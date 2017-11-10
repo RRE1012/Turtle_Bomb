@@ -117,3 +117,15 @@
  - 송형종 : Let's Try Assignment까지 튜토리알. (Unity for Aritist 항목에서, Lighting - Lights & Shading Basics 파트)
  - 장동필, 김성일 : Scripting 항목 다 따라해보기.
  - 11월 10일 금요일 오후 3시 30분
+
+2017-11-10
+-----------
+1. 진도
+ - 스크립트 파트를 보고 있는데 분량이 많아서 다 하지 못함.
+ - 아재 거북이 모델을 MAX에서 제작
+
+2. 다음 미팅
+ - 거북이 모델을 Unity에 올리고, 걷기 이동까지. (MAX 파일도 GIT에 올리기)
+ - 송형종 : Let's Try Assignment까지 튜토리알. (Unity for Aritist 항목에서, Lighting - Lights & Shading Basics 파트)
+ - 장동필, 김성일 : Scripting 항목 다 따라해보기.
+ - 11월 24일 금요일 오후 3시 30분
