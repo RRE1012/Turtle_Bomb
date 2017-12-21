@@ -3,9 +3,8 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\PlayerMove.cs">
     <Files>
       <File FileName="Assets\Script\PlayerMove.cs" Line="13" Column="2" />
-      <File FileName="..\..\proto1 (2)\Assets\Script\PlayerMove.cs" Line="86" Column="5" />
-      <File FileName="Assets\Script\UI.cs" Line="16" Column="38" />
-      <File FileName="Assets\Script\Bomb.cs" Line="137" Column="23" />
+      <File FileName="Assets\Script\UI.cs" Line="1" Column="1" />
+      <File FileName="Assets\Script\Bomb.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

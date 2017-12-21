@@ -2,17 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//define과 같은 개념. 상수 
 static class MAX_VALUE_ITEM
 {
     public const int retval = 8;
     
 }
 
+//캐릭터 움직임 관련 클래스
 public class PlayerMove : MonoBehaviour {
 	public GameObject m_Bomb;
-	public GameObject[] m_Fire; 
-	public static PlayerMove C_PM; 
-
+	public GameObject[] m_Fire;
+    public GameObject[] m_DropBomb;
+    public static PlayerMove C_PM;
+    public Animator animator_camera;
+    public Animation character_anima;
+    bool m_YouCanSetBomb = true;
     public float m_PlayerSpeed;
 
     // 회전 감도
@@ -43,13 +48,32 @@ public class PlayerMove : MonoBehaviour {
     // ======== Functions ========
 	void Awake()
 	{
+        //character_anima = GetComponent<Animator>();
         m_Remain_Bombcount = m_BombStat;
 		C_PM = this;
+        
+        Invoke("MakeAnimEnd", 5.5f); //5.5초 후에 애니메이션 한번만 실행되도록 설정
 	}
     void FixedUpdate () {
         Move();
+        
     }
-
+    //시작 애니메이션의 종료 여부를 획득 하는 함수
+    public bool GetAnimBool()
+    {
+        
+        return animator_camera.GetBool("Started");
+    }
+    //시작 카메라 이동 애니메이션 반복 종료 함수
+    void MakeAnimEnd()
+    {
+        animator_camera.SetBool("Started", true);
+    }
+    //게임오버 애니메이션 함수
+    public void MakeGameOverAni()
+    {
+        animator_camera.SetTrigger("Dead");
+    }
     void LateUpdate()
     {
         SetBomb();
@@ -70,59 +94,186 @@ public class PlayerMove : MonoBehaviour {
 
     void Move() // 플레이어 이동 및 회전
     {
-        if (Input.GetKey(KeyCode.W)) transform.Translate(new Vector3(0.0f, 0.0f, m_PlayerSpeed * Time.deltaTime));
-        if (Input.GetKey(KeyCode.S)) transform.Translate(new Vector3(0.0f, 0.0f, -m_PlayerSpeed * Time.deltaTime));
-        if (Input.GetKey(KeyCode.A)) transform.Translate(new Vector3(-m_PlayerSpeed * Time.deltaTime, 0.0f, 0.0f));
-        if (Input.GetKey(KeyCode.D)) transform.Translate(new Vector3(m_PlayerSpeed * Time.deltaTime, 0.0f, 0.0f));
-
-        if (Input.GetMouseButton(0))
+        if (animator_camera.GetBool("Started"))
         {
-            m_RotationX += Input.GetAxis("Mouse X") * m_RotateSensX * Time.deltaTime;
-            //rotationY += Input.GetAxis("Mouse Y") * sensY * Time.deltaTime;
-            //rotationY = Mathf.Clamp(rotationY, minY, maxY);
-            transform.localEulerAngles = new Vector3(0.0f, m_RotationX, 0.0f);
+            if (Input.GetKey(KeyCode.W))
+            {
+                transform.Translate(new Vector3(0.0f, 0.0f, m_PlayerSpeed * Time.deltaTime));
+                character_anima.Play("Walk");
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                transform.Translate(new Vector3(0.0f, 0.0f, -m_PlayerSpeed * Time.deltaTime));
+                character_anima.Play("Walk");
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                character_anima.Play("Walk");
+                transform.Translate(new Vector3(-m_PlayerSpeed * Time.deltaTime, 0.0f, 0.0f));
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                character_anima.Play("Walk");
+                transform.Translate(new Vector3(m_PlayerSpeed * Time.deltaTime, 0.0f, 0.0f));
+
+            }
+            if (Input.GetKeyUp(KeyCode.W))
+            {
+                character_anima.Stop("Walk");
+            }
+            if (Input.GetKeyUp(KeyCode.S))
+            {
+                character_anima.Stop("Walk");
+            }
+            if (Input.GetKeyUp(KeyCode.D))
+            {
+                character_anima.Stop("Walk");
+            }
+            if (Input.GetKeyUp(KeyCode.A))
+            {
+                character_anima.Stop("Walk");
+            }
+            if (Input.GetMouseButton(0))
+            {
+                m_RotationX += Input.GetAxis("Mouse X") * m_RotateSensX * Time.deltaTime;
+                //rotationY += Input.GetAxis("Mouse Y") * sensY * Time.deltaTime;
+                //rotationY = Mathf.Clamp(rotationY, minY, maxY);
+                transform.localEulerAngles = new Vector3(0.0f, m_RotationX, 0.0f);
+            }
         }
     }
-
-    void SetBomb() // 폭탄 설치
+    public void SetBomb_byIcon()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (animator_camera.GetBool("Started"))
         {
-			if (UI.m_bomb_count > 0) {
-                GameObject Instance_Bomb = Instantiate (m_Bomb);
+            if (UI.m_bomb_count > 0)
+            {
+
+
 
                 m_Bombindex_X = (int)transform.position.x;
                 m_Bombindex_Z = (int)transform.position.z;
 
-				if (m_Bombindex_X % 2 == 1) {
+                if (m_Bombindex_X % 2 == 1)
+                {
                     m_BombLocX = m_Bombindex_X + 1.0f;
-				} else if (m_Bombindex_X % 2 == -1) {
+                }
+                else if (m_Bombindex_X % 2 == -1)
+                {
                     m_BombLocX = m_Bombindex_X - 1.0f;
-				} else
+                }
+                else
                     m_BombLocX = m_Bombindex_X;
 
 
-				if (m_Bombindex_Z % 2 == 1) {
+                if (m_Bombindex_Z % 2 == 1)
+                {
                     m_BombLocZ = m_Bombindex_Z + 1.0f;
-				} else if (m_Bombindex_Z % 2 == -1) {
+                }
+                else if (m_Bombindex_Z % 2 == -1)
+                {
                     m_BombLocZ = m_Bombindex_Z - 1.0f;
-				} else
+                }
+                else
                     m_BombLocZ = m_Bombindex_Z;
+                // 이미 놓인 폭탄 검사
+                m_DropBomb = GameObject.FindGameObjectsWithTag("Bomb");
+                foreach (GameObject bomb in m_DropBomb)
+                {
+                    if (bomb != null)
+                    {
+                        if (m_BombLocX == bomb.transform.position.x && m_BombLocZ == bomb.transform.position.z)
+                        {
+                            m_YouCanSetBomb = false;
+                            break;
+                        }
+                        else m_YouCanSetBomb = true;
+                    }
+                }
+                if (m_YouCanSetBomb)
+                {
+                    MusicManager.manage_ESound.BombSetSound();
+                    GameObject Instance_Bomb = Instantiate(m_Bomb);
+                    //폭탄 위치 수정 -R
+                    Instance_Bomb.transform.position = new Vector3(m_BombLocX, -0.2f, m_BombLocZ);
+                    UI.m_bomb_count = UI.m_bomb_count - 1;
+                }
 
-                //폭탄 위치 수정 -R
-                Instance_Bomb.transform.position = new Vector3 (m_BombLocX, -0.2f, m_BombLocZ);
-				UI.m_bomb_count = UI.m_bomb_count - 1;
-			}
+            }
+        }
+    }
+    void SetBomb() // 폭탄 설치
+    {
+        if (animator_camera.GetBool("Started"))
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (UI.m_bomb_count > 0)
+                {
+
+
+
+                    m_Bombindex_X = (int)transform.position.x;
+                    m_Bombindex_Z = (int)transform.position.z;
+
+                    if (m_Bombindex_X % 2 == 1)
+                    {
+                        m_BombLocX = m_Bombindex_X + 1.0f;
+                    }
+                    else if (m_Bombindex_X % 2 == -1)
+                    {
+                        m_BombLocX = m_Bombindex_X - 1.0f;
+                    }
+                    else
+                        m_BombLocX = m_Bombindex_X;
+
+
+                    if (m_Bombindex_Z % 2 == 1)
+                    {
+                        m_BombLocZ = m_Bombindex_Z + 1.0f;
+                    }
+                    else if (m_Bombindex_Z % 2 == -1)
+                    {
+                        m_BombLocZ = m_Bombindex_Z - 1.0f;
+                    }
+                    else
+                        m_BombLocZ = m_Bombindex_Z;
+                    // 이미 놓인 폭탄 검사
+                    m_DropBomb = GameObject.FindGameObjectsWithTag("Bomb");
+                    foreach (GameObject bomb in m_DropBomb)
+                    {
+                        if (bomb != null)
+                        {
+                            if (m_BombLocX == bomb.transform.position.x && m_BombLocZ == bomb.transform.position.z)
+                            {
+                                m_YouCanSetBomb = false;
+                                break;
+                            }
+                            else m_YouCanSetBomb = true;
+                        }
+                    }
+                    if (m_YouCanSetBomb)
+                    {
+                        MusicManager.manage_ESound.BombSetSound();
+                        GameObject Instance_Bomb = Instantiate(m_Bomb);
+                        //폭탄 위치 수정 -R
+                        Instance_Bomb.transform.position = new Vector3(m_BombLocX, -0.2f, m_BombLocZ);
+                        UI.m_bomb_count = UI.m_bomb_count - 1;
+                    }
+
+                }
+            }
         }
     }
 
 	void OnTriggerEnter(Collider other) 
 	{
-		if (other.gameObject.CompareTag("Bomb_Item"))
+		if (other.gameObject.CompareTag("Bomb_Item")&& animator_camera.GetBool("Started"))
 		{
 			Destroy (other.gameObject);
             if(UI.m_bomb_count < MAX_VALUE_ITEM.retval)
             {
+                MusicManager.manage_ESound.ItemGetSound();
                 UI.m_bomb_count += 1;
                 UI.m_getItemText = "Bomb UP~!";
             }
@@ -134,15 +285,18 @@ public class PlayerMove : MonoBehaviour {
 			Destroy (other.gameObject);
             if (UI.m_fire_count < MAX_VALUE_ITEM.retval)
             {
+                MusicManager.manage_ESound.ItemGetSound();
                 UI.m_fire_count += 1;
                 UI.m_getItemText = "Fire UP~!";
             }
 		}
 		if (other.gameObject.CompareTag("Speed_Item"))
 		{
+
 			Destroy (other.gameObject);
             if (UI.m_speed_count < MAX_VALUE_ITEM.retval)
             {
+                MusicManager.manage_ESound.ItemGetSound();
                 UI.m_speed_count += 1;
                 UI.m_getItemText = "Speed UP~!";
             }

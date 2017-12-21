@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 93fcf69312256e74abb722a82868321f
+timeCreated: 1513785825
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: sharky&medusa 1
+  fontNames:
+  - sharky&medusa 1
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

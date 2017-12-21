@@ -10,6 +10,8 @@ TagManager:
   - Fire
   - Box
   - Bomb
+  - Rock
+  - Wall
   layers:
   - Default
   - TransparentFX
