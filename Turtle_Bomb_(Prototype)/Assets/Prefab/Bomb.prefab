@@ -96,9 +96,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Flame: {fileID: 1680143868423010, guid: 6f7f75e4ecafb47418a0409ae7b36af2, type: 2}
+  m_Flame_Remains: {fileID: 1492702224455140, guid: 536177fb3d5281649859c725a36525be,
+    type: 2}
   m_Character: []
   m_Bomb: []
   m_Box: []
+  m_BombItem: []
+  m_FireItem: []
+  m_SpeedItem: []
+  m_Rock: []
 --- !u!135 &135787760686941776
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -106,7 +112,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1070578890557438}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5

@@ -12,6 +12,7 @@ TagManager:
   - Bomb
   - Rock
   - Wall
+  - Flame_Remains
   layers:
   - Default
   - TransparentFX

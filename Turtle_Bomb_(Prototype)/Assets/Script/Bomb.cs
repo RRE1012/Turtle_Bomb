@@ -5,15 +5,18 @@ using UnityEngine;
 //폭탄 함수
 public class Bomb : MonoBehaviour {
     private Collider m_BCollider;
-	public GameObject m_Flame;
-	public GameObject[] m_Character;
+    public GameObject m_Flame;
+    public GameObject m_Flame_Remains;
+    public GameObject[] m_Character;
 	public GameObject[] m_Bomb;
 	public GameObject[] m_Box;
     public GameObject[] m_BombItem;
     public GameObject[] m_FireItem;
     public GameObject[] m_SpeedItem;
     public GameObject[] m_Rock;
-    public GameObject[] m_Wall;
+
+    int m_FlameCount = UI.m_fire_count;
+
     // 불길이 퍼질때 막힌 공간 판별을 위한 boolean
     // 동서남북 (= E, W, S, N)
     bool m_Blocked_N = false;
@@ -28,6 +31,7 @@ public class Bomb : MonoBehaviour {
 	{
         m_BombCountDown = -1.0f;
 	}
+
     void Update()
     {
         m_Character = GameObject.FindGameObjectsWithTag("Player");
@@ -37,7 +41,7 @@ public class Bomb : MonoBehaviour {
         m_FireItem = GameObject.FindGameObjectsWithTag("Bomb_Item");
         m_SpeedItem = GameObject.FindGameObjectsWithTag("Speed_Item");
         m_Rock = GameObject.FindGameObjectsWithTag("Rock");
-        m_Wall = GameObject.FindGameObjectsWithTag("Wall");
+
         if (m_BombCountDown > 0.0f)
         {
             m_BombCountDown -= Time.deltaTime;
@@ -50,6 +54,7 @@ public class Bomb : MonoBehaviour {
             Destroy(gameObject);
         }
     }
+
 	private void OnDestroy()
 	{
         //폭탄 터질 때 화염 이펙트 생성, 그 중에서 만약 박스가 있다면 관통하지 않고 그 박스만 부수도록 설정 -R
@@ -58,41 +63,12 @@ public class Bomb : MonoBehaviour {
         
         Instance_Flame.transform.position = new Vector3(gameObject.transform.position.x, 0.0f, gameObject.transform.position.z);
 
-        for (int i = 0; i < UI.m_fire_count; ++i)
+        for (int i = 0; i < m_FlameCount; ++i)
         {
             GameObject Instance_FlameDir_N;
             GameObject Instance_FlameDir_S;
             GameObject Instance_FlameDir_W;
             GameObject Instance_FlameDir_E;
-            if (!m_Blocked_N)
-            {
-                Instance_FlameDir_N = Instantiate(m_Flame);
-                Instance_FlameDir_N.transform.position = new Vector3(gameObject.transform.position.x, 0.0f, gameObject.transform.position.z + (2.0f * (i + 1)));
-            }
-
-            if (!m_Blocked_S)
-            {
-                Instance_FlameDir_S = Instantiate(m_Flame);
-                Instance_FlameDir_S.transform.position = new Vector3(gameObject.transform.position.x, 0.0f, gameObject.transform.position.z - (2.0f * (i + 1)));
-            }
-
-            if (!m_Blocked_W)
-            {
-                Instance_FlameDir_W = Instantiate(m_Flame);
-                Instance_FlameDir_W.transform.position = new Vector3(gameObject.transform.position.x - (2.0f * (i + 1)), 0.0f, gameObject.transform.position.z);
-            }
-
-            if (!m_Blocked_E)
-            {
-                Instance_FlameDir_E = Instantiate(m_Flame);
-                Instance_FlameDir_E.transform.position = new Vector3(gameObject.transform.position.x + (2.0f * (i + 1)), 0.0f, gameObject.transform.position.z);
-            }
-
-
-
-
-
-
 
             // 화염과 박스의 충돌
             foreach (GameObject box in m_Box)
@@ -101,18 +77,30 @@ public class Bomb : MonoBehaviour {
                 {
                     if (transform.position.x == box.transform.position.x && transform.position.z + (2.0f * (i + 1)) == box.transform.position.z)
                     {
+                        GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
+                        Instance_Flame_Remains.transform.position = new Vector3(box.transform.position.x, 0.0f, box.transform.position.z);
+
                         m_Blocked_N = true;
                     }
                     if (transform.position.x == box.transform.position.x && transform.position.z - (2.0f * (i + 1)) == box.transform.position.z)
                     {
+                        GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
+                        Instance_Flame_Remains.transform.position = new Vector3(box.transform.position.x, 0.0f, box.transform.position.z);
+
                         m_Blocked_S = true;
                     }
                     if (transform.position.x - (2.0f * (i + 1)) == box.transform.position.x && transform.position.z == box.transform.position.z)
                     {
+                        GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
+                        Instance_Flame_Remains.transform.position = new Vector3(box.transform.position.x, 0.0f, box.transform.position.z);
+
                         m_Blocked_W = true;
                     }
                     if (transform.position.x + (2.0f * (i + 1)) == box.transform.position.x && transform.position.z == box.transform.position.z)
                     {
+                        GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
+                        Instance_Flame_Remains.transform.position = new Vector3(box.transform.position.x, 0.0f, box.transform.position.z);
+
                         m_Blocked_E = true;
                     }
                 }
@@ -149,6 +137,7 @@ public class Bomb : MonoBehaviour {
                     }
                 }
             }
+
             // 화염과 안터지는 박스(돌)의 충돌
             foreach (GameObject rock in m_Rock)
             {
@@ -176,6 +165,7 @@ public class Bomb : MonoBehaviour {
                     }
                 }
             }
+
             // 화염과 아이템들의 충돌
             foreach (GameObject bombitem in m_BombItem)
             {
@@ -256,6 +246,7 @@ public class Bomb : MonoBehaviour {
                     }
                 }
             }
+
             // 화염 외부로 확장 제어
             if (!m_Blocked_N && transform.position.z + (2.0f * (i + 1)) >= 30.0f)
             {
@@ -273,19 +264,36 @@ public class Bomb : MonoBehaviour {
             {
                 m_Blocked_E = true;
             }
-           
+
+
+
+            if (!m_Blocked_N)
+            {
+                Instance_FlameDir_N = Instantiate(m_Flame);
+                Instance_FlameDir_N.transform.position = new Vector3(gameObject.transform.position.x, 0.0f, gameObject.transform.position.z + (2.0f * (i + 1)));
+            }
+
+            if (!m_Blocked_S)
+            {
+                Instance_FlameDir_S = Instantiate(m_Flame);
+                Instance_FlameDir_S.transform.position = new Vector3(gameObject.transform.position.x, 0.0f, gameObject.transform.position.z - (2.0f * (i + 1)));
+            }
+
+            if (!m_Blocked_W)
+            {
+                Instance_FlameDir_W = Instantiate(m_Flame);
+                Instance_FlameDir_W.transform.position = new Vector3(gameObject.transform.position.x - (2.0f * (i + 1)), 0.0f, gameObject.transform.position.z);
+            }
+
+            if (!m_Blocked_E)
+            {
+                Instance_FlameDir_E = Instantiate(m_Flame);
+                Instance_FlameDir_E.transform.position = new Vector3(gameObject.transform.position.x + (2.0f * (i + 1)), 0.0f, gameObject.transform.position.z);
+            }
         }
 
 
         //폭탄 수 다시 증가
 		PlayerMove.C_PM.ReloadUp();
 	}
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (m_BCollider.isTrigger && other.tag == "Player")
-        {
-            m_BCollider.isTrigger = false;
-        }
-    }
 }

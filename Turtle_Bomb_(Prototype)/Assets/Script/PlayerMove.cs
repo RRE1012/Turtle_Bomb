@@ -54,43 +54,53 @@ public class PlayerMove : MonoBehaviour {
         
         Invoke("MakeAnimEnd", 5.5f); //5.5초 후에 애니메이션 한번만 실행되도록 설정
 	}
-    void FixedUpdate () {
+
+    void Update ()
+    {
         Move();
-        
+        SetBomb();
     }
+
+
+
+
+
+    // ======== UDF =========
+
+
+
+
     //시작 애니메이션의 종료 여부를 획득 하는 함수
     public bool GetAnimBool()
     {
         
         return animator_camera.GetBool("Started");
     }
+
     //시작 카메라 이동 애니메이션 반복 종료 함수
     void MakeAnimEnd()
     {
         animator_camera.SetBool("Started", true);
     }
+
     //게임오버 애니메이션 함수
     public void MakeGameOverAni()
     {
         animator_camera.SetTrigger("Dead");
     }
-    void LateUpdate()
-    {
-        SetBomb();
-    }
+
     //다른 스크립트에서 현 캐릭터의 화력을 Get할 때 쓰이는 함수
 	public int GetFire()
 	{
 		return m_FireStat;
 	}
+
     //다른 스크립트에서 폭탄을 장전할 때 쓰는 함수
 	public void ReloadUp()
 	{
 		UI.m_bomb_count += 1;
 	}
 
-
-    // ======== UDF =========
 
     void Move() // 플레이어 이동 및 회전
     {
@@ -136,8 +146,6 @@ public class PlayerMove : MonoBehaviour {
             if (Input.GetMouseButton(0))
             {
                 m_RotationX += Input.GetAxis("Mouse X") * m_RotateSensX * Time.deltaTime;
-                //rotationY += Input.GetAxis("Mouse Y") * sensY * Time.deltaTime;
-                //rotationY = Mathf.Clamp(rotationY, minY, maxY);
                 transform.localEulerAngles = new Vector3(0.0f, m_RotationX, 0.0f);
             }
         }
@@ -148,9 +156,6 @@ public class PlayerMove : MonoBehaviour {
         {
             if (UI.m_bomb_count > 0)
             {
-
-
-
                 m_Bombindex_X = (int)transform.position.x;
                 m_Bombindex_Z = (int)transform.position.z;
 
@@ -176,6 +181,7 @@ public class PlayerMove : MonoBehaviour {
                 }
                 else
                     m_BombLocZ = m_Bombindex_Z;
+
                 // 이미 놓인 폭탄 검사
                 m_DropBomb = GameObject.FindGameObjectsWithTag("Bomb");
                 foreach (GameObject bomb in m_DropBomb)
@@ -202,6 +208,7 @@ public class PlayerMove : MonoBehaviour {
             }
         }
     }
+
     void SetBomb() // 폭탄 설치
     {
         if (animator_camera.GetBool("Started"))
@@ -277,8 +284,6 @@ public class PlayerMove : MonoBehaviour {
                 UI.m_bomb_count += 1;
                 UI.m_getItemText = "Bomb UP~!";
             }
-
-            
 		}
 		if (other.gameObject.CompareTag("Fire_Item"))
 		{
@@ -308,6 +313,17 @@ public class PlayerMove : MonoBehaviour {
             m_isAlive = false;
         }
     }
+
+    // 폭탄 트리거 비활성
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Bomb")
+        {
+            other.isTrigger = false;
+        }
+    }
+
+
 
     //다른 스크립트에서 플레이어를 죽게 하는 함수-R
     public void Set_Dead()
