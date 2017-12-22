@@ -76,28 +76,28 @@ public class Bomb : MonoBehaviour
             {
                 if (box != null)
                 {
-                    if (transform.position.x == box.transform.position.x && transform.position.z + (2.0f * (i + 1)) == box.transform.position.z)
+                    if (!m_Blocked_N && transform.position.x == box.transform.position.x && transform.position.z + (2.0f * (i + 1)) == box.transform.position.z)
                     {
                         GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
                         Instance_Flame_Remains.transform.position = new Vector3(box.transform.position.x, 0.0f, box.transform.position.z);
 
                         m_Blocked_N = true;
                     }
-                    if (transform.position.x == box.transform.position.x && transform.position.z - (2.0f * (i + 1)) == box.transform.position.z)
+                    if (!m_Blocked_S && transform.position.x == box.transform.position.x && transform.position.z - (2.0f * (i + 1)) == box.transform.position.z)
                     {
                         GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
                         Instance_Flame_Remains.transform.position = new Vector3(box.transform.position.x, 0.0f, box.transform.position.z);
 
                         m_Blocked_S = true;
                     }
-                    if (transform.position.x - (2.0f * (i + 1)) == box.transform.position.x && transform.position.z == box.transform.position.z)
+                    if (!m_Blocked_W && transform.position.x - (2.0f * (i + 1)) == box.transform.position.x && transform.position.z == box.transform.position.z)
                     {
                         GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
                         Instance_Flame_Remains.transform.position = new Vector3(box.transform.position.x, 0.0f, box.transform.position.z);
 
                         m_Blocked_W = true;
                     }
-                    if (transform.position.x + (2.0f * (i + 1)) == box.transform.position.x && transform.position.z == box.transform.position.z)
+                    if (!m_Blocked_E && transform.position.x + (2.0f * (i + 1)) == box.transform.position.x && transform.position.z == box.transform.position.z)
                     {
                         GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
                         Instance_Flame_Remains.transform.position = new Vector3(box.transform.position.x, 0.0f, box.transform.position.z);
@@ -112,25 +112,25 @@ public class Bomb : MonoBehaviour
             {
                 if (bomb != null)
                 {
-                    if (transform.position.x == bomb.transform.position.x && transform.position.z + (2.0f * (i + 1)) == bomb.transform.position.z)
+                    if (!m_Blocked_N && transform.position.x == bomb.transform.position.x && transform.position.z + (2.0f * (i + 1)) == bomb.transform.position.z)
                     {
                         Destroy(bomb);
                         m_Blocked_N = true;
                         break;
                     }
-                    if (transform.position.x == bomb.transform.position.x && transform.position.z - (2.0f * (i + 1)) == bomb.transform.position.z)
+                    if (!m_Blocked_S && transform.position.x == bomb.transform.position.x && transform.position.z - (2.0f * (i + 1)) == bomb.transform.position.z)
                     {
                         Destroy(bomb);
                         m_Blocked_S = true;
                         break;
                     }
-                    if (transform.position.x - (2.0f * (i + 1)) == bomb.transform.position.x && transform.position.z == bomb.transform.position.z)
+                    if (!m_Blocked_W && transform.position.x - (2.0f * (i + 1)) == bomb.transform.position.x && transform.position.z == bomb.transform.position.z)
                     {
                         Destroy(bomb);
                         m_Blocked_W = true;
                         break;
                     }
-                    if (transform.position.x + (2.0f * (i + 1)) == bomb.transform.position.x && transform.position.z == bomb.transform.position.z)
+                    if (!m_Blocked_E && transform.position.x + (2.0f * (i + 1)) == bomb.transform.position.x && transform.position.z == bomb.transform.position.z)
                     {
                         Destroy(bomb);
                         m_Blocked_E = true;
@@ -268,6 +268,7 @@ public class Bomb : MonoBehaviour
 
 
 
+            // 화염 생성
             if (!m_Blocked_N)
             {
                 Instance_FlameDir_N = Instantiate(m_Flame);

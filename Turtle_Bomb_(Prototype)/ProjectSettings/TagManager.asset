@@ -7,12 +7,12 @@ TagManager:
   - Bomb_Item
   - Fire_Item
   - Speed_Item
-  - Fire
   - Box
   - Bomb
   - Rock
   - Wall
   - Flame_Remains
+  - Flame
   layers:
   - Default
   - TransparentFX

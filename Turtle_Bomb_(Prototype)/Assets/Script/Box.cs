@@ -10,12 +10,14 @@ public class Box : MonoBehaviour {
     public GameObject m_Object_BombItem;
     public GameObject m_Object_SpeedItem;
     public GameObject m_Object_Player;
-    
+
+    bool m_is_Destroyed = false;
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Flame_Remains"))
+        if (!m_is_Destroyed && other.gameObject.CompareTag("Flame_Remains"))
         {
+            m_is_Destroyed = true;
             // 화염 잔해 파괴
             Destroy(other.gameObject);
             // 박스 파괴
@@ -31,7 +33,6 @@ public class Box : MonoBehaviour {
         {
             if (Random.Range(0.0f, 10.0f) > 5.5f)
             {
-
                 float temp = Random.Range(0.0f, 10.0f);
                 if (temp < 3.3f)
                 {

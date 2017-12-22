@@ -5,6 +5,15 @@ using UnityEngine.UI;
 
 //페이드아웃.페이드인 함수- 게임오버 시 사용
 public class FadeManager : MonoBehaviour {
+
+    public RawImage m_joypad;
+    public Button m_joystick;
+    public Button m_bombbutton;
+    public Button m_crouchbutton;
+    public Button m_pushbutton;
+    public Button m_jumpbutton;
+
+
     //인스턴스로 사용
     public static FadeManager instanceFM;
     //페이드아웃/인 용 이미지
@@ -21,7 +30,6 @@ public class FadeManager : MonoBehaviour {
     //페이드아웃 함수
     public void FadeOut()
     {
-       
         isShowing = true;
         isInTransition = true;
         this.duration = 6.0f;
@@ -45,6 +53,7 @@ public class FadeManager : MonoBehaviour {
         //캐릭터가 죽고, 변환중이 아니라면 페이드아웃+페이드인+카메라애니메이션 진행
         if (!PlayerMove.C_PM.Get_IsAlive()&&!isInTransition)
         {
+            ButtonRemove();
             FadeOut();
             Invoke("FadeIn", 5.8f);
             PlayerMove.C_PM.MakeGameOverAni();
@@ -59,5 +68,15 @@ public class FadeManager : MonoBehaviour {
         if (transition > 1 || transition < 0)
             isInTransition = false;
 
+    }
+
+    void ButtonRemove()
+    {
+        m_joypad.gameObject.SetActive(false);
+        m_joystick.gameObject.SetActive(false);
+        m_bombbutton.gameObject.SetActive(false);
+        m_crouchbutton.gameObject.SetActive(false);
+        m_pushbutton.gameObject.SetActive(false);
+        m_jumpbutton.gameObject.SetActive(false);
     }
 }

@@ -18,7 +18,6 @@ public class PlayerMove : MonoBehaviour {
     public Animator animator_camera;
     public Animation character_anima;
     bool m_YouCanSetBomb = true;
-    public float m_PlayerSpeed;
 
     // 회전 감도
     float m_RotateSensX = 150.0f;
@@ -37,19 +36,12 @@ public class PlayerMove : MonoBehaviour {
     // 플레이어 생존 여부
 	bool m_isAlive = true;
 
-    // 플레이어 스탯(status) 3가지
-	public int m_FireStat = 2;
-	public int m_BombStat = 2;
-	public int m_SpeedStat = 2;
-
-    // 남은(배치 가능한) 폭탄 수
-	int m_Remain_Bombcount;
+    // 기본 속도
+    float m_BasicSpeed = 5.0f;
 
     // ======== Functions ========
 	void Awake()
 	{
-        //character_anima = GetComponent<Animator>();
-        m_Remain_Bombcount = m_BombStat;
 		C_PM = this;
         
         Invoke("MakeAnimEnd", 5.5f); //5.5초 후에 애니메이션 한번만 실행되도록 설정
@@ -60,16 +52,10 @@ public class PlayerMove : MonoBehaviour {
         Move();
         SetBomb();
     }
-
-
-
-
+    
 
     // ======== UDF =========
-
-
-
-
+    
     //시작 애니메이션의 종료 여부를 획득 하는 함수
     public bool GetAnimBool()
     {
@@ -88,17 +74,12 @@ public class PlayerMove : MonoBehaviour {
     {
         animator_camera.SetTrigger("Dead");
     }
-
-    //다른 스크립트에서 현 캐릭터의 화력을 Get할 때 쓰이는 함수
-	public int GetFire()
-	{
-		return m_FireStat;
-	}
+    
 
     //다른 스크립트에서 폭탄을 장전할 때 쓰는 함수
 	public void ReloadUp()
 	{
-		UI.m_bomb_count += 1;
+		UI.m_releasable_bomb_count += 1;
 	}
 
 
@@ -108,25 +89,29 @@ public class PlayerMove : MonoBehaviour {
         {
             if (Input.GetKey(KeyCode.W))
             {
-                transform.Translate(new Vector3(0.0f, 0.0f, m_PlayerSpeed * Time.deltaTime));
+                transform.Translate(new Vector3(0.0f, 0.0f, ((m_BasicSpeed + UI.m_speed_count) * Time.deltaTime)));
                 character_anima.Play("Walk");
             }
             if (Input.GetKey(KeyCode.S))
             {
-                transform.Translate(new Vector3(0.0f, 0.0f, -m_PlayerSpeed * Time.deltaTime));
+                transform.Translate(new Vector3(0.0f, 0.0f, -((m_BasicSpeed + UI.m_speed_count) * Time.deltaTime)));
                 character_anima.Play("Walk");
             }
             if (Input.GetKey(KeyCode.A))
             {
                 character_anima.Play("Walk");
-                transform.Translate(new Vector3(-m_PlayerSpeed * Time.deltaTime, 0.0f, 0.0f));
+                transform.Translate(new Vector3(-((m_BasicSpeed + UI.m_speed_count) * Time.deltaTime), 0.0f, 0.0f));
             }
             if (Input.GetKey(KeyCode.D))
             {
                 character_anima.Play("Walk");
-                transform.Translate(new Vector3(m_PlayerSpeed * Time.deltaTime, 0.0f, 0.0f));
+                transform.Translate(new Vector3(((m_BasicSpeed + UI.m_speed_count) * Time.deltaTime), 0.0f, 0.0f));
 
             }
+
+
+
+
             if (Input.GetKeyUp(KeyCode.W))
             {
                 character_anima.Stop("Walk");
@@ -143,6 +128,10 @@ public class PlayerMove : MonoBehaviour {
             {
                 character_anima.Stop("Walk");
             }
+
+
+
+
             if (Input.GetMouseButton(0))
             {
                 m_RotationX += Input.GetAxis("Mouse X") * m_RotateSensX * Time.deltaTime;
@@ -154,7 +143,7 @@ public class PlayerMove : MonoBehaviour {
     {
         if (animator_camera.GetBool("Started"))
         {
-            if (UI.m_bomb_count > 0)
+            if (UI.m_releasable_bomb_count > 0)
             {
                 m_Bombindex_X = (int)transform.position.x;
                 m_Bombindex_Z = (int)transform.position.z;
@@ -202,7 +191,7 @@ public class PlayerMove : MonoBehaviour {
                     GameObject Instance_Bomb = Instantiate(m_Bomb);
                     //폭탄 위치 수정 -R
                     Instance_Bomb.transform.position = new Vector3(m_BombLocX, -0.2f, m_BombLocZ);
-                    UI.m_bomb_count = UI.m_bomb_count - 1;
+                    UI.m_releasable_bomb_count = UI.m_releasable_bomb_count - 1;
                 }
 
             }
@@ -215,11 +204,8 @@ public class PlayerMove : MonoBehaviour {
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                if (UI.m_bomb_count > 0)
+                if (UI.m_releasable_bomb_count > 0)
                 {
-
-
-
                     m_Bombindex_X = (int)transform.position.x;
                     m_Bombindex_Z = (int)transform.position.z;
 
@@ -265,7 +251,7 @@ public class PlayerMove : MonoBehaviour {
                         GameObject Instance_Bomb = Instantiate(m_Bomb);
                         //폭탄 위치 수정 -R
                         Instance_Bomb.transform.position = new Vector3(m_BombLocX, -0.2f, m_BombLocZ);
-                        UI.m_bomb_count = UI.m_bomb_count - 1;
+                        UI.m_releasable_bomb_count = UI.m_releasable_bomb_count - 1;
                     }
 
                 }
@@ -278,10 +264,11 @@ public class PlayerMove : MonoBehaviour {
 		if (other.gameObject.CompareTag("Bomb_Item")&& animator_camera.GetBool("Started"))
 		{
 			Destroy (other.gameObject);
-            if(UI.m_bomb_count < MAX_VALUE_ITEM.retval)
+            if(UI.m_cur_Max_Bomb_Count < MAX_VALUE_ITEM.retval)
             {
                 MusicManager.manage_ESound.ItemGetSound();
-                UI.m_bomb_count += 1;
+                UI.m_cur_Max_Bomb_Count += 1;
+                UI.m_releasable_bomb_count += 1;
                 UI.m_getItemText = "Bomb UP~!";
             }
 		}
@@ -308,7 +295,7 @@ public class PlayerMove : MonoBehaviour {
 		}
 
         //화염과 접촉 시 사망 -R
-        if (other.gameObject.tag == "Fire")
+        if (other.gameObject.tag == "Flame")
         {
             m_isAlive = false;
         }
