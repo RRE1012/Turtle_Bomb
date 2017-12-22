@@ -14,12 +14,8 @@ public class Box : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("파괴");
-        print("Destroy");
         if (other.gameObject.CompareTag("Flame_Remains"))
         {
-            Debug.Log("파괴");
-            print("Destroy");
             // 화염 잔해 파괴
             Destroy(other.gameObject);
             // 박스 파괴

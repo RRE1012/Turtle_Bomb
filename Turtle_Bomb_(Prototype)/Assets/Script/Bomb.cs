@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //폭탄 함수
-public class Bomb : MonoBehaviour {
+public class Bomb : MonoBehaviour
+{
     private Collider m_BCollider;
     public GameObject m_Flame;
     public GameObject m_Flame_Remains;
     public GameObject[] m_Character;
-	public GameObject[] m_Bomb;
-	public GameObject[] m_Box;
+    public GameObject[] m_Bomb;
+    public GameObject[] m_Box;
     public GameObject[] m_BombItem;
     public GameObject[] m_FireItem;
     public GameObject[] m_SpeedItem;
@@ -20,17 +21,17 @@ public class Bomb : MonoBehaviour {
     // 불길이 퍼질때 막힌 공간 판별을 위한 boolean
     // 동서남북 (= E, W, S, N)
     bool m_Blocked_N = false;
-	bool m_Blocked_S = false;
-	bool m_Blocked_W = false;
-	bool m_Blocked_E = false;
-    
+    bool m_Blocked_S = false;
+    bool m_Blocked_W = false;
+    bool m_Blocked_E = false;
+
     // 폭탄 생명주기
     private float m_BombCountDown = 3.0f;
 
-	public void MakeExplode()
-	{
+    public void MakeExplode()
+    {
         m_BombCountDown = -1.0f;
-	}
+    }
 
     void Update()
     {
@@ -48,19 +49,19 @@ public class Bomb : MonoBehaviour {
         }
 
         //폭발 전 사운드 출력(풀링으로 수정 예정)
-		else if(m_BombCountDown <= 0.0f)
+        else if (m_BombCountDown <= 0.0f)
         {
             MusicManager.manage_ESound.soundE();
             Destroy(gameObject);
         }
     }
 
-	private void OnDestroy()
-	{
+    private void OnDestroy()
+    {
         //폭탄 터질 때 화염 이펙트 생성, 그 중에서 만약 박스가 있다면 관통하지 않고 그 박스만 부수도록 설정 -R
-       
+
         GameObject Instance_Flame = Instantiate(m_Flame);
-        
+
         Instance_Flame.transform.position = new Vector3(gameObject.transform.position.x, 0.0f, gameObject.transform.position.z);
 
         for (int i = 0; i < m_FlameCount; ++i)
@@ -294,6 +295,6 @@ public class Bomb : MonoBehaviour {
 
 
         //폭탄 수 다시 증가
-		PlayerMove.C_PM.ReloadUp();
-	}
+        PlayerMove.C_PM.ReloadUp();
+    }
 }

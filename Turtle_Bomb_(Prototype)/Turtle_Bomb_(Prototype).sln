@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2017
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turtle_Bomb_(Prototype)", "Turtle_Bomb_(Prototype).csproj", "{7F2CD187-76A2-E36F-FF69-B9B143029FD9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turtle_Bomb_(Prototype).Editor", "Turtle_Bomb_(Prototype).Editor.csproj", "{2638C71A-171C-EDA6-7A6D-44794D2864D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{7F2CD187-76A2-E36F-FF69-B9B143029FD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F2CD187-76A2-E36F-FF69-B9B143029FD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F2CD187-76A2-E36F-FF69-B9B143029FD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2638C71A-171C-EDA6-7A6D-44794D2864D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2638C71A-171C-EDA6-7A6D-44794D2864D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2638C71A-171C-EDA6-7A6D-44794D2864D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2638C71A-171C-EDA6-7A6D-44794D2864D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
