@@ -33,21 +33,22 @@ public class Box : MonoBehaviour {
         {
             if (Random.Range(0.0f, 10.0f) > 5.5f)
             {
+                GameObject Instance_Item;
                 float temp = Random.Range(0.0f, 10.0f);
                 if (temp < 3.3f)
                 {
                     m_Object_FireItem.transform.position = new Vector3(transform.position.x, 0.6f, transform.position.z);
-                    GameObject Instance_Item = Instantiate(m_Object_FireItem);
+                    Instance_Item = Instantiate(m_Object_FireItem);
                 }
                 else if (temp > 6.6f)
                 {
                     m_Object_BombItem.transform.position = new Vector3(transform.position.x, 0.6f, transform.position.z);
-                    GameObject Instance_Item = Instantiate(m_Object_BombItem);
+                    Instance_Item = Instantiate(m_Object_BombItem);
                 }
                 else
                 {
                     m_Object_SpeedItem.transform.position = new Vector3(transform.position.x, 0.6f, transform.position.z);
-                    GameObject Instance_Item = Instantiate(m_Object_SpeedItem);
+                    Instance_Item = Instantiate(m_Object_SpeedItem);
                 }
             }
         }

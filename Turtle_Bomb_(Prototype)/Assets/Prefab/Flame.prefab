@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 114750096338294762}
   - component: {fileID: 65004844412783858}
   m_Layer: 0
-  m_Name: FlamesParticleEffect
+  m_Name: Flame
   m_TagString: Flame
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

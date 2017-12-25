@@ -12,6 +12,9 @@ public class FadeManager : MonoBehaviour {
     public Button m_crouchbutton;
     public Button m_pushbutton;
     public Button m_jumpbutton;
+    public Text m_fire_UI;
+    public Text m_bomb_UI;
+    public Text m_speed_UI;
 
 
     //인스턴스로 사용
@@ -78,5 +81,8 @@ public class FadeManager : MonoBehaviour {
         m_crouchbutton.gameObject.SetActive(false);
         m_pushbutton.gameObject.SetActive(false);
         m_jumpbutton.gameObject.SetActive(false);
+        m_fire_UI.gameObject.SetActive(false);
+        m_bomb_UI.gameObject.SetActive(false);
+        m_speed_UI.gameObject.SetActive(false);
     }
 }

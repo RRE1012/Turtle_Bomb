@@ -28,6 +28,14 @@ public class Bomb : MonoBehaviour
     // 폭탄 생명주기
     private float m_BombCountDown = 3.0f;
 
+    // 폭탄 애니메이션
+    float m_Reverse_Scale = 1.0f;
+    float m_Scale_Timer = 0.0f;
+    float m_Weight_Time_XY = 0.0f;
+    float m_Weight_Time_Z = 0.0f;
+    float m_Weight_Time_Pos = 0.0f;
+
+
     public void MakeExplode()
     {
         m_BombCountDown = -1.0f;
@@ -46,6 +54,7 @@ public class Bomb : MonoBehaviour
         if (m_BombCountDown > 0.0f)
         {
             m_BombCountDown -= Time.deltaTime;
+            BombAnimate(Time.deltaTime);
         }
 
         //폭발 전 사운드 출력(풀링으로 수정 예정)
@@ -297,5 +306,23 @@ public class Bomb : MonoBehaviour
 
         //폭탄 수 다시 증가
         PlayerMove.C_PM.ReloadUp();
+    }
+
+
+    void BombAnimate(float time)
+    {
+        m_Scale_Timer += time;
+        m_Weight_Time_XY = time * 0.05f;
+        m_Weight_Time_Z = time * 0.45f;
+        m_Weight_Time_Pos = time * 0.125f;
+
+        if (m_Scale_Timer >= 1.2f)
+        {
+            m_Reverse_Scale *= -1.0f;
+            m_Scale_Timer = 0.0f;
+        }
+
+        gameObject.transform.localScale += new Vector3(m_Reverse_Scale * m_Weight_Time_XY, m_Reverse_Scale * m_Weight_Time_XY, m_Reverse_Scale * m_Weight_Time_Z);
+        gameObject.transform.Translate(new Vector3(0.0f,0.0f, m_Reverse_Scale * m_Weight_Time_Pos));
     }
 }
