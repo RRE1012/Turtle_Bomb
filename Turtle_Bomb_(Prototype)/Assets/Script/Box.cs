@@ -11,6 +11,8 @@ public class Box : MonoBehaviour {
     public GameObject m_Object_SpeedItem;
     public GameObject m_Object_Player;
 
+    GameObject Instance_Item;
+
     bool m_is_Destroyed = false;
 
     void OnTriggerEnter(Collider other)
@@ -33,7 +35,6 @@ public class Box : MonoBehaviour {
         {
             if (Random.Range(0.0f, 10.0f) > 5.5f)
             {
-                GameObject Instance_Item;
                 float temp = Random.Range(0.0f, 10.0f);
                 if (temp < 3.3f)
                 {

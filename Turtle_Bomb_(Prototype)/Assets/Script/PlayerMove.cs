@@ -225,7 +225,7 @@ public class PlayerMove : MonoBehaviour {
                         MusicManager.manage_ESound.BombSetSound();
                         GameObject Instance_Bomb = Instantiate(m_Bomb);
                         //폭탄 위치 수정 -R
-                        Instance_Bomb.transform.position = new Vector3(m_BombLocX, 0.0f, m_BombLocZ);
+                        Instance_Bomb.transform.position = new Vector3(m_BombLocX, 0.35f, m_BombLocZ);
                         UI.m_releasable_bomb_count = UI.m_releasable_bomb_count - 1;
                     }
 

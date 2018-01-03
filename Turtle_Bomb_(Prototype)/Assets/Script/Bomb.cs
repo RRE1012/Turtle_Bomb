@@ -314,7 +314,7 @@ public class Bomb : MonoBehaviour
         m_Scale_Timer += time;
         m_Weight_Time_XY = time * 0.05f;
         m_Weight_Time_Z = time * 0.45f;
-        m_Weight_Time_Pos = time * 0.125f;
+        m_Weight_Time_Pos = time * 0.1f;
 
         if (m_Scale_Timer >= 1.2f)
         {
@@ -323,6 +323,6 @@ public class Bomb : MonoBehaviour
         }
 
         gameObject.transform.localScale += new Vector3(m_Reverse_Scale * m_Weight_Time_XY, m_Reverse_Scale * m_Weight_Time_XY, m_Reverse_Scale * m_Weight_Time_Z);
-        gameObject.transform.Translate(new Vector3(0.0f,0.0f, m_Reverse_Scale * m_Weight_Time_Pos));
+        gameObject.transform.localPosition += new Vector3(0.0f, m_Reverse_Scale * m_Weight_Time_Pos, 0.0f);
     }
 }
