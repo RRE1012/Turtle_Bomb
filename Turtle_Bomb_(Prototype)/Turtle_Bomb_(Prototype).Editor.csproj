@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2638C71A-171C-EDA6-7A6D-44794D2864D4}</ProjectGuid>
+    <ProjectGuid>{D1154A6F-D79E-5E7C-AEF7-9A1C237F1F50}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>Assembly-CSharp-Editor</AssemblyName>
     <FileAlignment>512</FileAlignment>
@@ -282,9 +282,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Turtle_Bomb_(Prototype).csproj">
-      <Project>{7F2CD187-76A2-E36F-FF69-B9B143029FD9}</Project>
-      <Name>Turtle_Bomb_(Prototype)</Name>
+    <ProjectReference Include="Turtle_Bomb_(prototype).csproj">
+      <Project>{C2016E2B-4E34-5D41-BB31-30EED3206A94}</Project>
+      <Name>Turtle_Bomb_(prototype)</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -126,7 +126,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Flame: {fileID: 1456075557612096, guid: d60e7e30c3d60b44ebf744f8cec71d54, type: 2}
-  m_Flame_Remains: {fileID: 1492702224455140, guid: 536177fb3d5281649859c725a36525be,
+  m_Flame_Remains: {fileID: 1420050026311484, guid: 536177fb3d5281649859c725a36525be,
     type: 2}
   m_Character: []
   m_Bomb: []

@@ -13,6 +13,9 @@ TagManager:
   - Wall
   - Flame_Remains
   - Flame
+  - Goal
+  - Ingame_Play_UI
+  - Stage_Clear_UI
   layers:
   - Default
   - TransparentFX

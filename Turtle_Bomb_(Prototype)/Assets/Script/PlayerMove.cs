@@ -6,7 +6,6 @@ using UnityEngine;
 static class MAX_VALUE_ITEM
 {
     public const int retval = 8;
-    
 }
 
 //캐릭터 움직임 관련 클래스
@@ -49,7 +48,7 @@ public class PlayerMove : MonoBehaviour {
 
     void Update ()
     {
-        if (m_isAlive)
+        if (m_isAlive && !StageManager.m_is_Stage_Clear)
         {
             Move();
 
@@ -97,9 +96,24 @@ public class PlayerMove : MonoBehaviour {
         }
 
         //화염과 접촉 시 사망 -R
-        if (other.gameObject.tag == "Flame")
+        if (other.gameObject.tag == "Flame" && !StageManager.m_is_Stage_Clear)
         {
             m_isAlive = false;
+        }
+
+        // 목표 도달 시 스테이지 클리어
+        if (other.gameObject.CompareTag("Goal"))
+        {
+            // 목표까지 이동시 별 획득
+            StageManager.m_Stars += 1;
+
+            // 일정 시간 내에 클리어시 별 획득
+            // 일단 기본 5초로 설정.
+            // 추후 변수로 할당할것.
+            if (UI.time_Second >= 5.0f)
+                StageManager.m_Stars += 1;
+
+            StageManager.StageClear();
         }
     }
 
