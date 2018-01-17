@@ -70,7 +70,7 @@ public class UI : MonoBehaviour {
         Stage_Clear_UI_Deactivate();
 
         m_getItemText = "";
-        time_Second = 90.0f;
+        time_Second = 200.0f;
         m_fire_count = 1;
         m_releasable_bomb_count = 1;
         m_speed_count = 1;
@@ -111,6 +111,16 @@ public class UI : MonoBehaviour {
         StageManager.m_is_Stage_Clear = true;
     }
 
+
+    // 인게임 UI 활성화
+    public static void Ingame_Play_UI_Activate()
+    {
+        foreach (GameObject Ingame_UI in m_Ingame_Play_UI)
+        {
+            Ingame_UI.SetActive(true);
+        }
+    }
+
     // 인게임 UI 비활성화
     public static void Ingame_Play_UI_Deactivate()
     {
@@ -118,7 +128,6 @@ public class UI : MonoBehaviour {
         {
             Ingame_UI.SetActive(false);
         }
-        Debug.Log("Ingame_UI is Deactivated.");
     }
 
     // 스테이지 클리어 UI 활성화
@@ -128,7 +137,6 @@ public class UI : MonoBehaviour {
         {
             stage_clear_UI.SetActive(true);
         }
-        Debug.Log("Stage_Clear_UI is activated.");
     }
 
     // 스테이지 클리어 UI 비활성화
@@ -138,7 +146,6 @@ public class UI : MonoBehaviour {
         {
             stage_clear_UI.SetActive(false);
         }
-        Debug.Log("Stage_Clear_UI is Deactivated.");
     }
 
     // 획득 별 갯수 적용
@@ -153,7 +160,6 @@ public class UI : MonoBehaviour {
             else if (s == 3)
                 m_Star_Image3.texture = m_Activated_Star_Texture;
         }
-        Debug.Log("Star_Count_Applied.");
     }
 
 

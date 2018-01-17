@@ -15,6 +15,15 @@ public class Box : MonoBehaviour {
 
     bool m_is_Destroyed = false;
 
+
+    void Start()
+    {
+        // 최초 시작 시 박스 자신의 위치의 isBlocked를 true로 갱신
+        int index = StageManager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
+        StageManager.Update_MCL_isBlocked(index, true);
+    }
+
+
     void OnTriggerEnter(Collider other)
     {
         if (!m_is_Destroyed && other.gameObject.CompareTag("Flame_Remains"))
@@ -26,6 +35,9 @@ public class Box : MonoBehaviour {
             Destroy(gameObject);
             // 파괴 후 아이템 생성
             SetItem();
+
+            // MCL 갱신
+
         }
     }
 

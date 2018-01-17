@@ -16,6 +16,9 @@ TagManager:
   - Goal
   - Ingame_Play_UI
   - Stage_Clear_UI
+  - Bush
+  - Fire
+  - Monster
   layers:
   - Default
   - TransparentFX
