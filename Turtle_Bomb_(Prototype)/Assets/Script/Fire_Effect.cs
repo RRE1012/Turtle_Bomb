@@ -6,7 +6,7 @@ using UnityEngine;
 public class Fire_Effect : MonoBehaviour {
     //화염 지속시간-  다만 이펙트 이기 때문에 파티클은 사라지지 않을 수 있으므로 값을 조종하려면 파티클 inspector에서 조정 -R
     public float bombCountDown = 1.0f;
-    
+    bool is_OnBush=false;
     // Use this for initialization
     void Start () {
         
@@ -21,7 +21,10 @@ public class Fire_Effect : MonoBehaviour {
         }
         else
         {
+            
+                
             Destroy(gameObject);
         }
+
     }
 }

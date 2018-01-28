@@ -23,7 +23,8 @@ public class PlayerMove : MonoBehaviour {
     SkinnedMeshRenderer[] m_Player_Mesh_Renderers;
 
     bool m_isCrouch = false;
-
+    //마우스 클릭
+    bool m_isClicked = false;
 
     // 회전 감도
     float m_RotateSensX = 150.0f;
@@ -192,7 +193,21 @@ public class PlayerMove : MonoBehaviour {
             transform.Translate(new Vector3(((m_BasicSpeed + UI.m_speed_count) * Time.deltaTime), 0.0f, 0.0f));
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
-
+        if(JoyStickMove.instance.GetJoyPosX()!=0 || JoyStickMove.instance.GetJoyPosZ() != 0)
+        {
+            //inputVector = (inputVector.magnitude > 1.0f) ? inputVector.normalized : inputVector;
+            float inputx = (JoyStickMove.instance.GetJoyPosX() >= 25.0f|| JoyStickMove.instance.GetJoyPosX() <= -25.0f) ? 1.0f : 0.0f;
+            float inputz = (JoyStickMove.instance.GetJoyPosZ() >= 25.0f|| JoyStickMove.instance.GetJoyPosZ() <= 25.0f) ? 1.0f : 0.0f;
+            float inputx_minus=0.0f;
+            float inputz_minus=0.0f;
+            if (inputx!=0)
+                inputx_minus = (JoyStickMove.instance.GetJoyPosX() <= -25.0f) ? -1.0f : 1.0f;
+            if (inputz != 0)
+                inputz_minus = (JoyStickMove.instance.GetJoyPosZ() <= 25.0f) ? -1.0f : 1.0f;
+            transform.Translate(new Vector3((m_BasicSpeed + UI.m_speed_count)* inputx* inputx_minus * Time.deltaTime, 0.0f, (m_BasicSpeed + UI.m_speed_count)* inputz* inputz_minus * Time.deltaTime));
+        }
+            
+        //*JoyStickMove.instance.GetJoyPosX() * JoyStickMove.instance.GetJoyPosZ()
         if (m_isCrouch)
         {
             m_TurtleMan_Animator.SetBool("TurtleMan_isCrouch_Move", true);
@@ -205,13 +220,21 @@ public class PlayerMove : MonoBehaviour {
         }
 
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) &&m_isClicked)
         {
             m_RotationX += Input.GetAxis("Mouse X") * m_RotateSensX * Time.deltaTime;
             transform.localEulerAngles = new Vector3(0.0f, m_RotationX, 0.0f);
         }
-
     }
+    public void isClicked()
+    {
+        m_isClicked = true;
+    }
+    public void isClickedOff()
+    {
+        m_isClicked = false;
+    }
+
 
     public void SetBomb() // 폭탄 설치
     {
@@ -230,7 +253,6 @@ public class PlayerMove : MonoBehaviour {
             }
             else
                 m_BombLocX = m_Bombindex_X;
-
 
             if (m_Bombindex_Z % 2 == 1)
             {
@@ -283,6 +305,7 @@ public class PlayerMove : MonoBehaviour {
         m_TurtleMan_Animator.SetBool("TurtleMan_isDrop", false);
     }
 
+   
 
     //다른 스크립트에서 플레이어를 죽게 하는 함수-R
     public void Set_Dead()
@@ -313,7 +336,10 @@ public class PlayerMove : MonoBehaviour {
     {
         animator_camera.SetTrigger("Dead");
     }
-
+    public void AniBomb_Start()
+    {
+        animator_camera.SetTrigger("Ring");
+    }
 
     //다른 스크립트에서 폭탄을 장전할 때 쓰는 함수
     public void ReloadUp()

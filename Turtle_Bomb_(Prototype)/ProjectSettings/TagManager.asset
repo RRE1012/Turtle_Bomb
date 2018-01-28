@@ -19,6 +19,7 @@ TagManager:
   - Bush
   - Fire
   - Monster
+  - Flame_Bush
   layers:
   - Default
   - TransparentFX

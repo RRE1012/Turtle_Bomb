@@ -51,7 +51,7 @@ public class MonsterAI : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Flame" && !StageManager.m_is_Stage_Clear)
+        if ((other.gameObject.tag == "Flame"|| other.gameObject.CompareTag("Flame_Bush")) && !StageManager.m_is_Stage_Clear)
         {
             StageManager.m_Left_Monster -= 1;
             Destroy(gameObject);

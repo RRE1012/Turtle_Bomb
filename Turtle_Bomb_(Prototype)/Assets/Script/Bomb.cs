@@ -15,6 +15,8 @@ public class Bomb : MonoBehaviour
     public GameObject[] m_FireItem;
     public GameObject[] m_SpeedItem;
     public GameObject[] m_Rock;
+    public GameObject[] m_Bush;
+    public GameObject[] m_Player;
 
     int m_FlameCount = UI.m_fire_count;
 
@@ -50,7 +52,8 @@ public class Bomb : MonoBehaviour
         m_FireItem = GameObject.FindGameObjectsWithTag("Bomb_Item");
         m_SpeedItem = GameObject.FindGameObjectsWithTag("Speed_Item");
         m_Rock = GameObject.FindGameObjectsWithTag("Rock");
-
+        m_Bush = GameObject.FindGameObjectsWithTag("Bush");
+        m_Player = GameObject.FindGameObjectsWithTag("Player");
         if (m_BombCountDown > 0.0f)
         {
             m_BombCountDown -= Time.deltaTime;
@@ -61,6 +64,14 @@ public class Bomb : MonoBehaviour
         else if (m_BombCountDown <= 0.0f)
         {
             MusicManager.manage_ESound.soundE();
+            foreach (GameObject p in m_Player)
+            {
+                bool in_Range = (p.transform.position.x <= transform.position.x + 6.0f) && (p.transform.position.x >= transform.position.x - 6.0f) && (p.transform.position.z <= transform.position.z + 6.0f) && (p.transform.position.z >= transform.position.z - 6.0f);
+                if (in_Range)
+                {
+                    PlayerMove.C_PM.AniBomb_Start();
+                }
+            }
             Destroy(gameObject);
         }
     }
@@ -68,7 +79,7 @@ public class Bomb : MonoBehaviour
     private void OnDestroy()
     {
         //폭탄 터질 때 화염 이펙트 생성, 그 중에서 만약 박스가 있다면 관통하지 않고 그 박스만 부수도록 설정 -R
-
+       
         GameObject Instance_Flame = Instantiate(m_Flame);
 
         Instance_Flame.transform.position = new Vector3(gameObject.transform.position.x, 0.0f, gameObject.transform.position.z);
@@ -79,6 +90,8 @@ public class Bomb : MonoBehaviour
             GameObject Instance_FlameDir_S;
             GameObject Instance_FlameDir_W;
             GameObject Instance_FlameDir_E;
+
+
 
             // 화염과 박스의 충돌
             foreach (GameObject box in m_Box)
@@ -115,7 +128,41 @@ public class Bomb : MonoBehaviour
                     }
                 }
             }
+            //화염과 수풀의 충돌
+            foreach (GameObject box in m_Bush)
+            {
+                if (box != null)
+                {
+                    if (!m_Blocked_N && transform.position.x == box.transform.position.x && transform.position.z + (2.0f * (i + 1)) == box.transform.position.z)
+                    {
+                        GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
+                        Instance_Flame_Remains.transform.position = new Vector3(box.transform.position.x, 0.0f, box.transform.position.z);
 
+                        
+                    }
+                    if (!m_Blocked_S && transform.position.x == box.transform.position.x && transform.position.z - (2.0f * (i + 1)) == box.transform.position.z)
+                    {
+                        GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
+                        Instance_Flame_Remains.transform.position = new Vector3(box.transform.position.x, 0.0f, box.transform.position.z);
+
+                        
+                    }
+                    if (!m_Blocked_W && transform.position.x - (2.0f * (i + 1)) == box.transform.position.x && transform.position.z == box.transform.position.z)
+                    {
+                        GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
+                        Instance_Flame_Remains.transform.position = new Vector3(box.transform.position.x, 0.0f, box.transform.position.z);
+
+                        
+                    }
+                    if (!m_Blocked_E && transform.position.x + (2.0f * (i + 1)) == box.transform.position.x && transform.position.z == box.transform.position.z)
+                    {
+                        GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
+                        Instance_Flame_Remains.transform.position = new Vector3(box.transform.position.x, 0.0f, box.transform.position.z);
+
+                        
+                    }
+                }
+            }
             // 화염과 폭탄의 충돌
             foreach (GameObject bomb in m_Bomb)
             {
