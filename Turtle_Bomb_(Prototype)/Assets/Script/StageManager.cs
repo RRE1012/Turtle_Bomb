@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+// MCL에 들어갈 좌표 구조체
 public struct Coordinate
 {
     public float x, z;
@@ -14,6 +16,8 @@ public struct Coordinate
         this.isBlocked = isBlocked;
     }
 }
+// ========================
+
 
 public class StageManager : MonoBehaviour {
 
@@ -40,12 +44,22 @@ public class StageManager : MonoBehaviour {
         m_is_Stage_Clear = false;
         m_Stars = 0;
         m_Left_Monster = 0;
-
         m_is_init_MCL = false;
         m_Map_Coordinate_List = new List<Coordinate>();
         
         c_Stage_Manager = this;
         MCL_init();
+        
+        for (int i = 0; i < 17; ++i)
+        {
+            // z라인 울타리
+            Update_MCL_isBlocked(i, true);
+            Update_MCL_isBlocked(i + 272, true);
+
+            // x라인 울타리
+            Update_MCL_isBlocked(i * 17, true);
+            Update_MCL_isBlocked(i * 17 + 16, true);
+        }
     }
 
     void Update()
@@ -81,16 +95,63 @@ public class StageManager : MonoBehaviour {
     }
 
 
+
     // 오브젝트들이 MCL의 isBlocked를 갱신할 수 있도록 해주는 메소드
     public static void Update_MCL_isBlocked(int index, bool isBlocked)
     {
         m_tmpCoordinate.x = m_Map_Coordinate_List[index].x;
         m_tmpCoordinate.z = m_Map_Coordinate_List[index].z;
         m_tmpCoordinate.isBlocked = isBlocked;
-        m_Map_Coordinate_List.Insert(index, m_tmpCoordinate);
-    }
 
-    // 받아온 좌표에 대한 MCL의 인덱스 반환
+        m_Map_Coordinate_List.Insert(index, m_tmpCoordinate);
+        m_Map_Coordinate_List.RemoveAt(index + 1);
+    }
+    // =============================================
+
+
+
+    // 받아온 좌표에 대한 MCL 인덱스 반환 (isBlocked 까지 사용)
+    public static int Find_Own_MCL_Index(float x, float z, bool isBlocked)
+    {
+
+        // 받아온 좌표에서 가장 가까운 좌표로 설정한다.
+        int index_X = (int)x;
+        int index_Z = (int)z;
+
+        if (index_X % 2 == 1)
+        {
+            m_tmpCoord_For_Objects.x = index_X + 1;
+        }
+        else if (index_X % 2 == -1)
+        {
+            m_tmpCoord_For_Objects.x = index_X - 1;
+        }
+        else
+            m_tmpCoord_For_Objects.x = index_X;
+
+
+        if (index_Z % 2 == 1)
+        {
+            m_tmpCoord_For_Objects.z = index_Z + 1;
+        }
+        else if (index_Z % 2 == -1)
+        {
+            m_tmpCoord_For_Objects.z = index_Z - 1;
+        }
+        else
+            m_tmpCoord_For_Objects.z = index_Z;
+
+        m_tmpCoord_For_Objects.isBlocked = isBlocked;
+
+
+        // 속한 좌표의 인덱스를 뽑아서 반환한다.
+        return m_Map_Coordinate_List.IndexOf(m_tmpCoord_For_Objects);
+    }
+    // =====================================
+
+
+
+    // 받아온 좌표에 대한 MCL 인덱스 반환
     public static int Find_Own_MCL_Index(float x, float z)
     {
 
@@ -121,10 +182,10 @@ public class StageManager : MonoBehaviour {
         else
             m_tmpCoord_For_Objects.z = index_Z;
 
-        //=========================
-
 
         // 속한 좌표의 인덱스를 뽑아서 반환한다.
         return m_Map_Coordinate_List.IndexOf(m_tmpCoord_For_Objects);
     }
+    // ======================================
+
 }

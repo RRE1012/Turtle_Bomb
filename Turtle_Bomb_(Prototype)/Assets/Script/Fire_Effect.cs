@@ -5,24 +5,24 @@ using UnityEngine;
 //화염 이펙트 클래스
 public class Fire_Effect : MonoBehaviour {
     //화염 지속시간-  다만 이펙트 이기 때문에 파티클은 사라지지 않을 수 있으므로 값을 조종하려면 파티클 inspector에서 조정 -R
-    public float bombCountDown = 1.0f;
-    bool is_OnBush=false;
-    // Use this for initialization
-    void Start () {
-        
-	}
-	
-	// Update is called once per frame
-	void Update () {
 
-        if (bombCountDown >= 0.0f)
+    float FlameLifeTime;
+
+    bool is_OnBush = false;
+
+    void Start()
+    {
+        FlameLifeTime = 1.0f;
+    }
+
+    void Update ()
+    { 
+        if (FlameLifeTime >= 0.0f)
         {
-            bombCountDown -= Time.deltaTime;
+            FlameLifeTime -= Time.deltaTime;
         }
         else
         {
-            
-                
             Destroy(gameObject);
         }
 

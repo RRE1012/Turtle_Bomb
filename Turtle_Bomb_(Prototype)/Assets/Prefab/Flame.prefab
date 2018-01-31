@@ -128,7 +128,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 346c33be09a88a64f86f9277f685a4a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bombCountDown: 1
 --- !u!198 &198037746163097350
 ParticleSystem:
   m_ObjectHideFlags: 1

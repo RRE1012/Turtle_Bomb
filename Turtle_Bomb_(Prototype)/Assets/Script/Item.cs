@@ -6,13 +6,20 @@ public class Item : MonoBehaviour {
 
 	float m_Move_Speed = 0.3f;
 	float m_Rotate_Speed = 50.0f;
-
-	// Update is called once per frame
-	void Update () {
+    
+	void Update ()
+    {
 		floating ();
 	}
 
-	void floating()
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Flame"))
+            Destroy(gameObject);
+    }
+
+
+    void floating()
 	{
 		if (this.transform.position.y > 1.0f || this.transform.position.y < 0.6f)
             m_Move_Speed *= -1;

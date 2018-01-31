@@ -42,6 +42,13 @@ public class FadeManager : MonoBehaviour {
         transition = 1.0f;
     }
 
+    void Activate_GameOver_Buttons()
+    {
+        UI.GameOver_Button_Activate();
+    }
+
+
+
     //인스턴싱
     private void Awake()
     {
@@ -57,6 +64,7 @@ public class FadeManager : MonoBehaviour {
             UI.Ingame_Play_UI_Deactivate();
             FadeOut();
             //Invoke("FadeIn", 5.8f);
+            Invoke("Activate_GameOver_Buttons", 4.0f);
             PlayerMove.C_PM.MakeGameOverAni();
         }
 
@@ -72,4 +80,6 @@ public class FadeManager : MonoBehaviour {
         
     }
 
+    
 }
+

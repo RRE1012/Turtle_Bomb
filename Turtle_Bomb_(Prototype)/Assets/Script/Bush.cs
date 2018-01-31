@@ -4,20 +4,16 @@ using UnityEngine;
 
 public class Bush : MonoBehaviour
 {
-
-    // Use this for initialization
     public GameObject[] m_Object_temp;
-    
-    public GameObject m_Object_Player;
     public GameObject fire_Effect;
-    GameObject Instance_Item;
-    Color color =new Color(1.0f,0.0f,0.0f,1);
-    bool m_is_Destroyed = false;
+
+    Color color = new Color(1.0f,0.0f,0.0f,1);
+
     MeshRenderer meshrenderer;
     public Material m;
+
     void Start()
     {
-        
         StartCoroutine("BushCheck");
         meshrenderer = gameObject.GetComponent<MeshRenderer>();
     }
@@ -28,7 +24,7 @@ public class Bush : MonoBehaviour
         int i = 0;
         for (;;)
         {
-            m_Object_temp = GameObject.FindGameObjectsWithTag("Flame_Remains");
+            m_Object_temp = GameObject.FindGameObjectsWithTag("Flame");
             foreach(GameObject flame in m_Object_temp)
             {
                 if(transform.position.x==flame.transform.position.x && transform.position.z == flame.transform.position.z&&gameObject.tag=="Bush")
@@ -47,7 +43,5 @@ public class Bush : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
         }
     }
-    
 
-    
 }

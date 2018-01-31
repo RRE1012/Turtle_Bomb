@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 
 // 게임 씬 UI 함수
 public class UI : MonoBehaviour {
@@ -15,10 +15,20 @@ public class UI : MonoBehaviour {
 	public Text m_BCT;
     // 플레이어 스피드 텍스트
 	public Text m_SCT;
+
+    // 남은 몬스터 텍스트
+    public Text m_MLT;
+
     // 아이템 획득 텍스트
-	public Text m_GIT;
+    public Text m_GIT;
     // 시간 텍스트
     public Text m_TLT;
+
+    public Image m_InBushImage;
+   
+    // 밀기 버튼
+    public Button m_PushButton;
+
     // 애니메이터
     public Animator ani;
     // 시간 변수
@@ -34,7 +44,10 @@ public class UI : MonoBehaviour {
     public RawImage m_Star_Image1;
     public RawImage m_Star_Image2;
     public RawImage m_Star_Image3;
-    
+
+
+    // 게임오버시 출력할 UI들
+    public static GameObject[] m_GameOver_UI;
 
     // UI에 표시될 변수
     // 캐릭터 마다 다르게 설정해주어야한다.
@@ -54,20 +67,24 @@ public class UI : MonoBehaviour {
 
 
     // 시험중 -fps 고정
+    /*
     void Awake()
     {
         //QualitySettings.vSyncCount = 0;
         //Application.targetFrameRate = 60;
     }
+    */
 
 	void Start()
     {
         // UIs initializing
         m_Ingame_Play_UI = GameObject.FindGameObjectsWithTag("Ingame_Play_UI");
         m_Stage_Clear_UI = GameObject.FindGameObjectsWithTag("Stage_Clear_UI");
+        m_GameOver_UI = GameObject.FindGameObjectsWithTag("GameOver_UI");
         m_is_Init_Star_Count = false;
 
         Stage_Clear_UI_Deactivate();
+        GameOver_Button_DeActivate();
 
         m_getItemText = "";
         time_Second = 200.0f;
@@ -148,6 +165,23 @@ public class UI : MonoBehaviour {
         }
     }
 
+    public static void GameOver_Button_Activate()
+    {
+        foreach (GameObject gameOver_UI in m_GameOver_UI)
+        {
+            gameOver_UI.SetActive(true);
+        }
+    }
+
+    public static void GameOver_Button_DeActivate()
+    {
+        foreach (GameObject gameOver_UI in m_GameOver_UI)
+        {
+            gameOver_UI.SetActive(false);
+        }
+    }
+
+
     // 획득 별 갯수 적용
     void Star_Count_Apply()
     {
@@ -164,7 +198,71 @@ public class UI : MonoBehaviour {
 
 
 
-    void Update () {
+    public void StageClear_ExitButton()
+    {
+        SceneManager.LoadScene(2);
+    }
+
+    public void StageClear_RestartButton()
+    {
+        SceneManager.LoadScene(3);
+    }
+
+
+
+    void Push_Button_Management()
+    {
+        ColorBlock cb = m_PushButton.colors;
+        Color c;
+
+        if (!PlayerMove.m_isAbleToPush)
+        {
+            c = Color.gray;
+            m_PushButton.interactable = false;
+        }
+
+        else
+        {
+            c = Color.white;
+            m_PushButton.interactable = true;
+        }
+
+        cb.normalColor = c;
+        m_PushButton.colors = cb;
+    }
+
+
+    void HideInBush_Management()
+    {
+        /*
+        Color c = m_InBushImage.color;
+
+        if (!PlayerMove.m_isHideinBush)
+        {
+            c.a = 0;
+        }
+        else
+        {
+            c.a = 0.3f;
+        }
+
+        m_InBushImage.color = c;
+        */
+        if (!PlayerMove.m_isHideinBush)
+        {
+            m_InBushImage.gameObject.SetActive(false);
+        }
+        else
+        {
+            m_InBushImage.gameObject.SetActive(true);
+        }
+    }
+
+
+
+
+    void Update()
+    {
         // 스테이지 클리어 후 별 갯수 적용
         if (StageManager.m_is_Stage_Clear && !m_is_Init_Star_Count)
         {
@@ -194,15 +292,22 @@ public class UI : MonoBehaviour {
                     time_Second = time_Second - deltaTime;
 
                 // 화력, 폭탄 설치 갯수, 스피드 정보 출력
-                m_FCT.text = "Fire: " + m_fire_count.ToString();
-                m_BCT.text = "Bomb: " + m_releasable_bomb_count.ToString() + " / " + m_cur_Max_Bomb_Count.ToString();
-                m_SCT.text = "Speed: " + m_speed_count.ToString();
-
+                m_FCT.text = "Fire : " + m_fire_count.ToString();
+                m_BCT.text = "Bomb : " + m_releasable_bomb_count.ToString() + " / " + m_cur_Max_Bomb_Count.ToString();
+                m_SCT.text = "Speed : " + m_speed_count.ToString();
+                m_MLT.text = "Monsters Left : " + StageManager.m_Left_Monster.ToString();
                 // 아이템 획득 텍스트 출력
                 m_GIT.text = m_getItemText;
 
                 // 시간 텍스트 출력
                 m_TLT.text = "Time: " + (int)time_Second / 60 + ":" + (int)time_Second % 60;
+
+
+                // 밀기버튼
+                Push_Button_Management();
+
+                // 부쉬 효과
+                HideInBush_Management();
 
                 // 각 수치 맥스 설정 -R
                 if (m_fire_count > 8)
@@ -243,5 +348,5 @@ public class UI : MonoBehaviour {
 
 
         }
-	}
+    }
 }
