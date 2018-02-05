@@ -292,9 +292,9 @@ public class UI : MonoBehaviour {
                     time_Second = time_Second - deltaTime;
 
                 // 화력, 폭탄 설치 갯수, 스피드 정보 출력
-                m_FCT.text = "Fire : " + m_fire_count.ToString();
-                m_BCT.text = "Bomb : " + m_releasable_bomb_count.ToString() + " / " + m_cur_Max_Bomb_Count.ToString();
-                m_SCT.text = "Speed : " + m_speed_count.ToString();
+                m_FCT.text = " : " + m_fire_count.ToString();
+                m_BCT.text = " : " + m_releasable_bomb_count.ToString() + " / " + m_cur_Max_Bomb_Count.ToString();
+                m_SCT.text = " : " + m_speed_count.ToString();
                 m_MLT.text = "Monsters Left : " + StageManager.m_Left_Monster.ToString();
                 // 아이템 획득 텍스트 출력
                 m_GIT.text = m_getItemText;

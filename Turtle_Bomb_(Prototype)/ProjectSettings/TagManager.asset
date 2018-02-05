@@ -22,6 +22,8 @@ TagManager:
   - Flame_Bush
   - TestMonster
   - GameOver_UI
+  - Throw_Item
+  - Kick_Item
   layers:
   - Default
   - TransparentFX

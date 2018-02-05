@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{DE7F840C-029E-24E6-F333-5B46F9162AA0}</ProjectGuid>
+    <ProjectGuid>{77275989-3534-255B-76CF-BFF3FB1806BD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp-Editor</AssemblyName>
@@ -64,7 +64,7 @@
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\ParticleAddEffect.shader" />
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\ParticleBlendEffect.shader" />
  <Reference Include="Assembly-UnityScript">
- <HintPath>D:/졸작/0124/Turtle_Bomb(맵수정)/Turtle_Bomb/Library/ScriptAssemblies/Assembly-UnityScript.dll</HintPath>
+ <HintPath>C:/Users/WHO/Desktop/Turtle_Bomb/Turtle_Bomb_(Prototype)/Library/ScriptAssemblies/Assembly-UnityScript.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
@@ -159,7 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp.csproj">
-      <Project>{F76CB3A4-A0EE-D533-73DD-B742A62D7C59}</Project>      <Name>Assembly-CSharp</Name>    </ProjectReference>
+      <Project>{9CDB1D15-01AD-52F7-C24E-BE26325E3639}</Project>      <Name>Assembly-CSharp</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

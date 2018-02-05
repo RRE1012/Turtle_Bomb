@@ -190,11 +190,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Object_temp: []
-  m_Object_FireItem: {fileID: 1501442255650702, guid: aec319f8bc559e842a2c397ab382bfe0,
+  m_Object_FireItem: {fileID: 1445955212869970, guid: 1bae4b1396c72c545b168880e8cfdc3c,
     type: 2}
-  m_Object_BombItem: {fileID: 1198957562726328, guid: fb8216c0778c5774bbe04c43b3ea4d87,
+  m_Object_BombItem: {fileID: 1700884374256354, guid: 0be0efcbbd3ebdd45954cfc3a5449ef6,
     type: 2}
-  m_Object_SpeedItem: {fileID: 1486440050058150, guid: 584105ca02e066744b57fd84bab11358,
+  m_Object_SpeedItem: {fileID: 1469720019897716, guid: 72f63e441376b9e4d883cf8a7b1310de,
     type: 2}
   m_Object_Player: {fileID: 1143621405932414, guid: 70136da78ae65f74988b74da74edf8e5,
     type: 2}

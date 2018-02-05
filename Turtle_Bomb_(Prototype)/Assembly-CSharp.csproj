@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{F76CB3A4-A0EE-D533-73DD-B742A62D7C59}</ProjectGuid>
+    <ProjectGuid>{9CDB1D15-01AD-52F7-C24E-BE26325E3639}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -77,12 +77,14 @@
      <Compile Include="Assets\Script\Bush.cs" />
      <Compile Include="Assets\Script\FadeManager.cs" />
      <Compile Include="Assets\Script\Fire_Effect.cs" />
+     <Compile Include="Assets\Script\Flame_Remains.cs" />
      <Compile Include="Assets\Script\Item.cs" />
      <Compile Include="Assets\Script\JoyStickMove.cs" />
      <Compile Include="Assets\Script\LobbySound.cs" />
      <Compile Include="Assets\Script\MonsterAI.cs" />
      <Compile Include="Assets\Script\MusicManager.cs" />
      <Compile Include="Assets\Script\PlayerMove.cs" />
+     <Compile Include="Assets\Script\Rock.cs" />
      <Compile Include="Assets\Script\SceneSwaps.cs" />
      <Compile Include="Assets\Script\StageManager.cs" />
      <Compile Include="Assets\Script\UI.cs" />
