@@ -8,7 +8,10 @@ using UnityEngine.SceneManagement;
 public class UI : MonoBehaviour {
 
     // 인게임에 사용되는 UI들
-    public static GameObject[] m_Ingame_Play_UI;
+    public static GameObject m_Ingame_Play_UI;
+    public static GameObject m_Option_UI;
+    GameObject m_Ingame_Mission_UI;
+
     // 플레이어 화력 텍스트
     public Text m_FCT;
     // 플레이어 폭탄 텍스트
@@ -21,6 +24,7 @@ public class UI : MonoBehaviour {
 
     // 아이템 획득 텍스트
     public Text m_GIT;
+
     // 시간 텍스트
     public Text m_TLT;
 
@@ -29,6 +33,12 @@ public class UI : MonoBehaviour {
     // 밀기 버튼
     public Button m_PushButton;
 
+    // 폭탄 설치 버튼
+    public Button m_Set_Bomb_Button;
+
+    // 폭탄 던지기 버튼
+    public Button m_Throw_Bomb_Button;
+
     // 애니메이터
     public Animator ani;
     // 시간 변수
@@ -36,7 +46,7 @@ public class UI : MonoBehaviour {
 
 
     // 스테이지 클리어시 출력할 UI들
-    public static GameObject[] m_Stage_Clear_UI;
+    public static GameObject m_Stage_Clear_UI;
     // 활성화된 별 텍스쳐
     public Texture m_Activated_Star_Texture;
     static bool m_is_Init_Star_Count = false;
@@ -46,11 +56,12 @@ public class UI : MonoBehaviour {
     public RawImage m_Star_Image3;
 
 
+    public Text[] m_MissionText;
+
     // 게임오버시 출력할 UI들
-    public static GameObject[] m_GameOver_UI;
+    public static GameObject m_GameOver_UI;
 
     // UI에 표시될 변수
-    // 캐릭터 마다 다르게 설정해주어야한다.
     public static int m_fire_count;
 	public static int m_releasable_bomb_count;
 	public static int m_speed_count;
@@ -78,21 +89,31 @@ public class UI : MonoBehaviour {
 	void Start()
     {
         // UIs initializing
-        m_Ingame_Play_UI = GameObject.FindGameObjectsWithTag("Ingame_Play_UI");
-        m_Stage_Clear_UI = GameObject.FindGameObjectsWithTag("Stage_Clear_UI");
-        m_GameOver_UI = GameObject.FindGameObjectsWithTag("GameOver_UI");
+        m_Ingame_Play_UI = GameObject.FindGameObjectWithTag("Ingame_Play_UI");
+        m_Stage_Clear_UI = GameObject.FindGameObjectWithTag("Stage_Clear_UI");
+        m_GameOver_UI = GameObject.FindGameObjectWithTag("GameOver_UI");
+        m_Option_UI = GameObject.FindGameObjectWithTag("Option_UI");
+        m_Ingame_Mission_UI = GameObject.FindGameObjectWithTag("Ingame_Mission_UI");
+        
         m_is_Init_Star_Count = false;
 
-        Stage_Clear_UI_Deactivate();
-        GameOver_Button_DeActivate();
+        m_Stage_Clear_UI.SetActive(false);
+        m_GameOver_UI.SetActive(false);
+        m_Option_UI.SetActive(false);
+        m_Ingame_Mission_UI.SetActive(false);
 
         m_getItemText = "";
-        time_Second = 200.0f;
+        time_Second = StageManager.c_Stage_Manager.m_Stage_Time_Limit;
         m_fire_count = 1;
         m_releasable_bomb_count = 1;
         m_speed_count = 1;
         m_cur_Max_Bomb_Count = 1;
+
+        // 폭탄 설치/던지기 활성/비활성
+        m_Set_Bomb_Button.gameObject.SetActive(true);
+        m_Throw_Bomb_Button.gameObject.SetActive(false);
     }
+
 
     // FPS 출력
     void OnGUI()
@@ -116,72 +137,18 @@ public class UI : MonoBehaviour {
 
     }
 
-
-
-
+    
 
     // 게임 클리어/오버 화면 출력
     public static void Draw_StageClearPage()
     {
-        Ingame_Play_UI_Deactivate();
-        Stage_Clear_UI_Activate();
+        m_Ingame_Play_UI.SetActive(false);
+        m_Stage_Clear_UI.SetActive(true);
         StageManager.m_is_Stage_Clear = true;
     }
 
 
-    // 인게임 UI 활성화
-    public static void Ingame_Play_UI_Activate()
-    {
-        foreach (GameObject Ingame_UI in m_Ingame_Play_UI)
-        {
-            Ingame_UI.SetActive(true);
-        }
-    }
-
-    // 인게임 UI 비활성화
-    public static void Ingame_Play_UI_Deactivate()
-    {
-        foreach (GameObject Ingame_UI in m_Ingame_Play_UI)
-        {
-            Ingame_UI.SetActive(false);
-        }
-    }
-
-    // 스테이지 클리어 UI 활성화
-    public static void Stage_Clear_UI_Activate()
-    {
-        foreach (GameObject stage_clear_UI in m_Stage_Clear_UI)
-        {
-            stage_clear_UI.SetActive(true);
-        }
-    }
-
-    // 스테이지 클리어 UI 비활성화
-    public static void Stage_Clear_UI_Deactivate()
-    {
-        foreach (GameObject stage_clear_UI in m_Stage_Clear_UI)
-        {
-            stage_clear_UI.SetActive(false);
-        }
-    }
-
-    public static void GameOver_Button_Activate()
-    {
-        foreach (GameObject gameOver_UI in m_GameOver_UI)
-        {
-            gameOver_UI.SetActive(true);
-        }
-    }
-
-    public static void GameOver_Button_DeActivate()
-    {
-        foreach (GameObject gameOver_UI in m_GameOver_UI)
-        {
-            gameOver_UI.SetActive(false);
-        }
-    }
-
-
+    
     // 획득 별 갯수 적용
     void Star_Count_Apply()
     {
@@ -195,21 +162,32 @@ public class UI : MonoBehaviour {
                 m_Star_Image3.texture = m_Activated_Star_Texture;
         }
     }
+    
 
-
-
+    // 나가기 버튼
     public void StageClear_ExitButton()
     {
         SceneManager.LoadScene(2);
     }
 
+    // 재시작 버튼
     public void StageClear_RestartButton()
     {
         SceneManager.LoadScene(3);
     }
+    
+
+    // 아이템 스탯 UI 관리
+    void Stat_UI_Management()
+    {
+        // 화력, 폭탄 설치 갯수, 스피드 정보 출력
+        m_FCT.text = " : " + m_fire_count.ToString();
+        m_BCT.text = " : " + m_releasable_bomb_count.ToString() + " / " + m_cur_Max_Bomb_Count.ToString();
+        m_SCT.text = " : " + m_speed_count.ToString();
+    }
 
 
-
+    // 박스밀기 버튼 관리
     void Push_Button_Management()
     {
         ColorBlock cb = m_PushButton.colors;
@@ -232,22 +210,9 @@ public class UI : MonoBehaviour {
     }
 
 
+    // 부쉬 입장시 색 변화 효과
     void HideInBush_Management()
     {
-        /*
-        Color c = m_InBushImage.color;
-
-        if (!PlayerMove.m_isHideinBush)
-        {
-            c.a = 0;
-        }
-        else
-        {
-            c.a = 0.3f;
-        }
-
-        m_InBushImage.color = c;
-        */
         if (!PlayerMove.m_isHideinBush)
         {
             m_InBushImage.gameObject.SetActive(false);
@@ -258,6 +223,31 @@ public class UI : MonoBehaviour {
         }
     }
 
+
+    // 던지기 버튼 관리
+    void Throw_Button_Management()
+    {
+        // 던지기 버튼 활성화
+        if (PlayerMove.m_isAbleToThrow)
+        {
+            m_Set_Bomb_Button.gameObject.SetActive(false);
+            m_Throw_Bomb_Button.gameObject.SetActive(true);
+        }
+        else
+        {
+            m_Set_Bomb_Button.gameObject.SetActive(true);
+            m_Throw_Bomb_Button.gameObject.SetActive(false);
+        }
+    }
+
+    
+    // 미션 UI 관리
+    void Mission_UI_Management()
+    {
+        m_MLT.text = "Monsters Left : " + StageManager.m_Left_Monster_Count.ToString();
+        m_MissionText[0].text = "미션 1 - 잔여 시간 " + ((int)time_Second).ToString() + "/5";
+        m_MissionText[1].text = "미션 2 - 일반 몬스터 처치 " + (StageManager.m_Total_Monster_Count - StageManager.m_Left_Monster_Count).ToString() + "/5";
+    }
 
 
 
@@ -291,17 +281,17 @@ public class UI : MonoBehaviour {
                 if (time_Second > 0)
                     time_Second = time_Second - deltaTime;
 
-                // 화력, 폭탄 설치 갯수, 스피드 정보 출력
-                m_FCT.text = " : " + m_fire_count.ToString();
-                m_BCT.text = " : " + m_releasable_bomb_count.ToString() + " / " + m_cur_Max_Bomb_Count.ToString();
-                m_SCT.text = " : " + m_speed_count.ToString();
-                m_MLT.text = "Monsters Left : " + StageManager.m_Left_Monster.ToString();
-                // 아이템 획득 텍스트 출력
-                m_GIT.text = m_getItemText;
-
                 // 시간 텍스트 출력
                 m_TLT.text = "Time: " + (int)time_Second / 60 + ":" + (int)time_Second % 60;
 
+                // 스탯 UI 출력
+                Stat_UI_Management();
+
+                // 미션 UI 출력
+                Mission_UI_Management();
+
+                // 아이템 획득 텍스트 출력
+                m_GIT.text = m_getItemText;
 
                 // 밀기버튼
                 Push_Button_Management();
@@ -309,6 +299,10 @@ public class UI : MonoBehaviour {
                 // 부쉬 효과
                 HideInBush_Management();
 
+                // 던지기 버튼
+                Throw_Button_Management();
+
+                /*
                 // 각 수치 맥스 설정 -R
                 if (m_fire_count > 8)
                     m_fire_count = 8;
@@ -316,6 +310,7 @@ public class UI : MonoBehaviour {
                     m_cur_Max_Bomb_Count = 8;
                 if (m_speed_count > 8)
                     m_speed_count = 8;
+                */
 
                 // 시간촉박 애니매이션 출력, 초기에는 애니매이션을 꺼놨다가 발동 -R
                 if (time_Second < 15.0f)
@@ -343,10 +338,59 @@ public class UI : MonoBehaviour {
                         m_GIT_CoolTime = 0.0f;
                     }
                 }
-
             }
-
-
         }
+    }
+
+
+    public void Mission_UI()
+    {
+        if (m_Ingame_Mission_UI.activeSelf)
+            Mission_UI_Deactivate();
+        else Mission_UI_Activate();
+    }
+
+    // 미션 UI 활성화
+    void Mission_UI_Activate()
+    {
+        m_Ingame_Mission_UI.SetActive(true);
+        //m_Ingame_Mission_UI.GetComponent<RawImage>().texture = 최소화 아이콘;
+    }
+
+    // 미션 UI 비활성화
+    void Mission_UI_Deactivate()
+    {
+        m_Ingame_Mission_UI.SetActive(false);
+        //m_Ingame_Mission_UI.GetComponent<RawImage>().texture = 최대화 아이콘;
+    }
+
+    // 게임오버 UI 활성화
+    public static void GameOver_Button_Activate()
+    {
+        m_GameOver_UI.SetActive(true);
+    }
+    // 인게임 UI 비활성화
+    public static void Ingame_Play_UI_Deactivate()
+    {
+        m_Ingame_Play_UI.SetActive(false);
+    }
+    // 옵션 UI 비활성화
+    public static void Option_UI_Deactivate()
+    {
+        m_Option_UI.SetActive(false);
+    }
+
+    // 옵션 버튼 UI 활성화
+    public void Option_Button()
+    {
+        m_Ingame_Play_UI.SetActive(false);
+        m_Option_UI.SetActive(true);
+    }
+
+    // 옵션의 Return 버튼 (게임으로 돌아가기)
+    public void Option_Return_Button()
+    {
+        m_Ingame_Play_UI.SetActive(true);
+        m_Option_UI.SetActive(false);
     }
 }

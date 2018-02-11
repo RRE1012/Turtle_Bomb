@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>Android:13</UnityBuildTarget>
     <UnityVersion>2017.2.0f3</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -247,17 +249,22 @@
     <Compile Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Script\RenderEffect.cs" />
     <Compile Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Script\TransformExtension.cs" />
     <Compile Include="Assets\Script\Bomb.cs" />
+    <Compile Include="Assets\Script\Boom_Effect.cs" />
+    <Compile Include="Assets\Script\BossMonsterAI.cs" />
     <Compile Include="Assets\Script\Box.cs" />
     <Compile Include="Assets\Script\Bush.cs" />
+    <Compile Include="Assets\Script\CrouchButton.cs" />
     <Compile Include="Assets\Script\FadeManager.cs" />
     <Compile Include="Assets\Script\Fire_Effect.cs" />
     <Compile Include="Assets\Script\Flame_Remains.cs" />
+    <Compile Include="Assets\Script\Front_Collider.cs" />
     <Compile Include="Assets\Script\Item.cs" />
     <Compile Include="Assets\Script\JoyStickMove.cs" />
     <Compile Include="Assets\Script\LobbySound.cs" />
     <Compile Include="Assets\Script\MonsterAI.cs" />
     <Compile Include="Assets\Script\MusicManager.cs" />
     <Compile Include="Assets\Script\PlayerMove.cs" />
+    <Compile Include="Assets\Script\RingEffectCollider.cs" />
     <Compile Include="Assets\Script\Rock.cs" />
     <Compile Include="Assets\Script\SceneSwaps.cs" />
     <Compile Include="Assets\Script\StageManager.cs" />

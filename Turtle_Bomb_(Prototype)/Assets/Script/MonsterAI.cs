@@ -11,8 +11,6 @@ public class MonsterAI : MonoBehaviour
     Vector3 m_V3_To_Find_my_rightObject;
     Vector3 m_V3_To_Find_my_leftObject;
 
-    //NavMeshAgent m_NMA;
-
     int m_My_MCL_Index = 0;
     int m_Right_Object_Index = 0;
     int m_Left_Object_Index = 0;
@@ -26,16 +24,18 @@ public class MonsterAI : MonoBehaviour
     bool m_isStuck;
     bool m_isDead;
 
+    float m_escape_Time;
 
     void Start()
     {
-        StageManager.m_Left_Monster += 1;
-        //m_NMA = GetComponent<NavMeshAgent>();
+        StageManager.m_Total_Monster_Count += 1;
+        StageManager.m_Left_Monster_Count += 1;
 
         // 객체 자신이 가지고 있는 애니메이터를 찾아온다.
         m_Goblman_Animator = GetComponent<Animator>();
 
         m_WalkCounter = 0.0f;
+        m_escape_Time = 0.0f;
 
         m_Monster_Basic_Speed = 2.0f;
         m_isStuck = false;
@@ -49,7 +49,7 @@ public class MonsterAI : MonoBehaviour
 
     void Update()
     {
-        if (m_is_Done_Camera_Walking && !m_isDead)
+        if (m_is_Done_Camera_Walking && !m_isDead && PlayerMove.C_PM.Get_IsAlive() && !StageManager.m_is_Stage_Clear)
         {
             MonsterMove();
             Find_My_Coord();
@@ -59,7 +59,11 @@ public class MonsterAI : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         // 아래 구문을 통해 몬스터가 막힌 길로 들어서지 않도록 한다.
-        if (!m_isStuck && collision.gameObject.CompareTag("Box") || collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Rock") || collision.gameObject.CompareTag("Monster") || collision.gameObject.CompareTag("Bomb"))
+        if (!m_isStuck && collision.gameObject.CompareTag("Box") 
+            || collision.gameObject.CompareTag("Wall") 
+            || collision.gameObject.CompareTag("Rock") 
+            || collision.gameObject.CompareTag("Monster") 
+            || collision.gameObject.CompareTag("Bomb"))
         {
             m_WalkCounter = 7.0f;
 
@@ -79,51 +83,50 @@ public class MonsterAI : MonoBehaviour
         // ==============================
     }
 
+    void OnCollisionStay(Collision collision)
+    {
+        // 몬스터 끼임 탈출
+        if (!m_isStuck && collision.gameObject.CompareTag("Box")
+            || collision.gameObject.CompareTag("Wall")
+            || collision.gameObject.CompareTag("Rock")
+            || collision.gameObject.CompareTag("Monster")
+            || collision.gameObject.CompareTag("Bomb"))
+        {
+            if (m_escape_Time < 0.2f)
+            {
+                m_escape_Time += Time.deltaTime;
+            }
+
+            else
+            {
+                // 시간 경과시 위치 변환
+                Vector3 Loc;
+                Loc.x = StageManager.m_Map_Coordinate_List[m_My_MCL_Index].x;
+                Loc.y = transform.position.y;
+                Loc.z = StageManager.m_Map_Coordinate_List[m_My_MCL_Index].z;
+                transform.position = Loc;
+                m_escape_Time = 0.0f;
+            }
+        }
+    }
 
     void OnTriggerEnter(Collider other)
     {
         // 몬스터가 불에 닿으면 사망 판정
-        if (!m_isDead && (other.gameObject.tag == "Flame" || other.gameObject.CompareTag("Flame_Bush")) && !StageManager.m_is_Stage_Clear)
+        if (!m_isDead && (other.gameObject.tag == "Flame" || other.gameObject.CompareTag("Flame_Bush")))
         {
-            StageManager.m_Left_Monster -= 1;
+            StageManager.m_Left_Monster_Count -= 1;
             m_Goblman_Animator.SetBool("Goblman_isDead", true);
             m_isDead = true;
             Invoke("MonsterDead", 1.5f);
         }
         //===============================
-
-
-
-        /*
-        if (other.gameObject.tag == "Player")
-        {
-            //m_NMA.SetDestination(PlayerMove.C_PM.transform.position);
-            //m_NMA.isStopped = false;
-            m_isFound_Turtleman = true;
-            //Debug.Log(m_isFound_Turtleman);
-        }
-        */
     }
-
-    /*
-    void OnTriggerExit(Collider other)
-    {
-        if (other.gameObject.tag == "Player")
-        {
-            //m_NMA.isStopped = true;
-            m_isFound_Turtleman = false;
-            //Debug.Log(m_isFound_Turtleman);
-        }
-    }
-    */
 
 
 
     void MonsterMove()
     {
-        //if (!m_isFound_Turtleman)
-        // {
-
         // 전방으로 최대 6.0f 만큼 이동.
         if (m_WalkCounter < 6.0f)
         {
@@ -138,13 +141,6 @@ public class MonsterAI : MonoBehaviour
             Invoke("Reset_WalkCounter", 2.0f);
             m_Goblman_Animator.SetBool("Goblman_isWalk", false);
         }
-
-        //}
-
-        //else
-        //{
-
-        //}
     }
 
     /*

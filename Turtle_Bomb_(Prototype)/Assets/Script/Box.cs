@@ -9,11 +9,13 @@ public class Box : MonoBehaviour {
     public GameObject m_Object_FireItem;
     public GameObject m_Object_BombItem;
     public GameObject m_Object_SpeedItem;
+    public GameObject m_Object_KickItem;
+    public GameObject m_Object_ThrowItem;
     public GameObject m_Object_Player;
 
     GameObject Instance_Item;
 
-    bool m_is_Destroyed = false;
+    public bool m_is_Destroyed = false;
     int index;
 
     void Start()
@@ -50,21 +52,31 @@ public class Box : MonoBehaviour {
         {
             if (Random.Range(0.0f, 10.0f) > 5.5f)
             {
-                float temp = Random.Range(0.0f, 10.0f);
-                if (temp < 3.3f)
+                float dropRate = Random.Range(0.0f, 20.0f);
+                if (dropRate < 5.0f)
                 {
                     m_Object_FireItem.transform.position = new Vector3(transform.position.x, 0.6f, transform.position.z);
                     Instance_Item = Instantiate(m_Object_FireItem);
                 }
-                else if (temp > 6.6f)
+                else if (dropRate >= 5.0f && dropRate < 10.0f)
                 {
                     m_Object_BombItem.transform.position = new Vector3(transform.position.x, 0.6f, transform.position.z);
                     Instance_Item = Instantiate(m_Object_BombItem);
                 }
-                else
+                else if (dropRate >= 10.0f && dropRate < 15.0f)
                 {
                     m_Object_SpeedItem.transform.position = new Vector3(transform.position.x, 0.6f, transform.position.z);
                     Instance_Item = Instantiate(m_Object_SpeedItem);
+                }
+                else if (dropRate >= 15.0f && dropRate < 17.5f)
+                {
+                    m_Object_KickItem.transform.position = new Vector3(transform.position.x, 0.6f, transform.position.z);
+                    Instance_Item = Instantiate(m_Object_KickItem);
+                }
+                else
+                {
+                    m_Object_ThrowItem.transform.position = new Vector3(transform.position.x, 0.6f, transform.position.z);
+                    Instance_Item = Instantiate(m_Object_ThrowItem);
                 }
             }
         }

@@ -29,7 +29,7 @@ public class FadeManager : MonoBehaviour {
     {
         isShowing = true;
         isInTransition = true;
-        this.duration = 6.0f;
+        this.duration = 4.0f;
         transition = 0.0f;
     }
 
@@ -38,7 +38,7 @@ public class FadeManager : MonoBehaviour {
     {
         isShowing = false;
         isInTransition = true;
-        this.duration = 6.0f;
+        this.duration = 4.0f;
         transition = 1.0f;
     }
 
@@ -62,18 +62,22 @@ public class FadeManager : MonoBehaviour {
         if (!PlayerMove.C_PM.Get_IsAlive() && !isInTransition)
         {
             UI.Ingame_Play_UI_Deactivate();
+            UI.Option_UI_Deactivate();
             FadeOut();
-            //Invoke("FadeIn", 5.8f);
             Invoke("Activate_GameOver_Buttons", 4.0f);
             PlayerMove.C_PM.MakeGameOverAni();
         }
 
         //값 제한 - 1초과가 되거나 0미만일 경우 변환 종료
         if (transition >= 1.0f)
+        {
             transition = 1.0f;
-        // else if (transition <= 0.0f)
+        }
         //페이드아웃일 경우 양수로, 페이드인일 경우 음수로 값을 더해줌(duration의 시간만큼 진행)
         else transition += (isShowing) ? Time.deltaTime * (1 / duration) : -Time.deltaTime * (1 / duration);
+
+
+        
 
         //이미지 색+투명도 변환
         fadeImage.color = Color.Lerp(new Color(0, 0, 0, 0), Color.black, transition);
