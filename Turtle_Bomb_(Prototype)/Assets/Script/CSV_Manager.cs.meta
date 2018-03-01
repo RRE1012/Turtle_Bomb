@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 72a49064f38d56446a168ead55bb7976
+timeCreated: 1519301455
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - m_Adventure_Quest_csvFile: {fileID: 4900000, guid: 231f0db796b75fb458fa422c750582b4,
+      type: 3}
+  executionOrder: -100
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

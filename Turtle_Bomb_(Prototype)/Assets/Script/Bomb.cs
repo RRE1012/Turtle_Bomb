@@ -2,6 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+static class WHOSE_BOMB
+{
+    public const int PLAYER = 0;
+    public const int JETGOBLIN = 1;
+}
+
+
+
 //폭탄 함수
 public class Bomb : MonoBehaviour
 {
@@ -35,21 +43,28 @@ public class Bomb : MonoBehaviour
 
     float m_Kicked_Bomb_Speed = 10.0f;
     float m_Thrown_Bomb_Speed = 15.0f;
+
+
     
-    public bool m_isKicked = false;
-    public bool m_isThrown = false;
-    public bool m_is_Thrown_Bomb_Moving = false;
-    public bool m_isDestroyed = false;
-    bool m_isinvalidated = false;
+    public GameObject m_Whose_Bomb; // 어떤 객체의 폭탄인가?
+    public int m_Whose_Bomb_Type; // 그 객체의 타입은 무엇인가?
 
-    public bool m_is_Rising_Start = false;
-    bool m_is_Done_Rising = false;
-    float m_Rising_Limit = 2.0f;
-    float m_Down_Limit = -0.8f;
-    float m_Rising_Speed = 10.0f;
-    float m_Down_Speed = 15.0f;
 
-    float m_Escape_Time;
+
+    public bool m_isKicked = false; // 폭탄이 차였는가?
+    public bool m_isThrown = false; // 폭탄이 던져졌는가?
+    public bool m_is_Thrown_Bomb_Moving = false; // 던져진 폭탄이 움직이는 중인가?
+    public bool m_isDestroyed = false; // 폭탄이 파괴되었는가?
+    public bool m_is_Rising_Start = false; // 폭탄 튕겨오르는것이 시작 되었는가?
+    bool m_is_Done_Rising = false; // 폭탄 튕겨오르는것이 완료 되었는가?
+
+
+    float m_Rising_Limit = 2.0f; // 튕겨오르기 제한 높이
+    float m_Down_Limit = -0.8f; // 떨어지기 제한 높이
+    float m_Rising_Speed = 10.0f; // 튕겨오르는 속도
+    float m_Down_Speed = 15.0f; // 떨어지는 속도
+
+    float m_Escape_Time; 
 
     public void MakeExplode()
     {
@@ -170,20 +185,29 @@ public class Bomb : MonoBehaviour
     }
 
 
+
+
+    // 터졌을 때
     void OnDestroy()
     {
-        if (!StageManager.c_Stage_Manager.m_is_Map_Changing && !m_is_Thrown_Bomb_Moving)
+        if (!StageManager.c_Stage_Manager.m_is_Map_Changing && !StageManager.m_is_Stage_Clear && !m_is_Thrown_Bomb_Moving)
         {
             // 폭발 사운드 출력
-            MusicManager.manage_ESound.soundE();
+            if (MusicManager.manage_ESound != null)
+                MusicManager.manage_ESound.soundE();
+
+            // 플레이어가 감지범위 내에 있을 경우
+            // 카메라 흔들림 연출
             if (transform.gameObject.GetComponentInChildren<RingEffectCollider>().m_isInRange)
                 PlayerMove.C_PM.AniBomb_Start();
 
-            Instantiate(m_Boom_Effect).transform.position = new Vector3(gameObject.transform.position.x, 0.0f, gameObject.transform.position.z);
+            // 폭발 이펙트 생성 (큰것)
+            Instantiate(m_Boom_Effect).transform.position = new Vector3(gameObject.transform.position.x, -1.0f, gameObject.transform.position.z);
 
             // 폭발 전 위치 조정
             Bomb_MCL_And_Position_Update();
 
+            // 이하는 화염 생성 구문
             GameObject Instance_Flame = Instantiate(m_Flame);
 
             Instance_Flame.transform.position = new Vector3(gameObject.transform.position.x, 0.0f, gameObject.transform.position.z);
@@ -257,12 +281,24 @@ public class Bomb : MonoBehaviour
 
             // MCL 갱신
             StageManager.Update_MCL_isBlocked(m_My_MCL_Index, false);
+
+            //폭탄 수 다시 증가
+            if (m_Whose_Bomb_Type == WHOSE_BOMB.PLAYER)
+            {
+                m_Whose_Bomb.GetComponent<PlayerMove>().ReloadUp();
+            }
+            else if (m_Whose_Bomb_Type == WHOSE_BOMB.JETGOBLIN)
+            {
+                m_Whose_Bomb.GetComponent<Boss_AI_JetGoblin>().Bomb_Reload();
+            }
         }
-        //폭탄 수 다시 증가
-        PlayerMove.C_PM.ReloadUp();
     }
 
 
+
+
+
+    // 폭탄 늘어났다 줄어드는 애니메이션
     void BombAnimate(float time)
     {
         m_Scale_Timer += time;
@@ -282,10 +318,23 @@ public class Bomb : MonoBehaviour
 
 
 
+
+
+
+    // 폭탄의 방향 설정
     public void SetBombDir()
     {
-        // 폭탄의 방향 설정
-        float angleY = PlayerMove.C_PM.transform.localEulerAngles.y;
+        float angleY = 0.0f;
+
+        if (m_Whose_Bomb_Type == WHOSE_BOMB.PLAYER)
+        {
+            angleY = m_Whose_Bomb.GetComponent<PlayerMove>().transform.localEulerAngles.y;
+        }
+        else if (m_Whose_Bomb_Type == WHOSE_BOMB.JETGOBLIN)
+        {
+            angleY = m_Whose_Bomb.GetComponent<Boss_AI_JetGoblin>().transform.localEulerAngles.y;
+        }
+
         float bombAngleY = 0.0f;
 
         if (angleY >= 315.0f && angleY < 45.0f)
@@ -301,11 +350,20 @@ public class Bomb : MonoBehaviour
         transform.Rotate(0.0f, bombAngleY, 0.0f);
     }
 
+
+
+
+
+    // 차여진 폭탄의 이동
     void Kicked_Bomb_Move()
     {
         transform.Translate(new Vector3(0.0f, 0.0f, (m_Kicked_Bomb_Speed * Time.deltaTime)));
     }
 
+
+
+
+    // 던져진 폭탄의 이동
     void Thrown_Bomb_Move()
     {
         if (m_isThrown)
@@ -363,15 +421,26 @@ public class Bomb : MonoBehaviour
         }
     }
 
+
+
+
+
+
+    // 폭탄의 위치와 MCL을 Update
     void Bomb_MCL_And_Position_Update()
     {
         StageManager.Update_MCL_isBlocked(m_My_MCL_Index, false);
         m_My_MCL_Index = StageManager.Find_Own_MCL_Index(transform.position.x, transform.position.z, false);
-        Vector3 pos;
-        pos.x = StageManager.m_Map_Coordinate_List[m_My_MCL_Index].x;
-        pos.y = transform.position.y;
-        pos.z = StageManager.m_Map_Coordinate_List[m_My_MCL_Index].z;
-        transform.position = pos;
+
+        if (m_My_MCL_Index != -1)
+        {
+            Vector3 Loc;
+            Loc.x = StageManager.m_Map_Coordinate_List[m_My_MCL_Index].x;
+            Loc.y = transform.position.y;
+            Loc.z = StageManager.m_Map_Coordinate_List[m_My_MCL_Index].z;
+            transform.position = Loc;
+        }
+
         StageManager.Update_MCL_isBlocked(m_My_MCL_Index, true);
     }
     

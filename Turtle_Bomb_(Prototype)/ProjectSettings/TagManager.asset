@@ -32,6 +32,7 @@ TagManager:
   - Land
   - Flame_Bush_Particle
   - Ingame_Mission_UI
+  - Monster_Attack_Collider
   layers:
   - Default
   - TransparentFX

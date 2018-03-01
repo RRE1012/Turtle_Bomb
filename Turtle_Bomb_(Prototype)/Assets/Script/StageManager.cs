@@ -19,16 +19,53 @@ public struct Coordinate
 // ========================
 
 
+// #define 맵 생성 관련
+static class MAP
+{
+    public const int NOT_SET = -1; // 설정이 안됐음
+
+    public const int THEME_FOREST = 1;
+    public const int THEME_OCEAN = 2;
+    public const int THEME_SNOWLAND = 3;
+}
+
+
 public class StageManager : MonoBehaviour {
 
+    // 맵 사이즈
     int m_Map_Size_X = 17;
     int m_Map_Size_Z = 17;
 
-    public GameObject[] m_Map;
+    // 프리팹들
+    public GameObject m_Forest_Theme_Terrain;
+    public GameObject m_Ocean_Theme_Terrain;
+    public GameObject m_SnowLand_Theme_Terrain;
+
+    public GameObject[] m_Forest_Theme_Stage_1_Maps;
+    public GameObject[] m_Forest_Theme_Stage_2_Maps;
+    public GameObject[] m_Forest_Theme_Stage_3_Maps;
+
+    
+    public GameObject[] m_Ocean_Theme_Stage_1_Maps;
+    public GameObject[] m_Ocean_Theme_Stage_2_Maps;
+    public GameObject[] m_Ocean_Theme_Stage_3_Maps;
+
+    
+    public GameObject[] m_SnowLand_Theme_Stage_1_Maps;
+    public GameObject[] m_SnowLand_Theme_Stage_2_Maps;
+    public GameObject[] m_SnowLand_Theme_Stage_3_Maps;
+
+    // 현재 생성된 프리팹
+    GameObject m_Current_Terrain;
     GameObject m_Current_Map;
 
+    // 맵(프리팹) 배열 임시 보관소
+    GameObject[] m_Temp_Maps;
+
+    // ??
     public Text m_Text;
     
+    // 현재 맵 번호 (인덱스)
     int m_Current_Map_Number = 0;
 
     public static bool m_is_Stage_Clear = false;
@@ -45,11 +82,38 @@ public class StageManager : MonoBehaviour {
     public static StageManager c_Stage_Manager;
     public static bool m_is_init_MCL;
 
-    // 해당 스테이지의 제한시간
-    public float m_Stage_Time_Limit;
 
     // 맵 이동 시 폭탄을 무효화 하기 위한 변수
     public bool m_is_Map_Changing;
+
+    // 현재 스테이지 번호
+    public int m_Theme_Num;
+    public int m_Stage_Num;
+
+    // 현재 스테이지의 제한시간 설정
+    // -1로 설정할 경우 기획 설정에 따른다.
+    public float m_Stage_Time_Limit;
+
+
+    // 현재 스테이지가 보스전인지?
+    public bool m_is_Boss_Stage;
+
+    // 서든데스 고블맨 객체
+    public GameObject m_SuddenDeath_JetGoblin;
+
+    // 서든데스 고블맨을 소환했는가? 
+    bool m_is_Summon_SJG;
+
+    // 서든데스 활성화?
+    public bool m_is_SuddenDeath;
+
+    // 보스 스테이지의 보스 몬스터가 죽었는가?
+    public bool m_is_Boss_Dead;
+
+
+    // 현재 스테이지의 퀘스트
+    List<Adventure_Quest_Data> m_QuestList;
+
 
     void Awake()
     {
@@ -62,15 +126,34 @@ public class StageManager : MonoBehaviour {
 
         m_is_init_MCL = false;
         m_Map_Coordinate_List = new List<Coordinate>();
-        
+
         c_Stage_Manager = this;
         m_Current_Map_Number = 0;
         m_is_Map_Changing = false;
-        
+
+        m_is_SuddenDeath = false;
+        m_is_Summon_SJG = false;
+
+        // 맵 좌표 리스트 초기화
         MCL_init();
-        m_Current_Map = Instantiate(m_Map[m_Current_Map_Number]);
-        
+
+        // 테마번호와 스테이지번호를 설정
+        if (m_Theme_Num == MAP.NOT_SET)
+            m_Theme_Num = PlayerPrefs.GetInt("Mode_Adventure_Selected_Theme_Number");
+        if (m_Stage_Num == MAP.NOT_SET)
+            m_Stage_Num = PlayerPrefs.GetInt("Mode_Adventure_Selected_Stage_Number");
+
+        // 설정된 번호를 받아서 맵 생성
+        Create_Map(m_Theme_Num, m_Stage_Num);
+
+
+        // 퀘스트 목록 로딩
+        m_QuestList = new List<Adventure_Quest_Data>();
+        m_QuestList = CSV_Manager.GetInstance().Get_Adventure_Quest_List(m_Theme_Num, m_Stage_Num);
     }
+
+
+
 
     void Update()
     {
@@ -78,14 +161,127 @@ public class StageManager : MonoBehaviour {
         {
             m_Text.text = "Game Over";
         }
+        if (!m_is_Boss_Stage && m_is_SuddenDeath && !m_is_Summon_SJG)
+        {
+            Instantiate(m_SuddenDeath_JetGoblin);
+            m_is_Summon_SJG = true;
+        }
 	}
+
+
+
+
+    // 맵 생성 및 설정
+    void Create_Map(int theme_Num, int stage_Num)
+    {
+        float temp_TimeLimit_Debug = m_Stage_Time_Limit;
+        
+
+        switch(theme_Num)
+        {
+            // 숲 테마
+            case MAP.THEME_FOREST:
+
+                // 터레인 생성
+                m_Current_Terrain = Instantiate(m_Forest_Theme_Terrain);
+                
+                if (stage_Num == 1)
+                {
+                    m_Temp_Maps = m_Forest_Theme_Stage_1_Maps;
+                    m_Stage_Time_Limit = 90.0f;
+                }
+                else if (stage_Num == 2)
+                {
+                    m_Temp_Maps = m_Forest_Theme_Stage_2_Maps;
+                    m_Stage_Time_Limit = 90.0f;
+                }
+                else if(stage_Num == 3)
+                {
+                    m_Temp_Maps = m_Forest_Theme_Stage_3_Maps;
+                    m_is_Boss_Stage = true;
+                    m_Stage_Time_Limit = 90.0f;
+                }
+
+                // 오브젝트 생성
+                m_Current_Map = Instantiate(m_Temp_Maps[m_Current_Map_Number]);
+
+                break;
+
+
+            // 바다 테마
+            case MAP.THEME_OCEAN:
+
+                // 터레인 생성
+                m_Current_Terrain = Instantiate(m_Ocean_Theme_Terrain);
+                
+                if (stage_Num == 1)
+                {
+                    m_Temp_Maps = m_Ocean_Theme_Stage_1_Maps;
+                    m_Stage_Time_Limit = 90.0f;
+                }
+                else if (stage_Num == 2)
+                {
+                    m_Temp_Maps = m_Ocean_Theme_Stage_2_Maps;
+                    m_Stage_Time_Limit = 90.0f;
+                }
+                else if (stage_Num == 3)
+                {
+                    m_Temp_Maps = m_Ocean_Theme_Stage_3_Maps;
+                    m_is_Boss_Stage = true;
+                    m_Stage_Time_Limit = 90.0f;
+                }
+
+                // 오브젝트 생성
+                m_Current_Map = Instantiate(m_Temp_Maps[m_Current_Map_Number]);
+
+                break;
+
+
+
+            // 설원 테마
+            case MAP.THEME_SNOWLAND:
+
+                // 터레인 생성
+                m_Current_Terrain = Instantiate(m_SnowLand_Theme_Terrain);
+
+                
+                if (stage_Num == 1)
+                {
+                    m_Temp_Maps = m_SnowLand_Theme_Stage_1_Maps;
+                    m_Stage_Time_Limit = 90.0f;
+                }
+                else if (stage_Num == 2)
+                {
+                    m_Temp_Maps = m_SnowLand_Theme_Stage_2_Maps;
+                    m_Stage_Time_Limit = 80.0f;
+                }
+                else if (stage_Num == 3)
+                {
+                    m_Temp_Maps = m_SnowLand_Theme_Stage_3_Maps;
+                    m_Stage_Time_Limit = 90.0f;
+                    m_is_Boss_Stage = true;
+                }
+
+                // 오브젝트 생성
+                m_Current_Map = Instantiate(m_Temp_Maps[m_Current_Map_Number]);
+
+                break;
+        }
+
+        if (temp_TimeLimit_Debug != MAP.NOT_SET)
+        {
+            m_Stage_Time_Limit = temp_TimeLimit_Debug;
+        }
+
+        // UI에도 적용한다
+        UI.time_Second = m_Stage_Time_Limit;
+    }
 
 
 
     // 좌표 초기화
     void MCL_init()
     { 
-
         m_Map_Coordinate_List.Clear();
 
         for (int i = -1; i < m_Map_Size_X-1; ++i)
@@ -118,12 +314,16 @@ public class StageManager : MonoBehaviour {
     // 오브젝트들이 MCL의 isBlocked를 갱신할 수 있도록 해주는 메소드
     public static void Update_MCL_isBlocked(int index, bool isBlocked)
     {
-        m_tmpCoordinate.x = m_Map_Coordinate_List[index].x;
-        m_tmpCoordinate.z = m_Map_Coordinate_List[index].z;
-        m_tmpCoordinate.isBlocked = isBlocked;
+        if (index != -1)
+        {
+            m_tmpCoordinate.x = m_Map_Coordinate_List[index].x;
+            m_tmpCoordinate.z = m_Map_Coordinate_List[index].z;
+            m_tmpCoordinate.isBlocked = isBlocked;
 
-        m_Map_Coordinate_List.Insert(index, m_tmpCoordinate);
-        m_Map_Coordinate_List.RemoveAt(index + 1);
+            m_Map_Coordinate_List.Insert(index, m_tmpCoordinate);
+            m_Map_Coordinate_List.RemoveAt(index + 1);
+        }
+        
     }
     // =============================================
 
@@ -221,7 +421,7 @@ public class StageManager : MonoBehaviour {
         ++m_Current_Map_Number;
 
         // 새 맵을 할당
-        m_Current_Map = Instantiate(m_Map[m_Current_Map_Number]);
+        m_Current_Map = Instantiate(m_Temp_Maps[m_Current_Map_Number]);
 
 
 
@@ -260,34 +460,87 @@ public class StageManager : MonoBehaviour {
         Invoke("Map_Changing_Over", 1.0f);
     }
 
+
+
+
+    // 맵 전환이 끝났음을 알리는
+    // Invoke를 위한 메소드
     void Map_Changing_Over()
     {
         m_is_Map_Changing = false;
     }
 
+
+
+
+    // 스테이지 클리어!
     public void Stage_Clear()
     {
         m_is_Stage_Clear = true;
 
-        // 목표까지 이동시 별 획득
+        // 목표까지 이동시 or 보스 처치시 별 획득
         m_Stars += 1;
 
         // 다른 조건 체크
         Condition_For_Getting_Stars();
-        
+
+        // 별 개수 저장 및 플레이 가능 스테이지 증가
+        string tempString = "Mode_Adventure_Stage_" + m_Theme_Num + "-" + m_Stage_Num + "_Stars";
+        PlayerPrefs.SetInt(tempString, m_Stars);
+
+        // 현재 스테이지가 플레이 가능 최대 스테이지라면
+        int tempMaxStage = PlayerPrefs.GetInt("Mode_Adventure_Playable_Max_Stage");
+
+        if ((m_Theme_Num - 1) * 3 + m_Stage_Num == tempMaxStage)
+        {
+            tempMaxStage += 1;
+
+            // 최대 스테이지 범위 내에서 플레이가능 최대 스테이지 증가!
+            if (tempMaxStage <= PlayerPrefs_Manager_Constants.MAX_STAGE_NUM)
+            {
+                PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", tempMaxStage);
+                Debug.Log("SetINT");
+            }
+        }
+
+        PlayerPrefs.Save();
+
         // 클리어 화면 출력
         UI.Draw_StageClearPage();
     }
 
+
+    // 별 획득 조건 관리
     void Condition_For_Getting_Stars()
     {
-        // 남은 몬스터가 1마리 이하일 경우
-        if (m_Total_Monster_Count - m_Left_Monster_Count >= 5)
-            m_Stars += 1;
+        foreach(Adventure_Quest_Data QuestData in m_QuestList)
+        {
+            if (QuestData.isCountable == 1)
+            {
+                if (QuestData.Quest_Script == "잔여 시간")
+                {
+                    if (UI.time_Second >= QuestData.Quest_Goal)
+                        m_Stars += 1;
+                }
+                else if (QuestData.Quest_Script == "일반 몬스터 처치")
+                {
+                    if (m_Total_Monster_Count - m_Left_Monster_Count >= QuestData.Quest_Goal)
+                        m_Stars += 1;
+                }
+                else if (m_is_Boss_Stage && QuestData.Quest_Script == "보스 몬스터 처치")
+                {
+                    if (m_is_Boss_Dead)
+                        m_Stars += 1;
+                }
+            }
+        }
+    }
 
-        // 일정 시간 내에 클리어시 별 획득
-        if (UI.time_Second >= 5.0f)
-            m_Stars += 1;
+
+    // 퀘스트 리스트를 리턴해준다.
+    public List<Adventure_Quest_Data> GetQuestList()
+    {
+        return m_QuestList;
     }
 
 }
