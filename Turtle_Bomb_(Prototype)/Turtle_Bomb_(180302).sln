@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turtle_Bomb_(180302)", "Turtle_Bomb_(180302).csproj", "{240A2741-04D1-AEF2-E567-4497E1A9F2E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turtle_Bomb_(180302).Editor", "Turtle_Bomb_(180302).Editor.csproj", "{C2F56D75-2B4B-ABB7-543B-60F43D6D72E3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{240A2741-04D1-AEF2-E567-4497E1A9F2E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{240A2741-04D1-AEF2-E567-4497E1A9F2E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{240A2741-04D1-AEF2-E567-4497E1A9F2E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{240A2741-04D1-AEF2-E567-4497E1A9F2E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2F56D75-2B4B-ABB7-543B-60F43D6D72E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2F56D75-2B4B-ABB7-543B-60F43D6D72E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2F56D75-2B4B-ABB7-543B-60F43D6D72E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2F56D75-2B4B-ABB7-543B-60F43D6D72E3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

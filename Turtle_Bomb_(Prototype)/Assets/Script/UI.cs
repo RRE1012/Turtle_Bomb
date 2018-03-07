@@ -20,7 +20,7 @@ public class UI : MonoBehaviour {
 	public Text m_SCT;
 
     // 남은 몬스터 텍스트
-    public Text m_MLT;
+    //public Text m_MLT;
 
     // 아이템 획득 텍스트
     public Text m_GIT;
@@ -56,7 +56,12 @@ public class UI : MonoBehaviour {
     public RawImage m_Star_Image3;
 
 
+    // 미션 UI
     public Text[] m_MissionText;
+
+    public RawImage m_Mission_Star_Image1;
+    public RawImage m_Mission_Star_Image2;
+    public RawImage m_Mission_Star_Image3;
 
     // 게임오버시 출력할 UI들
     public static GameObject m_GameOver_UI;
@@ -75,7 +80,11 @@ public class UI : MonoBehaviour {
 	float m_GIT_CoolTime = 0.0f;
     public static float time_Second = 30.0f;
 
-
+    string m_Mission_Script_time;
+    string m_Mission_Script_monster;
+    string m_Mission_Script_goal;
+    int m_timeLimit = 0;
+    int m_monsterKill = 0;
 
     // 시험중 -fps 고정
     /*
@@ -86,7 +95,7 @@ public class UI : MonoBehaviour {
     }
     */
 
-	void Start()
+    void Start()
     {
         // UIs initializing
         m_Ingame_Play_UI = GameObject.FindGameObjectWithTag("Ingame_Play_UI");
@@ -103,7 +112,6 @@ public class UI : MonoBehaviour {
         m_Ingame_Mission_UI.SetActive(false);
 
         m_getItemText = "";
-        time_Second = StageManager.c_Stage_Manager.m_Stage_Time_Limit;
         m_fire_count = 1;
         m_releasable_bomb_count = 1;
         m_speed_count = 1;
@@ -112,6 +120,12 @@ public class UI : MonoBehaviour {
         // 폭탄 설치/던지기 활성/비활성
         m_Set_Bomb_Button.gameObject.SetActive(true);
         m_Throw_Bomb_Button.gameObject.SetActive(false);
+
+        m_Mission_Script_time = StageManager.c_Stage_Manager.GetQuestList()[0].Quest_Script;
+        m_Mission_Script_monster = StageManager.c_Stage_Manager.GetQuestList()[1].Quest_Script;
+        m_Mission_Script_goal = StageManager.c_Stage_Manager.GetQuestList()[2].Quest_Script;
+        m_timeLimit = StageManager.c_Stage_Manager.GetQuestList()[0].Quest_Goal;
+        m_monsterKill = StageManager.c_Stage_Manager.GetQuestList()[1].Quest_Goal;
     }
 
 
@@ -167,6 +181,8 @@ public class UI : MonoBehaviour {
     // 나가기 버튼
     public void StageClear_ExitButton()
     {
+        if (LobbySound.instanceLS != null)
+            LobbySound.instanceLS.SoundStart();
         SceneManager.LoadScene(2);
     }
 
@@ -244,9 +260,13 @@ public class UI : MonoBehaviour {
     // 미션 UI 관리
     void Mission_UI_Management()
     {
-        m_MLT.text = "Monsters Left : " + StageManager.m_Left_Monster_Count.ToString();
-        m_MissionText[0].text = "미션 1 - 잔여 시간 " + ((int)time_Second).ToString() + "/5";
-        m_MissionText[1].text = "미션 2 - 일반 몬스터 처치 " + (StageManager.m_Total_Monster_Count - StageManager.m_Left_Monster_Count).ToString() + "/5";
+        m_MissionText[0].text = m_Mission_Script_time + " " + ((int)time_Second).ToString() + " / " + m_timeLimit.ToString();
+        if (time_Second > m_timeLimit)
+            m_Mission_Star_Image1.texture = m_Activated_Star_Texture;
+        m_MissionText[1].text = m_Mission_Script_monster + " " + (StageManager.m_Total_Monster_Count - StageManager.m_Left_Monster_Count).ToString() + " / " + m_monsterKill.ToString();
+        if ((StageManager.m_Total_Monster_Count - StageManager.m_Left_Monster_Count) >= m_monsterKill)
+            m_Mission_Star_Image2.texture = m_Activated_Star_Texture;
+        m_MissionText[2].text = m_Mission_Script_goal;
     }
 
 
@@ -311,6 +331,15 @@ public class UI : MonoBehaviour {
                 if (m_speed_count > 8)
                     m_speed_count = 8;
                 */
+
+                if (time_Second <= 30.0f && !StageManager.c_Stage_Manager.m_is_Boss_Stage)
+                {
+                    StageManager.c_Stage_Manager.m_is_SuddenDeath = true;
+                }
+                else
+                {
+                    StageManager.c_Stage_Manager.m_is_SuddenDeath = false;
+                }
 
                 // 시간촉박 애니매이션 출력, 초기에는 애니매이션을 꺼놨다가 발동 -R
                 if (time_Second < 15.0f)

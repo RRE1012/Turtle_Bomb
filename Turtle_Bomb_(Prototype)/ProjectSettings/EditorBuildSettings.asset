@@ -9,11 +9,11 @@ EditorBuildSettings:
     path: Assets/Scene/Title_Start.unity
     guid: ea16ba3bac27c6d41b6b2be7371b3e21
   - enabled: 1
-    path: Assets/Scene/SelectStage.unity
+    path: Assets/Scene/Mode_Select_Scene.unity
     guid: 7ac2456672533a54f887564d6d2ae712
   - enabled: 1
-    path: Assets/Scene/Stage_Select_Scene.unity
+    path: Assets/Scene/Mode_Adventure_(Stage_Select).unity
     guid: 6fbd766c7de030f4d8bdf7a0bd671501
   - enabled: 1
-    path: Assets/Scene/proto_Game.unity
-    guid: 6d6beacea39ad2d4e98e7414edd9ebc7
+    path: Assets/Scene/Mode_Adventure_Game_Stage.unity
+    guid: 885aa0f129b1e474ea2ef531f06c45e0

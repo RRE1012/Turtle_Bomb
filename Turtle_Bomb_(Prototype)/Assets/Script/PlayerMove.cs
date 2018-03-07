@@ -74,7 +74,7 @@ public class PlayerMove : MonoBehaviour {
     // ======== Functions ========
     void Awake()
 	{
-		C_PM = this;
+        C_PM = this;
         m_TurtleMan_Animator = GetComponent<Animator>();
         m_Player_Mesh_Renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
         Invoke("MakeAnimEnd", 6.0f);
@@ -84,6 +84,8 @@ public class PlayerMove : MonoBehaviour {
     {
         if (m_isAlive && !StageManager.m_is_Stage_Clear && animator_camera.GetBool("Started"))
         {
+            GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 0.0f);
+
             if (!m_isPushing)
                 Move();
             else
@@ -171,16 +173,14 @@ public class PlayerMove : MonoBehaviour {
             // ========================
 
 
-            // 화염과 접촉 시 사망 판정
+            // 사망 판정
             // 스테이지 클리어시, 맵 이동시는 사망하지 않는다.
-            if ((other.gameObject.tag == "Flame" || other.gameObject.tag == "Flame_Bush") && !StageManager.m_is_Stage_Clear)
+            if ((other.gameObject.tag == "Flame" || other.gameObject.tag == "Flame_Bush" || other.gameObject.tag == "Monster_Attack_Collider") && !StageManager.m_is_Stage_Clear)
             {
                 m_isAlive = false;
                 m_TurtleMan_Animator.SetBool("TurtleMan_isDead", true);
             }
             // ========================
-
-
 
 
             // 맵 전환 포탈
@@ -273,17 +273,7 @@ public class PlayerMove : MonoBehaviour {
             }
         }
         // ===========================
-
-
-
-        // 몬스터와 접촉시 사망
-        // 스테이지 클리어시, 맵 이동시는 사망하지 않는다.
-        if (collision.gameObject.tag == "Monster" && !StageManager.m_is_Stage_Clear)
-        {
-            m_isAlive = false;
-            m_TurtleMan_Animator.SetBool("TurtleMan_isDead", true);
-        }
-        // ====================
+        
 
 
         // 폭탄 발차기
@@ -396,7 +386,6 @@ public class PlayerMove : MonoBehaviour {
         {
             m_RotationX = Input.GetAxis("Mouse X") * m_RotateSensX * Time.deltaTime;
             transform.Rotate(transform.up, m_RotationX);
-            //transform.localEulerAngles = new Vector3(0.0f, m_RotationX, 0.0f);
         }
         // ====================
     }
@@ -467,6 +456,10 @@ public class PlayerMove : MonoBehaviour {
 
                 //폭탄 위치 수정 -R
                 Instance_Bomb.transform.position = new Vector3(m_BombLocX, -0.2f, m_BombLocZ);
+
+                // 주인 마킹
+                Instance_Bomb.GetComponent<Bomb>().m_Whose_Bomb = gameObject;
+                Instance_Bomb.GetComponent<Bomb>().m_Whose_Bomb_Type = WHOSE_BOMB.PLAYER;
 
                 UI.m_releasable_bomb_count = UI.m_releasable_bomb_count - 1;
                 m_TurtleMan_Animator.SetBool("TurtleMan_isDrop", true);
@@ -564,6 +557,19 @@ public class PlayerMove : MonoBehaviour {
 
             // 구한 사잇각만큼 플레이어를 회전시킨다.
             transform.Rotate(transform.up, Angle);
+
+            // 회전 각을 직각으로 맞춘다.
+            float AngleY = 0.0f;
+            if (transform.localEulerAngles.y >= 315.0f && transform.localEulerAngles.y < 45.0f)
+                AngleY = 0.0f;
+            else if (transform.localEulerAngles.y >= 45.0f && transform.localEulerAngles.y < 135.0f)
+                AngleY = 90.0f;
+            else if (transform.localEulerAngles.y >= 135.0f && transform.localEulerAngles.y < 225.0f)
+                AngleY = 180.0f;
+            else if (transform.localEulerAngles.y >= 225.0f && transform.localEulerAngles.y < 315.0f)
+                AngleY = 270.0f;
+
+            transform.localEulerAngles = new Vector3(0.0f, AngleY, 0.0f);
             //--------------------------------
 
 

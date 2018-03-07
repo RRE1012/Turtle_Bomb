@@ -12,7 +12,7 @@ public class Fire_Effect : MonoBehaviour {
 
     void Start()
     {
-        FlameLifeTime = 1.0f;
+        FlameLifeTime = 0.7f;
     }
 
     void Update ()

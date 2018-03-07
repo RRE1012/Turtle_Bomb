@@ -223,8 +223,10 @@ MonoBehaviour:
   m_Flame: {fileID: 1456075557612096, guid: d60e7e30c3d60b44ebf744f8cec71d54, type: 2}
   m_Flame_Remains: {fileID: 1420050026311484, guid: 536177fb3d5281649859c725a36525be,
     type: 2}
-  m_Boom_Effect: {fileID: 1202593230320554, guid: 3de82f4a511476c4fb7221fa8808e109,
+  m_Boom_Effect: {fileID: 1643248117883948, guid: 3de82f4a511476c4fb7221fa8808e109,
     type: 2}
+  m_Whose_Bomb: {fileID: 0}
+  m_Whose_Bomb_Type: 0
   m_isKicked: 0
   m_isThrown: 0
   m_is_Thrown_Bomb_Moving: 0
