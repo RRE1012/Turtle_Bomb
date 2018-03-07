@@ -1,16 +1,31 @@
 ﻿using System;
 using System.Collections;
-using System.Net;
+using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Net;
 using System.Threading;
+using System.Text;
 using UnityEngine;
 
 public class NetTest : MonoBehaviour {
-
+    int bomb_posx;
+    int bomb_posz;
+    byte[] m_bomb_posx = new byte[4];
+    byte[] m_bomb_posz = new byte[4];
+    byte[] m_turtle_posx = new byte[4];
+    byte[] m_turtle_posz = new byte[4];
+    byte[] m_turtle_roty = new byte[4];
+    public GameObject p_Bomb;
+    public GameObject p_Box;
+    public GameObject p_Rock;
+    bool m_set_bomb = false;
+    bool m_is_move = false;
     public static NetTest instance = null;
-    private string m_address = "";
+    private string m_address = "127.0.0.1";
     private string m_address2 = "127.0.0.1";
-
+    private byte[] R_Map_Info = new byte[900];
+    private byte[] Receiveid = new byte[4];
+    int id = -1;
     private const int m_port = 9000;
     private const int m_packetSize = 1024;
     private Socket m_socket = null;
@@ -28,7 +43,27 @@ public class NetTest : MonoBehaviour {
 
     // 수신 데이터
     Byte[] recv_data = new Byte[m_packetSize];
-
+    float hp;
+    float posx;
+    float posz;
+    float roty;
+    bool is_alive;
+    float hp2;
+    float posx2;
+    float posz2;
+    float roty2;
+    bool is_alive2;
+    float hp3;
+    float posx3;
+    float posz3;
+    float roty3;
+    bool is_alive3;
+    float hp4;
+    float posx4;
+    float posz4;
+    float roty4;
+    bool is_alive4;
+    List<Vector3> bomb_list;
     // Use this for initialization
     void Start()
     {
@@ -91,8 +126,13 @@ public class NetTest : MonoBehaviour {
             //byte[] recvBuffer = new byte[m_packetSize];
             m_socket.BeginReceive(this.recv_data, 0, recv_data.Length, SocketFlags.None,
                              new AsyncCallback(OnReceiveCallBack), m_socket);
+            m_socket.Receive(Receiveid);
+            m_socket.Receive(R_Map_Info);
+            //Debug.Log(sizeof(bool));
+            id = BitConverter.ToInt32(Receiveid, 0);
 
-            Debug.Log("Start client communication.");
+            Debug.Log("ID : " + id);
+            
         }
         catch (SocketException e)
         {
@@ -288,5 +328,99 @@ public class NetTest : MonoBehaviour {
 
 
         }
+    }
+
+    public void SetBombPos(int a, int b)
+    {
+        bomb_posx = a / 2;
+        bomb_posz = b / 2;
+        m_bomb_posx = BitConverter.GetBytes(bomb_posx);
+        m_bomb_posz = BitConverter.GetBytes(bomb_posz);
+        m_set_bomb = true;
+    }
+    public void SetMyPos(float x, float y, float z)
+    {
+        m_turtle_posx = BitConverter.GetBytes(x);
+        m_turtle_posz = BitConverter.GetBytes(z);
+        m_turtle_roty = BitConverter.GetBytes(y);
+        m_is_move = true;
+    }
+
+    public float GetNetPosx(int i)
+    {
+        if (i == 0)
+            return posx;
+        else if (i == 1)
+            return posx2;
+        else if (i == 2)
+            return posx3;
+        else
+            return posx4;
+    }
+    public float GetNetRoty(int i)
+    {
+        if (i == 0)
+            return roty;
+        else if (i == 1)
+            return roty2;
+        else if (i == 2)
+            return roty3;
+        else
+            return roty4;
+    }
+    public float GetNetPosz(int i)
+    {
+        if (i == 0)
+            return posz;
+        else if (i == 1)
+            return posz2;
+        else if (i == 2)
+            return posz3;
+        else
+            return posz4;
+    }
+    void CheckMap()
+    {
+        for (int x = 0; x < 15; ++x)
+        {
+            for (int y = 0; y < 15; ++y)
+            {
+
+                int Tile_Info2 = BitConverter.ToInt32(R_Map_Info, (x * 4) + (y * 4));
+
+                //Debug.Log(Tile_Info2);
+                switch (Tile_Info2)
+                {
+                    case 1: //Bomb
+
+                        //GameObject Instance_Bomb = Instantiate(p_Bomb);
+                        Vector3 bomb_posi = new Vector3(x * 2, -0.2f, y * 2);
+                        //bomb_list.Add(Instance_Bomb);
+                        int index = bomb_list.BinarySearch(bomb_posi);
+                        Debug.Log("Bomb:" + index);
+                        break;
+                    case 2: //Nothing
+
+                        break;
+                    case 3: //Cube(Box)로
+                        GameObject Instance_Box = Instantiate(p_Box);
+                        Instance_Box.transform.position = new Vector3(x * 2, -0.2f, y * 2);
+
+                        break;
+                    case 4: //Rock
+                        GameObject Instance_Rock = Instantiate(p_Rock);
+                        Instance_Rock.transform.position = new Vector3(x * 2, -0.2f, y * 2);
+                        break;
+                    case 5: //Item_Bomb
+                        break;
+                    default:
+                        GameObject Instance_Rock2 = Instantiate(p_Rock);
+                        Instance_Rock2.transform.position = new Vector3(x * 2, -0.2f, y * 2);
+                        break;
+
+                }
+            }
+        }
+        Debug.Log("맵정보 출력 완료");
     }
 }
