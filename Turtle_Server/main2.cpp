@@ -137,15 +137,16 @@ int main(int argc, char* argv[]) {
 			Bomb_Pos m_tempbombinfo;
 			if (ptr->recvbytes == 0) {
 				//데이터 받기
-				retval = recv(ptr->sock, (char*)&ptr->buf, sizeof(ptr->buf), 0);
-				char* c_buf = ptr->buf;
+				char recv_buf[2000];
+				retval = recv(ptr->sock, recv_buf, sizeof(recv_buf), 0);
+				char* c_buf = recv_buf;
 				
 				if (retval == SOCKET_ERROR) {
 					printf("수신 오류 !!\n");
 					continue;
 				}
 				else {
-					memcpy(c_buf + ptr->remainbytes, ptr->buf, retval);
+					memcpy(ptr->buf + ptr->remainbytes, c_buf, retval);
 					printf("%d바이트 수신 !!\n", retval);
 				}
 				c_buf[retval] = '\0';
@@ -216,9 +217,8 @@ int main(int argc, char* argv[]) {
 							printf("포지션값 받음! :x :%f, z:%f , roty:%f \n", pos->posx, pos->posz, char_info[pos->id].rotY);
 							ptr->remainbytes -= 18;
 							
-							memcpy(ptr->buf, c_buf + 18, ptr->remainbytes);
-							memset(c_buf, 0, sizeof(c_buf));
-							memcpy(c_buf, ptr->buf, sizeof(ptr->buf));
+							memcpy(c_buf, ptr->buf + 18, ptr->remainbytes);
+							memcpy(ptr->buf, c_buf, ptr->remainbytes));
 							ptr->m_getpacket = true;
 							
 							break;
