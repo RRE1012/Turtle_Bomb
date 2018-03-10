@@ -1,0 +1,12 @@
+ID,Description,Stage_Pattern_ID_List,Stage_Pattern_ID_List,Stage_Pattern_ID_List
+all,design,0,1,2
+int32,string,array<int32>,array<int32>,array<int32>
+1,forest ,1,0,0
+2,forest ,2,0,0
+3,forest ,3,4,0
+4,forest ,5,6,0
+5,forest ,7,8,0
+6,forest ,9,10,0
+7,forest ,11,12,13
+8,forest ,14,15,16
+9,forest ,17,0,0

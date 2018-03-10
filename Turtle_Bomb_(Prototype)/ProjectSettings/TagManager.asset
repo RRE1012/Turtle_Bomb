@@ -26,13 +26,12 @@ TagManager:
   - Kick_Item
   - Map_Portal
   - Map_Portal_Destination
-  - Map_1
-  - Map_2
   - Option_UI
   - Land
   - Flame_Bush_Particle
   - Ingame_Mission_UI
   - Monster_Attack_Collider
+  - Start_Point
   layers:
   - Default
   - TransparentFX

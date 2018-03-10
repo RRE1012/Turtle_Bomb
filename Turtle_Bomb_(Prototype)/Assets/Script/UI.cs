@@ -76,15 +76,19 @@ public class UI : MonoBehaviour {
     // 아이템획득 텍스트에 사용할 string변수
     public static string m_getItemText;
 
+    public Text m_Text_StageNum;
 
-	float m_GIT_CoolTime = 0.0f;
+
+    float m_GIT_CoolTime = 0.0f;
     public static float time_Second = 30.0f;
 
-    string m_Mission_Script_time;
-    string m_Mission_Script_monster;
-    string m_Mission_Script_goal;
+    string[] m_Mission_Script;
     int m_timeLimit = 0;
     int m_monsterKill = 0;
+
+    // 퀘스트 목록
+    List<Adventure_Quest_Data> m_QuestList;
+
 
     // 시험중 -fps 고정
     /*
@@ -121,11 +125,22 @@ public class UI : MonoBehaviour {
         m_Set_Bomb_Button.gameObject.SetActive(true);
         m_Throw_Bomb_Button.gameObject.SetActive(false);
 
-        m_Mission_Script_time = StageManager.c_Stage_Manager.GetQuestList()[0].Quest_Script;
-        m_Mission_Script_monster = StageManager.c_Stage_Manager.GetQuestList()[1].Quest_Script;
-        m_Mission_Script_goal = StageManager.c_Stage_Manager.GetQuestList()[2].Quest_Script;
-        m_timeLimit = StageManager.c_Stage_Manager.GetQuestList()[0].Quest_Goal;
-        m_monsterKill = StageManager.c_Stage_Manager.GetQuestList()[1].Quest_Goal;
+        m_Text_StageNum.text = "Stage ID - " + StageManager.c_Stage_Manager.m_Stage_ID.ToString();
+
+        m_Mission_Script = new string[3];
+        m_QuestList = new List<Adventure_Quest_Data>(StageManager.c_Stage_Manager.GetQuestList());
+        
+        for (int i = 0; i < 3; ++i)
+        {
+            m_Mission_Script[i] = m_QuestList[i].Quest_Script;
+            
+            // 퀘스트 id가 1번 (잔여시간) 이면 시간을 받아온다.
+            if (m_QuestList[i].Quest_ID == 1)
+                m_timeLimit = m_QuestList[i].Quest_Goal;
+            // 퀘스트 id가 2번 (일반 몬스터 킬) 이면 몬스터 수를 받아온다.
+            else if (m_QuestList[i].Quest_ID == 2)
+                m_monsterKill = m_QuestList[i].Quest_Goal;
+        }
     }
 
 
@@ -260,13 +275,13 @@ public class UI : MonoBehaviour {
     // 미션 UI 관리
     void Mission_UI_Management()
     {
-        m_MissionText[0].text = m_Mission_Script_time + " " + ((int)time_Second).ToString() + " / " + m_timeLimit.ToString();
+        m_MissionText[0].text = m_Mission_Script[0] + " " + ((int)time_Second).ToString() + " / " + m_timeLimit.ToString();
         if (time_Second > m_timeLimit)
             m_Mission_Star_Image1.texture = m_Activated_Star_Texture;
-        m_MissionText[1].text = m_Mission_Script_monster + " " + (StageManager.m_Total_Monster_Count - StageManager.m_Left_Monster_Count).ToString() + " / " + m_monsterKill.ToString();
+        m_MissionText[1].text = m_Mission_Script[1] + " " + (StageManager.m_Total_Monster_Count - StageManager.m_Left_Monster_Count).ToString() + " / " + m_monsterKill.ToString();
         if ((StageManager.m_Total_Monster_Count - StageManager.m_Left_Monster_Count) >= m_monsterKill)
             m_Mission_Star_Image2.texture = m_Activated_Star_Texture;
-        m_MissionText[2].text = m_Mission_Script_goal;
+        m_MissionText[2].text = m_Mission_Script[2];
     }
 
 

@@ -1,0 +1,11 @@
+﻿ID,Description,Prefab_Name,FieldItem_Group_Name,UseAble_Theme_ID_List
+client,design,client,client,client
+int32,string,string,string,string
+1,Box,,BreakBox,1
+2,Rock,,NonBreakBox,1
+3,Grass,,Hide,1
+4,Goblin_Spawn,,NormalMonster,1
+5,Goblin_Boss_Spawn,,BossMonster,1
+6,Start_Point,,Start,0
+7,Next_Point,,Next,0
+8,End_Point,,End,0

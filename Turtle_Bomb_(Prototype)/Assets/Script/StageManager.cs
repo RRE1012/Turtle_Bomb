@@ -36,11 +36,11 @@ public class StageManager : MonoBehaviour {
     int m_Map_Size_X = 17;
     int m_Map_Size_Z = 17;
 
+    
     // 프리팹들
     public GameObject m_Forest_Theme_Terrain;
-    public GameObject m_Ocean_Theme_Terrain;
     public GameObject m_SnowLand_Theme_Terrain;
-
+    /*
     public GameObject[] m_Forest_Theme_Stage_1_Maps;
     public GameObject[] m_Forest_Theme_Stage_2_Maps;
     public GameObject[] m_Forest_Theme_Stage_3_Maps;
@@ -61,6 +61,26 @@ public class StageManager : MonoBehaviour {
 
     // 맵(프리팹) 배열 임시 보관소
     GameObject[] m_Temp_Maps;
+    */
+
+    // 오브젝트 프리팹들
+    public GameObject m_Prefab_Box;
+    public GameObject m_Prefab_Rock;
+    public GameObject m_Prefab_Grass;
+    public GameObject m_Prefab_Goblin;
+    public GameObject m_Prefab_Goblin_Boss;
+    public GameObject m_Prefab_Start_Point;
+    public GameObject m_Prefab_Next_Portal;
+    public GameObject m_Prefab_End_Portal;
+
+    // 생성한 오브젝트 관리
+    GameObject[] m_Current_Map_Objects = new GameObject[225];
+    int m_Current_Map_Objects_Count;
+
+    int m_Current_Stage_index_Count = 0; // 현재 스테이지의 맵 인덱스 카운트
+
+    Vector3 m_Object_Position; // 오브젝트 생성시 위치 변경에 이용
+
 
     // ??
     public Text m_Text;
@@ -87,8 +107,7 @@ public class StageManager : MonoBehaviour {
     public bool m_is_Map_Changing;
 
     // 현재 스테이지 번호
-    public int m_Theme_Num;
-    public int m_Stage_Num;
+    public int m_Stage_ID;
 
     // 현재 스테이지의 제한시간 설정
     // -1로 설정할 경우 기획 설정에 따른다.
@@ -111,8 +130,17 @@ public class StageManager : MonoBehaviour {
     public bool m_is_Boss_Dead;
 
 
-    // 현재 스테이지의 퀘스트
+    // 현재 스테이지의 퀘스트 목록
     List<Adventure_Quest_Data> m_QuestList;
+
+    // 오브젝트 테이블
+    List<Object_Table_Data> m_Object_Table_List;
+
+    // 현재 스테이지의 오브젝트 배치 목록
+    List<Object_Spawn_Position_Data> m_Object_Spawn_Position_List;
+
+    // 스테이지 번호 배열 테이블
+    List<int> m_Stage_Number_List = new List<int>();
 
 
     void Awake()
@@ -137,19 +165,32 @@ public class StageManager : MonoBehaviour {
         // 맵 좌표 리스트 초기화
         MCL_init();
 
-        // 테마번호와 스테이지번호를 설정
-        if (m_Theme_Num == MAP.NOT_SET)
-            m_Theme_Num = PlayerPrefs.GetInt("Mode_Adventure_Selected_Theme_Number");
-        if (m_Stage_Num == MAP.NOT_SET)
-            m_Stage_Num = PlayerPrefs.GetInt("Mode_Adventure_Selected_Stage_Number");
+        // 오브젝트 테이블 목록 로드
+        m_Object_Table_List = new List<Object_Table_Data>(CSV_Manager.GetInstance().Get_Object_Table_List());
 
-        // 설정된 번호를 받아서 맵 생성
-        Create_Map(m_Theme_Num, m_Stage_Num);
 
+        // 스테이지 ID를 받아온다.
+        if (m_Stage_ID == MAP.NOT_SET)
+            m_Stage_ID = PlayerPrefs.GetInt("Mode_Adventure_Selected_Stage_ID");
+        
+        // 스테이지 번호 목록 로드
+        m_Stage_Number_List = CSV_Manager.GetInstance().Get_Stage_Number_List(m_Stage_ID);
+
+        // 터레인 생성
+        Create_Terrain();
+
+        // 설정된 번호를 받아서 맵 생성!
+        Create_Map(m_Stage_Number_List[m_Current_Stage_index_Count]);
 
         // 퀘스트 목록 로딩
-        m_QuestList = new List<Adventure_Quest_Data>();
-        m_QuestList = CSV_Manager.GetInstance().Get_Adventure_Quest_List(m_Theme_Num, m_Stage_Num);
+        m_QuestList = new List<Adventure_Quest_Data>(CSV_Manager.GetInstance().Get_Adventure_Quest_List(m_Stage_ID));
+
+        // 시간 설정
+        if (m_Stage_Time_Limit == MAP.NOT_SET)
+            m_Stage_Time_Limit = 90.0f;
+        
+        // UI에도 시간 적용
+        UI.time_Second = m_Stage_Time_Limit;
     }
 
 
@@ -169,114 +210,92 @@ public class StageManager : MonoBehaviour {
 	}
 
 
-
-
-    // 맵 생성 및 설정
-    void Create_Map(int theme_Num, int stage_Num)
+    // 터레인 생성
+    void Create_Terrain()
     {
-        float temp_TimeLimit_Debug = m_Stage_Time_Limit;
-        
-
-        switch(theme_Num)
-        {
-            // 숲 테마
-            case MAP.THEME_FOREST:
-
-                // 터레인 생성
-                m_Current_Terrain = Instantiate(m_Forest_Theme_Terrain);
-                
-                if (stage_Num == 1)
-                {
-                    m_Temp_Maps = m_Forest_Theme_Stage_1_Maps;
-                    m_Stage_Time_Limit = 90.0f;
-                }
-                else if (stage_Num == 2)
-                {
-                    m_Temp_Maps = m_Forest_Theme_Stage_2_Maps;
-                    m_Stage_Time_Limit = 90.0f;
-                }
-                else if(stage_Num == 3)
-                {
-                    m_Temp_Maps = m_Forest_Theme_Stage_3_Maps;
-                    m_is_Boss_Stage = true;
-                    m_Stage_Time_Limit = 90.0f;
-                }
-
-                // 오브젝트 생성
-                m_Current_Map = Instantiate(m_Temp_Maps[m_Current_Map_Number]);
-
-                break;
-
-
-            // 바다 테마
-            case MAP.THEME_OCEAN:
-
-                // 터레인 생성
-                m_Current_Terrain = Instantiate(m_Ocean_Theme_Terrain);
-                
-                if (stage_Num == 1)
-                {
-                    m_Temp_Maps = m_Ocean_Theme_Stage_1_Maps;
-                    m_Stage_Time_Limit = 90.0f;
-                }
-                else if (stage_Num == 2)
-                {
-                    m_Temp_Maps = m_Ocean_Theme_Stage_2_Maps;
-                    m_Stage_Time_Limit = 90.0f;
-                }
-                else if (stage_Num == 3)
-                {
-                    m_Temp_Maps = m_Ocean_Theme_Stage_3_Maps;
-                    m_is_Boss_Stage = true;
-                    m_Stage_Time_Limit = 90.0f;
-                }
-
-                // 오브젝트 생성
-                m_Current_Map = Instantiate(m_Temp_Maps[m_Current_Map_Number]);
-
-                break;
-
-
-
-            // 설원 테마
-            case MAP.THEME_SNOWLAND:
-
-                // 터레인 생성
-                m_Current_Terrain = Instantiate(m_SnowLand_Theme_Terrain);
-
-                
-                if (stage_Num == 1)
-                {
-                    m_Temp_Maps = m_SnowLand_Theme_Stage_1_Maps;
-                    m_Stage_Time_Limit = 90.0f;
-                }
-                else if (stage_Num == 2)
-                {
-                    m_Temp_Maps = m_SnowLand_Theme_Stage_2_Maps;
-                    m_Stage_Time_Limit = 80.0f;
-                }
-                else if (stage_Num == 3)
-                {
-                    m_Temp_Maps = m_SnowLand_Theme_Stage_3_Maps;
-                    m_Stage_Time_Limit = 90.0f;
-                    m_is_Boss_Stage = true;
-                }
-
-                // 오브젝트 생성
-                m_Current_Map = Instantiate(m_Temp_Maps[m_Current_Map_Number]);
-
-                break;
-        }
-
-        if (temp_TimeLimit_Debug != MAP.NOT_SET)
-        {
-            m_Stage_Time_Limit = temp_TimeLimit_Debug;
-        }
-
-        // UI에도 적용한다
-        UI.time_Second = m_Stage_Time_Limit;
+        Instantiate(m_Forest_Theme_Terrain);
     }
 
+    
+    // 맵 생성 및 설정
+    void Create_Map(int stage_id)
+    {
+        Debug.Log("스테이지");
+        Debug.Log(stage_id);
+        Debug.Log("맵 생성");
+
+        // 스테이지 ID 대입
+        m_Stage_ID = stage_id;
+
+        // 오브젝트 스폰 위치 목록을 받아온다.
+        m_Object_Spawn_Position_List = new List<Object_Spawn_Position_Data>(CSV_Manager.GetInstance().Get_Object_Spawn_Position_List(m_Stage_ID));
+        
+        m_Current_Map_Objects_Count = 0;
+
+        // 위치에 맞게 오브젝트를 생성한다.
+        for (int z = 0; z < 15; ++z)
+        {
+            for (int x = 0; x < 15; ++x)
+            {
+                //Debug.Log(m_Object_Spawn_Position_List[z].Spawn_Node[x]);
+                if (m_Object_Spawn_Position_List[z].Spawn_Node[x] != 0)
+                {
+                    // x, z 좌표 설정
+                    m_Object_Position.x = x * 2.0f;
+                    m_Object_Position.z = 78.0f - (z * 2.0f);
+
+                    if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[0].ID)
+                    {
+                        m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Box);
+                        m_Object_Position.y = m_Prefab_Box.transform.position.y;
+
+                    }
+                    else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[1].ID)
+                    {
+                        m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Rock);
+                        m_Object_Position.y = m_Prefab_Rock.transform.position.y;
+                    }
+                    else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[2].ID)
+                    {
+                        m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Grass);
+                        m_Object_Position.y = m_Prefab_Grass.transform.position.y;
+                    }
+                    else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[3].ID)
+                    {
+                        m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Goblin);
+                        m_Object_Position.y = m_Prefab_Goblin.transform.position.y;
+                    }
+                    else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[4].ID)
+                    {
+                        m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Goblin_Boss);
+                        m_Object_Position.y = m_Prefab_Goblin_Boss.transform.position.y;
+                    }
+                    else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[5].ID)
+                    {
+                        m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Start_Point);
+                        m_Object_Position.y = m_Prefab_Start_Point.transform.position.y;
+                        
+                    }
+                    else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[6].ID)
+                    {
+                        m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Next_Portal);
+                        m_Object_Position.y = m_Prefab_Next_Portal.transform.position.y;
+                    }
+                    else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[7].ID)
+                    {
+                        m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_End_Portal);
+                        m_Object_Position.y = m_Prefab_End_Portal.transform.position.y;
+                    }
+
+                    // 생성한 객체 좌표 이동
+                    m_Current_Map_Objects[m_Current_Map_Objects_Count].transform.position = m_Object_Position;
+
+                    // 카운트 증가
+                    ++m_Current_Map_Objects_Count;
+                }
+            }
+        }
+    }
 
 
     // 좌표 초기화
@@ -409,55 +428,66 @@ public class StageManager : MonoBehaviour {
 
     public void Next_Map_Load()
     {
-        m_is_Map_Changing = true;
-
-        // MCL을 재설정한다.
-        MCL_init();
-        
-        // 현재 맵을 제거
-        Destroy(m_Current_Map);
-
         // 다음 맵 번호를 지정하고
-        ++m_Current_Map_Number;
+        ++m_Current_Stage_index_Count;
 
-        // 새 맵을 할당
-        m_Current_Map = Instantiate(m_Temp_Maps[m_Current_Map_Number]);
+        if (m_Stage_Number_List[m_Current_Stage_index_Count] != 0)
+        {
+            m_is_Map_Changing = true;
 
-
-
-        // 이하는 인스턴스 객체들을 제거한다.
-        // =========================================
-
-        // 혹여나 있을 폭탄들 제거
-        GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
-        foreach(GameObject b in bombs)
-            Destroy(b);
-
-        // 불 붙은 부쉬의 파티클도 제거
-        GameObject[] fBushs = GameObject.FindGameObjectsWithTag("Flame_Bush_Particle");
-        foreach (GameObject fb in fBushs)
-            Destroy(fb);
-
-        // 아이템들도 제거
-        GameObject[] items = GameObject.FindGameObjectsWithTag("Bomb_Item");
-        foreach (GameObject i in items)
-            Destroy(i);
-        items = GameObject.FindGameObjectsWithTag("Fire_Item");
-        foreach (GameObject i in items)
-            Destroy(i);
-        items = GameObject.FindGameObjectsWithTag("Speed_Item");
-        foreach (GameObject i in items)
-            Destroy(i);
-        items = GameObject.FindGameObjectsWithTag("Kick_Item");
-        foreach (GameObject i in items)
-            Destroy(i);
-        items = GameObject.FindGameObjectsWithTag("Throw_Item");
-        foreach (GameObject i in items)
-            Destroy(i);
-        // ========================================
+            // MCL을 재설정한다.
+            MCL_init();
 
 
-        Invoke("Map_Changing_Over", 1.0f);
+
+            // 이하는 인스턴스 객체들을 제거한다.
+            // =========================================
+
+            // 현재 맵의 오브젝트들을 제거
+            for (int i = 0; i < m_Current_Map_Objects_Count; ++i)
+            {
+                if (m_Current_Map_Objects[i] != null)
+                {
+                    Destroy(m_Current_Map_Objects[i]);
+                }
+            }
+
+            // 혹여나 있을 폭탄들 제거
+            GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
+            foreach (GameObject b in bombs)
+                Destroy(b);
+
+            // 불 붙은 부쉬의 파티클도 제거
+            GameObject[] fBushs = GameObject.FindGameObjectsWithTag("Flame_Bush_Particle");
+            foreach (GameObject fb in fBushs)
+                Destroy(fb);
+
+            // 아이템들도 제거
+            GameObject[] items = GameObject.FindGameObjectsWithTag("Bomb_Item");
+            foreach (GameObject i in items)
+                Destroy(i);
+            items = GameObject.FindGameObjectsWithTag("Fire_Item");
+            foreach (GameObject i in items)
+                Destroy(i);
+            items = GameObject.FindGameObjectsWithTag("Speed_Item");
+            foreach (GameObject i in items)
+                Destroy(i);
+            items = GameObject.FindGameObjectsWithTag("Kick_Item");
+            foreach (GameObject i in items)
+                Destroy(i);
+            items = GameObject.FindGameObjectsWithTag("Throw_Item");
+            foreach (GameObject i in items)
+                Destroy(i);
+            // ========================================
+
+            
+            // 새 맵을 생성!
+            Create_Map(m_Stage_Number_List[m_Current_Stage_index_Count]);
+
+
+
+            Invoke("Map_Changing_Over", 1.0f);
+        }
     }
 
 
@@ -485,13 +515,13 @@ public class StageManager : MonoBehaviour {
         Condition_For_Getting_Stars();
 
         // 별 개수 저장 및 플레이 가능 스테이지 증가
-        string tempString = "Mode_Adventure_Stage_" + m_Theme_Num + "-" + m_Stage_Num + "_Stars";
-        PlayerPrefs.SetInt(tempString, m_Stars);
+        //string tempString = "Mode_Adventure_Stage_" + m_Theme_Num + "-" + m_Stage_Num + "_Stars";
+        //PlayerPrefs.SetInt(tempString, m_Stars);
 
         // 현재 스테이지가 플레이 가능 최대 스테이지라면
         int tempMaxStage = PlayerPrefs.GetInt("Mode_Adventure_Playable_Max_Stage");
 
-        if ((m_Theme_Num - 1) * 3 + m_Stage_Num == tempMaxStage)
+        if (m_Stage_ID == tempMaxStage)
         {
             tempMaxStage += 1;
 

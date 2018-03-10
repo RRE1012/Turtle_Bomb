@@ -38,8 +38,7 @@ public class PlayerPrefs_Manager : MonoBehaviour {
                 PlayerPrefs.SetInt("isOpen_Mode_Coop", 0);
                 PlayerPrefs.SetInt("isOpen_Mode_Competition", 0);
                 PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", 1);
-                PlayerPrefs.SetInt("Mode_Adventure_Selected_Theme_Number", 1);
-                PlayerPrefs.SetInt("Mode_Adventure_Selected_Stage_Number", 1);
+                PlayerPrefs.SetInt("Mode_Adventure_Selected_Stage_ID", 1);
                 PlayerPrefs.Save();
             }
         }
@@ -66,7 +65,6 @@ public class PlayerPrefs_Manager : MonoBehaviour {
             // 별 개수 리스트 초기화;
             //m_Stage_Stars_List = new List<int>();
             //string temp_string;
-            //int theme_num = 0;
             //int stage_num = 0;
 
             int playable_max_stage = PlayerPrefs.GetInt("Mode_Adventure_Playable_Max_Stage");

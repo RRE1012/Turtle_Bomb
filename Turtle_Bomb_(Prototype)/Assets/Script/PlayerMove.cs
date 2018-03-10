@@ -39,6 +39,9 @@ public class PlayerMove : MonoBehaviour {
     //마우스 클릭
     bool m_isClicked = false;
 
+    // 이전 터치 지점 (x값)
+    float m_Touch_PrevPoint_X;
+
     // 회전 감도
     float m_RotateSensX = 150.0f;
 
@@ -80,6 +83,11 @@ public class PlayerMove : MonoBehaviour {
         Invoke("MakeAnimEnd", 6.0f);
 	}
 
+    public void Player_Set_Start_Point(Vector3 p)
+    {
+        transform.position = p;
+    }
+
     void Update ()
     {
         if (m_isAlive && !StageManager.m_is_Stage_Clear && animator_camera.GetBool("Started"))
@@ -87,7 +95,10 @@ public class PlayerMove : MonoBehaviour {
             GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 0.0f);
 
             if (!m_isPushing)
+            {
                 Move();
+                //BodyRotation();
+            }
             else
                 Pushing();
 
@@ -191,8 +202,8 @@ public class PlayerMove : MonoBehaviour {
 
                 // 캐릭터를 특정 위치로 이동시킨다.
                 // 현재는 초기 위치로 설정.
-                transform.position = new Vector3(0.0f, transform.position.y, 50.0f);
-                transform.Rotate(new Vector3(0.0f, 0.0f, 0.0f));
+                //transform.position = new Vector3(0.0f, transform.position.y, 50.0f);
+                //transform.Rotate(new Vector3(0.0f, 0.0f, 0.0f));
 
                 // 다음 맵을 로드한다.
                 StageManager.c_Stage_Manager.Next_Map_Load();
@@ -373,7 +384,7 @@ public class PlayerMove : MonoBehaviour {
                 inputx_minus = (JoyStickMove.instance.GetJoyPosX() <= -25.0f) ? -1.0f : 1.0f;
             if (inputz != 0)
                 inputz_minus = (JoyStickMove.instance.GetJoyPosZ() <= 25.0f) ? -1.0f : 1.0f;
-            transform.Translate(new Vector3((m_BasicSpeed + UI.m_speed_count)* inputx* inputx_minus * Time.deltaTime, 0.0f, (m_BasicSpeed + UI.m_speed_count)* inputz* inputz_minus * Time.deltaTime));
+            transform.Translate(new Vector3((m_BasicSpeed + UI.m_speed_count) * inputx * inputx_minus * Time.deltaTime, 0.0f, (m_BasicSpeed + UI.m_speed_count)* inputz* inputz_minus * Time.deltaTime));
         }
         //*JoyStickMove.instance.GetJoyPosX() * JoyStickMove.instance.GetJoyPosZ()
         // ==================
@@ -382,6 +393,7 @@ public class PlayerMove : MonoBehaviour {
         
 
         // 플레이어 회전 관련
+        
         if (Input.GetMouseButton(0) && m_isClicked)
         {
             m_RotationX = Input.GetAxis("Mouse X") * m_RotateSensX * Time.deltaTime;
@@ -390,7 +402,23 @@ public class PlayerMove : MonoBehaviour {
         // ====================
     }
 
-
+    // 실제환경에서 테스트 해야한다...
+    // (PC로는 안됨)
+    void BodyRotation()
+    {
+        if (Input.touchCount >= 1)
+        {
+            Debug.Log("Touched!");
+            if (Input.GetTouch(0).phase == TouchPhase.Began)
+                m_Touch_PrevPoint_X = Input.GetTouch(0).position.x;
+            if (Input.GetTouch(0).phase == TouchPhase.Moved)
+            {
+                Debug.Log("Rotate");
+                transform.Rotate(0, Input.GetTouch(0).position.x - m_Touch_PrevPoint_X, 0);
+                m_Touch_PrevPoint_X = Input.GetTouch(0).position.x;
+            }
+        }
+    }
 
     public void isClicked()
     {
