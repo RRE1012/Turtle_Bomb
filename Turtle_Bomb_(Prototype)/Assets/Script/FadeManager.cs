@@ -59,7 +59,7 @@ public class FadeManager : MonoBehaviour {
     {
 
         //캐릭터가 죽고, 변환중이 아니라면 페이드아웃+페이드인+카메라애니메이션 진행
-        if (!PlayerMove.C_PM.Get_IsAlive() && !isInTransition)
+        if (PlayerMove.C_PM != null && !PlayerMove.C_PM.Get_IsAlive() && !isInTransition)
         {
             UI.Ingame_Play_UI_Deactivate();
             UI.Option_UI_Deactivate();

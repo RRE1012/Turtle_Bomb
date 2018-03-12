@@ -176,14 +176,22 @@ public class StageManager : MonoBehaviour {
         // 스테이지 번호 목록 로드
         m_Stage_Number_List = CSV_Manager.GetInstance().Get_Stage_Number_List(m_Stage_ID);
 
+        // 퀘스트 목록 로딩
+        m_QuestList = new List<Adventure_Quest_Data>(CSV_Manager.GetInstance().Get_Adventure_Quest_List(m_Stage_ID));
+
+        // 퀘스트 목록에 보스 몬스터 처치가 있다는것은
+        // 해당 스테이지가 보스 스테이지라는 뜻!
+        if (m_QuestList[2].Quest_ID == 4)
+            m_is_Boss_Stage = true;
+
         // 터레인 생성
         Create_Terrain();
 
         // 설정된 번호를 받아서 맵 생성!
         Create_Map(m_Stage_Number_List[m_Current_Stage_index_Count]);
 
-        // 퀘스트 목록 로딩
-        m_QuestList = new List<Adventure_Quest_Data>(CSV_Manager.GetInstance().Get_Adventure_Quest_List(m_Stage_ID));
+        
+            
 
         // 시간 설정
         if (m_Stage_Time_Limit == MAP.NOT_SET)
@@ -198,7 +206,7 @@ public class StageManager : MonoBehaviour {
 
     void Update()
     {
-        if (!PlayerMove.C_PM.Get_IsAlive())
+        if (PlayerMove.C_PM != null && !PlayerMove.C_PM.Get_IsAlive())
         {
             m_Text.text = "Game Over";
         }
@@ -220,13 +228,9 @@ public class StageManager : MonoBehaviour {
     // 맵 생성 및 설정
     void Create_Map(int stage_id)
     {
-        Debug.Log("스테이지");
-        Debug.Log(stage_id);
-        Debug.Log("맵 생성");
-
         // 스테이지 ID 대입
         m_Stage_ID = stage_id;
-
+        
         // 오브젝트 스폰 위치 목록을 받아온다.
         m_Object_Spawn_Position_List = new List<Object_Spawn_Position_Data>(CSV_Manager.GetInstance().Get_Object_Spawn_Position_List(m_Stage_ID));
         
@@ -237,7 +241,6 @@ public class StageManager : MonoBehaviour {
         {
             for (int x = 0; x < 15; ++x)
             {
-                //Debug.Log(m_Object_Spawn_Position_List[z].Spawn_Node[x]);
                 if (m_Object_Spawn_Position_List[z].Spawn_Node[x] != 0)
                 {
                     // x, z 좌표 설정
@@ -515,7 +518,6 @@ public class StageManager : MonoBehaviour {
         Condition_For_Getting_Stars();
 
         // 별 개수 저장 및 플레이 가능 스테이지 증가
-        //string tempString = "Mode_Adventure_Stage_" + m_Theme_Num + "-" + m_Stage_Num + "_Stars";
         //PlayerPrefs.SetInt(tempString, m_Stars);
 
         // 현재 스테이지가 플레이 가능 최대 스테이지라면

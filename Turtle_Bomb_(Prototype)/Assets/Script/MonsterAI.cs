@@ -104,7 +104,10 @@ public class MonsterAI : MonoBehaviour
         // 몬스터가 불에 닿으면 사망 판정
         if (!m_isDead && (other.gameObject.tag == "Flame" || other.gameObject.CompareTag("Flame_Bush")))
         {
-            StageManager.m_Left_Monster_Count -= 1;
+            if (MusicManager.manage_ESound != null)
+                MusicManager.manage_ESound.Goblin_Dead_Sound();
+
+            StageManager.m_Left_Monster_Count -= 1; // 불에 닿아 죽는것만 카운팅.
             m_Goblman_Animator.SetBool("Goblman_isDead", true);
             m_isDead = true;
             StopCoroutine(MonsterBehavior());
@@ -119,6 +122,9 @@ public class MonsterAI : MonoBehaviour
         // 공격
         if (m_Attack_Detector.m_isInRange && !m_isAttacking)
         {
+            if (MusicManager.manage_ESound != null)
+                MusicManager.manage_ESound.Goblin_Attack_Sound();
+
             if (m_Current_Behavior != m_Behavior_Attack)
                 m_Current_Behavior = m_Behavior_Attack;
             m_isAttacking = true;
@@ -142,6 +148,7 @@ public class MonsterAI : MonoBehaviour
                 else if (transform.localEulerAngles.y >= 225.0f && transform.localEulerAngles.y < 315.0f)
                     AngleY = 270.0f;
                 transform.localEulerAngles = new Vector3(0.0f, AngleY, 0.0f);
+
                 Set_Right_Position();
             }
 
@@ -188,6 +195,9 @@ public class MonsterAI : MonoBehaviour
             }
             else
             {
+                if (MusicManager.manage_ESound != null)
+                    MusicManager.manage_ESound.Goblin_Idle_Sound();
+
                 m_Goblman_Animator.SetBool("Goblman_isWalk", false);
                 yield return new WaitForSeconds(2.0f);
                 m_WalkTimer = 0.0f;
@@ -204,13 +214,14 @@ public class MonsterAI : MonoBehaviour
         while (m_AttackTimer < Monster_AI_Constants.Attack_Time)
         {
             m_AttackTimer += Time.deltaTime;
-            
+
             if (m_AttackTimer < Monster_AI_Constants.Attack_Time)
             {
-                if (m_is_Done_Camera_Walking && PlayerMove.C_PM.Get_IsAlive() && !StageManager.m_is_Stage_Clear)
+                if (m_is_Done_Camera_Walking && PlayerMove.C_PM.Get_IsAlive() && !StageManager.m_is_Stage_Clear && !m_Goblman_Animator.GetBool("Goblman_isAttack"))
                 {
                     m_Attack_Collider.gameObject.SetActive(true);
                     m_Goblman_Animator.SetBool("Goblman_isAttack", true);
+                    m_isAttacking = true;
                 }
             }
 
@@ -218,10 +229,10 @@ public class MonsterAI : MonoBehaviour
             {
                 m_Goblman_Animator.SetBool("Goblman_isAttack", false);
                 m_Attack_Collider.gameObject.SetActive(false);
-                yield return new WaitForSeconds(0.5f);
                 m_isAttacking = false;
                 m_AttackTimer = 0.0f;
                 m_Attack_Detector.m_isRotated = false;
+                yield return new WaitForSeconds(0.5f);
             }
 
             yield return null;

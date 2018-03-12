@@ -14,7 +14,7 @@ public class PlayerMove : MonoBehaviour {
     public GameObject[] m_DropBomb;
     public static PlayerMove C_PM;
     public Animator animator_camera;
-    GameObject m_Front_Box;
+    public GameObject m_Front_Box;
     Animator m_TurtleMan_Animator;
     GameObject m_Selected_Bomb_For_Throwing;
 
@@ -22,7 +22,7 @@ public class PlayerMove : MonoBehaviour {
     SkinnedMeshRenderer[] m_Player_Mesh_Renderers;
 
     // 캐릭터 상태
-    bool m_isBoxSelected = false;
+    public bool m_isBoxSelected = false;
     bool m_isCrouch = false;
     bool m_isPushing = false;
 
@@ -31,7 +31,7 @@ public class PlayerMove : MonoBehaviour {
 
     bool m_isGot_KickItem = false;
     bool m_isGot_ThrowItem = false;
-    public static bool m_isAbleToPush = false;
+    public bool m_isAbleToPush = false;
     public static bool m_isHideinBush = false;
     public bool m_isAbleToKick = false;
     public static bool m_isAbleToThrow = false;
@@ -267,6 +267,7 @@ public class PlayerMove : MonoBehaviour {
 
     void OnCollisionEnter(Collision collision)
     {
+        /*
         // 박스와 접촉시 밀기 활성화
         if (!m_isBoxSelected && collision.gameObject.CompareTag("Box"))
         {
@@ -283,6 +284,7 @@ public class PlayerMove : MonoBehaviour {
                 }
             }
         }
+        */
         // ===========================
         
 
@@ -304,6 +306,7 @@ public class PlayerMove : MonoBehaviour {
 
     }
 
+    /*
     void OnCollisionExit(Collision collision)
     {
         // 박스와 접촉 해제시 밀기 비활성화
@@ -315,7 +318,7 @@ public class PlayerMove : MonoBehaviour {
         }
 
     }
-
+    */
 
 
     // ======== UDF =========
@@ -569,35 +572,17 @@ public class PlayerMove : MonoBehaviour {
 
 
 
+            
+            // 플레이어 방향 변환
+            Vector3 dir = m_Front_Box.transform.position - transform.position;
+            Vector3 dirXZ = new Vector3(dir.x, 0f, dir.z);
 
-            // 플레이어 방향 변환 (수정할것)
-            // 플레이어로부터 박스의 방향 벡터를 구한다.
-            var heading = m_Front_Box.transform.position - transform.position;
-            var distance = heading.magnitude;
-            var direction = heading / distance;
+            if (dirXZ != Vector3.zero)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(dirXZ);
 
-            // 플레이어의 방향 벡터와 위의 벡터를 내적한다.
-            float Dot = Vector3.Dot(transform.forward, direction);
-
-            // 내적값을 통해 두 벡터 사잇각을 구한다.
-            float Angle = Mathf.Acos(Dot);
-            Angle *= Mathf.Rad2Deg;
-
-            // 구한 사잇각만큼 플레이어를 회전시킨다.
-            transform.Rotate(transform.up, Angle);
-
-            // 회전 각을 직각으로 맞춘다.
-            float AngleY = 0.0f;
-            if (transform.localEulerAngles.y >= 315.0f && transform.localEulerAngles.y < 45.0f)
-                AngleY = 0.0f;
-            else if (transform.localEulerAngles.y >= 45.0f && transform.localEulerAngles.y < 135.0f)
-                AngleY = 90.0f;
-            else if (transform.localEulerAngles.y >= 135.0f && transform.localEulerAngles.y < 225.0f)
-                AngleY = 180.0f;
-            else if (transform.localEulerAngles.y >= 225.0f && transform.localEulerAngles.y < 315.0f)
-                AngleY = 270.0f;
-
-            transform.localEulerAngles = new Vector3(0.0f, AngleY, 0.0f);
+                transform.rotation = targetRot;
+            }
             //--------------------------------
 
 

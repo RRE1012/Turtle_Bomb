@@ -21,12 +21,12 @@ static class Boss_JetGoblin_Status
     public const float JetGoblin__SuddenDeath__BombDrop_Cooltime = 1.0f;
     public const int JetGoblin__SuddenDeath__Extra_Bomb_Count = 7;
 
-    public const float JetGoblin__Normal__Extra_Health = 90.0f;
+    public const float JetGoblin__Normal__Extra_Health = 0.0f;
     public const float JetGoblin__Normal__Extra_Move_Speed = 5.0f;
     public const int JetGoblin__Normal__Extra_Bomb_Count = 2;
-    public const float JetGoblin__Normal__Moving_Cooltime = 4.0f;
+    public const float JetGoblin__Normal__Moving_Cooltime = 1.5f;
     public const float JetGoblin__Normal__BombDrop_Cooltime = 2.0f;
-    public const float JetGoblin__Normal__Landing_Cooltime = 10.0f;
+    public const float JetGoblin__Normal__Landing_Cooltime = 15.0f;
 }
 
 
@@ -47,7 +47,8 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
 
     // "행동들"
     IEnumerator m_Behavior_Move;
-    IEnumerator m_Behavior_Drop_Bomb;
+    IEnumerator m_Behavior_Break;
+    IEnumerator m_Behavior_WallCrash;
     IEnumerator m_Behavior_Landing;
 
     public static Boss_AI_JetGoblin c_JetGoblin; // 이 객체
@@ -56,7 +57,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
 
     Rigidbody m_Rigidbody;
 
-
+    Animator m_Boss_JetGoblin_Animator; // 애니메이터
 
     float m_Health = Boss_JetGoblin_Status.JetGoblin__Base__Health; // 체력
     float m_MaxHealth; // 최대 체력
@@ -71,8 +72,11 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     float m_Current_Bomb_Drop_Cooltime; // 폭탄 드랍 쿨타임 "체크"
     float m_Total_Landing_Cooltime; // 이동-착륙 쿨타임
     float m_Current_Landing_Cooltime; // 이동-착륙 쿨타임 "체크"
+    float m_Total_Wall_Crash_Move_Cooltime = 2.0f; // 벽 충돌시 밀려남 쿨타임
+    float m_Current_Wall_Crash_Move_Cooltime = 0.0f; // 벽 충돌시 밀려남 쿨타임 "체크"
 
-    
+
+
     int m_MCL_Index = 0; // MCL 인덱스
 
     // =====================================
@@ -92,10 +96,14 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
 
         m_Rigidbody = GetComponent<Rigidbody>();
 
+        m_Boss_JetGoblin_Animator = GetComponent<Animator>();
+        m_Boss_JetGoblin_Animator.SetBool("Idle", true);
+
         // 몬스터의 행동 코루틴들을 설정
         m_Behavior_Move = Behavior_Move();
-        m_Behavior_Drop_Bomb = Behavior_Drop_Bomb();
+        m_Behavior_Break = Behavior_Break();
         m_Behavior_Landing = Behavior_Landing();
+        m_Behavior_WallCrash = Behavior_WallCrash();
 
         // 처음 실행할 행동 설정
         m_Current_Behavior = Behavior_Move();
@@ -106,7 +114,6 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         {
             Mode_Change(Boss_Mode.NORMAL_MODE);
             Invoke("Wait_To_Start_Presentation", 6.0f);
-            //StartCoroutine(Do_Behavior());
         }
 
         else
@@ -135,7 +142,19 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     // 어떤 행동을 할지 생각하기 위한 메소드 (미완성)
     void Think()
     {
-        
+        if (m_Current_Landing_Cooltime >= m_Total_Landing_Cooltime * 2.0f / 3.0f && m_Current_Landing_Cooltime < m_Total_Landing_Cooltime)
+        {
+            // 착륙 쿨타임이 2/3 지나면 제트기가 고장난다.
+            m_Current_Behavior = m_Behavior_Break;
+            m_Boss_JetGoblin_Animator.SetBool("Move", false);
+            m_Boss_JetGoblin_Animator.SetBool("Idle", true);
+        }
+
+        if (m_Current_Landing_Cooltime >= m_Total_Landing_Cooltime)
+        {
+            // 착륙 쿨타임이 다 되면 착륙!
+            m_Current_Behavior = m_Behavior_Landing;
+        }
     }
 
     // ======================================
@@ -157,7 +176,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     {
         while (true)
         {
-            //Think();
+            Think();
 
             if (m_Current_Behavior != null && m_Current_Behavior.MoveNext())
             {
@@ -179,35 +198,59 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         while (m_Current_Landing_Cooltime < m_Total_Landing_Cooltime)
         {
             Move();
-            Drop_Bomb(); // 이동 중에만 폭탄 투하
-
-            if (m_Current_Landing_Cooltime >= m_Total_Landing_Cooltime)
-            {
-                // 착륙 쿨타임이 다 되면 착륙!
-                m_Current_Behavior = m_Behavior_Landing;
-            }
+            Drop_Bomb(); // 폭탄 투하
             yield return null;
         }
-
-
     }
 
-    // 폭탄 드랍
-    IEnumerator Behavior_Drop_Bomb()
+    // 제트기 고장
+    IEnumerator Behavior_Break()
     {
-        yield return null;
+        while (m_Current_Landing_Cooltime < m_Total_Landing_Cooltime)
+        {
+            BreakMove();
+            Drop_Bomb(); // 폭탄 투하
+            yield return null;
+        }
+    }
+
+    // 벽 충돌시 뒤로 살짝 밀려나게
+    IEnumerator Behavior_WallCrash()
+    {
+        while (m_Current_Wall_Crash_Move_Cooltime < m_Total_Wall_Crash_Move_Cooltime)
+        {
+            WallCrashMove();
+            m_Boss_JetGoblin_Animator.SetBool("Move", false);
+            m_Boss_JetGoblin_Animator.SetBool("Idle", true);
+            yield return null;
+        }
     }
 
     // 착륙
     IEnumerator Behavior_Landing()
     {
+        // 착륙=====================================
         m_Rigidbody.useGravity = true;
 
-        yield return new WaitForSeconds(8.0f); // 8초간 착륙해있는다.
+        if (MusicManager.manage_ESound != null)
+            MusicManager.manage_ESound.Boss_Goblin_Fall_Sound();
+
+        m_Boss_JetGoblin_Animator.SetBool("Idle", false);
+        Invoke("Motion_Landing_StandUp", 1.0f);
+        Invoke("Motion_Landing_idle", 3.0f);
+        Invoke("Motion_Ready_to_Rising", 8.0f);
+
+        yield return new WaitForSeconds(10.0f); // 10초간 착륙해있는다.
+
+
+
+        // 이륙=====================================
+        m_Boss_JetGoblin_Animator.SetBool("Idle", true);
+        
 
         m_Rigidbody.useGravity = false;
 
-        while (m_Rigidbody.position.y <= 7.0f)
+        while (m_Rigidbody.position.y < 7.0f)
         {
             m_Rigidbody.MovePosition(m_Rigidbody.position + transform.up * m_Move_Speed * Time.deltaTime);
             yield return null;
@@ -215,13 +258,20 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
 
         if (m_Rigidbody.position.y >= 7.0f) // 위치 조정
         {
-            m_Current_Behavior = m_Behavior_Move;
+            m_Current_Behavior = m_Behavior_Move; // 이동 상태로 변경
+
             Vector3 pos;
             pos.x = m_Rigidbody.position.x;
             pos.y = 7.0f;
             pos.z = m_Rigidbody.position.z;
             m_Rigidbody.position = pos;
-            m_Current_Landing_Cooltime = 0.0f;
+
+            m_Current_Landing_Cooltime = 0.0f; // 착륙 쿨타임 초기화
+            m_Current_Moving_Cooltime = 0.0f; // 이동 쿨타임 초기화
+
+            m_Boss_JetGoblin_Animator.SetBool("Idle", false);
+            m_Boss_JetGoblin_Animator.SetBool("Move", true);
+            m_Behavior_Landing = Behavior_Landing();
         }
         
     }
@@ -230,9 +280,21 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
 
     // ===============================
 
+    void Motion_Landing_StandUp()
+    {
+        m_Boss_JetGoblin_Animator.SetTrigger("Landing_StandUp");
+    }
 
+    void Motion_Landing_idle()
+    {
+        m_Boss_JetGoblin_Animator.SetBool("Landing_Idle", true);
+    }
 
-
+    void Motion_Ready_to_Rising()
+    {
+        m_Boss_JetGoblin_Animator.SetTrigger("Ready_to_Rising");
+        m_Boss_JetGoblin_Animator.SetBool("Landing_Idle", false);
+    }
 
 
 
@@ -294,7 +356,8 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         m_Total_Bomb_Count += Boss_JetGoblin_Status.JetGoblin__Normal__Extra_Bomb_Count;
         m_Usable_Bomb_Count += Boss_JetGoblin_Status.JetGoblin__Normal__Extra_Bomb_Count;
 
-
+        m_Total_Moving_Cooltime = Boss_JetGoblin_Status.JetGoblin__Normal__Moving_Cooltime;
+        m_Current_Moving_Cooltime = 0.0f;
         m_Total_Bomb_Drop_Cooltime = Boss_JetGoblin_Status.JetGoblin__Normal__BombDrop_Cooltime;
         m_Current_Bomb_Drop_Cooltime = 0.0f;
         m_Total_Landing_Cooltime = Boss_JetGoblin_Status.JetGoblin__Normal__Landing_Cooltime;
@@ -404,17 +467,41 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     }
 
 
+    void Find_New_Direction()
+    {
+        int rand = Random.Range(0, 2);
+        switch (rand)
+        {
+            case 0:
+                transform.Rotate(transform.up, 90.0f);
+                break;
+
+            case 1:
+                transform.Rotate(transform.up, 180.0f);
+                break;
+
+            case 2:
+                transform.Rotate(transform.up, 270.0f);
+                break;
+        }
+    }
+
     // 폭탄 피격
     void Hurt()
     {
+        if (MusicManager.manage_ESound != null)
+            MusicManager.manage_ESound.Boss_Goblin_Hurt_Sound();
+
+        m_Health -= 20.0f;
+        m_Boss_JetGoblin_Animator.SetTrigger("Hurt");
+
         if (m_Health < 0.0f)
         {
+            if (MusicManager.manage_ESound != null)
+                MusicManager.manage_ESound.Boss_Goblin_Dead_Sound();
             StopCoroutine(Do_Behavior());
-            Invoke("Dead", 1.0f);
-        }
-        else
-        {
-            m_Health -= 20.0f;
+            m_Boss_JetGoblin_Animator.SetTrigger("Dead");
+            Invoke("Dead", 3.0f);
         }
     }
 
@@ -423,6 +510,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     {
         StageManager.c_Stage_Manager.m_is_Boss_Dead = true;
         Destroy(gameObject);
+        StageManager.c_Stage_Manager.Stage_Clear(); // 보스를 잡으면 스테이지 클리어
     }
 
     // 폭탄 투하
@@ -435,6 +523,9 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
 
         else if (m_Usable_Bomb_Count > 0)
         {
+            if (MusicManager.manage_ESound != null)
+                MusicManager.manage_ESound.Boss_Goblin_Throw_Sound();
+
             // 폭탄 생성
             GameObject Instance_Bomb = Instantiate(m_Bomb);
             
@@ -471,16 +562,56 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     // 이동
     void Move()
     {
+        m_Boss_JetGoblin_Animator.SetBool("Move", true);
+        m_Boss_JetGoblin_Animator.SetBool("Idle", false);
+
         // 서든데스 모드가 아닐 때
         if (m_Current_Mode != Boss_Mode.SUDDENDEATH_MODE)
         {
             m_Current_Landing_Cooltime += Time.deltaTime;
-            transform.Rotate(transform.up, 5.0f);
-        }
 
-        m_Rigidbody.MovePosition(m_Rigidbody.position + transform.forward * m_Move_Speed * Time.deltaTime);
+            if (m_Current_Moving_Cooltime < m_Total_Moving_Cooltime)
+            {
+                m_Current_Moving_Cooltime += Time.deltaTime;
+                m_Rigidbody.MovePosition(m_Rigidbody.position + transform.forward * m_Move_Speed * Time.deltaTime);
+            }
+            else
+            {
+                if (m_Current_Moving_Cooltime < m_Total_Moving_Cooltime + 1.5f)
+                {
+                    m_Current_Moving_Cooltime += Time.deltaTime;
+                }
+                else m_Current_Moving_Cooltime = 0.0f;
+            }
+        }
+        else
+            m_Rigidbody.MovePosition(m_Rigidbody.position + transform.forward * m_Move_Speed * Time.deltaTime);
 
     }
+
+    // 고장났을때의 이동
+    void BreakMove()
+    {
+        // 빙글빙글 돈다
+        m_Current_Landing_Cooltime += Time.deltaTime;
+        transform.Rotate(transform.up, 5.0f);
+        m_Rigidbody.MovePosition(m_Rigidbody.position + transform.forward * m_Move_Speed * Time.deltaTime);
+    }
+
+    // 벽 충돌시 밀려남
+    void WallCrashMove()
+    {
+        m_Current_Wall_Crash_Move_Cooltime += Time.deltaTime;
+        m_Rigidbody.MovePosition(m_Rigidbody.position + -transform.forward * m_Move_Speed * 0.1f * Time.deltaTime);
+
+        if (m_Current_Wall_Crash_Move_Cooltime >= m_Total_Wall_Crash_Move_Cooltime)
+        {
+            m_Current_Wall_Crash_Move_Cooltime = 0.0f;
+            Find_New_Direction();
+            m_Current_Behavior = m_Behavior_Move;
+        }
+    }
+    
 
     void OnCollisionEnter(Collision collision)
     {
@@ -494,12 +625,19 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
                 Set_New_Position_SuddenDeath();
                 m_Current_Bomb_Drop_Cooltime = 0.0f;
             }
+
+            else
+            {
+                if (MusicManager.manage_ESound != null)
+                    MusicManager.manage_ESound.Boss_Goblin_Wall_Crush_Sound();
+                m_Current_Behavior = m_Behavior_WallCrash;
+            }
         }
     }
 
     void OnTriggerEnter(Collider other)
     {
-        // 몬스터가 불에 닿으면 사망 판정
+        // 몬스터가 불에 닿으면 히트 판정
         if ((other.gameObject.tag == "Flame" || other.gameObject.CompareTag("Flame_Bush")))
         {
             Hurt();

@@ -20,7 +20,7 @@ public class Bomb : MonoBehaviour
 
     public static Bomb c_Bomb;
 
-    int m_FlameCount = UI.m_fire_count;
+    int m_FlameCount;
 
     int m_My_MCL_Index = -1;
 
@@ -76,6 +76,11 @@ public class Bomb : MonoBehaviour
         m_My_MCL_Index = StageManager.Find_Own_MCL_Index(transform.position.x, transform.position.z, false);
         StageManager.Update_MCL_isBlocked(m_My_MCL_Index, true);
         c_Bomb = this;
+        
+        if (m_Whose_Bomb_Type == WHOSE_BOMB.PLAYER)
+            m_FlameCount = UI.m_fire_count;
+        else if (m_Whose_Bomb_Type == WHOSE_BOMB.JETGOBLIN)
+            m_FlameCount = 1;
 
         m_Escape_Time = 0.0f;
         m_is_Rising_Start = false;

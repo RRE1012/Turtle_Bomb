@@ -1217,6 +1217,14 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4540010612188146, guid: 70136da78ae65f74988b74da74edf8e5, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 56.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 4540010612188146, guid: 70136da78ae65f74988b74da74edf8e5, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 4.39
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: 70136da78ae65f74988b74da74edf8e5, type: 2}
@@ -1430,6 +1438,20 @@ MonoBehaviour:
   itemGetSound: {fileID: 8300000, guid: a61c0cfb36339c444a94eebb55bb46f8, type: 3}
   explodeSound: {fileID: 8300000, guid: d852cd95d7a126e40bfc90fd67959ff6, type: 3}
   bombSetSound: {fileID: 8300000, guid: 39a4eb58f25126c4ea2d7766d6fcb057, type: 3}
+  m_Goblin_Idle_Sound: {fileID: 8300000, guid: 8c9cbef409a958540949e872e70d028a, type: 3}
+  m_Goblin_Attack_Sound: {fileID: 8300000, guid: d1c209da1c01b174c90f36a1e8d1e32c,
+    type: 3}
+  m_Goblin_Dead_Sound: {fileID: 8300000, guid: 9a180cbdbe3bbf14e91286f205db314f, type: 3}
+  m_Boss_Goblin_Throw_Sound: {fileID: 8300000, guid: b71b51b9e028a3e4499dd8743925936e,
+    type: 3}
+  m_Boss_Goblin_Fall_Sound: {fileID: 8300000, guid: 492c3f1ee0d259c4a8d3767c52ac77c7,
+    type: 3}
+  m_Boss_Goblin_Dead_Sound: {fileID: 8300000, guid: 5cc53b02829a17743a436e809d8f5e09,
+    type: 3}
+  m_Boss_Goblin_Hurt_Sound: {fileID: 8300000, guid: f9b155b80596e704eacc54e6598737c8,
+    type: 3}
+  m_Boss_Goblin_Wall_Crush_Sound: {fileID: 8300000, guid: e29b9d4f1e5a54b48821eec2b7a5f776,
+    type: 3}
   bgmSource: {fileID: 629855251}
 --- !u!82 &136365219
 AudioSource:
@@ -1940,7 +1962,7 @@ MonoBehaviour:
     type: 2}
   m_Prefab_Goblin: {fileID: 1944355993119360, guid: 8116e691c7bd6ff42b729caf820ee7ad,
     type: 2}
-  m_Prefab_Goblin_Boss: {fileID: 1323701507996734, guid: df7a97fdcadc0e840b2d6143912f450e,
+  m_Prefab_Goblin_Boss: {fileID: 1433940958717456, guid: a0dbc50fe2fc84c48b8360f40cf76fcd,
     type: 2}
   m_Prefab_Start_Point: {fileID: 1875812991857284, guid: d3343cedfabed454abd4bf78ee02b882,
     type: 2}
@@ -1953,7 +1975,7 @@ MonoBehaviour:
   m_Stage_ID: -1
   m_Stage_Time_Limit: -1
   m_is_Boss_Stage: 0
-  m_SuddenDeath_JetGoblin: {fileID: 1323701507996734, guid: df7a97fdcadc0e840b2d6143912f450e,
+  m_SuddenDeath_JetGoblin: {fileID: 1433940958717456, guid: a0dbc50fe2fc84c48b8360f40cf76fcd,
     type: 2}
   m_is_SuddenDeath: 0
   m_is_Boss_Dead: 0
@@ -4065,7 +4087,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 830946331}
         m_MethodName: SetBomb
         m_Mode: 1
         m_Arguments:
@@ -4356,8 +4378,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1225317049}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 330.5, y: 186, z: 0}
-  m_LocalScale: {x: 0.82625, y: 0.82625, z: 0.82625}
+  m_LocalPosition: {x: 324.5, y: 182.5, z: 0}
+  m_LocalScale: {x: 0.81125, y: 0.81125, z: 0.81125}
   m_Children:
   - {fileID: 1401182578}
   - {fileID: 1406001786}
@@ -4548,7 +4570,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 830946331}
         m_MethodName: Bomb_Throw
         m_Mode: 1
         m_Arguments:
@@ -6342,7 +6364,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 830946331}
         m_MethodName: BoxPush
         m_Mode: 1
         m_Arguments:

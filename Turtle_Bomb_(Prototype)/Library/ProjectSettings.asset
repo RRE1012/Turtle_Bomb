@@ -12,7 +12,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: 123
-  productName: Build(171226)
+  productName: Build(180313)
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -241,7 +241,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: b06f09c3453a05541b12b77d47f8ca17, type: 3}
+      m_Icon: {fileID: 2800000, guid: 332c1ac7a93a9ee43a465a233d4ac103, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0

@@ -1460,7 +1460,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.5, y: 2, z: 0.5}
+  m_Size: {x: 0.2, y: 2, z: 0.2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!81 &81154605007423594
 AudioListener:
@@ -1552,6 +1552,9 @@ MonoBehaviour:
   m_Bomb: {fileID: 1892360167901840, guid: 8601fa25871102d48916efa075ebc7b3, type: 2}
   m_DropBomb: []
   animator_camera: {fileID: 95176315520792414}
+  m_Front_Box: {fileID: 0}
+  m_isBoxSelected: 0
+  m_isAbleToPush: 0
   m_isAbleToKick: 0
 --- !u!124 &124820687379310984
 Behaviour:

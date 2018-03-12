@@ -11,6 +11,16 @@ public class MusicManager : MonoBehaviour {
     public AudioClip itemGetSound;
     public AudioClip explodeSound;
     public AudioClip bombSetSound;
+
+    public AudioClip m_Goblin_Idle_Sound;
+    public AudioClip m_Goblin_Attack_Sound;
+    public AudioClip m_Goblin_Dead_Sound;
+    public AudioClip m_Boss_Goblin_Throw_Sound;
+    public AudioClip m_Boss_Goblin_Fall_Sound;
+    public AudioClip m_Boss_Goblin_Dead_Sound;
+    public AudioClip m_Boss_Goblin_Hurt_Sound;
+    public AudioClip m_Boss_Goblin_Wall_Crush_Sound;
+
     //게임 씬에서의 bgm 오디오소스
     public AudioSource bgmSource;
     //게임 씬에서의 효과음 오디오소스
@@ -60,5 +70,54 @@ public class MusicManager : MonoBehaviour {
     public void TryMute()
     {
         gameover = true;
+    }
+
+    // 고블린 기본
+    public void Goblin_Idle_Sound()
+    {
+        source.PlayOneShot(m_Goblin_Idle_Sound, 0.2f);
+    }
+
+    // 고블린 공격
+    public void Goblin_Attack_Sound()
+    {
+        source.PlayOneShot(m_Goblin_Attack_Sound);
+    }
+
+    // 고블린 죽음
+    public void Goblin_Dead_Sound()
+    {
+        source.PlayOneShot(m_Goblin_Dead_Sound, 0.6f);
+    }
+
+
+    // 보스 고블린 폭탄 투척
+    public void Boss_Goblin_Throw_Sound()
+    {
+        source.PlayOneShot(m_Boss_Goblin_Throw_Sound, 0.7f);
+    }
+
+    // 보스 고블린 벽 충돌
+    public void Boss_Goblin_Wall_Crush_Sound()
+    {
+        source.PlayOneShot(m_Boss_Goblin_Wall_Crush_Sound, 0.5f);
+    }
+
+    // 보스 고블린 추락
+    public void Boss_Goblin_Fall_Sound()
+    {
+        source.PlayOneShot(m_Boss_Goblin_Fall_Sound, 0.5f);
+    }
+
+    // 보스 고블린 피격
+    public void Boss_Goblin_Hurt_Sound()
+    {
+        source.PlayOneShot(m_Boss_Goblin_Hurt_Sound);
+    }
+
+    // 보스 고블린 죽음
+    public void Boss_Goblin_Dead_Sound()
+    {
+        source.PlayOneShot(m_Boss_Goblin_Dead_Sound);
     }
 }

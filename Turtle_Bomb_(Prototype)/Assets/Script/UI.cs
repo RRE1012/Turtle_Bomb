@@ -78,7 +78,6 @@ public class UI : MonoBehaviour {
 
     public Text m_Text_StageNum;
 
-
     float m_GIT_CoolTime = 0.0f;
     public static float time_Second = 30.0f;
 
@@ -224,7 +223,7 @@ public class UI : MonoBehaviour {
         ColorBlock cb = m_PushButton.colors;
         Color c;
 
-        if (!PlayerMove.m_isAbleToPush)
+        if (!PlayerMove.C_PM.m_isAbleToPush)
         {
             c = Color.gray;
             m_PushButton.interactable = false;
@@ -298,13 +297,13 @@ public class UI : MonoBehaviour {
         if (!StageManager.m_is_Stage_Clear)
         {
             // 게임 시작 카메라 이동 완료 시 시간 경과
-            if (PlayerMove.C_PM.GetAnimBool())
+            if (PlayerMove.C_PM != null && PlayerMove.C_PM.GetAnimBool())
             {
                 deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
             }
 
             // 죽었을 경우, 사운드 감소
-            if (!PlayerMove.C_PM.Get_IsAlive())
+            if (PlayerMove.C_PM != null && !PlayerMove.C_PM.Get_IsAlive())
             {
                 MusicManager.manage_ESound.TryMute();
 
@@ -429,6 +428,7 @@ public class UI : MonoBehaviour {
     {
         m_Ingame_Play_UI.SetActive(false);
         m_Option_UI.SetActive(true);
+        m_Text_StageNum.text = "Stage ID - " + StageManager.c_Stage_Manager.m_Stage_ID.ToString();
     }
 
     // 옵션의 Return 버튼 (게임으로 돌아가기)
