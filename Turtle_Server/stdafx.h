@@ -32,6 +32,8 @@ using namespace std;
 #define CASE_BOMB_EX 3
 #define BUFSIZE 512
 
+#define MAX_EVENT_SIZE 64
+
 #define MAP_BOMB 1
 #define MAP_NOTHING 2
 #define MAP_BOX 3
@@ -57,7 +59,7 @@ struct Pos {//type:1
 	float roty;
 };
 struct PosOfBOMB {//recv :type:2, send: type:3
-	
+
 	int x;
 	int y;
 };
@@ -72,8 +74,8 @@ struct Socket_Info {
 	SOCKET sock;
 	bool m_connected;
 	bool m_getpacket;
-	char buf[MAX_BUFF_SIZE +1];
-	
+	char buf[MAX_BUFF_SIZE + 1];
+
 	int type;
 	int id;
 	int recvbytes;
@@ -86,6 +88,7 @@ struct Packet_Char
 	//BYTE  size;
 
 	//int  clientID;
+	int id;
 	float hp;
 	float x;
 	float z;
@@ -116,5 +119,3 @@ struct Packet_Bomb_Off
 
 
 #pragma pack()
-
-
