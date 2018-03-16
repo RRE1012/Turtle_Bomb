@@ -7,12 +7,13 @@ Socket_Info SocketInfoArray[WSA_MAXIMUM_WAIT_EVENTS];
 WSAEVENT EventArray[WSA_MAXIMUM_WAIT_EVENTS];
 DWORD io_size, key;
 list<Bomb_Pos> bomb_list;
-int MapInfo[15][15];
+queue<Bomb_Pos> bomb_queue;
+BYTE MapInfo[15][15];
 unsigned char socket_buf[MAX_BUFF_SIZE + 1];
-//int MapInfo[225];
-DWORD WINAPI Bomb_Count_Thread(LPVOID arg);
-Packet_Char char_info[4]; //4명의 캐릭터정보를 담아두자
 
+DWORD WINAPI Bomb_Count_Thread(LPVOID arg); //폭탄쓰레드
+Packet_Char char_info[4]; //4명의 캐릭터정보를 담아두자
+void Refresh_Map();
 bool bomb_Map[15][15]; //폭탄 on/off
 Bomb_Pos bombs[225];
 int g_total_member = 0;
@@ -23,6 +24,7 @@ void RemoveSocketInfo(int nIndex);
 void err_display(int errcode);
 DWORD g_prevTime2;
 list<PosOfBOMB> g_bomb_explode;
+
 int map = 3;
 void ArrayMap();
 CRITICAL_SECTION g_cs;
@@ -31,7 +33,7 @@ int main(int argc, char* argv[]) {
 	printf("sizeof BYTE : %d, char : %d, unsigned char : %d\n", sizeof(BYTE),sizeof(char),sizeof(unsigned char));
 	ArrayMap();
 	HANDLE hThread;
-	hThread = CreateThread(NULL, 0, Bomb_Count_Thread, NULL, 0, NULL);
+	//hThread = CreateThread(NULL, 0, Bomb_Count_Thread, NULL, 0, NULL);
 	int retval;
 	WSADATA wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
@@ -64,168 +66,134 @@ int main(int argc, char* argv[]) {
 	InitializeCriticalSection(&g_cs);
 	while (1) {
 		//이벤트 객체 관찰하기
-		i = WSAWaitForMultipleEvents(g_TotalSockets, EventArray, FALSE, WSA_INFINITE, FALSE);
-		if (i == WSA_WAIT_FAILED)
-			continue;
-		i -= WSA_WAIT_EVENT_0;
-		//구체적인 네트워크 이벤트 알아내기
-		retval = WSAEnumNetworkEvents(SocketInfoArray[i].sock, EventArray[i], &m_NetworkEvents);
-		if (retval == SOCKET_ERROR)
-			continue;
-		//FD_ACCEPT 이벤트 처리
-		if (m_NetworkEvents.lNetworkEvents&FD_ACCEPT) {
-			if (m_NetworkEvents.iErrorCode[FD_ACCEPT_BIT] != 0) {
-				err_display(m_NetworkEvents.iErrorCode[FD_ACCEPT_BIT]);
-				continue;
-			}
-			addrlen = sizeof(clientaddr);
-			client_sock = accept(SocketInfoArray[i].sock, (SOCKADDR*)&clientaddr, &addrlen);
-			if (client_sock == INVALID_SOCKET) {
-				err_display("accept()");
-				continue;
-			}
-			printf("[TCP 서버] 클라이언트 접속 : IP 주소 =%s, 포트번호=%d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
-			retval = send(client_sock, (char*)&g_total_member, sizeof(int), 0);
-			printf("전송-%d번째 -ID : %d\n", i, g_total_member);
-
-			g_total_member++;
-			//retval = send(client_sock, (char*)&map, sizeof(int), 0);
-			retval = send(client_sock, (char*)&MapInfo, sizeof(MapInfo), 0);
-			printf("맵정보 전송 :%d바이트\n", retval);
-			for (int j = 0; j < 4; ++j) {
-				retval = send(client_sock, (char*)&char_info[j], sizeof(Packet_Char), 0);
-				printf("%d바이트 보냈다!!!\n", retval);
-			}
-
-			if (g_TotalSockets >= WSA_MAXIMUM_WAIT_EVENTS) {
-				printf("[오류] 더 이상 접속을 받아들일 수 없습니다!!!!!\n");
-				closesocket(client_sock);
-				continue;
-			}
-
-			if (retval == SOCKET_ERROR) {
-				if (WSAGetLastError() != WSAEWOULDBLOCK) {
-					err_display("send()");
-					RemoveSocketInfo(i);
-				}
-				continue;
-			}
-			//
-			//소켓 정보 추가
-			AddSOCKETInfo(client_sock);
-
-			retval = WSAEventSelect(client_sock, EventArray[g_TotalSockets - 1], FD_READ | FD_WRITE | FD_CLOSE);
-			if (retval == SOCKET_ERROR)
-				err_quit("WSAEventSelect()-client");
-
-		}
-		if (m_NetworkEvents.lNetworkEvents&FD_READ || m_NetworkEvents.lNetworkEvents&FD_WRITE) {
-			if (m_NetworkEvents.lNetworkEvents&FD_READ &&m_NetworkEvents.iErrorCode[FD_READ_BIT] != 0) {
-				err_display(m_NetworkEvents.iErrorCode[FD_READ_BIT]);
-				continue;
-			}
-			if (m_NetworkEvents.lNetworkEvents&FD_WRITE &&m_NetworkEvents.iErrorCode[FD_WRITE_BIT] != 0) {
-				err_display(m_NetworkEvents.iErrorCode[FD_WRITE_BIT]);
-				continue;
-			}
-
-			Socket_Info* ptr = &SocketInfoArray[i];
+		DWORD currTime = GetTickCount();
+		DWORD elapsedTime = currTime - g_prevTime2;
+		g_prevTime2 = currTime;
+		//i = WSAWaitForMultipleEvents(g_TotalSockets, EventArray, FALSE, WSA_INFINITE, FALSE);
+		i = WSAWaitForMultipleEvents(g_TotalSockets, EventArray, FALSE, 0, FALSE);
+		//cout << i << endl;
+		if (i == WSA_WAIT_FAILED || i==258 ||i==WAIT_TIMEOUT) {
 			
-			int m_temp_id = 0;
-			
-			if (ptr->recvbytes == 0) {
-				//데이터 받기
-				char recv_buf[2000];
-				retval = recv(ptr->sock, (char*)recv_buf, sizeof(recv_buf), 0);
-				char* c_buf = recv_buf;
-
-				if (retval == SOCKET_ERROR) {
-					printf("수신 오류 !!\n");
-					continue;
-				}
-				else {
-					memcpy(ptr->buf + ptr->remainbytes, c_buf, retval);
-					printf("%d바이트 수신 !!\n", retval);
-					c_buf[retval] = '\0';
-					ptr->buf[retval + ptr->remainbytes] = '\0';
-					//ptr->recvbytes = ptr->recvbytes+retval;
-					ptr->remainbytes = ptr->remainbytes + retval;
-					c_buf[ptr->remainbytes] = '\0';
-				}
-				
-
-				
-				
-				if (ptr->remainbytes >= 9) {
-					switch (c_buf[0]) {
-					case CASE_POS: //CharPos
-						if (ptr->remainbytes >= 17) {
-							Pos* pos = reinterpret_cast<Pos*>(c_buf+1);
-							char_info[pos->id].x = pos->posx;
-							char_info[pos->id].rotY = pos->roty;
-							char_info[pos->id].z = pos->posz;
-							printf("1p포지션값  :x :%f, z:%f , roty:%f \n", char_info[0].x, char_info[0].z, char_info[0].rotY);
-							printf("2p포지션값  :x :%f, z:%f , roty:%f \n", char_info[1].x, char_info[1].z, char_info[1].rotY);
-							printf("3p포지션값  :x :%f, z:%f , roty:%f \n", char_info[2].x, char_info[2].z, char_info[2].rotY);
-							printf("4p포지션값  :x :%f, z:%f , roty:%f \n", char_info[3].x, char_info[3].z, char_info[3].rotY);
-							ptr->remainbytes -= 17;
-
-							memcpy(c_buf, ptr->buf + 17, ptr->remainbytes);
-							memcpy(ptr->buf, c_buf, ptr->remainbytes);
-							for (int j = 0; j < g_TotalSockets; ++j) {
-								if(SocketInfoArray[j].m_connected)
-									retval = send(SocketInfoArray[j].sock, (char*)&char_info[pos->id], sizeof(Packet_Char), 0);
+			/*if (bomb_list.size() > 0) {
+				for (auto bomb : bomb_list) {
+					bomb.settime = bomb.settime + ((float)elapsedTime / 1000);
+					cout << bomb.settime << "  ";
+					if (bomb.settime >= 2.0f) {
+						for (int j = 0; j < g_TotalSockets; ++j) {
+							int tempx = bomb.posx;
+							int tempz = bomb.posz;
+							printf("폭발할 폭탄 전송!!!\n");
+							if (SocketInfoArray[j].m_connected) {
+								int temptype = 3;
+								PosOfBOMB temp_bomb = { tempx ,tempz };
+								retval = send(SocketInfoArray[j].sock, (char*)&temptype, sizeof(int), 0);
+								retval = send(SocketInfoArray[j].sock, (char*)&temp_bomb, sizeof(PosOfBOMB), 0);
 							}
-							//ptr->m_getpacket = true;
 
-							break;
 						}
-						break;
-					case CASE_BOMB:
-						if (ptr->remainbytes >= 9) {
-							PosOfBOMB* b_pos = reinterpret_cast<PosOfBOMB*>(c_buf+1);
-							MapInfo[b_pos->x][b_pos->y] = MAP_BOMB;
-							printf("폭탄포지션값  :x :%d, z:%d ,  \n", b_pos->x, b_pos->y);
-							printf("Bomb값 받음!\n");
-							ptr->remainbytes -= 9;
-							memcpy(ptr->buf, c_buf + 9, ptr->remainbytes);
-							memset(c_buf, 0, sizeof(c_buf));
-							memcpy(c_buf, ptr->buf, sizeof(ptr->buf));
-							ptr->m_getpacket = true;
-							break;
-						}
-						break;
-
-
-					default:
-						printf("현재 버퍼 첫 바이트값 : %d\n", c_buf[0]);
-						break;
+						MapInfo[bomb.posx][bomb.posz] = MAP_NOTHING;
+						//bomb_list.remove(bomb);
+						bomb_list.pop_front();
 					}
 				}
+			}*/
+			if (bomb_list.size() > 0) {
+				list<Bomb_Pos>::iterator bomb = bomb_list.begin();
+				for (; bomb != bomb_list.end(); ++bomb) {
+					bomb->settime = bomb->settime + ((float)elapsedTime / 1000);
+					cout << "Timeout "<<bomb->settime << "  ";
+					if (bomb->settime >= 2.0f) {
+						for (int j = 0; j < g_TotalSockets; ++j) {
+							int tempx = bomb->posx;
+							int tempz = bomb->posz;
+							printf("폭발할 폭탄 전송!!!\n");
+							if (SocketInfoArray[j].m_connected) {
+								int temptype = 3;
+								PosOfBOMB temp_bomb = { 2,tempx ,tempz };
+								retval = send(SocketInfoArray[j].sock, (char*)&temptype, sizeof(int), 0);
+								retval = send(SocketInfoArray[j].sock, (char*)&temp_bomb, sizeof(PosOfBOMB), 0);
+							}
 
-				addrlen = sizeof(clientaddr);
-
-				getpeername(ptr->sock, (SOCKADDR*)&clientaddr, &addrlen);
-				//	printf("[TCP/%s:%d] TurtlePosx,z : %f,%f, \n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port), m_turtle1_posx, m_turtle1_posz);
-
+						}
+						MapInfo[bomb->posx][bomb->posz] = MAP_NOTHING;
+						
+						bomb_list.pop_front();
+						Refresh_Map();
+						if (bomb_list.size() <= 0) {
+							break;
+						}
+						//bomb_list.remove(bomb);
+					}
+				}
 			}
-			if (ptr->m_getpacket) {
-				//데이터 보내기
-				int temptype = 1;
+			continue;
+		}
+		else {
+			
+				list<Bomb_Pos>::iterator bomb = bomb_list.begin();
+				for (; bomb != bomb_list.end();++bomb) {
+					bomb->settime = bomb->settime + ((float)elapsedTime / 1000);
+					cout << "EventGet " << bomb->settime << "  ";
+					if (bomb->settime >= 2.0f) {
+						for (int j = 0; j < g_TotalSockets; ++j) {
+							int tempx = bomb->posx;
+							int tempz = bomb->posz;
+							printf("폭발할 폭탄 전송!!!\n");
+							if (SocketInfoArray[j].m_connected) {
+								int temptype = 3;
+								PosOfBOMB temp_bomb = { 2,tempx ,tempz};
+								retval = send(SocketInfoArray[j].sock, (char*)&temptype, sizeof(int), 0);
+								retval = send(SocketInfoArray[j].sock, (char*)&temp_bomb, sizeof(PosOfBOMB), 0);
+							}
 
-				retval = send(ptr->sock, (char*)&temptype, sizeof(int), 0);
-				//for (int player = 0; player < g_total_member; ++player) {
+						}
+						MapInfo[bomb->posx][bomb->posz] = MAP_NOTHING;
+						
+						bomb_list.pop_front();
+						Refresh_Map();
+						if (bomb_list.size() <= 0) {
+							break;
+						}
+						//bomb_list.remove(bomb);
+					}
+				}
+			
+			i -= WSA_WAIT_EVENT_0;
+			//구체적인 네트워크 이벤트 알아내기
+			retval = WSAEnumNetworkEvents(SocketInfoArray[i].sock, EventArray[i], &m_NetworkEvents);
+			if (retval == SOCKET_ERROR)
+				continue;
+			//FD_ACCEPT 이벤트 처리
+			if (m_NetworkEvents.lNetworkEvents&FD_ACCEPT) {
+				if (m_NetworkEvents.iErrorCode[FD_ACCEPT_BIT] != 0) {
+					err_display(m_NetworkEvents.iErrorCode[FD_ACCEPT_BIT]);
+					continue;
+				}
+				addrlen = sizeof(clientaddr);
+				client_sock = accept(SocketInfoArray[i].sock, (SOCKADDR*)&clientaddr, &addrlen);
+				if (client_sock == INVALID_SOCKET) {
+					err_display("accept()");
+					continue;
+				}
+				printf("[TCP 서버] 클라이언트 접속 : IP 주소 =%s, 포트번호=%d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
+				retval = send(client_sock, (char*)&g_total_member, sizeof(int), 0);
+				printf("전송-%d번째 -ID : %d\n", i, g_total_member);
+
+				g_total_member++;
+				//retval = send(client_sock, (char*)&map, sizeof(int), 0);
+				retval = send(client_sock, (char*)&MapInfo, sizeof(MapInfo), 0);
+				printf("맵정보 전송 :%d바이트\n", retval);
 				for (int j = 0; j < 4; ++j) {
-					retval = send(ptr->sock, (char*)&char_info[j], sizeof(Packet_Char), 0);
+					retval = send(client_sock, (char*)&char_info[j], sizeof(Packet_Char), 0);
 					printf("%d바이트 보냈다!!!\n", retval);
 				}
 
-				//}
-				printf("보냈다!!!\n");
-				int temptype2 = 2;
-				retval = send(ptr->sock, (char*)&temptype2, sizeof(int), 0);
-				retval = send(ptr->sock, (char*)&MapInfo, sizeof(MapInfo), 0);
-				printf("%d바이트 맵정보를 보냈다!!!\n", retval);
+				if (g_TotalSockets >= WSA_MAXIMUM_WAIT_EVENTS) {
+					printf("[오류] 더 이상 접속을 받아들일 수 없습니다!!!!!\n");
+					closesocket(client_sock);
+					continue;
+				}
+
 				if (retval == SOCKET_ERROR) {
 					if (WSAGetLastError() != WSAEWOULDBLOCK) {
 						err_display("send()");
@@ -233,31 +201,184 @@ int main(int argc, char* argv[]) {
 					}
 					continue;
 				}
+				//
+				//소켓 정보 추가
+				AddSOCKETInfo(client_sock);
 
-				ptr->m_getpacket = false;
+				retval = WSAEventSelect(client_sock, EventArray[g_TotalSockets - 1], FD_READ | FD_WRITE | FD_CLOSE);
+				if (retval == SOCKET_ERROR)
+					err_quit("WSAEventSelect()-client");
 
 			}
-			//제거할 폭탄이 있다면
-			if (g_bomb_explode.size()>0) {
-				int m_temptype = 3;
-
-				list<PosOfBOMB>::iterator b = g_bomb_explode.begin();
-
-				for (; b != g_bomb_explode.end(); ++b) {
-					send(ptr->sock, (char*)&m_temptype, sizeof(int), 0);
-					send(ptr->sock, (char*)&b, sizeof(PosOfBOMB), 0);
-
+			if (m_NetworkEvents.lNetworkEvents&FD_READ || m_NetworkEvents.lNetworkEvents&FD_WRITE) {
+				if (m_NetworkEvents.lNetworkEvents&FD_READ &&m_NetworkEvents.iErrorCode[FD_READ_BIT] != 0) {
+					err_display(m_NetworkEvents.iErrorCode[FD_READ_BIT]);
+					continue;
+				}
+				if (m_NetworkEvents.lNetworkEvents&FD_WRITE &&m_NetworkEvents.iErrorCode[FD_WRITE_BIT] != 0) {
+					err_display(m_NetworkEvents.iErrorCode[FD_WRITE_BIT]);
+					continue;
 				}
 
-				//ㄴretval = send(ptr->sock, (char*)&char_info[j], sizeof(Packet_Char), 0);
+				Socket_Info* ptr = &SocketInfoArray[i];
+
+				int m_temp_id = 0;
+
+				if (ptr->recvbytes == 0) {
+					//데이터 받기
+					char recv_buf[2000];
+					retval = recv(ptr->sock, (char*)recv_buf, sizeof(recv_buf), 0);
+					char* c_buf = recv_buf;
+
+					if (retval == SOCKET_ERROR) {
+						printf("수신 오류 !!\n");
+						continue;
+					}
+					else {
+						memcpy(ptr->buf + ptr->remainbytes, c_buf, retval);
+						printf("%d바이트 수신 !!\n", retval);
+						c_buf[retval] = '\0';
+						ptr->buf[retval + ptr->remainbytes] = '\0';
+						//ptr->recvbytes = ptr->recvbytes+retval;
+						ptr->remainbytes = ptr->remainbytes + retval;
+						c_buf[ptr->remainbytes] = '\0';
+					}
+
+
+
+
+					if (ptr->remainbytes >= 10) {
+						switch (c_buf[0]) {
+						case CASE_POS: //CharPos
+							if (ptr->remainbytes >= 17) {
+								Pos* pos = reinterpret_cast<Pos*>(c_buf + 1);
+								char_info[pos->id].x = pos->posx;
+								char_info[pos->id].rotY = pos->roty;
+								char_info[pos->id].z = pos->posz;
+								printf("1p포지션값  :x :%f, z:%f , roty:%f \n", char_info[0].x, char_info[0].z, char_info[0].rotY);
+								printf("2p포지션값  :x :%f, z:%f , roty:%f \n", char_info[1].x, char_info[1].z, char_info[1].rotY);
+								printf("3p포지션값  :x :%f, z:%f , roty:%f \n", char_info[2].x, char_info[2].z, char_info[2].rotY);
+								printf("4p포지션값  :x :%f, z:%f , roty:%f \n", char_info[3].x, char_info[3].z, char_info[3].rotY);
+								ptr->remainbytes -= 17;
+
+								memcpy(c_buf, ptr->buf + 17, ptr->remainbytes);
+								memcpy(ptr->buf, c_buf, ptr->remainbytes);
+
+								for (int j = 0; j < g_TotalSockets; ++j) {
+
+									if (SocketInfoArray[j].m_connected) {
+										int temptype = 1;
+
+										retval = send(SocketInfoArray[j].sock, (char*)&temptype, sizeof(int), 0);
+										retval = send(SocketInfoArray[j].sock, (char*)&char_info[pos->id], sizeof(Packet_Char), 0);
+									}
+								}
+								//ptr->m_getpacket = true;
+
+								break;
+							}
+							break;
+						case CASE_BOMB:
+							if (ptr->remainbytes >= 10) {
+								PosOfBOMB* b_pos = reinterpret_cast<PosOfBOMB*>(c_buf + 1);
+								MapInfo[b_pos->x][b_pos->y] = MAP_BOMB;
+								printf("폭탄포지션값  :x :%d, z:%d ,  \n", b_pos->x, b_pos->y);
+								int tempx = b_pos->x;
+								int tempz = b_pos->y;
+								BYTE tempfire = b_pos->fire_power;
+								/*
+								int id;
+								int posx;
+								int posz;
+								bool is_set;
+
+								float settime;
+								*/
+								Bomb_Pos tempbomb = { 0,tempx,tempz,true,0.0f,tempfire };
+								bomb_list.emplace_back(tempbomb);
+								//bomb_queue.push(tempbomb);
+								ptr->remainbytes -= 10;
+								memcpy(ptr->buf, c_buf +10, ptr->remainbytes);
+								memset(c_buf, 0, sizeof(c_buf));
+								memcpy(c_buf, ptr->buf, sizeof(ptr->buf));
+								Refresh_Map();
+								//ptr->m_getpacket = true;
+								for (int j = 0; j < g_TotalSockets; ++j) {
+
+									if (SocketInfoArray[j].m_connected) {
+										int temptype = 2;
+										retval = send(SocketInfoArray[j].sock, (char*)&temptype, sizeof(int), 0);
+										retval = send(SocketInfoArray[j].sock, (char*)&MapInfo, sizeof(MapInfo), 0);
+										printf("Bomb값 전송!\n");
+									}
+								}
+								break;
+							}
+							break;
+
+
+						default:
+							printf("현재 버퍼 첫 바이트값 : %d\n", c_buf[0]);
+							break;
+						}
+					}
+
+					addrlen = sizeof(clientaddr);
+
+					getpeername(ptr->sock, (SOCKADDR*)&clientaddr, &addrlen);
+					//	printf("[TCP/%s:%d] TurtlePosx,z : %f,%f, \n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port), m_turtle1_posx, m_turtle1_posz);
+
+				}
+				if (ptr->m_getpacket) {
+					//데이터 보내기
+					int temptype = 1;
+
+					retval = send(ptr->sock, (char*)&temptype, sizeof(int), 0);
+					//for (int player = 0; player < g_total_member; ++player) {
+					for (int j = 0; j < 4; ++j) {
+						retval = send(ptr->sock, (char*)&char_info[j], sizeof(Packet_Char), 0);
+						printf("%d바이트 보냈다!!!\n", retval);
+					}
+
+					//}
+					printf("보냈다!!!\n");
+					int temptype2 = 2;
+					retval = send(ptr->sock, (char*)&temptype2, sizeof(int), 0);
+					retval = send(ptr->sock, (char*)&MapInfo, sizeof(MapInfo), 0);
+					printf("%d바이트 맵정보를 보냈다!!!\n", retval);
+					if (retval == SOCKET_ERROR) {
+						if (WSAGetLastError() != WSAEWOULDBLOCK) {
+							err_display("send()");
+							RemoveSocketInfo(i);
+						}
+						continue;
+					}
+
+					ptr->m_getpacket = false;
+
+				}
+				//제거할 폭탄이 있다면
+				if (g_bomb_explode.size() > 0) {
+					int m_temptype = 3;
+
+					list<PosOfBOMB>::iterator b = g_bomb_explode.begin();
+
+					for (; b != g_bomb_explode.end(); ++b) {
+						send(ptr->sock, (char*)&m_temptype, sizeof(int), 0);
+						send(ptr->sock, (char*)&b, sizeof(PosOfBOMB), 0);
+
+					}
+
+					//ㄴretval = send(ptr->sock, (char*)&char_info[j], sizeof(Packet_Char), 0);
+				}
 			}
-		}
-		//FD_CLOSE 이벤트 처리
-		if (m_NetworkEvents.lNetworkEvents&FD_CLOSE) {
-			if (m_NetworkEvents.iErrorCode[FD_CLOSE_BIT] != 0) {
-				err_display(m_NetworkEvents.iErrorCode[FD_CLOSE_BIT]);
+			//FD_CLOSE 이벤트 처리
+			if (m_NetworkEvents.lNetworkEvents&FD_CLOSE) {
+				if (m_NetworkEvents.iErrorCode[FD_CLOSE_BIT] != 0) {
+					err_display(m_NetworkEvents.iErrorCode[FD_CLOSE_BIT]);
+				}
+				RemoveSocketInfo(i);
 			}
-			RemoveSocketInfo(i);
 		}
 	}
 	DeleteCriticalSection(&g_cs);
@@ -402,6 +523,7 @@ DWORD WINAPI Bomb_Count_Thread(LPVOID arg) {
 		}
 		*/
 	}
+	
 	return 0;
 
 }
@@ -609,6 +731,33 @@ void ArrayMap() {
 	for (int y = 0; y < 15; ++y) {
 		for (int x = 0; x < 15; ++x) {
 			if (MapInfo[x][14-y] == 1) {
+				printf("B  ");
+			}
+			else if (MapInfo[x][14 - y] == 2) {
+				printf("N  ");
+			}
+			else if (MapInfo[x][14 - y] == 3) {
+				printf("C  ");
+			}
+			else if (MapInfo[x][14 - y] == 4) {
+				printf("R  ");
+			}
+			else if (MapInfo[x][14 - y] == 5) {
+				printf("I  ");
+			}
+
+
+		}
+		printf("\n");
+	}
+
+}
+
+void Refresh_Map() {
+	system("cls");
+	for (int y = 0; y < 15; ++y) {
+		for (int x = 0; x < 15; ++x) {
+			if (MapInfo[x][14 - y] == 1) {
 				printf("B  ");
 			}
 			else if (MapInfo[x][14 - y] == 2) {

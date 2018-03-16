@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include<fstream>
 #include<iterator>
+
 #include <math.h>
 #pragma warning(disable : 4996)
 //#pragma comment(linker,"/entry:WinMainCRTStartup /subsystem:console")
@@ -59,16 +60,19 @@ struct Pos {//type:1
 	float roty;
 };
 struct PosOfBOMB {//recv :type:2, send: type:3
-
+	BYTE fire_power;
 	int x;
 	int y;
+	
 };
 struct Bomb_Pos {//type:3
 	int id;
 	int posx;
 	int posz;
 	bool is_set;
+	
 	float settime;
+	BYTE firepower; //È­·Â
 };
 struct Socket_Info {
 	SOCKET sock;
