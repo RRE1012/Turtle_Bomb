@@ -41,6 +41,14 @@ using namespace std;
 #define MAP_ROCK 4
 #define MAP_ITEM 5
 #define MAP_BUSH 6
+#define MAP_ITEM_F 7
+#define MAP_ITEM_S 8
+
+
+#define MAP_CHAR 7
+#define MAP_ENEMY 8
+#define MAP_BOSS 9
+
 
 #define BASIC_POSX_CHAR1 0
 #define BASIC_POSZ_CHAR1 0
@@ -51,29 +59,34 @@ using namespace std;
 #define BASIC_POSX_CHAR4 0
 #define BASIC_POSZ_CHAR4 0
 
+#define TURTLE_ANI_IDLE 0
+#define TURTLE_ANI_WALK 1
+#define TURTLE_ANI_HIDE 2
+#define TURTLE_ANI_DEAD 3
 
-#pragma pack(1)
+
+
+#pragma pack(push,1)
 struct Pos {//type:1
+
 	int id;
 	float posx;
 	float posz;
 	float roty;
 };
+
+
+
+
+
 struct PosOfBOMB {//recv :type:2, send: type:3
 	BYTE fire_power;
 	int x;
 	int y;
 	
 };
-struct Bomb_Pos {//type:3
-	int id;
-	int posx;
-	int posz;
-	bool is_set;
-	
-	float settime;
-	BYTE firepower; //È­·Â
-};
+
+
 struct Socket_Info {
 	SOCKET sock;
 	bool m_connected;
@@ -87,39 +100,50 @@ struct Socket_Info {
 	int sendbytes;
 	int remainbytes;
 };
-struct Packet_Char
-{
-	//BYTE  size;
 
-	//int  clientID;
+
+struct TurtleBomb_ID {//type:0
+	BYTE size; //6
+	BYTE type;
 	int id;
-	float hp;
-	float x;
-	float z;
+};
+
+struct TurtleBomb_Pos {//type:1
+	BYTE size; //17
+	BYTE type;
+	BYTE id;
+	BYTE anistate;
+	BYTE is_alive;
+	float posx;
+	float posz;
 	float rotY;
-	bool is_alive;
+
 };
 
-struct Packet_Bomb_On
-{
-	//BYTE  size;
+struct TurtleBomb_Bomb { //type:2
+	BYTE size;//16
+	BYTE type;
+	BYTE id;
+	BYTE firepower; //È­·Â
+	int posx;
+	int posz;
+	float settime;
+};
 
-	int  clientID;
-	int bomb_count; //ÆøÅº °¹¼ö¸¦ Ã¼Å©ÇÏ´Â Ä«¿îÆ®
+struct TurtleBomb_Explode { //type:3
+	BYTE size;//11
+	BYTE type;
+	BYTE firepower;
 	int posx;
 	int posz;
 
 };
-
-struct Packet_Bomb_Off
-{
-	int  clientID;
-	int bomb_count; //ÆøÅº °¹¼ö¸¦ Ã¼Å©ÇÏ´Â Ä«¿îÆ®
-	int posx;
-	int posz;
+struct TurtleBomb_Map { //type:4
+	BYTE size;//227
+	BYTE type;
+	BYTE mapInfo[15][15];
 
 };
 
 
-
-#pragma pack()
+#pragma pack(pop)
