@@ -9,9 +9,7 @@ using UnityEngine.SceneManagement;
 public class SceneSwaps : MonoBehaviour {
 
     public Canvas cv;
-
-    int m_Selected_Theme_Number;
-    int m_Selected_Stage_Number;
+    public RawImage FadeSlider;
 
     // Use this for initialization
     void Start () {
@@ -55,9 +53,14 @@ public class SceneSwaps : MonoBehaviour {
         // 선택한 스테이지가 몇번인지 PlayerPrefs에 기록!
         PlayerPrefs.SetInt("Mode_Adventure_Selected_Stage_ID", stage_ID);
 
+        FadeSlider.gameObject.SetActive(true);
         // 모험모드 씬을 연다
-        SceneManager.LoadScene(3);
+        Invoke("WaitForFadeSlider", 2.0f);
     }
    
+    void WaitForFadeSlider()
+    {
+        SceneManager.LoadScene(3);
+    }
     
 }

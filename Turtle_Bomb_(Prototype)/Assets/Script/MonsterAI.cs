@@ -27,8 +27,7 @@ public class MonsterAI : MonoBehaviour
     int m_My_MCL_Index = 0;
     int m_Right_Object_Index = 0;
     int m_Left_Object_Index = 0;
-
-    bool m_is_Done_Camera_Walking;
+    
     bool m_isFound_Turtleman;
 
     float m_Monster_Basic_Speed;
@@ -60,11 +59,9 @@ public class MonsterAI : MonoBehaviour
 
         m_isDead = false;
         m_isAttacking = false;
-
-        m_is_Done_Camera_Walking = false;
+        
         m_isFound_Turtleman = false;
-
-        Invoke("ReadyToCameraWalking", 6.0f);
+        
 
         // 몬스터의 행동 코루틴들을 설정
         m_Behavior_Move = MonsterMove();
@@ -164,7 +161,6 @@ public class MonsterAI : MonoBehaviour
         while (true)
         {
             Think();
-
             if (m_Current_Behavior != null && m_Current_Behavior.MoveNext())
             {
                 yield return m_Current_Behavior.Current;
@@ -186,7 +182,7 @@ public class MonsterAI : MonoBehaviour
             
             if (m_WalkTimer < Monster_AI_Constants.Walk_Time)
             {
-                if (m_is_Done_Camera_Walking && PlayerMove.C_PM.Get_IsAlive() && !StageManager.m_is_Stage_Clear)
+                if (StageManager.c_Stage_Manager.m_is_Intro_Over && PlayerMove.C_PM.Get_IsAlive() && !StageManager.m_is_Stage_Clear)
                 {
                     transform.Translate(new Vector3(0.0f, 0.0f, (m_Monster_Basic_Speed * Time.deltaTime)));
                     m_Goblman_Animator.SetBool("Goblman_isWalk", true);
@@ -217,7 +213,7 @@ public class MonsterAI : MonoBehaviour
 
             if (m_AttackTimer < Monster_AI_Constants.Attack_Time)
             {
-                if (m_is_Done_Camera_Walking && PlayerMove.C_PM.Get_IsAlive() && !StageManager.m_is_Stage_Clear && !m_Goblman_Animator.GetBool("Goblman_isAttack"))
+                if (StageManager.c_Stage_Manager.m_is_Intro_Over && PlayerMove.C_PM.Get_IsAlive() && !StageManager.m_is_Stage_Clear && !m_Goblman_Animator.GetBool("Goblman_isAttack"))
                 {
                     m_Attack_Collider.gameObject.SetActive(true);
                     m_Goblman_Animator.SetBool("Goblman_isAttack", true);
@@ -238,6 +234,7 @@ public class MonsterAI : MonoBehaviour
             yield return null;
         }
     }
+
     
 
 
@@ -277,14 +274,7 @@ public class MonsterAI : MonoBehaviour
 
     
 
-
-
-    // 시작 시 카메라워킹이 완료될 때 까지 대기한다.
-    void ReadyToCameraWalking()
-    {
-        m_is_Done_Camera_Walking = true;
-    }
-    // ==============================
+        
 
 
 

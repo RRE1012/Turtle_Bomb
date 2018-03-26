@@ -15,6 +15,7 @@ ff05dcdf90651c3d98a9cad3df5e471e UnityEngine.Timeline.dll:UnityEngine.Timeline.C
 6af7378a45ad6da4992a71ef50ddc2eb UnityEngine.Timeline.dll:UnityEngine.Timeline.PlayableTrack
 af723155c251fcfa0e66530a75f3ea4c UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
 f70c9f2228e3854af90b91db03cfbaec Assembly-CSharp.dll:.FadeManager
+34456d38c6392231cc588d776c5a2c43 Assembly-CSharp.dll:.Performance_Camera
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.ReverseNormals
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.CrouchButton
 6e764dbcd616424d76379e6d46edf44a Assembly-CSharp.dll:.PlayerPrefs_Manager
@@ -100,6 +101,7 @@ ff05dcdf90651c3d98a9cad3df5e471e UnityEngine.Timeline.dll:UnityEngine.Timeline.C
 6af7378a45ad6da4992a71ef50ddc2eb UnityEngine.Timeline.dll:UnityEngine.Timeline.PlayableTrack
 af723155c251fcfa0e66530a75f3ea4c UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
 c1cadceeb2bdad35e6295d1e24b6006c Assembly-CSharp.dll:.JoyStickMove
+890858f56069c7dcf127eda97007fcb9 Assembly-CSharp.dll:.Fade_Slider
 fc1e0f4d8439d9928083474691511a13 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkAnimator
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Networking.dll:UnityEngine.Networking.NetworkBehaviour
 60b2bb652410a5867a5ab9a01cd38461 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkDiscovery
@@ -114,7 +116,7 @@ e9bdabf9265d758d56f01bb188916fa8 UnityEngine.Networking.dll:UnityEngine.Networki
 3f32f08a64daf40b09ed864d96fe3840 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransform
 73843688b51256aed059f049c540bca8 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformChild
 528ea1fd7c01796fc60c4e2f172ea229 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformVisualizer
-e07bb9f8fe6d41ca654aa511af86332f Assembly-CSharp.dll:.StageManager
+0974d58c24c6712075ae6cb42579762a Assembly-CSharp.dll:.StageManager
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 b6a366ca83da6668d1a58f81c138511d Assembly-CSharp.dll:.PlayerMove
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.BillBoard
@@ -138,7 +140,7 @@ f8b9a7d83fcdd0f78deea0ab481173dd Assembly-CSharp.dll:.UI
 6816a2047d390d6af575248f24a827de Assembly-CSharp.dll:.Boss_AI_JetGoblin
 eb7ca56a2bb6a82bfc60f1c306aa9086 Assembly-UnityScript.dll:.Lighting
 9ef6b1380523bce6572073d4eb9acbcd Assembly-CSharp.dll:.RingEffectCollider
-cb0de210113f0c6494f8f69d168a8390 Assembly-CSharp.dll:.SceneSwaps
+38f916ae4e2cab0e4291c4e93347fcee Assembly-CSharp.dll:.SceneSwaps
 de267a503d9870bb055c3e1f1d719b12 Assembly-CSharp.dll:.Bomb
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.MonsterAI
 43294ec8a676944978bb7198ea43935c Assembly-CSharp.dll:DigitalRuby.PyroParticles.FireLightScript
@@ -181,3 +183,4 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 1dd5afbe72b78672a791f893fdff3e5f Assembly-CSharp.dll:DigitalRuby.PyroParticles.FireConstantBaseScript
 2b0d1bf7df1dadb2f1fa8efa0efe11fa Assembly-UnityScript.dll:.ConGUI
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Start_Point
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Intro_Boss

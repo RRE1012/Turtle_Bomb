@@ -50,6 +50,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     IEnumerator m_Behavior_Break;
     IEnumerator m_Behavior_WallCrash;
     IEnumerator m_Behavior_Landing;
+    IEnumerator m_Intro_Moving;
 
     public static Boss_AI_JetGoblin c_JetGoblin; // 이 객체
 
@@ -62,7 +63,6 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     float m_Health = Boss_JetGoblin_Status.JetGoblin__Base__Health; // 체력
     float m_MaxHealth; // 최대 체력
     float m_Move_Speed = Boss_JetGoblin_Status.JetGoblin__Base__Move_Speed; // 이동속도
-    float m_Landing_Speed = 10.0f; // 착륙하는 속도
     int m_Total_Bomb_Count = Boss_JetGoblin_Status.JetGoblin__Base__Bomb_Count; // 폭탄 개수
     int m_Usable_Bomb_Count = Boss_JetGoblin_Status.JetGoblin__Base__Bomb_Count; // 사용가능한 폭탄 개수
 
@@ -75,10 +75,10 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     float m_Total_Wall_Crash_Move_Cooltime = 2.0f; // 벽 충돌시 밀려남 쿨타임
     float m_Current_Wall_Crash_Move_Cooltime = 0.0f; // 벽 충돌시 밀려남 쿨타임 "체크"
 
-
+    SkinnedMeshRenderer[] m_BossRenderer;
+    MeshRenderer m_JetRenderer;
 
     int m_MCL_Index = 0; // MCL 인덱스
-
     // =====================================
 
 
@@ -105,34 +105,34 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         m_Behavior_Landing = Behavior_Landing();
         m_Behavior_WallCrash = Behavior_WallCrash();
 
-        // 처음 실행할 행동 설정
-        m_Current_Behavior = Behavior_Move();
-
         // 보스 스테이지인지 판단하여 (StageManager에서 설정)
         // 처음 실행할 모드 설정 및 그에 따른 스탯 설정
         if (StageManager.c_Stage_Manager.m_is_Boss_Stage)
         {
+            m_Current_Behavior = Wait_To_Intro();
+
             Mode_Change(Boss_Mode.NORMAL_MODE);
-            Invoke("Wait_To_Start_Presentation", 6.0f);
+
+            m_BossRenderer = GetComponentsInChildren<SkinnedMeshRenderer>();
+            m_JetRenderer = GetComponentInChildren<MeshRenderer>();
+            GetComponentInChildren<LineRenderer>().enabled = false;
+            foreach (SkinnedMeshRenderer s in m_BossRenderer)
+                s.enabled = false;
+            m_JetRenderer.enabled = false;
+
+            StartCoroutine(Do_Behavior());
         }
 
         else
         {
+            m_Current_Behavior = Behavior_Move();
+
             Mode_Change(Boss_Mode.SUDDENDEATH_MODE);
+
             StartCoroutine(Do_Behavior());
         }
     }
-
-
-
-
-
-    // 시작시 카메라 연출이 끝날 때 까지 대기한 후 수행하는 메소드
-    void Wait_To_Start_Presentation()
-    {
-        // 코루틴 실행
-        StartCoroutine(Do_Behavior());
-    }
+    
 
 
 
@@ -197,8 +197,11 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         // 착륙 쿨타임이 다 차기 전까지는 계속 이동한다.
         while (m_Current_Landing_Cooltime < m_Total_Landing_Cooltime)
         {
-            Move();
-            Drop_Bomb(); // 폭탄 투하
+            if (StageManager.c_Stage_Manager.m_is_Intro_Over)
+            {
+                Move();
+                Drop_Bomb(); // 폭탄 투하
+            }
             yield return null;
         }
     }
@@ -246,7 +249,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
 
         // 이륙=====================================
         m_Boss_JetGoblin_Animator.SetBool("Idle", true);
-        
+
 
         m_Rigidbody.useGravity = false;
 
@@ -273,8 +276,25 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
             m_Boss_JetGoblin_Animator.SetBool("Move", true);
             m_Behavior_Landing = Behavior_Landing();
         }
-        
     }
+
+
+    IEnumerator Wait_To_Intro()
+    {
+        while (true)
+        {
+            if (StageManager.c_Stage_Manager.m_is_Intro_Over)
+            {
+                m_Current_Behavior = m_Behavior_Move;
+                GetComponentInChildren<LineRenderer>().enabled = true;
+                foreach (SkinnedMeshRenderer s in m_BossRenderer)
+                    s.enabled = true;
+                m_JetRenderer.enabled = true;
+            }
+            yield return null;
+        }
+    }
+
 
     // 모드 체인지 연출을 위한 행동 추가??
 
@@ -544,7 +564,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
             Instance_Bomb.GetComponent<Bomb>().m_Whose_Bomb_Type = WHOSE_BOMB.JETGOBLIN;
 
             // 방향 설정
-            Instance_Bomb.gameObject.GetComponent<Bomb>().SetBombDir();
+            Instance_Bomb.GetComponent<Bomb>().SetBombDir();
 
             // 쿨타임 리셋
             m_Current_Bomb_Drop_Cooltime = 0.0f;

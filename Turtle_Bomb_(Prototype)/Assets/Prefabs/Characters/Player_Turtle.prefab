@@ -1549,7 +1549,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5c4c8f379b511b4a9dc7f3516c98fe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Bomb: {fileID: 1892360167901840, guid: 8601fa25871102d48916efa075ebc7b3, type: 2}
+  m_Bomb: {fileID: 1864067110058600, guid: 566a28d4977493042b81a631f1137ddd, type: 2}
   m_DropBomb: []
   animator_camera: {fileID: 95176315520792414}
   m_Front_Box: {fileID: 0}

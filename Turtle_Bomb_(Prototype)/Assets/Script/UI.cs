@@ -297,7 +297,7 @@ public class UI : MonoBehaviour {
         if (!StageManager.m_is_Stage_Clear)
         {
             // 게임 시작 카메라 이동 완료 시 시간 경과
-            if (PlayerMove.C_PM != null && PlayerMove.C_PM.GetAnimBool())
+            if (PlayerMove.C_PM != null && StageManager.c_Stage_Manager.m_is_Intro_Over)
             {
                 deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
             }

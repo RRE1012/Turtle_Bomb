@@ -36,32 +36,13 @@ public class StageManager : MonoBehaviour {
     int m_Map_Size_X = 17;
     int m_Map_Size_Z = 17;
 
-    
+    // 퍼포먼스 카메라
+    public GameObject m_CameraOffset;
+    public bool m_is_Intro_Over;
+
     // 프리팹들
     public GameObject m_Forest_Theme_Terrain;
     public GameObject m_SnowLand_Theme_Terrain;
-    /*
-    public GameObject[] m_Forest_Theme_Stage_1_Maps;
-    public GameObject[] m_Forest_Theme_Stage_2_Maps;
-    public GameObject[] m_Forest_Theme_Stage_3_Maps;
-
-    
-    public GameObject[] m_Ocean_Theme_Stage_1_Maps;
-    public GameObject[] m_Ocean_Theme_Stage_2_Maps;
-    public GameObject[] m_Ocean_Theme_Stage_3_Maps;
-
-    
-    public GameObject[] m_SnowLand_Theme_Stage_1_Maps;
-    public GameObject[] m_SnowLand_Theme_Stage_2_Maps;
-    public GameObject[] m_SnowLand_Theme_Stage_3_Maps;
-
-    // 현재 생성된 프리팹
-    GameObject m_Current_Terrain;
-    GameObject m_Current_Map;
-
-    // 맵(프리팹) 배열 임시 보관소
-    GameObject[] m_Temp_Maps;
-    */
 
     // 오브젝트 프리팹들
     public GameObject m_Prefab_Box;
@@ -164,6 +145,10 @@ public class StageManager : MonoBehaviour {
 
         // 맵 좌표 리스트 초기화
         MCL_init();
+
+        // 카메라
+        m_CameraOffset = GameObject.Find("Camera_Offset");
+        m_is_Intro_Over = false;
 
         // 오브젝트 테이블 목록 로드
         m_Object_Table_List = new List<Object_Table_Data>(CSV_Manager.GetInstance().Get_Object_Table_List());
@@ -574,5 +559,5 @@ public class StageManager : MonoBehaviour {
     {
         return m_QuestList;
     }
-
+    
 }

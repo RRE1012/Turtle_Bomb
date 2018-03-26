@@ -80,7 +80,12 @@ public class PlayerMove : MonoBehaviour {
         C_PM = this;
         m_TurtleMan_Animator = GetComponent<Animator>();
         m_Player_Mesh_Renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
-        Invoke("MakeAnimEnd", 6.0f);
+        Vector3 pos;
+        pos.x = transform.position.x;
+        pos.y = transform.position.y + 2.0f;
+        pos.z = transform.position.z + 0.7f;
+        StageManager.c_Stage_Manager.m_CameraOffset.transform.position = pos;
+        
 	}
 
     public void Player_Set_Start_Point(Vector3 p)
@@ -90,7 +95,7 @@ public class PlayerMove : MonoBehaviour {
 
     void Update ()
     {
-        if (m_isAlive && !StageManager.m_is_Stage_Clear && animator_camera.GetBool("Started"))
+        if (m_isAlive && !StageManager.m_is_Stage_Clear && StageManager.c_Stage_Manager.m_is_Intro_Over)
         {
             GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 0.0f);
 
@@ -130,7 +135,7 @@ public class PlayerMove : MonoBehaviour {
         if (m_isAlive)
         {
             // 아이템 획득 관련
-            if (other.gameObject.CompareTag("Bomb_Item") && animator_camera.GetBool("Started"))
+            if (other.gameObject.CompareTag("Bomb_Item") && StageManager.c_Stage_Manager.m_is_Intro_Over)
             {
                 Destroy(other.gameObject);
                 if (UI.m_cur_Max_Bomb_Count < MAX_VALUE_ITEM.retval)
@@ -435,7 +440,7 @@ public class PlayerMove : MonoBehaviour {
 
     public void SetBomb() // 폭탄 설치
     {
-        if (UI.m_releasable_bomb_count > 0 && animator_camera.GetBool("Started") && !m_isCrouch)
+        if (UI.m_releasable_bomb_count > 0 && !m_isCrouch)
         {
             m_Bombindex_X = (int)transform.position.x;
             m_Bombindex_Z = (int)transform.position.z;
@@ -532,7 +537,7 @@ public class PlayerMove : MonoBehaviour {
 
     public void Crouch() // 플레이어 숙이기
     {
-        if(animator_camera.GetBool("Started") && !m_isPress_LShift)
+        if(StageManager.c_Stage_Manager.m_is_Intro_Over && !m_isPress_LShift)
         {
             if (CrouchButton.m_isClicked)
             {
@@ -555,7 +560,7 @@ public class PlayerMove : MonoBehaviour {
     
     public void BoxPush() // 박스 밀기 시작
     {
-        if (m_isBoxSelected && m_isAbleToPush && animator_camera.GetBool("Started") && !m_isCrouch)
+        if (m_isBoxSelected && m_isAbleToPush && StageManager.c_Stage_Manager.m_is_Intro_Over && !m_isCrouch)
         {
             // 플레이어 위치 변환
 
@@ -704,18 +709,6 @@ public class PlayerMove : MonoBehaviour {
 		return m_isAlive;
 	}
 
-    //시작 애니메이션의 종료 여부를 획득 하는 함수
-    public bool GetAnimBool()
-    {
-        return animator_camera.GetBool("Started");
-    }
-
-    //시작 카메라 이동 애니메이션 반복 종료 함수
-    void MakeAnimEnd()
-    {
-        animator_camera.SetBool("Started", true);
-    }
-
     //게임오버 애니메이션 함수
     public void MakeGameOverAni()
     {
@@ -731,6 +724,4 @@ public class PlayerMove : MonoBehaviour {
     {
         UI.m_releasable_bomb_count += 1;
     }
-
-    
 }

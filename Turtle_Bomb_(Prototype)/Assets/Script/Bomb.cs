@@ -44,8 +44,9 @@ public class Bomb : MonoBehaviour
     float m_Kicked_Bomb_Speed = 10.0f;
     float m_Thrown_Bomb_Speed = 15.0f;
 
+    Transform m_Model;
 
-    
+
     public GameObject m_Whose_Bomb; // 어떤 객체의 폭탄인가?
     public int m_Whose_Bomb_Type; // 그 객체의 타입은 무엇인가?
 
@@ -75,8 +76,11 @@ public class Bomb : MonoBehaviour
     {
         m_My_MCL_Index = StageManager.Find_Own_MCL_Index(transform.position.x, transform.position.z, false);
         StageManager.Update_MCL_isBlocked(m_My_MCL_Index, true);
+
         c_Bomb = this;
-        
+
+        m_Model = transform.Find("Bomb_리터칭");
+
         if (m_Whose_Bomb_Type == WHOSE_BOMB.PLAYER)
             m_FlameCount = UI.m_fire_count;
         else if (m_Whose_Bomb_Type == WHOSE_BOMB.JETGOBLIN)
@@ -90,6 +94,7 @@ public class Bomb : MonoBehaviour
         m_Blocked_S = false;
         m_Blocked_W = false;
         m_Blocked_E = false;
+        
     }
 
     void Update()
@@ -111,6 +116,8 @@ public class Bomb : MonoBehaviour
         }
     }
 
+
+    // 충돌감지
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Flame_Remains") || other.gameObject.CompareTag("Flame") || other.gameObject.CompareTag("Flame_Bush"))
@@ -152,6 +159,7 @@ public class Bomb : MonoBehaviour
         {
             if (m_isKicked)
             {
+                m_Model.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
                 Bomb_MCL_And_Position_Update();
                 m_isKicked = false;
             }
@@ -188,6 +196,15 @@ public class Bomb : MonoBehaviour
             }
         }
     }
+
+    // ==================================
+
+
+
+
+
+
+
 
 
 
@@ -301,6 +318,15 @@ public class Bomb : MonoBehaviour
 
 
 
+    // =======================================
+
+
+
+
+
+
+
+
 
 
     // 폭탄 늘어났다 줄어드는 애니메이션
@@ -353,6 +379,7 @@ public class Bomb : MonoBehaviour
 
 
         transform.Rotate(0.0f, bombAngleY, 0.0f);
+        transform.Find("Bomb_리터칭").Rotate(0.0f, bombAngleY, 0.0f);
     }
 
 
@@ -362,6 +389,7 @@ public class Bomb : MonoBehaviour
     // 차여진 폭탄의 이동
     void Kicked_Bomb_Move()
     {
+        m_Model.Rotate(transform.right, 70.0f);
         transform.Translate(new Vector3(0.0f, 0.0f, (m_Kicked_Bomb_Speed * Time.deltaTime)));
     }
 
