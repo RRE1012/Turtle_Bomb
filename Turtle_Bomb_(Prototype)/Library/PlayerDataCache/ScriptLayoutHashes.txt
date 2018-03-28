@@ -1,4 +1,4 @@
-Android
+WindowsStandalone
 5057e03fd92fe9ced7130e04940c0a6e Assembly-CSharp.dll:.Box
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Rock
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Flame_Remains
@@ -126,6 +126,7 @@ b6a366ca83da6668d1a58f81c138511d Assembly-CSharp.dll:.PlayerMove
 fc346f47f02ab3fbaf64b959bae0295c Assembly-CSharp.dll:.CSV_Manager
 07701aa818d962a77e81dc66b620136d Assembly-CSharp.dll:.DecalDestroyer
 dc07d7ad69b399a46e92c483bf1c04ca UnityEngine.Analytics.dll:UnityEngine.Analytics.AnalyticsTracker
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Intro_Boss
 bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.AudioSpatializerMicrosoft
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInput
 463516d5b5fe8e67a0a24c48f2095b04 UnityEngine.HoloLens.dll:UnityEngine.EventSystems.HoloLensInputModule
@@ -183,4 +184,3 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 1dd5afbe72b78672a791f893fdff3e5f Assembly-CSharp.dll:DigitalRuby.PyroParticles.FireConstantBaseScript
 2b0d1bf7df1dadb2f1fa8efa0efe11fa Assembly-UnityScript.dll:.ConGUI
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Start_Point
-05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Intro_Boss

@@ -20,6 +20,7 @@ public class MusicManager : MonoBehaviour {
     public AudioClip m_Boss_Goblin_Dead_Sound;
     public AudioClip m_Boss_Goblin_Hurt_Sound;
     public AudioClip m_Boss_Goblin_Wall_Crush_Sound;
+    
 
     //게임 씬에서의 bgm 오디오소스
     public AudioSource bgmSource;
@@ -55,6 +56,8 @@ public class MusicManager : MonoBehaviour {
     {
         source.PlayOneShot(explodeSound,1.0f);
     }
+
+    
     //아이템 획득 사운드
     public void ItemGetSound()
     {
@@ -120,4 +123,5 @@ public class MusicManager : MonoBehaviour {
     {
         source.PlayOneShot(m_Boss_Goblin_Dead_Sound);
     }
+    
 }
