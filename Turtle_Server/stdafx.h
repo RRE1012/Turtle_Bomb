@@ -24,14 +24,14 @@
 using namespace std;
 
 #define TB_SERVER_PORT 9000
-#define MAX_BUFF_SIZE 2000
+#define MAX_BUFF_SIZE 4000
 
 #define MAX_USER 4
 #define MAX_NPC	50
 #define CASE_POS 1
 #define CASE_BOMB 2
 #define CASE_BOMB_EX 3
-#define BUFSIZE 512
+
 
 #define MAX_EVENT_SIZE 64
 
@@ -91,7 +91,7 @@ struct Socket_Info {
 	SOCKET sock;
 	bool m_connected;
 	bool m_getpacket;
-	char buf[MAX_BUFF_SIZE + 1];
+	char buf[MAX_BUFF_SIZE];
 
 	int type;
 	int id;
@@ -102,11 +102,7 @@ struct Socket_Info {
 };
 
 
-struct TurtleBomb_ID {//type:0
-	BYTE size; //6
-	BYTE type;
-	int id;
-};
+
 
 struct TurtleBomb_Pos {//type:1
 	BYTE size; //17
@@ -144,6 +140,20 @@ struct TurtleBomb_Map { //type:4
 	BYTE mapInfo[15][15];
 
 };
+struct TurtleBomb_ID {//type:5
+	BYTE size; //3
+	BYTE type;
+	BYTE id;  //0330 수정 int에서- BYTE로 수정
+};
 
+struct TurtleBomb_ItemGet { //type:6
+	BYTE size; //
+	BYTE type;
+	BYTE id;
+	BYTE item_posx; //if (g_TurtleMap.mapinfo[posz][posx] == type){g_TurtleMap.mapinfo[posz][posx] = MAP_NOTHING;charinfo[id].fire++; send(mapdata),send(charinfo[id])} 
+	BYTE item_posz;
+	BYTE item_type;
+
+};
 
 #pragma pack(pop)

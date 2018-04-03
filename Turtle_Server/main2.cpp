@@ -17,7 +17,7 @@ TurtleBomb_Pos char_info[4]; //4명의 캐릭터정보를 담아둘 캐릭터 정보 ->방 정보가
 
 void Refresh_Map(); //맵을 서버에서 갱신하기 위해 만든 함수 -> 계산도 추가할 예정
 
-int g_total_member = 0;//현재 접속자의 수
+BYTE g_total_member = 0;//현재 접속자의 수
 
 list<TurtleBomb_Bomb> bomb_list;//폭탄 터지는 시간을 계산하기 위해 만든 리스트 - 현재까지는 앞에서만 터트리지만, 좀 더 개선이 필요
 
@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
 		err_quit("listen()");
 	//~Listen 까지
 
-	//소켓 정보 추가&WSAEventSelect
+	//소켓 정보 추가(WSAEventSelect를 위한 소켓 정보 추가)&WSAEventSelect
 	AddSOCKETInfo(listen_sock);
 	retval = WSAEventSelect(listen_sock, EventArray[g_TotalSockets - 1], FD_ACCEPT | FD_CLOSE);
 	if (retval == SOCKET_ERROR)
@@ -89,22 +89,31 @@ int main(int argc, char* argv[]) {
 		//타임아웃에 걸릴 경우 - 폭탄 시간은 계속 체크하고 있어야 하므로, 여기서도 시간체크를 실행시킨다.
 		if (i == WSA_WAIT_FAILED || i==258 ||i==WAIT_TIMEOUT) {
 			if (bomb_list.size() > 0) {
-				
-				for (list<TurtleBomb_Bomb>::iterator bomb = bomb_list.begin(); bomb != bomb_list.end(); ++bomb) {
+				list<TurtleBomb_Bomb>::iterator bomb = bomb_list.begin();
+				for (; bomb != bomb_list.end(); ++bomb) {
 					bomb->settime = bomb->settime + ((float)elapsedTime / 1000);
 					//cout << "Timeout "<<bomb->settime << "  ";
 					if (bomb->settime >= 2.0f) {
+						int tempx = bomb->posx;
+						int tempz = bomb->posz;
 						g_TurtleMap.mapInfo[bomb->posx][bomb->posz] = MAP_NOTHING;
 						CalculateMap(bomb->posx, bomb->posz, bomb->firepower);
 						
+						TurtleBomb_Explode temp_bomb = { 11,3, bomb->firepower,tempx ,tempz };
+						g_TurtleMap.size = 227;
 						for (int j = 0; j < g_TotalSockets; ++j) {
-							int tempx = bomb->posx;
-							int tempz = bomb->posz;
-							printf("폭발할 폭탄 전송!!!\n");
+							
+							//printf("폭발할 폭탄 전송!!!\n");
+							
 							if (SocketInfoArray[j].m_connected) {
-								TurtleBomb_Explode temp_bomb = {sizeof(TurtleBomb_Explode),3, bomb->firepower,tempx ,tempz };
+								printf("Send size : %d\n",temp_bomb.size);
+
 								retval = send(SocketInfoArray[j].sock, (char*)&temp_bomb, sizeof(TurtleBomb_Explode), 0);
+								printf("Retval size : %d\n", retval);
+								printf("Send size : %d\n", g_TurtleMap.size);
+
 								retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap, sizeof(TurtleBomb_Map), 0);
+								printf("Retval size : %d\n", retval);
 							}
 
 						}
@@ -123,40 +132,46 @@ int main(int argc, char* argv[]) {
 			continue;
 		}
 		else {
-			
+			if (bomb_list.size() > 0) {
 				list<TurtleBomb_Bomb>::iterator bomb = bomb_list.begin();
-				for (; bomb != bomb_list.end();++bomb) 
+				for (; bomb != bomb_list.end(); ++bomb)
 				{
 					bomb->settime = bomb->settime + ((float)elapsedTime / 1000);
 					//cout << "EventGet " << bomb->settime << "  ";
-					if (bomb->settime >= 2.0f) 
+					if (bomb->settime >= 2.0f)
 					{
 						g_TurtleMap.mapInfo[bomb->posx][bomb->posz] = MAP_NOTHING;
 						CalculateMap(bomb->posx, bomb->posz, bomb->firepower);
-						
-						for (int j = 0; j < g_TotalSockets; ++j) 
+						int tempx = bomb->posx;
+						int tempz = bomb->posz;
+						TurtleBomb_Explode temp_bomb = { 11,3, bomb->firepower,tempx ,tempz };
+						g_TurtleMap.size = 227;
+						for (int j = 0; j < g_TotalSockets; ++j)
 						{
-							int tempx = bomb->posx;
-							int tempz = bomb->posz;
+
 							printf("폭발할 폭탄 전송!!!\n");
 							if (SocketInfoArray[j].m_connected) {
-								TurtleBomb_Explode temp_bomb = { sizeof(TurtleBomb_Explode),3, bomb->firepower,tempx ,tempz };
+								printf("Send size : %d\n", temp_bomb.size);
 								retval = send(SocketInfoArray[j].sock, (char*)&temp_bomb, sizeof(TurtleBomb_Explode), 0);
+								printf("Retval size : %d\n", retval);
+								printf("Send size : %d\n", g_TurtleMap.size);
+
 								retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap, sizeof(TurtleBomb_Map), 0);
+								printf("Retval size : %d\n", retval);
 							}
 						}
-						
-						
+
+
 						bomb_list.pop_front();
 						//Refresh_Map();
-						if (bomb_list.size() <= 0) 
+						if (bomb_list.size() <= 0)
 						{
 							break;
 						}
 						break;
 					}
 				}
-			
+			}
 			i -= WSA_WAIT_EVENT_0;
 			//구체적인 네트워크 이벤트 알아내기
 			retval = WSAEnumNetworkEvents(SocketInfoArray[i].sock, EventArray[i], &m_NetworkEvents);
@@ -179,7 +194,7 @@ int main(int argc, char* argv[]) {
 				}
 				printf("[TCP 서버] 클라이언트 접속 : IP 주소 =%s, 포트번호=%d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 				
-				TurtleBomb_ID tempid = {6,0,g_total_member};
+				TurtleBomb_ID tempid = {3,5,g_total_member};
 				retval = send(client_sock, (char*)&tempid, sizeof(TurtleBomb_ID), 0); //ID 전송.
 				printf("전송-%d번째 -ID : %d\n", i, g_total_member);
 
@@ -234,7 +249,7 @@ int main(int argc, char* argv[]) {
 				if (ptr->recvbytes == 0) 
 				{
 					//데이터 받기
-					char recv_buf[2000];
+					char recv_buf[MAX_BUFF_SIZE];
 					retval = recv(ptr->sock, (char*)recv_buf, sizeof(recv_buf), 0);
 					char* c_buf = recv_buf;
 
@@ -248,11 +263,11 @@ int main(int argc, char* argv[]) {
 					{
 						memcpy(ptr->buf + ptr->remainbytes, c_buf, retval);
 						printf("%d바이트 수신 !!\n", retval);
-						c_buf[retval] = '\0';
-						ptr->buf[retval + ptr->remainbytes] = '\0';
+						//c_buf[retval] = '\0';
+						//ptr->buf[retval + ptr->remainbytes] = '\0';
 						//ptr->recvbytes = ptr->recvbytes+retval;
 						ptr->remainbytes = ptr->remainbytes + retval;
-						c_buf[ptr->remainbytes] = '\0';
+						//c_buf[ptr->remainbytes] = '\0';
 					}
 
 
@@ -264,15 +279,17 @@ int main(int argc, char* argv[]) {
 						case CASE_POS: //CharPos
 							if (ptr->remainbytes >= 17) {
 								TurtleBomb_Pos* pos = reinterpret_cast<TurtleBomb_Pos*>(c_buf);
-								char_info[pos->id].anistate = pos->anistate;
-								char_info[pos->id].is_alive = pos->is_alive;
-								char_info[pos->id].posx = pos->posx;
-								char_info[pos->id].rotY = pos->rotY;
-								char_info[pos->id].posz = pos->posz;
-								printf("1p포지션값  :x :%f, z:%f , roty:%f \n", char_info[0].posx, char_info[0].posz, char_info[0].rotY);
-								printf("2p포지션값  :x :%f, z:%f , roty:%f \n", char_info[1].posx, char_info[1].posz, char_info[1].rotY);
-								printf("3p포지션값  :x :%f, z:%f , roty:%f \n", char_info[2].posx, char_info[2].posz, char_info[2].rotY);
-								printf("4p포지션값  :x :%f, z:%f , roty:%f \n", char_info[3].posx, char_info[3].posz, char_info[3].rotY);
+								//필수 -
+								BYTE tempid = pos->id;
+								char_info[tempid].anistate = pos->anistate;
+								char_info[tempid].is_alive = pos->is_alive;
+								char_info[tempid].posx = pos->posx;
+								char_info[tempid].rotY = pos->rotY;
+								char_info[tempid].posz = pos->posz;
+								//printf("1p포지션값  :x :%f, z:%f , roty:%f \n", char_info[0].posx, char_info[0].posz, char_info[0].rotY);
+								//printf("2p포지션값  :x :%f, z:%f , roty:%f \n", char_info[1].posx, char_info[1].posz, char_info[1].rotY);
+								//printf("3p포지션값  :x :%f, z:%f , roty:%f \n", char_info[2].posx, char_info[2].posz, char_info[2].rotY);
+								//printf("4p포지션값  :x :%f, z:%f , roty:%f \n", char_info[3].posx, char_info[3].posz, char_info[3].rotY);
 								ptr->remainbytes -= 17;
 
 								memcpy(c_buf, ptr->buf + 17, ptr->remainbytes);
@@ -281,8 +298,11 @@ int main(int argc, char* argv[]) {
 								for (int j = 0; j < g_TotalSockets; ++j) {
 
 									if (SocketInfoArray[j].m_connected) {
-										
-										retval = send(SocketInfoArray[j].sock, (char*)&char_info[pos->id], sizeof(TurtleBomb_Pos), 0);
+										printf("Send size : %d\n", char_info[tempid].size);
+										char_info[tempid].size = 17;
+										char_info[tempid].type = 1;
+										retval = send(SocketInfoArray[j].sock, (char*)&char_info[tempid], sizeof(TurtleBomb_Pos), 0);
+										printf("Retval size : %d\n", retval);
 									}
 								}
 								
@@ -293,10 +313,11 @@ int main(int argc, char* argv[]) {
 						case CASE_BOMB:
 							if (ptr->remainbytes >= 11) {
 								TurtleBomb_Explode* b_pos = reinterpret_cast<TurtleBomb_Explode*>(c_buf);
-								g_TurtleMap.mapInfo[b_pos->posz][b_pos->posx] = MAP_BOMB;
-								printf("폭탄포지션값  :x :%d, z:%d ,  \n", b_pos->posx, b_pos->posz);
 								int tempx = b_pos->posx;
 								int tempz = b_pos->posz;
+								g_TurtleMap.mapInfo[tempz][tempx] = MAP_BOMB;
+								//printf("폭탄포지션값  :x :%d, z:%d ,  \n", b_pos->posx, b_pos->posz);
+								
 								BYTE tempfire = b_pos->firepower;
 								
 								TurtleBomb_Bomb tempbomb = { sizeof(TurtleBomb_Bomb),CASE_BOMB,0,tempfire,tempx,tempz,0.0f };
@@ -305,16 +326,18 @@ int main(int argc, char* argv[]) {
 								ptr->remainbytes -= 11;
 								memcpy(ptr->buf, c_buf +11, ptr->remainbytes);
 								memset(c_buf, 0, sizeof(c_buf));
-								memcpy(c_buf, ptr->buf, sizeof(ptr->buf));
+ 								memcpy(c_buf, ptr->buf, sizeof(ptr->buf));
 								//Refresh_Map();
 								
 								
 								for (int j = 0; j < g_TotalSockets; ++j) {
 									//폭탄을 받았으므로 갱신된 맵정보를 접속해있는 유저에게 전송
 									if (SocketInfoArray[j].m_connected) {
-										
+										printf("Send size : %d\n", g_TurtleMap.size);
+
 										retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap, sizeof(TurtleBomb_Map), 0);
-										printf("Bomb가 추가된 맵정보값 전송!\n");
+										printf("Retval size : %d\n", retval);
+										//printf("Bomb가 추가된 맵정보값 전송!\n");
 									}
 								}
 								break;
@@ -330,7 +353,7 @@ int main(int argc, char* argv[]) {
 
 					addrlen = sizeof(clientaddr);
 
-					getpeername(ptr->sock, (SOCKADDR*)&clientaddr, &addrlen);
+ 					getpeername(ptr->sock, (SOCKADDR*)&clientaddr, &addrlen);
 
 				}
 				
@@ -404,7 +427,10 @@ BOOL AddSOCKETInfo(SOCKET sock) {
 	ptr->recvbytes = 0;
 	ptr->remainbytes = 0;
 	ptr->sendbytes = 0;
-	ptr->m_connected = true;
+	if(g_TotalSockets==0)
+		ptr->m_connected = false;
+	else
+		ptr->m_connected = true;
 
 	EventArray[g_TotalSockets] = hEvent;
 	++g_TotalSockets;
@@ -748,34 +774,36 @@ void CalculateMap(int x, int z, byte f) {
 	bool l_LeftBlock = false;
 	bool l_RightBlock = false;
 
-
-	for (byte b = 0; b < f; ++b) {
+	BYTE tempMap[15][15];
+	memcpy(tempMap, g_TurtleMap.mapInfo, sizeof(tempMap));
+	tempMap[z][x] = MAP_NOTHING;
+	for (byte b = 1; b <= f; ++b) {
 		if (!l_DownBlock) {
 			if (z - b < 0) {
 				l_DownBlock = true;
 			}
 			else {
-				if (g_TurtleMap.mapInfo[z - b][x] == MAP_BOMB ) {
-					g_TurtleMap.mapInfo[z - b][x] = MAP_NOTHING;
+				if (tempMap[z - b][x] == MAP_BOMB ) {
+					tempMap[z - b][x] = MAP_NOTHING;
 					l_DownBlock = true;
 				}
-				else if (g_TurtleMap.mapInfo[z - b][x] == MAP_BOX) {
+				else if (tempMap[z - b][x] == MAP_BOX) {
 					int temp_rand = (rand() % 10);
 					if(temp_rand<4)
-						g_TurtleMap.mapInfo[z - b][x] = MAP_NOTHING;
+						tempMap[z - b][x] = MAP_NOTHING;
 					else if(temp_rand>=4&&temp_rand<=5)
-						g_TurtleMap.mapInfo[z - b][x] = MAP_ITEM;
+						tempMap[z - b][x] = MAP_ITEM;
 					else if (temp_rand >= 6 && temp_rand <= 7)
-						g_TurtleMap.mapInfo[z - b][x] = MAP_ITEM_F;
+						tempMap[z - b][x] = MAP_ITEM_F;
 					else if (temp_rand >= 8 && temp_rand <= 9)
-						g_TurtleMap.mapInfo[z - b][x] = MAP_ITEM_S;
+						tempMap[z - b][x] = MAP_ITEM_S;
 
 					l_DownBlock = true;
 				}
-				else if (g_TurtleMap.mapInfo[z - b][x] == MAP_ITEM || g_TurtleMap.mapInfo[z - b][x] == MAP_ITEM_F || g_TurtleMap.mapInfo[z - b][x] == MAP_ITEM_S || g_TurtleMap.mapInfo[z - b][x] == MAP_BUSH) {
-					g_TurtleMap.mapInfo[z - b][x] = MAP_NOTHING;
+				else if (tempMap[z - b][x] == MAP_ITEM || tempMap[z - b][x] == MAP_ITEM_F || tempMap[z - b][x] == MAP_ITEM_S || tempMap[z - b][x] == MAP_BUSH) {
+					tempMap[z - b][x] = MAP_NOTHING;
 				}
-				else if (g_TurtleMap.mapInfo[z - b][x] == MAP_ROCK ) {
+				else if (tempMap[z - b][x] == MAP_ROCK ) {
 					l_DownBlock = true;
 				}
 			}
@@ -785,27 +813,27 @@ void CalculateMap(int x, int z, byte f) {
 				l_UpBlock = true;
 			}
 			else {
-				if (g_TurtleMap.mapInfo[z + b][x] == MAP_BOMB ) {
-					g_TurtleMap.mapInfo[z + b][x] = MAP_NOTHING;
+				if (tempMap[z + b][x] == MAP_BOMB ) {
+					tempMap[z + b][x] = MAP_NOTHING;
 					l_UpBlock = true;
 				}
-				else if (g_TurtleMap.mapInfo[z + b][x] == MAP_BOX) {
+				else if (tempMap[z + b][x] == MAP_BOX) {
 					int temp_rand = (rand() % 10);
 					if (temp_rand<4)
-						g_TurtleMap.mapInfo[z + b][x] = MAP_NOTHING;
+						tempMap[z + b][x] = MAP_NOTHING;
 					else if (temp_rand >= 4 && temp_rand <= 5)
-						g_TurtleMap.mapInfo[z + b][x] = MAP_ITEM;
+						tempMap[z + b][x] = MAP_ITEM;
 					else if (temp_rand >= 6 && temp_rand <= 7)
-						g_TurtleMap.mapInfo[z + b][x] = MAP_ITEM_F;
+						tempMap[z + b][x] = MAP_ITEM_F;
 					else if (temp_rand >= 8 && temp_rand <= 9)
-						g_TurtleMap.mapInfo[z + b][x] = MAP_ITEM_S;
+						tempMap[z + b][x] = MAP_ITEM_S;
 
 					l_UpBlock = true;
 				}
-				else if (g_TurtleMap.mapInfo[z + b][x] == MAP_ITEM || g_TurtleMap.mapInfo[z + b][x] == MAP_ITEM_F || g_TurtleMap.mapInfo[z + b][x] == MAP_ITEM_S || g_TurtleMap.mapInfo[z + b][x] == MAP_BUSH) {
-					g_TurtleMap.mapInfo[z + b][x] = MAP_NOTHING;
+				else if (tempMap[z + b][x] == MAP_ITEM || tempMap[z + b][x] == MAP_ITEM_F || tempMap[z + b][x] == MAP_ITEM_S || tempMap[z + b][x] == MAP_BUSH) {
+					tempMap[z + b][x] = MAP_NOTHING;
 				}
-				else if (g_TurtleMap.mapInfo[z + b][x] == MAP_ROCK) {
+				else if (tempMap[z + b][x] == MAP_ROCK) {
 					l_UpBlock = true;
 				}
 			}
@@ -815,27 +843,27 @@ void CalculateMap(int x, int z, byte f) {
 				l_LeftBlock = true;
 			}
 			else {
-				if (g_TurtleMap.mapInfo[z][x-b] == MAP_BOMB) {
-					g_TurtleMap.mapInfo[z][x-b] = MAP_NOTHING;
+				if (tempMap[z][x-b] == MAP_BOMB) {
+					tempMap[z][x-b] = MAP_NOTHING;
 					l_LeftBlock = true;
 				}
-				else if (g_TurtleMap.mapInfo[z][x - b] == MAP_BOX) {
+				else if (tempMap[z][x - b] == MAP_BOX) {
 					int temp_rand = (rand() % 10);
 					if (temp_rand<4)
-						g_TurtleMap.mapInfo[z][x - b] = MAP_NOTHING;
+						tempMap[z][x - b] = MAP_NOTHING;
 					else if (temp_rand >= 4 && temp_rand <= 5)
-						g_TurtleMap.mapInfo[z][x - b] = MAP_ITEM;
+						tempMap[z][x - b] = MAP_ITEM;
 					else if (temp_rand >= 6 && temp_rand <= 7)
-						g_TurtleMap.mapInfo[z][x - b] = MAP_ITEM_F;
+						tempMap[z][x - b] = MAP_ITEM_F;
 					else if (temp_rand >= 8 && temp_rand <= 9)
-						g_TurtleMap.mapInfo[z][x - b] = MAP_ITEM_S;
+						tempMap[z][x - b] = MAP_ITEM_S;
 
 					l_LeftBlock = true;
 				}
-				else if (g_TurtleMap.mapInfo[z][x-b] == MAP_ITEM || g_TurtleMap.mapInfo[z][x-b] == MAP_BUSH|| g_TurtleMap.mapInfo[z][x - b] == MAP_ITEM_F || g_TurtleMap.mapInfo[z][x - b] == MAP_ITEM_S) {
-					g_TurtleMap.mapInfo[z][x-b] = MAP_NOTHING;
+				else if (tempMap[z][x-b] == MAP_ITEM || tempMap[z][x-b] == MAP_BUSH|| tempMap[z][x - b] == MAP_ITEM_F || tempMap[z][x - b] == MAP_ITEM_S) {
+					tempMap[z][x-b] = MAP_NOTHING;
 				}
-				else if (g_TurtleMap.mapInfo[z][x-b] == MAP_ROCK) {
+				else if (tempMap[z][x-b] == MAP_ROCK) {
 					l_LeftBlock = true;
 				}
 			}
@@ -845,34 +873,35 @@ void CalculateMap(int x, int z, byte f) {
 				l_RightBlock = true;
 			}
 			else {
-				if (g_TurtleMap.mapInfo[z][x+b] == MAP_BOMB ) {
-					g_TurtleMap.mapInfo[z][x+b] = MAP_NOTHING;
+				if (tempMap[z][x+b] == MAP_BOMB ) {
+					tempMap[z][x+b] = MAP_NOTHING;
 					l_RightBlock = true;
 				}
-				else if (g_TurtleMap.mapInfo[z][x + b] == MAP_BOX) {
+				else if (tempMap[z][x + b] == MAP_BOX) {
 					int temp_rand = (rand() % 10);
 					if (temp_rand<4)
-						g_TurtleMap.mapInfo[z][x + b] = MAP_NOTHING;
+						tempMap[z][x + b] = MAP_NOTHING;
 					else if (temp_rand >= 4 && temp_rand <= 5)
-						g_TurtleMap.mapInfo[z][x + b] = MAP_ITEM;
+						tempMap[z][x + b] = MAP_ITEM;
 					else if (temp_rand >= 6 && temp_rand <= 7)
-						g_TurtleMap.mapInfo[z][x + b] = MAP_ITEM_F;
+						tempMap[z][x + b] = MAP_ITEM_F;
 					else if (temp_rand >= 8 && temp_rand <= 9)
-						g_TurtleMap.mapInfo[z][x + b] = MAP_ITEM_S;
+						tempMap[z][x + b] = MAP_ITEM_S;
 
 					l_RightBlock = true;
 				}
-				else if (g_TurtleMap.mapInfo[z][x + b] == MAP_ITEM || g_TurtleMap.mapInfo[z][x + b] == MAP_BUSH || g_TurtleMap.mapInfo[z][x + b] == MAP_ITEM_F || g_TurtleMap.mapInfo[z][x + b] == MAP_ITEM_S) {
-					g_TurtleMap.mapInfo[z][x+b] = MAP_NOTHING;
+				else if (tempMap[z][x + b] == MAP_ITEM || tempMap[z][x + b] == MAP_BUSH || tempMap[z][x + b] == MAP_ITEM_F || tempMap[z][x + b] == MAP_ITEM_S) {
+					tempMap[z][x+b] = MAP_NOTHING;
 				}
-				else if (g_TurtleMap.mapInfo[z][x+b] == MAP_ROCK) {
+				else if (tempMap[z][x+b] == MAP_ROCK) {
 					l_RightBlock = true;
 				}
 			}
 		}
-
+		
 
 	}
-
+	g_TurtleMap.type = 4;
+	memcpy( g_TurtleMap.mapInfo, tempMap, sizeof(tempMap));
 
 }
