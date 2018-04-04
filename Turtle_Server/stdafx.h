@@ -31,8 +31,8 @@ using namespace std;
 #define CASE_POS 1
 #define CASE_BOMB 2
 #define CASE_BOMB_EX 3
-
-
+#define CASE_JOINROOM 9
+#define CASE_CREATEROOM 10
 #define MAX_EVENT_SIZE 64
 
 #define MAP_BOMB 1
@@ -96,37 +96,49 @@ struct Socket_Info {
 	int type;
 	int id;
 	int recvbytes;
-
+	
 	int sendbytes;
 	int remainbytes;
+	BYTE roomID; //디폴트는 0. 안 들어갔다는 뜻
+	BYTE is_guardian;//방장인지 아닌지 
+	BYTE is_ready;
+	//추가
+	BYTE fire;
+	BYTE bomb;
+	BYTE speed;
 };
 
 
 
 
-struct TurtleBomb_Pos {//type:1
-	BYTE size; //17
+struct TB_CharPos {//type:1
+	BYTE size; //22
 	BYTE type;
-	BYTE id;
+	BYTE ingame_id;
 	BYTE anistate;
 	BYTE is_alive;
+	BYTE speed;
+	BYTE fire;
+	BYTE bomb;
+	BYTE can_throw;
+	BYTE can_kick;
 	float posx;
 	float posz;
 	float rotY;
 
 };
 
-struct TurtleBomb_Bomb { //type:2
+struct TB_BombPos { //type:2
 	BYTE size;//16
 	BYTE type;
-	BYTE id;
+	BYTE ingame_id;
 	BYTE firepower; //화력
 	int posx;
 	int posz;
 	float settime;
 };
 
-struct TurtleBomb_Explode { //type:3
+struct TB_BombExplode { //type:3
 	BYTE size;//11
 	BYTE type;
 	BYTE firepower;
@@ -134,26 +146,99 @@ struct TurtleBomb_Explode { //type:3
 	int posz;
 
 };
-struct TurtleBomb_Map { //type:4
+struct TB_Map { //type:4
 	BYTE size;//227
 	BYTE type;
 	BYTE mapInfo[15][15];
 
 };
-struct TurtleBomb_ID {//type:5
+struct TB_ID {//type:5
 	BYTE size; //3
 	BYTE type;
 	BYTE id;  //0330 수정 int에서- BYTE로 수정
 };
 
-struct TurtleBomb_ItemGet { //type:6
+struct TB_ItemGet { //type:6
 	BYTE size; //
 	BYTE type;
-	BYTE id;
+	BYTE ingame_id;;
 	BYTE item_posx; //if (g_TurtleMap.mapinfo[posz][posx] == type){g_TurtleMap.mapinfo[posz][posx] = MAP_NOTHING;charinfo[id].fire++; send(mapdata),send(charinfo[id])} 
 	BYTE item_posz;
 	BYTE item_type;
 
 };
+struct TB_GetItem{ //send : type 6 서버 전송-> 클라 수신
+	BYTE size; //
+	BYTE type;
+	BYTE ingame_id;
+	BYTE itemType; //타입에 따라 다른 문구가 출력된다
+};
+
+
+struct TB_UserInfo{ //유저정보 - type: 7
+	BYTE size; //9
+	BYTE type;
+	BYTE id; //인게임 id와는 다르다.
+	BYTE roomID; //디폴트는 0. 안 들어갔다는 뜻
+	BYTE is_guardian;//방장인지 아닌지 
+	BYTE is_ready;
+	//추가
+	BYTE fire;
+	BYTE bomb;
+	BYTE speed;
+
+};
+
+struct TB_Room { //방장 추가(완)
+	BYTE size; //20
+	BYTE type;//8
+	BYTE roomID;
+	BYTE people_count;
+	BYTE game_start;
+	BYTE people_max; //최대 인원 수
+	BYTE made; //만들어진 방인가? 0-안 만들어짐, 1- 만들어짐(공개), 2-만들어짐(비공개)
+	BYTE guardian_pos; //배열에 넣을 때 -1할 것
+	BYTE people_inroom[4];
+	
+	char password[8];
+};
+
+struct TB_join { //들어갈 때 보내는 패킷 9
+	BYTE size;
+	BYTE type;
+	BYTE id;
+	BYTE roomID;
+	char password[8];
+};
+struct TB_joinRE { //방장 추가
+	BYTE size;//9
+	BYTE type;
+	BYTE respond; //0이면 no, 1이면 yes
+	BYTE yourpos; //1,2,3,4 중 하나
+	BYTE guard_pos; //방장 위치
+	BYTE people_inroom[4];
+
+
+};
+struct TB_create { //type:10
+	BYTE size;
+	BYTE type;
+	BYTE id;
+	char password[8];
+};
+
+struct TB_createRE {
+	BYTE size;
+	BYTE type;
+	BYTE can; //가능하면 1, 불가능하면 0
+	BYTE roomid;
+};
+struct TB_GetOut {//클라 전송->서버 수신, 서버 전송할 경우 받은 클라는 강퇴 결과 출력
+	BYTE size;
+	BYTE type;
+	BYTE roomID;
+	BYTE id;
+
+}; //받았을 경우 turtle_room.people_count-=1; turtle_waitroom.roodID = 0; 
 
 #pragma pack(pop)
