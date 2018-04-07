@@ -123,6 +123,9 @@ public class StageManager : MonoBehaviour {
     // 스테이지 번호 배열 테이블
     List<int> m_Stage_Number_List = new List<int>();
 
+    // 스크립트(대사) 테이블
+    List<Script_Data> m_Script_List = new List<Script_Data>();
+
 
     void Awake()
     {
@@ -175,8 +178,9 @@ public class StageManager : MonoBehaviour {
         // 설정된 번호를 받아서 맵 생성!
         Create_Map(m_Stage_Number_List[m_Current_Stage_index_Count]);
 
-        
-            
+        // 대사 받아오기!
+        //m_Script_List = CSV_Manager.GetInstance().Get_Script_List(스크립트ID);
+
 
         // 시간 설정
         if (m_Stage_Time_Limit == MAP.NOT_SET)

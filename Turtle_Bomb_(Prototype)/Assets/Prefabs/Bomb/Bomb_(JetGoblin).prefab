@@ -254,6 +254,8 @@ MonoBehaviour:
     type: 2}
   m_Boom_Effect: {fileID: 1643248117883948, guid: 3de82f4a511476c4fb7221fa8808e109,
     type: 2}
+  m_Explosion_Range: {fileID: 1848196084621122, guid: d3b9f33039bf53e4581d800d8270cd86,
+    type: 2}
   m_Whose_Bomb: {fileID: 0}
   m_Whose_Bomb_Type: 0
   m_isKicked: 0

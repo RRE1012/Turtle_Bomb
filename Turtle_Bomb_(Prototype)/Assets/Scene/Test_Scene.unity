@@ -1130,12 +1130,6 @@ Transform:
   m_PrefabParentObject: {fileID: 4224070052687576, guid: 09ea4848109adf84b83ed846ca9eee1d,
     type: 2}
   m_PrefabInternal: {fileID: 1513175459}
---- !u!114 &188233526 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114470768313338446, guid: 70136da78ae65f74988b74da74edf8e5,
-    type: 2}
-  m_PrefabInternal: {fileID: 839385271}
-  m_Script: {fileID: 11500000, guid: f5c4c8f379b511b4a9dc7f3516c98fe9, type: 3}
 --- !u!4 &197504161 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4224070052687576, guid: 09ea4848109adf84b83ed846ca9eee1d,
@@ -4209,7 +4203,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4851728602094650, guid: b8c5e5d4c870f544897b1d3935cec39c, type: 2}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b8c5e5d4c870f544897b1d3935cec39c, type: 2}
@@ -10619,6 +10613,14 @@ MonoBehaviour:
   itemGetSound: {fileID: 8300000, guid: a61c0cfb36339c444a94eebb55bb46f8, type: 3}
   explodeSound: {fileID: 8300000, guid: d852cd95d7a126e40bfc90fd67959ff6, type: 3}
   bombSetSound: {fileID: 8300000, guid: 39a4eb58f25126c4ea2d7766d6fcb057, type: 3}
+  m_Goblin_Idle_Sound: {fileID: 0}
+  m_Goblin_Attack_Sound: {fileID: 0}
+  m_Goblin_Dead_Sound: {fileID: 0}
+  m_Boss_Goblin_Throw_Sound: {fileID: 0}
+  m_Boss_Goblin_Fall_Sound: {fileID: 0}
+  m_Boss_Goblin_Dead_Sound: {fileID: 0}
+  m_Boss_Goblin_Hurt_Sound: {fileID: 0}
+  m_Boss_Goblin_Wall_Crush_Sound: {fileID: 0}
   bgmSource: {fileID: 213020379}
 --- !u!82 &1352371904
 AudioSource:
@@ -11002,12 +11004,21 @@ MonoBehaviour:
   m_SCT: {fileID: 1719672550}
   m_GIT: {fileID: 1136285143}
   m_TLT: {fileID: 1440054188}
+  m_InBushImage: {fileID: 0}
+  m_PushButton: {fileID: 0}
+  m_Set_Bomb_Button: {fileID: 0}
+  m_Throw_Bomb_Button: {fileID: 0}
   ani: {fileID: 1440054187}
   m_Activated_Star_Texture: {fileID: 2800000, guid: 3d667fd1ce1880546beea94b4be9e2f8,
     type: 3}
   m_Star_Image1: {fileID: 1709241054}
   m_Star_Image2: {fileID: 280379172}
   m_Star_Image3: {fileID: 1972816323}
+  m_MissionText: []
+  m_Mission_Star_Image1: {fileID: 0}
+  m_Mission_Star_Image2: {fileID: 0}
+  m_Mission_Star_Image3: {fileID: 0}
+  m_Text_StageNum: {fileID: 0}
 --- !u!114 &1385786065
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11072,8 +11083,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1385786062}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 308.5, y: 173.5, z: 0}
-  m_LocalScale: {x: 0.77125, y: 0.77125, z: 0.77125}
+  m_LocalPosition: {x: 483, y: 267.5, z: 0}
+  m_LocalScale: {x: 1.2075, y: 1.2075, z: 1.2075}
   m_Children:
   - {fileID: 985700760}
   - {fileID: 1441597327}
@@ -12507,7 +12518,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 188233526}
+      - m_Target: {fileID: 0}
         m_MethodName: SetBomb
         m_Mode: 1
         m_Arguments:

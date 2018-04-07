@@ -17,6 +17,13 @@ public class Bomb : MonoBehaviour
     public GameObject m_Flame;
     public GameObject m_Flame_Remains;
     public GameObject m_Boom_Effect;
+    public GameObject m_Explosion_Range;
+
+    GameObject m_Range_Base;
+    List<GameObject> m_Range_N = new List<GameObject>();
+    List<GameObject> m_Range_S = new List<GameObject>();
+    List<GameObject> m_Range_W = new List<GameObject>();
+    List<GameObject> m_Range_E = new List<GameObject>();
 
     public static Bomb c_Bomb;
 
@@ -94,19 +101,27 @@ public class Bomb : MonoBehaviour
         m_Blocked_S = false;
         m_Blocked_W = false;
         m_Blocked_E = false;
-        
+
+        // 화력범위 생성
+        Set_Explosion_Range();
+        Explosion_Range_Pos_Update();
     }
 
     void Update()
     {
         if (m_BombCountDown > 0.0f)
         {
-            BombAnimate(Time.deltaTime);
+            Explosion_Range_Manager();
+
             if (m_isKicked)
                 Kicked_Bomb_Move();
-            if (m_is_Thrown_Bomb_Moving)
+            else if (m_is_Thrown_Bomb_Moving)
                 Thrown_Bomb_Move();
-            else m_BombCountDown -= Time.deltaTime;
+            else
+            {
+                BombAnimate(Time.deltaTime);
+                m_BombCountDown -= Time.deltaTime;
+            }
         }
 
         //폭발 전 사운드 출력(풀링으로 수정 예정)
@@ -200,8 +215,117 @@ public class Bomb : MonoBehaviour
     // ==================================
 
 
+    // "화력 범위 오브젝트"를 생성
+    void Set_Explosion_Range()
+    {
+        // 정위치
+        m_Range_Base = Instantiate(m_Explosion_Range);
 
+        // 그리고 방향별로 8개씩 생성
+        for (int i = 1; i <= m_FlameCount; ++i)
+        {
+            m_Range_N.Add(Instantiate(m_Explosion_Range));
+            m_Range_S.Add(Instantiate(m_Explosion_Range));
+            m_Range_W.Add(Instantiate(m_Explosion_Range));
+            m_Range_E.Add(Instantiate(m_Explosion_Range));
+        }
+    }
 
+    // "화력 범위 오브젝트"의 위치를 갱신
+    void Explosion_Range_Pos_Update()
+    {
+        m_Range_Base.transform.position = new Vector3(gameObject.transform.position.x, -0.7f, gameObject.transform.position.z);
+
+        for (int i = 1; i <= m_FlameCount; ++i)
+        {
+            m_Range_N[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
+            
+            m_Range_S[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
+            
+            m_Range_W[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
+
+            m_Range_E[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
+        }
+    }
+
+    void Explosion_Range_Manager()
+    {
+        if (m_isKicked || m_is_Thrown_Bomb_Moving)
+        {
+            m_Range_Base.SetActive(false);
+            for (int i = 0; i < m_FlameCount; ++i)
+            {
+                m_Range_N[i].SetActive(false);
+                m_Range_S[i].SetActive(false);
+                m_Range_W[i].SetActive(false);
+                m_Range_E[i].SetActive(false);
+            }
+        }
+
+        else
+        {
+            bool is_blocked_N = false;
+            bool is_blocked_S = false;
+            bool is_blocked_W = false;
+            bool is_blocked_E = false;
+
+            for (int i = 1; i <= m_FlameCount; ++i)
+            {
+                if (!is_blocked_N)
+                {
+                    if (StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].isBlocked == false)
+                    {
+                        m_Range_N[i - 1].SetActive(true);
+                    }
+                    else
+                    {
+                        is_blocked_N = true;
+                        for (int j = i - 1; j < m_FlameCount; ++j)
+                            m_Range_N[j].SetActive(false);
+                    }
+                }
+                if (!is_blocked_S)
+                {
+                    if (StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].isBlocked == false)
+                    {
+                        m_Range_S[i - 1].SetActive(true);
+                    }
+                    else
+                    {
+                        is_blocked_S = true;
+                        for (int j = i - 1; j < m_FlameCount; ++j)
+                            m_Range_S[j].SetActive(false);
+                    }
+                }
+                if (!is_blocked_W)
+                {
+                    if (StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].isBlocked == false)
+                    {
+                        m_Range_W[i - 1].SetActive(true);
+                    }
+                    else
+                    {
+                        is_blocked_W = true;
+                        for (int j = i - 1; j < m_FlameCount; ++j)
+                            m_Range_W[j].SetActive(false);
+                    }
+                }
+                if (!is_blocked_E)
+                {
+                    if (StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].isBlocked == false)
+                    {
+                        m_Range_E[i - 1].SetActive(true);
+                    }
+                    else
+                    {
+                        is_blocked_E = true;
+                        for (int j = i - 1; j < m_FlameCount; ++j)
+                            m_Range_E[j].SetActive(false);
+                    }
+                }
+            }
+        }
+    }
 
 
 
@@ -301,6 +425,21 @@ public class Bomb : MonoBehaviour
                 }
             }
 
+            // 범위 삭제
+            Destroy(m_Range_Base);
+
+            for (int i = 1; i <= m_FlameCount; ++i)
+            {
+                Destroy(m_Range_N[i - 1]);
+                Destroy(m_Range_S[i - 1]);
+                Destroy(m_Range_W[i - 1]);
+                Destroy(m_Range_E[i - 1]);
+            }
+
+            m_Range_N.Clear();
+            m_Range_S.Clear();
+            m_Range_W.Clear();
+            m_Range_E.Clear();
             // MCL 갱신
             StageManager.Update_MCL_isBlocked(m_My_MCL_Index, false);
 
@@ -459,7 +598,7 @@ public class Bomb : MonoBehaviour
 
 
 
-    // 폭탄의 위치와 MCL을 Update
+    // 폭탄의 위치와 MCL, 범위 오브젝트의 위치를 Update
     void Bomb_MCL_And_Position_Update()
     {
         StageManager.Update_MCL_isBlocked(m_My_MCL_Index, false);
@@ -475,6 +614,8 @@ public class Bomb : MonoBehaviour
         }
 
         StageManager.Update_MCL_isBlocked(m_My_MCL_Index, true);
+
+        Explosion_Range_Pos_Update();
     }
     
 }

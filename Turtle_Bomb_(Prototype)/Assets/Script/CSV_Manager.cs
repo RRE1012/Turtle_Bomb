@@ -23,6 +23,12 @@ public struct Object_Spawn_Position_Data
     public int[] Spawn_Node;
 }
 
+public struct Script_Data
+{
+    public int Spawn_Number;
+    public int NPC_ID;
+    public string Script;
+}
 
 
 public class CSV_Manager : MonoBehaviour {
@@ -40,6 +46,7 @@ public class CSV_Manager : MonoBehaviour {
     public TextAsset m_Object_Table_csvFile;
     public TextAsset m_Object_Spawn_Table_csvFile;
     public TextAsset m_Stage_Table_csvFile;
+    public TextAsset m_Script_Table_csvFile;
 
     protected string[] m_data;
     protected string[] m_stringList;
@@ -196,5 +203,37 @@ public class CSV_Manager : MonoBehaviour {
         }
 
         return List;
+    }
+
+
+    // 스크립트(대사) 목록
+    public List<Script_Data> Get_Script_List(int scriptID)
+    {
+        Script_Data data = new Script_Data();
+        List<Script_Data> Script_List = new List<Script_Data>();
+
+        // csv 파일의 길이를 세어준다.
+        int file_Line_Count = Counting_EOF(m_Script_Table_csvFile);
+
+        m_Read_Text = m_Script_Table_csvFile.text;
+        m_stringList = m_Read_Text.Split('\n');
+
+        // 3 부터 시작
+        for (int i = 3; i < file_Line_Count; ++i)
+        {
+            m_data = m_stringList[i].Split(',');
+
+            // 스테이지 번호를 확인한다.
+            if (System.Convert.ToInt32(m_data[1]) == scriptID)
+            {
+                // 입력한 값과 일치한다면 필요한 데이터를 리스트에 삽입.
+                data.Spawn_Number = System.Convert.ToInt32(m_data[2]);
+                data.NPC_ID = System.Convert.ToInt32(m_data[3]);
+                data.Script = m_data[4];
+                Script_List.Add(data);
+            }
+        }
+
+        return Script_List;
     }
 }

@@ -50,25 +50,25 @@ public class Box : MonoBehaviour {
     {
         if (m_Object_Player != null)
         {
-            if (Random.Range(0.0f, 10.0f) > 5.5f)
+            if (Random.Range(0, 100) > 51)
             {
-                float dropRate = Random.Range(0.0f, 20.0f);
-                if (dropRate < 5.0f)
+                int dropRate = Random.Range(0, 100);
+                if (dropRate < 25)
                 {
                     m_Object_FireItem.transform.position = new Vector3(transform.position.x, 0.6f, transform.position.z);
                     Instance_Item = Instantiate(m_Object_FireItem);
                 }
-                else if (dropRate >= 5.0f && dropRate < 10.0f)
+                else if (dropRate >= 25 && dropRate < 55)
                 {
                     m_Object_BombItem.transform.position = new Vector3(transform.position.x, 0.6f, transform.position.z);
                     Instance_Item = Instantiate(m_Object_BombItem);
                 }
-                else if (dropRate >= 10.0f && dropRate < 15.0f)
+                else if (dropRate >= 55 && dropRate < 80)
                 {
                     m_Object_SpeedItem.transform.position = new Vector3(transform.position.x, 0.6f, transform.position.z);
                     Instance_Item = Instantiate(m_Object_SpeedItem);
                 }
-                else if (dropRate >= 15.0f && dropRate < 17.5f)
+                else if (dropRate >= 80 && dropRate < 90)
                 {
                     m_Object_KickItem.transform.position = new Vector3(transform.position.x, 0.6f, transform.position.z);
                     Instance_Item = Instantiate(m_Object_KickItem);

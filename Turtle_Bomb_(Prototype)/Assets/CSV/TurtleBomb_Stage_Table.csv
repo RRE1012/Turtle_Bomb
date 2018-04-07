@@ -1,4 +1,4 @@
-ID,Description,Stage_Pattern_ID_List,Stage_Pattern_ID_List,Stage_Pattern_ID_List
+﻿ID,Description,Stage_Pattern_ID_List,Stage_Pattern_ID_List,Stage_Pattern_ID_List
 all,design,0,1,2
 int32,string,array<int32>,array<int32>,array<int32>
 1,forest ,1,0,0
