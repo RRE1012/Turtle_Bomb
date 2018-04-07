@@ -1,8 +1,4 @@
 sceneSetups:
-<<<<<<< HEAD
-- path: Assets/Scene/Mode_Adventure_Game_Stage.unity
-=======
 - path: Assets/Scene/New_Title.unity
->>>>>>> origin/master
   isLoaded: 1
   isActive: 1

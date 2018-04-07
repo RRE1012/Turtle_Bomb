@@ -35,6 +35,7 @@ public class SceneSwaps : MonoBehaviour {
     // "모드 선택 화면"으로 이동
     public void GoTo_ModeSelect_Scene()
     {
+        Debug.Log("Clicked");
         SceneManager.LoadScene(1);
     }
 
