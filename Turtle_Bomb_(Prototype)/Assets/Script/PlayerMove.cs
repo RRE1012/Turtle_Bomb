@@ -102,7 +102,7 @@ public class PlayerMove : MonoBehaviour {
             if (!m_isPushing)
             {
                 Move();
-                //BodyRotation();
+                BodyRotation();
             }
             else
                 Pushing();

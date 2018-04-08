@@ -33,6 +33,10 @@ public class SceneSwaps : MonoBehaviour {
     }
 
     // "모드 선택 화면"으로 이동
+    public void GoTo_ModeSelect_After2sec()
+    {
+        Invoke("GoTo_ModeSelect_Scene", 2.0f);
+    }
     public void GoTo_ModeSelect_Scene()
     {
         Debug.Log("Clicked");
@@ -40,6 +44,7 @@ public class SceneSwaps : MonoBehaviour {
     }
 
     // "모험모드 스테이지 선택 화면"으로 이동
+
     public void GoTo_Mode_Adventure_StageSelect_Scene()
     {    
         SceneManager.LoadScene(2);
