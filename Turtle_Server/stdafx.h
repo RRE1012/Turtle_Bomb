@@ -33,6 +33,12 @@ using namespace std;
 #define CASE_BOMB_EX 3
 #define CASE_JOINROOM 9
 #define CASE_CREATEROOM 10
+#define CASE_READY 11
+#define CASE_STARTGAME 12
+#define CASE_OUTROOM 13
+#define CASE_FORCEOUTROOM 14
+
+
 #define MAX_EVENT_SIZE 64
 
 #define MAP_BOMB 1
@@ -161,12 +167,13 @@ struct TB_ID {//type:5
 struct TB_ItemGet { //type:6
 	BYTE size; //
 	BYTE type;
-	BYTE ingame_id;;
+	BYTE ingame_id;
 	BYTE item_posx; //if (g_TurtleMap.mapinfo[posz][posx] == type){g_TurtleMap.mapinfo[posz][posx] = MAP_NOTHING;charinfo[id].fire++; send(mapdata),send(charinfo[id])} 
 	BYTE item_posz;
 	BYTE item_type;
 
 };
+
 struct TB_GetItem{ //send : type 6 서버 전송-> 클라 수신
 	BYTE size; //
 	BYTE type;
@@ -188,6 +195,7 @@ struct TB_UserInfo{ //유저정보 - type: 7
 	BYTE speed;
 
 };
+//프로토콜이 아닌 구조체에 맵데이터를 넣은 방 구조체 작성
 
 struct TB_Room { //방장 추가(완)
 	BYTE size; //20
@@ -203,22 +211,33 @@ struct TB_Room { //방장 추가(완)
 	char password[8];
 };
 
-struct TB_join { //들어갈 때 보내는 패킷 9
+
+
+struct TB_Refresh { //type:?
 	BYTE size;
 	BYTE type;
+	BYTE id;
+	BYTE roomID;
+};
+
+
+struct TB_join { //들어갈 때 보내는 패킷 9
+	BYTE size;
+	BYTE type;//9
 	BYTE id;
 	BYTE roomID;
 	char password[8];
 };
 struct TB_joinRE { //방장 추가
-	BYTE size;//9
+	BYTE size;//10
 	BYTE type;
 	BYTE respond; //0이면 no, 1이면 yes
+	BYTE my_room_num;
 	BYTE yourpos; //1,2,3,4 중 하나
 	BYTE guard_pos; //방장 위치
 	BYTE people_inroom[4];
 
-
+	
 };
 struct TB_create { //type:10
 	BYTE size;
@@ -233,12 +252,51 @@ struct TB_createRE {
 	BYTE can; //가능하면 1, 불가능하면 0
 	BYTE roomid;
 };
-struct TB_GetOut {//클라 전송->서버 수신, 서버 전송할 경우 받은 클라는 강퇴 결과 출력
+struct TB_GameStart {
+	BYTE size;//4
+	BYTE type;//12
+	BYTE roomID;
+	BYTE my_pos;
+};
+struct TB_GameStartRE {
 	BYTE size;
 	BYTE type;
+	BYTE startTB;//1이면 시작,0이면 땡
+};
+struct TB_GetOut {//클라 전송->서버 수신, 서버 전송할 경우 받은 클라는 강퇴 결과 출력
+	BYTE size;
+	BYTE type;//14
 	BYTE roomID;
-	BYTE id;
+	BYTE position;
 
 }; //받았을 경우 turtle_room.people_count-=1; turtle_waitroom.roodID = 0; 
+struct TB_RoomOut {//방에서 나갈 때
+	BYTE size;//4
+	BYTE type;//13
+	BYTE roomID;
+	BYTE my_pos;
 
+};
+struct TB_GetOUTRE {
+	BYTE size;
+	BYTE type;//14
+};
+struct TB_RoomOutRE {
+	BYTE size;
+	BYTE type;
+	BYTE can; //가능하면 1, 불가능하면 0
+	
+};
+struct TB_Room_Data { //방장 추가(완)
+
+	BYTE roomID;
+	BYTE people_count;
+	BYTE game_start;
+	BYTE people_max; //최대 인원 수
+	BYTE made; //만들어진 방인가? 0-안 만들어짐, 1- 만들어짐(공개), 2-만들어짐(비공개)
+	BYTE guardian_pos; //배열에 넣을 때 -1할 것
+	BYTE people_inroom[4];
+	TB_Map map;
+	char password[8];
+};
 #pragma pack(pop)

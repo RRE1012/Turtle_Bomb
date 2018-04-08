@@ -11,6 +11,7 @@ WSAEVENT EventArray[WSA_MAXIMUM_WAIT_EVENTS];//WSAEVENT의 배열
 
 
 TB_Map g_TurtleMap; //맵 정보2
+TB_Map g_TurtleMap2[20]; //맵 정보2
 
 TB_CharPos char_info[4]; //4명의 캐릭터정보를 담아둘 캐릭터 정보 ->방 정보가 추가될 경우 2차원배열로 활용할 예정
 TB_CharPos ingame_Char_Info[20][4]; //4명의 캐릭터정보를 담아둘 캐릭터 정보 ->방 정보가 추가될 경우 2차원배열로 활용할 예정
@@ -199,7 +200,7 @@ int main(int argc, char* argv[]) {
 				retval = send(client_sock, (char*)&tempid, sizeof(TB_ID), 0); //ID 전송.
 				printf("전송-%d번째 -ID : %d\n", i, g_total_member);
 
-				g_total_member++; // 현재 접속자 수 체크
+				 // 현재 접속자 수 체크
 				
 				retval = send(client_sock, (char*)&room, sizeof(room), 0); //초기화된 맵정보 클라이언트에게 전송
 				printf("방정보 전송 :%d바이트\n", retval);
@@ -225,7 +226,7 @@ int main(int argc, char* argv[]) {
 				
 				//소켓 정보 추가
 				AddSOCKETInfo(client_sock);
-
+				g_total_member++;
 				retval = WSAEventSelect(client_sock, EventArray[g_TotalSockets - 1], FD_READ | FD_WRITE | FD_CLOSE);
 				if (retval == SOCKET_ERROR)
 					err_quit("WSAEventSelect()-client");
@@ -276,14 +277,14 @@ int main(int argc, char* argv[]) {
 
 
 
-					if (ptr->remainbytes >= 9) 
+					if (ptr->remainbytes >= 4) 
 					{
 						switch (c_buf[1]) {
 						case CASE_POS: //CharPos
 							if (ptr->remainbytes >= 22) {
 								TB_CharPos* pos = reinterpret_cast<TB_CharPos*>(c_buf);
 								//필수 -
-								BYTE tempid = pos->ingame_id-1;
+								BYTE tempid = pos->ingame_id;
 								char_info[tempid].anistate = pos->anistate;
 								char_info[tempid].is_alive = pos->is_alive;
 								char_info[tempid].posx = pos->posx;
@@ -349,42 +350,51 @@ int main(int argc, char* argv[]) {
 						case CASE_JOINROOM:
 							if (ptr->remainbytes >= 12) {
 								TB_join* joininfo = reinterpret_cast<TB_join*>(c_buf);
-								byte temproomid = joininfo->roomID;
+								byte temproomid = joininfo->roomID;//방id 변수
 								printf("ID:%d\n", temproomid);
+
 								if (temproomid != 0) {
 									bool bool_a = room[temproomid - 1].people_count < room[temproomid - 1].people_max;
 									bool bool_b = room[temproomid - 1].game_start != 1;
 									bool bool_c = room[temproomid - 1].made == 1;
 									if (bool_a&&bool_b&&bool_c) {
-										byte tempcount = room[temproomid - 1].people_count;
+										byte tempcount = room[temproomid - 1].people_count+1;
 										byte tempguard = room[temproomid - 1].guardian_pos;
 										room[temproomid - 1].people_count += 1;
 										for (int j = 0; j < 4; ++j) {
 											if (room[temproomid - 1].people_inroom[j] == 0) {
 												room[temproomid - 1].people_inroom[j] = joininfo->id;
-												tempcount = j + 1;
+												printf("%d가 %d번방에 들어감\n", joininfo->id, joininfo->roomID);
 												break;
 											}
 										}
 										ptr->roomID = temproomid;
-										TB_joinRE tempjoin = { 9,9,1,tempcount,tempguard };
+										TB_joinRE tempjoin = { 10,9,1,temproomid,tempcount,tempguard };
 										for (int j = 0; j < 4; ++j)
 											tempjoin.people_inroom[j] = room[temproomid - 1].people_inroom[j];
-										/*for (int j = 0; j < g_TotalSockets; ++j) {
+										for (int j = 0; j < g_TotalSockets; ++j) {
 											if (SocketInfoArray[j].m_connected) {
-												printf("Send size : %d\n", g_TurtleMap.size);
+												if (SocketInfoArray[j].roomID == 0) {
+													//printf("Send size : %d\n", g_TurtleMap.size);
+													retval = send(SocketInfoArray[j].sock, (char*)&room, sizeof(room), 0); //초기화된 맵정보 클라이언트에게 전송
+												}
+												if (SocketInfoArray[j].roomID == temproomid) {
+													//printf("Send size : %d\n", g_TurtleMap.size);
 
-												retval = send(SocketInfoArray[j].sock, (char*)&tempjoin, sizeof(tempjoin), 0);
-												//printf("Retval size : %d\n", retval);
-												//printf("Bomb가 추가된 맵정보값 전송!\n");
+													retval = send(SocketInfoArray[j].sock, (char*)&room[temproomid-1], sizeof(TB_Room), 0); //초기화된 맵정보 클라이언트에게 전송
+												}
+
+												//retval = send(SocketInfoArray[j].sock, (char*)&tempjoin, sizeof(tempjoin), 0);
+												
 											}
 
-										}*/
+										}
+										
 										retval = send(ptr->sock, (char*)&tempjoin, sizeof(tempjoin), 0);
 										printf("send yes!! %d\n",retval);
 									}
 									else {
-										TB_joinRE tempjoin = { 9,9,0 };
+										TB_joinRE tempjoin = { 10,9,0 };
 										retval = send(ptr->sock, (char*)&tempjoin, sizeof(tempjoin), 0);
 										printf("send no! %d\n", retval);
 									}
@@ -398,15 +408,144 @@ int main(int argc, char* argv[]) {
 						case CASE_CREATEROOM:
 							if (ptr->remainbytes >= 11) {
 								TB_create* createinfo = reinterpret_cast<TB_create*>(c_buf);
-								TB_createRE tempa = { 3,10,0 };
-								for (auto roominfo : room) {
-									if (roominfo.made == 0) {
+								TB_createRE tempa = { 4,10,0 };
+								for (int a = 0; a < 20;++a) {
+									if (room[a].made == 0) {
 										tempa.can = 1;
-										tempa.roomid = roominfo.roomID;
+										tempa.roomid = room[a].roomID;
+										room[a].guardian_pos = 1;
+										room[a].made = 1;
+										room[a].people_count = 1;
+										room[a].people_inroom[0] = createinfo->id;
+										ptr->roomID = room[a].roomID;
+										printf("Created No.%d Room!!\n", ptr->roomID);
 										break;
 									}
 								}
+								for (auto roominfo : room) {
+									if (roominfo.made == 1)
+										printf("%d(Made) ", roominfo.roomID);
+								}
 								retval = send(ptr->sock, (char*)&tempa, sizeof(TB_createRE), 0);
+								for (int j = 0; j < g_TotalSockets; ++j) {
+									if (SocketInfoArray[j].m_connected) {
+										if (SocketInfoArray[j].roomID == 0) {
+											//printf("Send size : %d\n", g_TurtleMap.size);
+											retval = send(SocketInfoArray[j].sock, (char*)&room, sizeof(room), 0); //초기화된 맵정보 클라이언트에게 전송
+										}
+									}
+								}
+								ptr->remainbytes -= 11;
+								memcpy(ptr->buf, c_buf + 11, ptr->remainbytes);
+								memset(c_buf, 0, sizeof(c_buf));
+								memcpy(c_buf, ptr->buf, sizeof(ptr->buf));
+							}
+							break;
+						case CASE_READY:
+							break;
+						case CASE_STARTGAME:
+							if (ptr->remainbytes >= 4) {
+								
+								TB_GameStart* startinfo = reinterpret_cast<TB_GameStart*>(c_buf);
+								
+								byte temproomid = startinfo->roomID;
+								printf("Get Start Data from No.%d Room\n", startinfo->roomID);
+								bool check_guard = (room[temproomid-1].guardian_pos == startinfo->my_pos);
+								printf("Start Check guardian_pos : %d == %d?\n", room[temproomid - 1].guardian_pos, startinfo->my_pos);
+								//bool check_all_ready= 전원 준비상태인가
+								if (check_guard) {
+									printf("True");
+									for (int j = 0; j < g_TotalSockets; ++j) {
+										//폭탄을 받았으므로 갱신된 맵정보를 접속해있는 유저에게 전송
+										if (SocketInfoArray[j].m_connected) {
+											printf("Connected\n");
+											if (SocketInfoArray[j].roomID == temproomid) {
+												printf("Connected\n");
+												TB_GameStartRE tempRE = { 3,12,1 };
+												retval = send(SocketInfoArray[j].sock, (char*)&tempRE, sizeof(TB_GameStartRE), 0);
+												printf("Retval size : %d\n", retval);
+												retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap, sizeof(TB_Map), 0); //초기화된 맵정보 클라이언트에게 전송
+												printf("맵정보 전송 :%d바이트\n", retval);
+												
+											}
+										}
+									}
+								}
+								else {
+									TB_GameStartRE tempRE = { 3,12,0 };
+									retval = send(ptr->sock, (char*)&tempRE, sizeof(TB_GameStartRE), 0);
+									printf("Rejected size : %d\n", retval);
+								}
+								ptr->remainbytes -= 4;
+								memcpy(ptr->buf, c_buf + 4, ptr->remainbytes);
+								memset(c_buf, 0, sizeof(c_buf));
+								memcpy(c_buf, ptr->buf, sizeof(ptr->buf));
+							}
+							break;
+						case CASE_OUTROOM:
+							if (ptr->remainbytes >= 4) {
+								TB_RoomOut* tempRO = reinterpret_cast<TB_RoomOut*>(c_buf);
+								byte temproomid = tempRO->roomID;
+								byte temproompos = tempRO->my_pos;
+								TB_RoomOutRE tempRE = { 3,13,1 };
+								room[temproomid - 1].people_count -= 1;
+								room[temproomid - 1].people_inroom[temproompos - 1] = 0;
+								if (room[temproomid - 1].people_count <= 0) {
+									room[temproomid - 1].made = 0;
+								}
+								
+								for (int j = 0; j < g_TotalSockets; ++j) {
+									if (SocketInfoArray[j].m_connected) {
+										if (SocketInfoArray[j].roomID == temproomid) {
+											//printf("Send size : %d\n", g_TurtleMap.size);
+											retval = send(SocketInfoArray[j].sock, (char*)&room[temproomid - 1], sizeof(TB_Room), 0); //초기화된 맵정보 클라이언트에게 전송
+										}
+
+										if (SocketInfoArray[j].roomID == 0) {
+											retval = send(SocketInfoArray[j].sock, (char*)&room, sizeof(room), 0); //초기화된 맵정보 클라이언트에게 전송
+										}
+									}
+
+								}
+								ptr->roomID = 0;
+								retval = send(ptr->sock, (char*)&tempRE, sizeof(TB_RoomOutRE), 0);
+								retval = send(ptr->sock, (char*)&room, sizeof(room),0);
+								
+							}
+							break;
+						case CASE_FORCEOUTROOM:
+							if (ptr->remainbytes >= 4) {
+								TB_GetOut* tempFO = reinterpret_cast<TB_GetOut*>(c_buf);
+								byte temproomid = tempFO->roomID;
+								byte temproompos = tempFO->position;
+								printf("강퇴 요청자 :ID:%d\n", ptr->id);
+								room[temproomid - 1].people_count -= 1;
+								byte tempid = room[temproomid - 1].people_inroom[temproompos - 1];
+								room[temproomid - 1].people_inroom[temproompos - 1] = 0;
+
+								TB_GetOUTRE tempRE = { 2,14 };
+								for (int j = 0; j < g_TotalSockets; ++j) {
+									if (SocketInfoArray[j].m_connected) {
+										if (SocketInfoArray[j].id == tempid) {
+											//강퇴당했다!
+											printf("%d가 강퇴당함!!\n", SocketInfoArray[j].id);
+											retval = send(SocketInfoArray[j].sock, (char*)&tempRE, sizeof(TB_GetOUTRE), 0);
+											retval = send(SocketInfoArray[j].sock, (char*)&room, sizeof(room), 0);
+										}
+										if (SocketInfoArray[j].roomID == temproomid) {
+											//printf("Send size : %d\n", g_TurtleMap.size);
+											retval = send(SocketInfoArray[j].sock, (char*)&room[temproomid - 1], sizeof(TB_Room), 0); //초기화된 맵정보 클라이언트에게 전송
+										}
+
+										
+									}
+
+								}
+								
+
+								
+								
+								
 
 							}
 							break;
@@ -432,6 +571,7 @@ int main(int argc, char* argv[]) {
 				RemoveSocketInfo(i);
 			}
 		}
+
 	}
 	
 
@@ -503,6 +643,7 @@ BOOL AddSOCKETInfo(SOCKET sock) {
 	ptr->speed = 2;
 	ptr->is_guardian = 0;
 	ptr->is_ready = 0;
+	
 	EventArray[g_TotalSockets] = hEvent;
 	++g_TotalSockets;
 	printf("등록완료\n");
@@ -600,9 +741,9 @@ void ArrayMap() {
 	room[0].made = 1;
 	room[2].made = 1;
 	room[10].made = 1;
+	room[0].people_inroom[2] = 25;
+	room[0].guardian_pos = 3;
 	
-	room[3].people_inroom[2] = 25;
-	room[3].guardian_pos = 3;
 	char_info[0].ingame_id = 0;
 	char_info[1].ingame_id = 1;
 	char_info[2].ingame_id = 2;
