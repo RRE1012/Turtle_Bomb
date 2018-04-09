@@ -31,12 +31,15 @@ using namespace std;
 #define CASE_POS 1
 #define CASE_BOMB 2
 #define CASE_BOMB_EX 3
+#define CASE_ITEM_GET 6
+#define CASE_ID 5
 #define CASE_JOINROOM 9
 #define CASE_CREATEROOM 10
 #define CASE_READY 11
 #define CASE_STARTGAME 12
 #define CASE_OUTROOM 13
 #define CASE_FORCEOUTROOM 14
+
 
 
 #define MAX_EVENT_SIZE 64
@@ -70,6 +73,10 @@ using namespace std;
 #define TURTLE_ANI_HIDE 2
 #define TURTLE_ANI_DEAD 3
 
+#define ITEM_BOMB 0
+#define ITEM_FIRE 1
+#define ITEM_SPEED 2
+#define ITEM_SUPER 3
 
 
 #pragma pack(push,1)
@@ -116,6 +123,12 @@ struct Socket_Info {
 
 
 
+struct GameCharInfo {
+	BYTE speed;
+	BYTE fire;
+	BYTE bomb;
+
+};
 
 struct TB_CharPos {//type:1
 	BYTE size; //22
@@ -123,7 +136,7 @@ struct TB_CharPos {//type:1
 	BYTE ingame_id;
 	BYTE anistate;
 	BYTE is_alive;
-	BYTE speed;
+	BYTE room_id;
 	BYTE fire;
 	BYTE bomb;
 	BYTE can_throw;
@@ -135,19 +148,21 @@ struct TB_CharPos {//type:1
 };
 
 struct TB_BombPos { //type:2
-	BYTE size;//16
+	BYTE size;//17
 	BYTE type;
 	BYTE ingame_id;
 	BYTE firepower; //화력
+	BYTE room_num;
 	int posx;
 	int posz;
 	float settime;
 };
 
 struct TB_BombExplode { //type:3
-	BYTE size;//11
+	BYTE size;//12
 	BYTE type;
 	BYTE firepower;
+	BYTE room_id;
 	int posx;
 	int posz;
 
@@ -165,20 +180,22 @@ struct TB_ID {//type:5
 };
 
 struct TB_ItemGet { //type:6
-	BYTE size; //
-	BYTE type;
+	BYTE size; //13
+	BYTE type;//6
+	BYTE room_id;
 	BYTE ingame_id;
-	BYTE item_posx; //if (g_TurtleMap.mapinfo[posz][posx] == type){g_TurtleMap.mapinfo[posz][posx] = MAP_NOTHING;charinfo[id].fire++; send(mapdata),send(charinfo[id])} 
-	BYTE item_posz;
 	BYTE item_type;
-
+	int posx;
+	int posz;
 };
 
 struct TB_GetItem{ //send : type 6 서버 전송-> 클라 수신
-	BYTE size; //
-	BYTE type;
+	BYTE size; //4
+	BYTE type;//6
+	
 	BYTE ingame_id;
-	BYTE itemType; //타입에 따라 다른 문구가 출력된다
+	BYTE itemType; //타입에 따라 다른 문구가 출력된다 + 능력이 오른다.
+	
 };
 
 

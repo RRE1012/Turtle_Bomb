@@ -11,7 +11,7 @@ WSAEVENT EventArray[WSA_MAXIMUM_WAIT_EVENTS];//WSAEVENT의 배열
 
 
 TB_Map g_TurtleMap; //맵 정보2
-TB_Map g_TurtleMap2[20]; //맵 정보2
+TB_Map g_TurtleMap_room[20]; //맵 정보2
 
 TB_CharPos char_info[4]; //4명의 캐릭터정보를 담아둘 캐릭터 정보 ->방 정보가 추가될 경우 2차원배열로 활용할 예정
 TB_CharPos ingame_Char_Info[20][4]; //4명의 캐릭터정보를 담아둘 캐릭터 정보 ->방 정보가 추가될 경우 2차원배열로 활용할 예정
@@ -37,7 +37,7 @@ DWORD g_prevTime2; //GetTickCount()를 활용한 시간을 체크할 때 사용할 함수
 
 void ArrayMap(); //맵 초기화 및 정렬 함수
 
-void CalculateMap(int,int,byte);
+void CalculateMap(int,int,byte,byte);
 
 int main(int argc, char* argv[]) {
 
@@ -98,24 +98,28 @@ int main(int argc, char* argv[]) {
 					if (bomb->settime >= 2.0f) {
 						int tempx = bomb->posx;
 						int tempz = bomb->posz;
-						g_TurtleMap.mapInfo[bomb->posx][bomb->posz] = MAP_NOTHING;
-						CalculateMap(bomb->posx, bomb->posz, bomb->firepower);
 						
-						TB_BombExplode temp_bomb = { 11,3, bomb->firepower,tempx ,tempz };
+						BYTE roomid = bomb->room_num;
+						g_TurtleMap_room[roomid - 1].mapInfo[bomb->posx][bomb->posz] = MAP_NOTHING;
+						CalculateMap(bomb->posx, bomb->posz, bomb->firepower, roomid);
+						
+						TB_BombExplode temp_bomb = { 12,3, bomb->firepower,roomid,tempx ,tempz };
 						g_TurtleMap.size = 227;
 						for (int j = 0; j < g_TotalSockets; ++j) {
 							
 							//printf("폭발할 폭탄 전송!!!\n");
 							
 							if (SocketInfoArray[j].m_connected) {
-								printf("Send size : %d\n",temp_bomb.size);
+								if (SocketInfoArray[j].roomID == roomid) {
+									//printf("Send size : %d\n", temp_bomb.size);
 
-								retval = send(SocketInfoArray[j].sock, (char*)&temp_bomb, sizeof(TB_BombExplode), 0);
-								printf("Retval size : %d\n", retval);
-								printf("Send size : %d\n", g_TurtleMap.size);
+									retval = send(SocketInfoArray[j].sock, (char*)&temp_bomb, sizeof(TB_BombExplode), 0);
+									printf("Retval size : %d\n", retval);
+									//printf("Send size : %d\n", g_TurtleMap.size);
 
-								retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap, sizeof(TB_Map), 0);
-								printf("Retval size : %d\n", retval);
+									retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap_room[roomid - 1], sizeof(TB_Map), 0);
+									printf("Retval size : %d\n", retval);
+								}
 							}
 
 						}
@@ -142,24 +146,28 @@ int main(int argc, char* argv[]) {
 					//cout << "EventGet " << bomb->settime << "  ";
 					if (bomb->settime >= 2.0f)
 					{
-						g_TurtleMap.mapInfo[bomb->posx][bomb->posz] = MAP_NOTHING;
-						CalculateMap(bomb->posx, bomb->posz, bomb->firepower);
+						BYTE temproom = bomb->room_num;
+						g_TurtleMap_room[temproom-1].mapInfo[bomb->posx][bomb->posz] = MAP_NOTHING;
+						CalculateMap(bomb->posx, bomb->posz, bomb->firepower, temproom);
 						int tempx = bomb->posx;
 						int tempz = bomb->posz;
-						TB_BombExplode temp_bomb = { 11,3, bomb->firepower,tempx ,tempz };
-						g_TurtleMap.size = 227;
+						
+						TB_BombExplode temp_bomb = { 12,3, bomb->firepower,temproom,tempx ,tempz };
+						g_TurtleMap_room[temproom - 1].size = 227;
 						for (int j = 0; j < g_TotalSockets; ++j)
 						{
 
 							printf("폭발할 폭탄 전송!!!\n");
 							if (SocketInfoArray[j].m_connected) {
-								printf("Send size : %d\n", temp_bomb.size);
-								retval = send(SocketInfoArray[j].sock, (char*)&temp_bomb, sizeof(TB_BombExplode), 0);
-								printf("Retval size : %d\n", retval);
-								printf("Send size : %d\n", g_TurtleMap.size);
+								if (SocketInfoArray[j].roomID == temproom) {
+									//printf("Send size : %d\n", temp_bomb.size);
+									retval = send(SocketInfoArray[j].sock, (char*)&temp_bomb, sizeof(TB_BombExplode), 0);
+									//printf("Retval size : %d\n", retval);
+									//printf("Send size : %d\n", g_TurtleMap.size);
 
-								retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap, sizeof(TB_Map), 0);
-								printf("Retval size : %d\n", retval);
+									retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap_room[temproom - 1], sizeof(TB_Map), 0);
+									//printf("Retval size : %d\n", retval);
+								}
 							}
 						}
 
@@ -196,7 +204,7 @@ int main(int argc, char* argv[]) {
 				}
 				printf("[TCP 서버] 클라이언트 접속 : IP 주소 =%s, 포트번호=%d\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 				
-				TB_ID tempid = {3,5,g_total_member};
+				TB_ID tempid = {3,CASE_ID,g_total_member};
 				retval = send(client_sock, (char*)&tempid, sizeof(TB_ID), 0); //ID 전송.
 				printf("전송-%d번째 -ID : %d\n", i, g_total_member);
 
@@ -266,7 +274,7 @@ int main(int argc, char* argv[]) {
 					else 
 					{
 						memcpy(ptr->buf + ptr->remainbytes, c_buf, retval);
-						printf("%d바이트 수신 !!\n", retval);
+						//printf("%d바이트 수신 !!\n", retval);
 						//c_buf[retval] = '\0';
 						//ptr->buf[retval + ptr->remainbytes] = '\0';
 						//ptr->recvbytes = ptr->recvbytes+retval;
@@ -285,11 +293,20 @@ int main(int argc, char* argv[]) {
 								TB_CharPos* pos = reinterpret_cast<TB_CharPos*>(c_buf);
 								//필수 -
 								BYTE tempid = pos->ingame_id;
+								BYTE temproom = pos->room_id;
+								/*
 								char_info[tempid].anistate = pos->anistate;
 								char_info[tempid].is_alive = pos->is_alive;
 								char_info[tempid].posx = pos->posx;
 								char_info[tempid].rotY = pos->rotY;
 								char_info[tempid].posz = pos->posz;
+								*/
+								
+								ingame_Char_Info[temproom - 1][tempid].anistate = pos->anistate;
+								ingame_Char_Info[temproom - 1][tempid].is_alive = pos->is_alive;
+								ingame_Char_Info[temproom - 1][tempid].posx = pos->posx;
+								ingame_Char_Info[temproom - 1][tempid].rotY = pos->rotY;
+								ingame_Char_Info[temproom - 1][tempid].posz = pos->posz;
 								//printf("1p포지션값  :x :%f, z:%f , roty:%f \n", char_info[0].posx, char_info[0].posz, char_info[0].rotY);
 								//printf("2p포지션값  :x :%f, z:%f , roty:%f \n", char_info[1].posx, char_info[1].posz, char_info[1].rotY);
 								//printf("3p포지션값  :x :%f, z:%f , roty:%f \n", char_info[2].posx, char_info[2].posz, char_info[2].rotY);
@@ -302,11 +319,13 @@ int main(int argc, char* argv[]) {
 								for (int j = 0; j < g_TotalSockets; ++j) {
 
 									if (SocketInfoArray[j].m_connected) {
-										printf("Send size : %d\n", char_info[tempid].size);
-										char_info[tempid].size = 22;
-										char_info[tempid].type = 1;
-										retval = send(SocketInfoArray[j].sock, (char*)&char_info[tempid], sizeof(TB_CharPos), 0);
-										printf("Retval size : %d\n", retval);
+										//printf("Send size : %d\n", char_info[tempid].size);
+										if (SocketInfoArray[j].roomID == temproom) {
+											ingame_Char_Info[temproom - 1][tempid].size = 22;
+											ingame_Char_Info[temproom - 1][tempid].type = 1;
+											retval = send(SocketInfoArray[j].sock, (char*)&ingame_Char_Info[temproom - 1][tempid], sizeof(TB_CharPos), 0);
+										}
+										//printf("Retval size : %d\n", retval);
 									}
 								}
 								
@@ -315,20 +334,21 @@ int main(int argc, char* argv[]) {
 							}
 							break;
 						case CASE_BOMB:
-							if (ptr->remainbytes >= 11) {
+							if (ptr->remainbytes >= 12) {
 								TB_BombExplode* b_pos = reinterpret_cast<TB_BombExplode*>(c_buf);
 								int tempx = b_pos->posx;
 								int tempz = b_pos->posz;
-								g_TurtleMap.mapInfo[tempz][tempx] = MAP_BOMB;
+								BYTE roomid = b_pos->room_id;
+								g_TurtleMap_room[roomid-1].mapInfo[tempz][tempx] = MAP_BOMB;
 								//printf("폭탄포지션값  :x :%d, z:%d ,  \n", b_pos->posx, b_pos->posz);
 								
 								BYTE tempfire = b_pos->firepower;
 								
-								TB_BombPos tempbomb = { sizeof(TB_BombPos),CASE_BOMB,0,tempfire,tempx,tempz,0.0f };
+								TB_BombPos tempbomb = { sizeof(TB_BombPos),CASE_BOMB,0,tempfire,b_pos->room_id,tempx,tempz,0.0f };
 								bomb_list.emplace_back(tempbomb);
 								
-								ptr->remainbytes -= 11;
-								memcpy(ptr->buf, c_buf +11, ptr->remainbytes);
+								ptr->remainbytes -= 12;
+								memcpy(ptr->buf, c_buf +12, ptr->remainbytes);
 								memset(c_buf, 0, sizeof(c_buf));
  								memcpy(c_buf, ptr->buf, sizeof(ptr->buf));
 								//Refresh_Map();
@@ -337,11 +357,13 @@ int main(int argc, char* argv[]) {
 								for (int j = 0; j < g_TotalSockets; ++j) {
 									//폭탄을 받았으므로 갱신된 맵정보를 접속해있는 유저에게 전송
 									if (SocketInfoArray[j].m_connected) {
-										printf("Send size : %d\n", g_TurtleMap.size);
+										if (SocketInfoArray[j].roomID == roomid) {
+											printf("Send size : %d\n", g_TurtleMap_room[roomid - 1].size);
 
-										retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap, sizeof(TB_Map), 0);
-										printf("Retval size : %d\n", retval);
-										//printf("Bomb가 추가된 맵정보값 전송!\n");
+											retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap_room[roomid - 1], sizeof(TB_Map), 0);
+											printf("Retval size : %d\n", retval);
+											//printf("Bomb가 추가된 맵정보값 전송!\n");
+										}
 									}
 								}
 								break;
@@ -464,7 +486,7 @@ int main(int argc, char* argv[]) {
 												TB_GameStartRE tempRE = { 3,12,1 };
 												retval = send(SocketInfoArray[j].sock, (char*)&tempRE, sizeof(TB_GameStartRE), 0);
 												printf("Retval size : %d\n", retval);
-												retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap, sizeof(TB_Map), 0); //초기화된 맵정보 클라이언트에게 전송
+												retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap_room[temproomid-1], sizeof(TB_Map), 0); //초기화된 맵정보 클라이언트에게 전송
 												printf("맵정보 전송 :%d바이트\n", retval);
 												
 											}
@@ -510,7 +532,10 @@ int main(int argc, char* argv[]) {
 								ptr->roomID = 0;
 								retval = send(ptr->sock, (char*)&tempRE, sizeof(TB_RoomOutRE), 0);
 								retval = send(ptr->sock, (char*)&room, sizeof(room),0);
-								
+								ptr->remainbytes -= 4;
+								memcpy(ptr->buf, c_buf + 4, ptr->remainbytes);
+								memset(c_buf, 0, sizeof(c_buf));
+								memcpy(c_buf, ptr->buf, sizeof(ptr->buf));
 							}
 							break;
 						case CASE_FORCEOUTROOM:
@@ -541,7 +566,10 @@ int main(int argc, char* argv[]) {
 									}
 
 								}
-								
+								ptr->remainbytes -= 4;
+								memcpy(ptr->buf, c_buf + 4, ptr->remainbytes);
+								memset(c_buf, 0, sizeof(c_buf));
+								memcpy(c_buf, ptr->buf, sizeof(ptr->buf));
 
 								
 								
@@ -549,6 +577,46 @@ int main(int argc, char* argv[]) {
 
 							}
 							break;
+						case CASE_ITEM_GET:
+							if (ptr->remainbytes >= 13) {
+								TB_ItemGet* tempitem = reinterpret_cast<TB_ItemGet*>(c_buf);
+								BYTE temproomid = tempitem->room_id;
+								BYTE tempid = tempitem->ingame_id;
+								BYTE m_person = tempitem->ingame_id;
+								BYTE tempi = tempitem->item_type;
+								printf("%d의 item type 획득\n", tempi);
+								int tempx = tempitem->posx;
+								int tempz = tempitem->posz;
+								bool tempbool =g_TurtleMap_room[temproomid - 1].mapInfo[tempz][tempx] != MAP_NOTHING;
+								printf("bool 초기화\n" );
+								if (tempbool) {
+									g_TurtleMap_room[temproomid - 1].mapInfo[tempz][tempx] = MAP_NOTHING;
+									TB_GetItem tempIRE = { 4,6,m_person,tempi };
+									printf("임시 구조체 생성\n");
+									for (int j = 0; j < g_TotalSockets; ++j) {
+										if (SocketInfoArray[j].m_connected) {
+											
+											if (SocketInfoArray[j].roomID == temproomid) {
+												retval = send(SocketInfoArray[j].sock, (char*)&tempIRE, sizeof(TB_GetItem), 0);
+												printf("연결된 친구들 검색 - 아이템 정보 올림\n");
+												retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap_room[temproomid-1], sizeof(TB_Map), 0);
+												printf("연결된 친구들 검색 - 맵 정보 올림\n");
+											}
+
+
+
+										}
+
+									}
+								}
+
+								ptr->remainbytes -= 13;
+								memcpy(ptr->buf, c_buf + 13, ptr->remainbytes);
+								memset(c_buf, 0, sizeof(c_buf));
+								memcpy(c_buf, ptr->buf, sizeof(ptr->buf));
+							}
+							break;
+
 						default:
 							printf("현재 버퍼 첫 바이트값 : %d\n", c_buf[0]);
 							break;
@@ -699,7 +767,7 @@ void ArrayMap() {
 			ingame_Char_Info[j][i].can_throw = 0;
 			ingame_Char_Info[j][i].bomb = 2;
 			ingame_Char_Info[j][i].fire = 2;
-			ingame_Char_Info[j][i].speed = 2;
+			//ingame_Char_Info[j][i].speed = 2;
 			char_info[i].size = 22;
 			char_info[i].type = 1;
 			char_info[i].anistate = 0;
@@ -708,14 +776,14 @@ void ArrayMap() {
 			char_info[i].can_throw = 0;
 			char_info[i].bomb = 2;
 			char_info[i].fire = 2;
-			char_info[i].speed = 2;
+			//char_info[i].speed = 2;
 
 		}
 
-		ingame_Char_Info[j][0].ingame_id = 1;
-		ingame_Char_Info[j][1].ingame_id = 2;
-		ingame_Char_Info[j][2].ingame_id = 3;
-		ingame_Char_Info[j][3].ingame_id = 4;
+		ingame_Char_Info[j][0].ingame_id = 0;
+		ingame_Char_Info[j][1].ingame_id = 1;
+		ingame_Char_Info[j][2].ingame_id = 2;
+		ingame_Char_Info[j][3].ingame_id = 3;
 		//char_info[0].hp = 10.0f;
 
 		ingame_Char_Info[j][0].posx = 0.0f;
@@ -769,185 +837,187 @@ void ArrayMap() {
 	char_info[3].posz = 28.0f;
 	char_info[3].is_alive = true;
 	char_info[3].rotY = 180.0f;
-	g_TurtleMap.size = 227;
-	g_TurtleMap.type = 4;
+	
 
+	for (int k = 0; k < 20; ++k) {
+		g_TurtleMap_room[k].size = 227;
+		g_TurtleMap_room[k].type = 4;
+		for (int x = 0; x < 15; ++x) {
+			for (int y = 0; y < 15; ++y) {
+				g_TurtleMap_room[k].mapInfo[x][y] = MAP_NOTHING;
 
-	for (int x = 0; x < 15; ++x) {
-		for (int y = 0; y < 15; ++y) {
-			g_TurtleMap.mapInfo[x][y] = 2;
+			}
 
-		}
-
-	}
-
-	for (int i = 2; i < 13; ++i) {
-		if (rand() % 15 < 1) {
-			g_TurtleMap.mapInfo[i][0] =MAP_BUSH;
-		}
-		else if (rand() % 15 < 5) {
-			g_TurtleMap.mapInfo[i][0] = 2;
-		}
-		else if (rand() % 15 < 9) {
-			g_TurtleMap.mapInfo[i][0] = 3;
-		}
-		else if (rand() % 15 < 13) {
-			g_TurtleMap.mapInfo[i][0] = 4;
-		}
-		else
-		{
-			g_TurtleMap.mapInfo[i][0] = 5;
-		}
-		if (rand() % 15 < 1) {
-			g_TurtleMap.mapInfo[i][1] =MAP_BUSH;
-		}
-		else if (rand() % 15 < 5) {
-			g_TurtleMap.mapInfo[i][1] = 2;
-		}
-		else if (rand() % 15 < 9) {
-			g_TurtleMap.mapInfo[i][1] = 3;
-		}
-		else if (rand() % 15 < 13) {
-			g_TurtleMap.mapInfo[i][1] = 4;
-		}
-		else {
-			g_TurtleMap.mapInfo[i][1] = 5;
-		}
-		
-		if (rand() % 15 < 1) {
-			g_TurtleMap.mapInfo[i][14] =MAP_BUSH;
-		}
-		else if (rand() % 15 < 5) {
-			g_TurtleMap.mapInfo[i][14] = 2;
-		}
-		else if (rand() % 15 < 9) {
-			g_TurtleMap.mapInfo[i][14] = 3;
-		}
-		else if (rand() % 15 < 13) {
-			g_TurtleMap.mapInfo[i][14] = 4;
-		}
-		else {
-			g_TurtleMap.mapInfo[i][14] = 5;
-		}
-		if (rand() % 15 < 1) {
-			g_TurtleMap.mapInfo[i][13] =MAP_BUSH;
-		}
-		else if (rand() % 15 < 5) {
-			g_TurtleMap.mapInfo[i][13] = 2;
-		}
-		else if (rand() % 15 < 9) {
-			g_TurtleMap.mapInfo[i][13] = 3;
-		}
-		else if (rand() % 15 < 13) {
-			g_TurtleMap.mapInfo[i][13] = 4;
-		}
-		else {
-			g_TurtleMap.mapInfo[i][13] = 5;
-		}
-		if (rand() % 15 < 1) {
-			g_TurtleMap.mapInfo[0][i] =MAP_BUSH;
-		}
-		else if (rand() % 15 < 5) {
-			g_TurtleMap.mapInfo[0][i] = 2;
-		}
-		else if (rand() % 15 < 9) {
-			g_TurtleMap.mapInfo[0][i] = 3;
-		}
-		else if (rand() % 15 < 13) {
-			g_TurtleMap.mapInfo[0][i] = 4;
-		}
-		else {
-			g_TurtleMap.mapInfo[0][i] = 5;
-		}
-		if (rand() % 15 < 1) {
-			g_TurtleMap.mapInfo[1][i] =MAP_BUSH;
-		}
-		else if (rand() % 15 < 5) {
-			g_TurtleMap.mapInfo[1][i] = 2;
-		}
-		else if (rand() % 15 < 9) {
-			g_TurtleMap.mapInfo[1][i] = 3;
-		}
-		else if (rand() % 15 < 13) {
-			g_TurtleMap.mapInfo[1][i] = 4;
-		}
-		else {
-			g_TurtleMap.mapInfo[1][i] = 5;
-		}
-		if (rand() % 15 < 1) {
-			g_TurtleMap.mapInfo[13][i] =MAP_BUSH;
-		}
-		else if (rand() % 15 < 5) {
-			g_TurtleMap.mapInfo[13][i] = 2;
-		}
-		else if (rand() % 15 < 9) {
-			g_TurtleMap.mapInfo[13][i] = 3;
-		}
-		else if (rand() % 15 < 13) {
-			g_TurtleMap.mapInfo[13][i] = 4;
-		}
-		else {
-			g_TurtleMap.mapInfo[13][i] = 5;
-		}
-		if (rand() % 15 < 1) {
-			g_TurtleMap.mapInfo[14][i] =MAP_BUSH;
-		}
-		else if (rand() % 15 < 5) {
-			g_TurtleMap.mapInfo[14][i] = 2;
-		}
-		else if (rand() % 15 < 9) {
-			g_TurtleMap.mapInfo[14][i] = 3;
-		}
-		else if (rand() % 15 < 13) {
-			g_TurtleMap.mapInfo[14][i] = 4;
-			
-		}
-		else {
-			g_TurtleMap.mapInfo[14][i] = 5;
-			
 		}
 
-		for (int j = 2; j < 13; ++j) {
+		for (int i = 2; i < 13; ++i) {
 			if (rand() % 15 < 1) {
-				g_TurtleMap.mapInfo[i][j] =MAP_BUSH;
+				g_TurtleMap_room[k].mapInfo[i][0] = MAP_BUSH;
 			}
 			else if (rand() % 15 < 5) {
-				g_TurtleMap.mapInfo[i][j] = 2;
+				g_TurtleMap_room[k].mapInfo[i][0] = MAP_NOTHING;
 			}
 			else if (rand() % 15 < 9) {
-				g_TurtleMap.mapInfo[i][j] = 3;
+				g_TurtleMap_room[k].mapInfo[i][0] = MAP_BOX;
 			}
 			else if (rand() % 15 < 13) {
-				g_TurtleMap.mapInfo[i][j] = 4;
+				g_TurtleMap_room[k].mapInfo[i][0] = MAP_ROCK;
 			}
-
 			else
 			{
-				g_TurtleMap.mapInfo[i][j] = 5;
+				g_TurtleMap_room[k].mapInfo[i][0] = MAP_ITEM; //폭탄아이템
 			}
+			if (rand() % 15 < 1) {
+				g_TurtleMap_room[k].mapInfo[i][1] = MAP_BUSH;
+			}
+			else if (rand() % 15 < 5) {
+				g_TurtleMap_room[k].mapInfo[i][1] = MAP_NOTHING;
+			}
+			else if (rand() % 15 < 9) {
+				g_TurtleMap_room[k].mapInfo[i][1] = MAP_BOX;
+			}
+			else if (rand() % 15 < 13) {
+				g_TurtleMap_room[k].mapInfo[i][1] = 4;
+			}
+			else {
+				g_TurtleMap_room[k].mapInfo[i][1] = 5;
+			}
+
+			if (rand() % 15 < 1) {
+				g_TurtleMap_room[k].mapInfo[i][14] = MAP_BUSH;
+			}
+			else if (rand() % 15 < 5) {
+				g_TurtleMap_room[k].mapInfo[i][14] = 2;
+			}
+			else if (rand() % 15 < 9) {
+				g_TurtleMap_room[k].mapInfo[i][14] = MAP_BOX;
+			}
+			else if (rand() % 15 < 13) {
+				g_TurtleMap_room[k].mapInfo[i][14] = 4;
+			}
+			else {
+				g_TurtleMap_room[k].mapInfo[i][14] = 5;
+			}
+			if (rand() % 15 < 1) {
+				g_TurtleMap_room[k].mapInfo[i][13] = MAP_BUSH;
+			}
+			else if (rand() % 15 < 5) {
+				g_TurtleMap_room[k].mapInfo[i][13] = 2;
+			}
+			else if (rand() % 15 < 9) {
+				g_TurtleMap_room[k].mapInfo[i][13] = MAP_BOX;
+			}
+			else if (rand() % 15 < 13) {
+				g_TurtleMap_room[k].mapInfo[i][13] = 4;
+			}
+			else {
+				g_TurtleMap_room[k].mapInfo[i][13] = 5;
+			}
+			if (rand() % 15 < 1) {
+				g_TurtleMap_room[k].mapInfo[0][i] = MAP_BUSH;
+			}
+			else if (rand() % 15 < 5) {
+				g_TurtleMap_room[k].mapInfo[0][i] = 2;
+			}
+			else if (rand() % 15 < 9) {
+				g_TurtleMap_room[k].mapInfo[0][i] = MAP_BOX;
+			}
+			else if (rand() % 15 < 13) {
+				g_TurtleMap_room[k].mapInfo[0][i] = 4;
+			}
+			else {
+				g_TurtleMap_room[k].mapInfo[0][i] = 5;
+			}
+			if (rand() % 15 < 1) {
+				g_TurtleMap_room[k].mapInfo[1][i] = MAP_BUSH;
+			}
+			else if (rand() % 15 < 5) {
+				g_TurtleMap_room[k].mapInfo[1][i] = 2;
+			}
+			else if (rand() % 15 < 9) {
+				g_TurtleMap_room[k].mapInfo[1][i] = MAP_BOX;
+			}
+			else if (rand() % 15 < 13) {
+				g_TurtleMap_room[k].mapInfo[1][i] = 4;
+			}
+			else {
+				g_TurtleMap_room[k].mapInfo[1][i] = 5;
+			}
+			if (rand() % 15 < 1) {
+				g_TurtleMap_room[k].mapInfo[13][i] = MAP_BUSH;
+			}
+			else if (rand() % 15 < 5) {
+				g_TurtleMap_room[k].mapInfo[13][i] = 2;
+			}
+			else if (rand() % 15 < 9) {
+				g_TurtleMap_room[k].mapInfo[13][i] = MAP_BOX;
+			}
+			else if (rand() % 15 < 13) {
+				g_TurtleMap_room[k].mapInfo[13][i] = 4;
+			}
+			else {
+				g_TurtleMap_room[k].mapInfo[13][i] = 5;
+			}
+			if (rand() % 15 < 1) {
+				g_TurtleMap_room[k].mapInfo[14][i] = MAP_BUSH;
+			}
+			else if (rand() % 15 < 5) {
+				g_TurtleMap_room[k].mapInfo[14][i] = 2;
+			}
+			else if (rand() % 15 < 9) {
+				g_TurtleMap_room[k].mapInfo[14][i] = MAP_BOX;
+			}
+			else if (rand() % 15 < 13) {
+				g_TurtleMap_room[k].mapInfo[14][i] = 4;
+
+			}
+			else {
+				g_TurtleMap_room[k].mapInfo[14][i] = 5;
+
+			}
+
+			for (int j = 2; j < 13; ++j) {
+				if (rand() % 15 < 1) {
+					g_TurtleMap_room[k].mapInfo[i][j] = MAP_BUSH;
+				}
+				else if (rand() % 15 < 5) {
+					g_TurtleMap_room[k].mapInfo[i][j] = 2;
+				}
+				else if (rand() % 15 < 9) {
+					g_TurtleMap_room[k].mapInfo[i][j] = MAP_BOX;
+				}
+				else if (rand() % 15 < 13) {
+					g_TurtleMap_room[k].mapInfo[i][j] = 4;
+				}
+
+				else
+				{
+					g_TurtleMap_room[k].mapInfo[i][j] = 5;
+				}
+			}
+
+
 		}
-
-
 	}
 
 	for (int y = 0; y < 15; ++y) {
 		for (int x = 0; x < 15; ++x) {
-			if (g_TurtleMap.mapInfo[14 - y][x] == 1) {
+			if (g_TurtleMap_room[1].mapInfo[14 - y][x] == 1) {
 				printf("●  ");
 			}
-			else if (g_TurtleMap.mapInfo[14 - y][x] == 2) {
+			else if (g_TurtleMap_room[1].mapInfo[14 - y][x] == 2) {
 				printf("N  ");
 			}
-			else if (g_TurtleMap.mapInfo[14 - y][x] == 3) {
+			else if (g_TurtleMap_room[1].mapInfo[14 - y][x] == 3) {
 				printf("C  ");
 			}
-			else if (g_TurtleMap.mapInfo[14 - y][x] == 4) {
+			else if (g_TurtleMap_room[1].mapInfo[14 - y][x] == 4) {
 				printf("R  ");
 			}
-			else if (g_TurtleMap.mapInfo[14 - y][x] == 5) {
+			else if (g_TurtleMap_room[1].mapInfo[14 - y][x] == 5) {
 				printf("I  ");
 			}
-			else if (g_TurtleMap.mapInfo[14 - y][x] == 6) {
+			else if (g_TurtleMap_room[1].mapInfo[14 - y][x] == 6) {
 				printf("B  ");
 			}
 
@@ -992,14 +1062,14 @@ void Refresh_Map() {
 
 }
 
-void CalculateMap(int x, int z, byte f) {
+void CalculateMap(int x, int z, byte f,byte room_num) {
 	bool l_UpBlock = false;
 	bool l_DownBlock = false;
 	bool l_LeftBlock = false;
 	bool l_RightBlock = false;
 
 	BYTE tempMap[15][15];
-	memcpy(tempMap, g_TurtleMap.mapInfo, sizeof(tempMap));
+	memcpy(tempMap, g_TurtleMap_room[room_num-1].mapInfo, sizeof(tempMap));
 	tempMap[z][x] = MAP_NOTHING;
 	for (byte b = 1; b <= f; ++b) {
 		if (!l_DownBlock) {
@@ -1125,7 +1195,8 @@ void CalculateMap(int x, int z, byte f) {
 		
 
 	}
-	g_TurtleMap.type = 4;
-	memcpy( g_TurtleMap.mapInfo, tempMap, sizeof(tempMap));
+	g_TurtleMap_room[room_num-1].type = 4;
+
+	memcpy(g_TurtleMap_room[room_num-1].mapInfo, tempMap, sizeof(tempMap));
 
 }
