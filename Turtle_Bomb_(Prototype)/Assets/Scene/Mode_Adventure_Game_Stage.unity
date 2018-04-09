@@ -2041,7 +2041,7 @@ MonoBehaviour:
   m_Prefab_Giant_Boss1: {fileID: 0}
   m_Text: {fileID: 1561299572}
   m_is_Map_Changing: 0
-  m_Stage_ID: 17
+  m_Stage_ID: -1
   m_Stage_Time_Limit: -1
   m_is_Boss_Stage: 0
   m_Boss_ID: 0
