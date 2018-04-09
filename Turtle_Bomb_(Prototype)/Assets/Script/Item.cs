@@ -9,7 +9,10 @@ public class Item : MonoBehaviour {
     
 	void Update ()
     {
-		floating ();
+        if (!StageManager.c_Stage_Manager.m_is_Pause)
+        {
+            floating();
+        }
 	}
 
     void OnTriggerEnter(Collider other)

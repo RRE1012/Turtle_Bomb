@@ -283,8 +283,6 @@ public class UI : MonoBehaviour {
         m_MissionText[2].text = m_Mission_Script[2];
     }
 
-
-
     void Update()
     {
         // 스테이지 클리어 후 별 갯수 적용
@@ -294,7 +292,7 @@ public class UI : MonoBehaviour {
             m_is_Init_Star_Count = true;
         }
 
-        if (!StageManager.m_is_Stage_Clear)
+        if (!StageManager.m_is_Stage_Clear && !StageManager.c_Stage_Manager.m_is_Pause)
         {
             // 게임 시작 카메라 이동 완료 시 시간 경과
             if (PlayerMove.C_PM != null && StageManager.c_Stage_Manager.m_is_Intro_Over)
@@ -335,16 +333,6 @@ public class UI : MonoBehaviour {
 
                 // 던지기 버튼
                 Throw_Button_Management();
-
-                /*
-                // 각 수치 맥스 설정 -R
-                if (m_fire_count > 8)
-                    m_fire_count = 8;
-                if (m_cur_Max_Bomb_Count > 8)
-                    m_cur_Max_Bomb_Count = 8;
-                if (m_speed_count > 8)
-                    m_speed_count = 8;
-                */
 
                 if (time_Second <= 30.0f && !StageManager.c_Stage_Manager.m_is_Boss_Stage)
                 {

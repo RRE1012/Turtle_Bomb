@@ -1,0 +1,7 @@
+﻿ID,Description,Boss_HP,Bomb_Damage,Normal_Pecentage,Angry_Pecentage,Angry_Condition_Start_HP,Groggy_Condition_Start_HP,Spawn_MonsterGroup_Id,Spawn_MonsterGroup_Number
+client,design,client,client,design,design,client,client,client,client
+int32,string,int32,int32,string,string,int32,int32,int32,int32
+1,Forest_Middle_Boss,30,5,40%,10%,12,3,4,4
+2,Forest_Final_Boss,50,5,45%,10%,23,5,4,6
+3,SnowLand_Middle_Boss,45,5,50%,15%,23,7,4,8
+4,SnowLand_Final_Boss,60,5,60%,15%,36,9,4,10

@@ -17,6 +17,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scene/Mode_Adventure_Game_Stage.unity
     guid: 885aa0f129b1e474ea2ef531f06c45e0
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scene/Title_Start.unity
     guid: ea16ba3bac27c6d41b6b2be7371b3e21

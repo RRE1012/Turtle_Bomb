@@ -9,11 +9,14 @@ public class Boom_Effect : MonoBehaviour {
     	
 	void Update ()
     {
-        if (m_TimeCount < m_TotalLifeTime)
+        if (!StageManager.c_Stage_Manager.m_is_Pause)
         {
-            m_TimeCount += Time.deltaTime;
+            if (m_TimeCount < m_TotalLifeTime)
+            {
+                m_TimeCount += Time.deltaTime;
+            }
+            else
+                Destroy(gameObject);
         }
-        else
-            Destroy(gameObject);
     }
 }

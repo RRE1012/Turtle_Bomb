@@ -109,25 +109,28 @@ public class Bomb : MonoBehaviour
 
     void Update()
     {
-        if (m_BombCountDown > 0.0f)
+        if (!StageManager.c_Stage_Manager.m_is_Pause)
         {
-            Explosion_Range_Manager();
-
-            if (m_isKicked)
-                Kicked_Bomb_Move();
-            else if (m_is_Thrown_Bomb_Moving)
-                Thrown_Bomb_Move();
-            else
+            if (m_BombCountDown > 0.0f)
             {
-                BombAnimate(Time.deltaTime);
-                m_BombCountDown -= Time.deltaTime;
-            }
-        }
+                Explosion_Range_Manager();
 
-        //폭발 전 사운드 출력(풀링으로 수정 예정)
-        else if (m_BombCountDown <= 0.0f)
-        {
-            Destroy(gameObject);
+                if (m_isKicked)
+                    Kicked_Bomb_Move();
+                else if (m_is_Thrown_Bomb_Moving)
+                    Thrown_Bomb_Move();
+                else
+                {
+                    BombAnimate(Time.deltaTime);
+                    m_BombCountDown -= Time.deltaTime;
+                }
+            }
+
+            //폭발 전 사운드 출력(풀링으로 수정 예정)
+            else if (m_BombCountDown <= 0.0f)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 
@@ -144,6 +147,7 @@ public class Bomb : MonoBehaviour
                 Bomb_MCL_And_Position_Update();
             }
             m_is_Thrown_Bomb_Moving = false;
+            m_isThrown = false;
             m_isKicked = false;
             Destroy(gameObject);
         }
@@ -159,6 +163,7 @@ public class Bomb : MonoBehaviour
                 transform.position = new Vector3(transform.position.x, 0.0f, transform.position.z);
                 Bomb_MCL_And_Position_Update();
                 m_is_Thrown_Bomb_Moving = false;
+                m_isThrown = false;
             }
         }
 
@@ -234,23 +239,26 @@ public class Bomb : MonoBehaviour
     // "화력 범위 오브젝트"의 위치를 갱신
     void Explosion_Range_Pos_Update()
     {
-        m_Range_Base.transform.position = new Vector3(gameObject.transform.position.x, -0.7f, gameObject.transform.position.z);
-
-        for (int i = 1; i <= m_FlameCount; ++i)
+        if (!m_isThrown)
         {
-            m_Range_N[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
-            
-            m_Range_S[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
-            
-            m_Range_W[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
+            m_Range_Base.transform.position = new Vector3(gameObject.transform.position.x, -0.7f, gameObject.transform.position.z);
 
-            m_Range_E[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
+            for (int i = 1; i <= m_FlameCount; ++i)
+            {
+                m_Range_N[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
+
+                m_Range_S[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
+
+                m_Range_W[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
+
+                m_Range_E[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
+            }
         }
     }
 
     void Explosion_Range_Manager()
     {
-        if (m_isKicked || m_is_Thrown_Bomb_Moving)
+        if (m_isKicked || m_is_Thrown_Bomb_Moving || m_isThrown)
         {
             m_Range_Base.SetActive(false);
             for (int i = 0; i < m_FlameCount; ++i)

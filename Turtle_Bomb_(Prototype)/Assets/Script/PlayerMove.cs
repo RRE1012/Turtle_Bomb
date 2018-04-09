@@ -95,7 +95,7 @@ public class PlayerMove : MonoBehaviour {
 
     void Update ()
     {
-        if (m_isAlive && !StageManager.m_is_Stage_Clear && StageManager.c_Stage_Manager.m_is_Intro_Over)
+        if (m_isAlive && !StageManager.m_is_Stage_Clear && StageManager.c_Stage_Manager.m_is_Intro_Over && !StageManager.c_Stage_Manager.m_is_Pause)
         {
             GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 0.0f);
 

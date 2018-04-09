@@ -178,7 +178,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         {
             Think();
 
-            if (m_Current_Behavior != null && m_Current_Behavior.MoveNext())
+            if (!StageManager.c_Stage_Manager.m_is_Pause && m_Current_Behavior != null && m_Current_Behavior.MoveNext())
             {
                 yield return m_Current_Behavior.Current;
             }

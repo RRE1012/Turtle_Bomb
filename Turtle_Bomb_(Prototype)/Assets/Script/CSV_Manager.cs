@@ -30,6 +30,15 @@ public struct Script_Data
     public string Script;
 }
 
+public struct Adventure_Boss_Data
+{
+    public int Boss_HP;
+    public int Bomb_Damage;
+    public int Angry_Condition_Start_HP;
+    public int Groggy_Condition_Start_HP;
+    public int Spawn_MonsterGroup_Id;
+    public int Spawn_MonsterGroup_Number;
+}
 
 public class CSV_Manager : MonoBehaviour {
 
@@ -47,6 +56,7 @@ public class CSV_Manager : MonoBehaviour {
     public TextAsset m_Object_Spawn_Table_csvFile;
     public TextAsset m_Stage_Table_csvFile;
     public TextAsset m_Script_Table_csvFile;
+    public TextAsset m_Adventure_Boss_Table_csvFile;
 
     protected string[] m_data;
     protected string[] m_stringList;
@@ -235,5 +245,31 @@ public class CSV_Manager : MonoBehaviour {
         }
 
         return Script_List;
+    }
+
+    public Adventure_Boss_Data Get_Adventure_Boss_Data(int objectNum)
+    {
+        Adventure_Boss_Data boss_Data = new Adventure_Boss_Data();
+
+        int file_Line_Count = Counting_EOF(m_Stage_Table_csvFile);
+
+        m_Read_Text = m_Adventure_Boss_Table_csvFile.text;
+        m_stringList = m_Read_Text.Split('\n');
+
+        for (int i = 3; i < file_Line_Count; ++i)
+        {
+            m_data = m_stringList[i].Split(','); // 한 줄씩 읽기
+            if (objectNum == System.Convert.ToInt32(m_data[0])) // id는 오브젝트 테이블의 번호가 아닌 보스 테이블의 번호임!
+            {
+                boss_Data.Boss_HP = System.Convert.ToInt32(m_data[2]);
+                boss_Data.Bomb_Damage = System.Convert.ToInt32(m_data[3]);
+                boss_Data.Angry_Condition_Start_HP = System.Convert.ToInt32(m_data[6]);
+                boss_Data.Groggy_Condition_Start_HP = System.Convert.ToInt32(m_data[7]);
+                boss_Data.Spawn_MonsterGroup_Id = System.Convert.ToInt32(m_data[8]);
+                boss_Data.Spawn_MonsterGroup_Number = System.Convert.ToInt32(m_data[9]);
+                break;
+            }
+        }
+        return boss_Data;
     }
 }

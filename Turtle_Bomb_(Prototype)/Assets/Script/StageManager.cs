@@ -44,6 +44,9 @@ public class StageManager : MonoBehaviour {
     public GameObject m_Forest_Theme_Terrain;
     public GameObject m_SnowLand_Theme_Terrain;
 
+    // 보스 스테이지 인트로용
+    //public GameObject m_Prefab_Intro_Boss;
+
     // 오브젝트 프리팹들
     public GameObject m_Prefab_Box;
     public GameObject m_Prefab_Rock;
@@ -53,35 +56,51 @@ public class StageManager : MonoBehaviour {
     public GameObject m_Prefab_Start_Point;
     public GameObject m_Prefab_Next_Portal;
     public GameObject m_Prefab_End_Portal;
+    public GameObject m_Prefab_Giant_Boss1;
 
-    // 생성한 오브젝트 관리
+    // ===== 생성한 오브젝트 관리 =====
+    // ================================
     GameObject[] m_Current_Map_Objects = new GameObject[225];
-    int m_Current_Map_Objects_Count;
+    int m_Current_Map_Objects_Count; // 생성된 오브젝트 개수
 
     int m_Current_Stage_index_Count = 0; // 현재 스테이지의 맵 인덱스 카운트
 
     Vector3 m_Object_Position; // 오브젝트 생성시 위치 변경에 이용
+    // ================================
 
 
-    // ??
+
+    // 게임 오버 텍스트
     public Text m_Text;
     
     // 현재 맵 번호 (인덱스)
     int m_Current_Map_Number = 0;
 
+    // 스테이지를 클리어했는가?
     public static bool m_is_Stage_Clear = false;
+
+    // 획득한 별 개수
     public static int m_Stars = 0;
 
+    // 총 스폰된 일반 몹 수
     public static int m_Total_Monster_Count = 0;
+
+    // 남은 일반 몹 수
     public static int m_Left_Monster_Count = 0;
+
 
     public static Coordinate m_tmpCoordinate;
     public static Coordinate m_tmpCoord_For_Objects;
 
+    // MCL
     public static List<Coordinate> m_Map_Coordinate_List;
 
-    public static StageManager c_Stage_Manager;
+    // MCL이 초기화 되었는가?
     public static bool m_is_init_MCL;
+
+    // 스테이지 매니저 객체
+    public static StageManager c_Stage_Manager;
+    
 
 
     // 맵 이동 시 폭탄을 무효화 하기 위한 변수
@@ -91,12 +110,21 @@ public class StageManager : MonoBehaviour {
     public int m_Stage_ID;
 
     // 현재 스테이지의 제한시간 설정
-    // -1로 설정할 경우 기획 설정에 따른다.
+    // -1로 설정할 경우 기획 설정(테이블)에 따른다.
     public float m_Stage_Time_Limit;
 
 
+
+
+
+
+    // ===== 보스 관련 =====
+    // =====================
     // 현재 스테이지가 보스전인지?
     public bool m_is_Boss_Stage;
+
+    // 보스 테이블 번호!
+    public int m_Boss_ID;
 
     // 서든데스 고블맨 객체
     public GameObject m_SuddenDeath_JetGoblin;
@@ -109,8 +137,23 @@ public class StageManager : MonoBehaviour {
 
     // 보스 스테이지의 보스 몬스터가 죽었는가?
     public bool m_is_Boss_Dead;
+    // =====================
 
 
+
+
+
+
+    // 게임이 일시정지 되었는가?
+    public bool m_is_Pause;
+
+
+
+
+
+
+    // ===== CSV 관련 =====
+    // ====================
     // 현재 스테이지의 퀘스트 목록
     List<Adventure_Quest_Data> m_QuestList;
 
@@ -125,11 +168,17 @@ public class StageManager : MonoBehaviour {
 
     // 스크립트(대사) 테이블
     List<Script_Data> m_Script_List = new List<Script_Data>();
+    // ====================
+
+    Adventure_Boss_Data m_Adventure_Boss_Data = new Adventure_Boss_Data();
+
+
 
 
     void Awake()
     {
         m_is_Stage_Clear = false;
+        m_is_Pause = false;
 
         m_Stars = 0;
 
@@ -151,7 +200,7 @@ public class StageManager : MonoBehaviour {
 
         // 카메라
         m_CameraOffset = GameObject.Find("Camera_Offset");
-        m_is_Intro_Over = false;
+        m_is_Intro_Over = true;
 
         // 오브젝트 테이블 목록 로드
         m_Object_Table_List = new List<Object_Table_Data>(CSV_Manager.GetInstance().Get_Object_Table_List());
@@ -182,6 +231,7 @@ public class StageManager : MonoBehaviour {
         //m_Script_List = CSV_Manager.GetInstance().Get_Script_List(스크립트ID);
 
 
+
         // 시간 설정
         if (m_Stage_Time_Limit == MAP.NOT_SET)
             m_Stage_Time_Limit = 90.0f;
@@ -191,7 +241,7 @@ public class StageManager : MonoBehaviour {
     }
 
 
-
+    
 
     void Update()
     {
@@ -225,6 +275,8 @@ public class StageManager : MonoBehaviour {
         
         m_Current_Map_Objects_Count = 0;
 
+
+
         // 위치에 맞게 오브젝트를 생성한다.
         for (int z = 0; z < 15; ++z)
         {
@@ -235,48 +287,74 @@ public class StageManager : MonoBehaviour {
                     // x, z 좌표 설정
                     m_Object_Position.x = x * 2.0f;
                     m_Object_Position.z = 78.0f - (z * 2.0f);
-
+                    
+                    // 박스
                     if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[0].ID)
                     {
                         m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Box);
                         m_Object_Position.y = m_Prefab_Box.transform.position.y;
-
                     }
+
+                    // 바위
                     else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[1].ID)
                     {
                         m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Rock);
                         m_Object_Position.y = m_Prefab_Rock.transform.position.y;
                     }
+
+                    // 부쉬
                     else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[2].ID)
                     {
                         m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Grass);
                         m_Object_Position.y = m_Prefab_Grass.transform.position.y;
                     }
+
+                    // 일반 고블린
                     else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[3].ID)
                     {
                         m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Goblin);
                         m_Object_Position.y = m_Prefab_Goblin.transform.position.y;
                     }
+                    
+                    // 보스 고블린
                     else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[4].ID)
                     {
+                        //Instantiate(m_Prefab_Intro_Boss);
+
+                        // 보스 데이터 읽어오기 (아이디는 어떻게 하지?)
+                        m_Adventure_Boss_Data = CSV_Manager.GetInstance().Get_Adventure_Boss_Data(2);
+
+                        // 생성
                         m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Goblin_Boss);
                         m_Object_Position.y = m_Prefab_Goblin_Boss.transform.position.y;
                     }
+
+                    // 시작지점
                     else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[5].ID)
                     {
                         m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Start_Point);
                         m_Object_Position.y = m_Prefab_Start_Point.transform.position.y;
-                        
                     }
+
+                    // 맵 이동 포탈
                     else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[6].ID)
                     {
                         m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Next_Portal);
                         m_Object_Position.y = m_Prefab_Next_Portal.transform.position.y;
                     }
+
+                    // 목표 지점
                     else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[7].ID)
                     {
                         m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_End_Portal);
                         m_Object_Position.y = m_Prefab_End_Portal.transform.position.y;
+                    }
+
+                    // 거대 보스
+                    else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[9].ID)
+                    {
+                        m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Giant_Boss1);
+                        m_Object_Position.y = m_Prefab_Giant_Boss1.transform.position.y;
                     }
 
                     // 생성한 객체 좌표 이동
@@ -563,5 +641,10 @@ public class StageManager : MonoBehaviour {
     {
         return m_QuestList;
     }
-    
+
+    // 보스 데이터를 리턴해준다.
+    public Adventure_Boss_Data Get_Adventure_Boss_Data()
+    {
+        return m_Adventure_Boss_Data;
+    }
 }

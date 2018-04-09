@@ -54,7 +54,7 @@ public class MusicManager : MonoBehaviour {
     //폭탄 폭발 사운드
     public void soundE()
     {
-        source.PlayOneShot(explodeSound,1.0f);
+        source.PlayOneShot(explodeSound, 1.0f);
     }
 
     

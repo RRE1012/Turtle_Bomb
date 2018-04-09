@@ -33,9 +33,9 @@ public class SceneSwaps : MonoBehaviour {
     }
 
     // "모드 선택 화면"으로 이동
-    public void GoTo_ModeSelect_After2sec()
+    public void GoTo_ModeSelect_AfterFewSec()
     {
-        Invoke("GoTo_ModeSelect_Scene", 2.0f);
+        Invoke("GoTo_ModeSelect_Scene", 1.5f);
     }
     public void GoTo_ModeSelect_Scene()
     {
@@ -60,6 +60,8 @@ public class SceneSwaps : MonoBehaviour {
         PlayerPrefs.SetInt("Mode_Adventure_Selected_Stage_ID", stage_ID);
 
         FadeSlider.gameObject.SetActive(true);
+        FadeSlider.gameObject.GetComponent<Fade_Slider>().m_is_Stage_Select_Scene = true;
+
         // 모험모드 씬을 연다
         Invoke("WaitForFadeSlider", 2.0f);
     }

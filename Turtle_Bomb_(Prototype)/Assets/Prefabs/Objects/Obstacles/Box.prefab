@@ -41,12 +41,13 @@ GameObject:
   - component: {fileID: 23774825109525270}
   - component: {fileID: 114354179142724970}
   - component: {fileID: 54607355364833992}
+  - component: {fileID: 208692789111319316}
   m_Layer: 0
   m_Name: Box
   m_TagString: Box
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &4320515321783646
 Transform:
@@ -219,3 +220,18 @@ MonoBehaviour:
   m_Object_Player: {fileID: 1259163520995078, guid: 70136da78ae65f74988b74da74edf8e5,
     type: 2}
   m_is_Destroyed: 0
+--- !u!208 &208692789111319316
+NavMeshObstacle:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1454096474618254}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5

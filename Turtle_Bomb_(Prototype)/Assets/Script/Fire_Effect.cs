@@ -16,15 +16,17 @@ public class Fire_Effect : MonoBehaviour {
     }
 
     void Update ()
-    { 
-        if (FlameLifeTime >= 0.0f)
+    {
+        if (!StageManager.c_Stage_Manager.m_is_Pause)
         {
-            FlameLifeTime -= Time.deltaTime;
+            if (FlameLifeTime >= 0.0f)
+            {
+                FlameLifeTime -= Time.deltaTime;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
-        else
-        {
-            Destroy(gameObject);
-        }
-
     }
 }

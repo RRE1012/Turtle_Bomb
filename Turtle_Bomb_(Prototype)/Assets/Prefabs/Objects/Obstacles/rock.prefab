@@ -39,12 +39,13 @@ GameObject:
   - component: {fileID: 65701657470312666}
   - component: {fileID: 23527657467964488}
   - component: {fileID: 114469861922848770}
+  - component: {fileID: 208137452569600376}
   m_Layer: 0
   m_Name: rock
   m_TagString: Rock
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &4321626835376624
 Transform:
@@ -171,3 +172,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa19aa20ef82bfa42aa352f59ac8da80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!208 &208137452569600376
+NavMeshObstacle:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1075352204319104}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5

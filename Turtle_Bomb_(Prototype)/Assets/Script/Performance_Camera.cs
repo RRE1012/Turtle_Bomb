@@ -37,8 +37,9 @@ public class Performance_Camera : MonoBehaviour {
     {
         if (StageManager.c_Stage_Manager.m_is_Boss_Stage)
         {
-            m_CameraAnimator.SetTrigger("Intro_Boss");
-            Invoke("Intro_Performance_Over", 12.0f);
+            //m_CameraAnimator.SetTrigger("Intro_Boss");
+            //Invoke("Intro_Performance_Over", 12.0f);
+            Intro_Performance_Over();
         }
         else
         {

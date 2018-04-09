@@ -15,11 +15,13 @@ public class Flame_Remains : MonoBehaviour {
 
 	void Update()
     {
-
-        if (!isFlameOnBush && Flame_Remains_LifeTime <= 0.0f)
+        if (!StageManager.c_Stage_Manager.m_is_Pause)
         {
-            Destroy(gameObject);
+            if (!isFlameOnBush && Flame_Remains_LifeTime <= 0.0f)
+            {
+                Destroy(gameObject);
+            }
+            else Flame_Remains_LifeTime -= Time.deltaTime;
         }
-        else Flame_Remains_LifeTime -= Time.deltaTime;
     }
 }

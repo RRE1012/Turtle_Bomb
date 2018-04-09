@@ -13,6 +13,7 @@ public class Monster_Player_Detector : MonoBehaviour {
     {
         m_MainBody = transform.parent;
     }
+
     void OnTriggerStay(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
@@ -20,7 +21,7 @@ public class Monster_Player_Detector : MonoBehaviour {
             m_isInRange = true;
 
             Vector3 dir = other.transform.position - m_MainBody.transform.position;
-            Vector3 dirXZ = new Vector3(dir.x, 0f, dir.z);
+            Vector3 dirXZ = new Vector3(dir.x, 0.0f, dir.z);
 
             if (dirXZ != Vector3.zero)
             {

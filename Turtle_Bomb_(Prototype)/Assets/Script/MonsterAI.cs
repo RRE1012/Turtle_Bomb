@@ -124,7 +124,7 @@ public class MonsterAI : MonoBehaviour
 
             if (m_Current_Behavior != m_Behavior_Attack)
                 m_Current_Behavior = m_Behavior_Attack;
-            m_isAttacking = true;
+            //m_isAttacking = true;
         }
 
         // 플레이어가 감지범위 밖에 있고, 공격모션 중이 아니라면
@@ -161,7 +161,7 @@ public class MonsterAI : MonoBehaviour
         while (true)
         {
             Think();
-            if (m_Current_Behavior != null && m_Current_Behavior.MoveNext())
+            if (!StageManager.c_Stage_Manager.m_is_Pause && !m_isDead && m_Current_Behavior != null && m_Current_Behavior.MoveNext())
             {
                 yield return m_Current_Behavior.Current;
             }
@@ -176,7 +176,7 @@ public class MonsterAI : MonoBehaviour
 
     IEnumerator MonsterMove()
     {
-        while (m_WalkTimer < Monster_AI_Constants.Walk_Time)
+        while (true)
         {
             m_WalkTimer += Time.deltaTime;
             
@@ -207,7 +207,7 @@ public class MonsterAI : MonoBehaviour
     
     IEnumerator MonsterAttack()
     {
-        while (m_AttackTimer < Monster_AI_Constants.Attack_Time)
+        while (true)
         {
             m_AttackTimer += Time.deltaTime;
 
