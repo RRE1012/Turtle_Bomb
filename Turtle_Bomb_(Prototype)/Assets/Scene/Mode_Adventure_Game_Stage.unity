@@ -2022,7 +2022,7 @@ MonoBehaviour:
     type: 2}
   m_SnowLand_Theme_Terrain: {fileID: 1242684535988222, guid: 9a080747edaa5d44eb17780e3c27e026,
     type: 2}
-  m_Prefab_Box: {fileID: 1454096474618254, guid: 92d8c09d429eb354492797622d6c4898,
+  m_Prefab_Box: {fileID: 1135829912912126, guid: fcc32f3caf7ec8f4387e0aed0abc7c78,
     type: 2}
   m_Prefab_Rock: {fileID: 1075352204319104, guid: 5bde1cefd17e4a747ad32d0b56903fe7,
     type: 2}
@@ -4491,7 +4491,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1225317049}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 483, y: 268, z: 0}
+  m_LocalPosition: {x: 483, y: 270.5, z: 0}
   m_LocalScale: {x: 1.2075, y: 1.2075, z: 1.2075}
   m_Children:
   - {fileID: 1401182578}

@@ -1389,7 +1389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b5d6683379f8574aa1fe2843563a037, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider_num: 1
+  m_is_Stage_Select_Scene: 0
 --- !u!114 &1159288094
 MonoBehaviour:
   m_ObjectHideFlags: 0
