@@ -31,8 +31,10 @@ using namespace std;
 #define CASE_POS 1
 #define CASE_BOMB 2
 #define CASE_BOMB_EX 3
-#define CASE_ITEM_GET 6
 #define CASE_ID 5
+#define CASE_ITEM_GET 6
+#define CASE_DEAD 7
+#define CASE_GAMESET 8
 #define CASE_JOINROOM 9
 #define CASE_CREATEROOM 10
 #define CASE_READY 11
@@ -196,6 +198,12 @@ struct TB_GetItem{ //send : type 6 서버 전송-> 클라 수신
 	BYTE ingame_id;
 	BYTE itemType; //타입에 따라 다른 문구가 출력된다 + 능력이 오른다.
 	
+};
+struct TB_DEAD {
+	BYTE size; //3
+	BYTE type;//7
+	BYTE game_id; //누가 죽었나!
+
 };
 
 
