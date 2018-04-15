@@ -34,7 +34,7 @@ using namespace std;
 #define CASE_ID 5
 #define CASE_ITEM_GET 6
 #define CASE_DEAD 7
-#define CASE_GAMESET 8
+#define CASE_GAMESET 15
 #define CASE_JOINROOM 9
 #define CASE_CREATEROOM 10
 #define CASE_READY 11
@@ -80,6 +80,49 @@ using namespace std;
 #define ITEM_SPEED 2
 #define ITEM_SUPER 3
 
+class InGameCalculator {
+	bool id[4];
+	
+	bool gameover;
+public:
+	int deathcount;
+	InGameCalculator() { 
+		deathcount = 0;
+		id[0] = true;
+		id[1] = true;
+		id[2] = true;
+		id[3] = true;
+
+		gameover = false;
+	}
+	~InGameCalculator() {}
+	void InitClass() {
+		deathcount = 0;
+		gameover = false;
+		id[0] = true;
+		id[1] = true;
+		id[2] = true;
+		id[3] = true;
+	}
+	void PlayerDead(BYTE idd) {
+
+		id[idd] = false;
+		deathcount++;
+	}
+	void SetGameOver() {
+		gameover = true;
+	}
+	bool IsGameOver() {
+		return gameover;
+	}
+	BYTE GetWinnerID() {
+		for (BYTE i = 0; i < 4; ++i) {
+			if (id[i])
+				return i;
+		}
+		return 4; //DRAW
+	}
+};
 
 #pragma pack(push,1)
 struct Pos {//type:1
@@ -199,10 +242,18 @@ struct TB_GetItem{ //send : type 6 서버 전송-> 클라 수신
 	BYTE itemType; //타입에 따라 다른 문구가 출력된다 + 능력이 오른다.
 	
 };
-struct TB_DEAD {
+struct TB_DEAD { //죽었을 때 알려주는 패킷
 	BYTE size; //3
 	BYTE type;//7
 	BYTE game_id; //누가 죽었나!
+
+};
+
+struct TB_GAMEEND {
+	BYTE size; //3
+	BYTE type;//15
+	BYTE winner_id; //누가 이겼나!
+	
 
 };
 

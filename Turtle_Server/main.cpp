@@ -16,6 +16,7 @@ TB_Map g_TurtleMap_room[20]; //맵 정보2
 TB_CharPos char_info[4]; //4명의 캐릭터정보를 담아둘 캐릭터 정보 ->방 정보가 추가될 경우 2차원배열로 활용할 예정
 TB_CharPos ingame_Char_Info[20][4]; //4명의 캐릭터정보를 담아둘 캐릭터 정보 ->방 정보가 추가될 경우 2차원배열로 활용할 예정
 
+InGameCalculator ingamestate[20];
 TB_Room room[20];
 void Refresh_Map(); //맵을 서버에서 갱신하기 위해 만든 함수 -> 계산도 추가할 예정
 
@@ -309,9 +310,14 @@ int main(int argc, char* argv[]) {
 								ingame_Char_Info[temproom - 1][tempid].rotY = pos->rotY;
 								ingame_Char_Info[temproom - 1][tempid].posz = pos->posz;
 								if (!ingame_Char_Info[temproom - 1][tempid].is_alive) {
+									ingamestate[temproom - 1].PlayerDead(tempid);
 									tempbool = true;
 								}
-
+								//몇명이 죽었는가 테스트
+								if (ingamestate[temproom - 1].deathcount == (room[temproom - 1].people_count-1)) {
+									ingamestate[temproom - 1].SetGameOver();
+								}
+								
 								//printf("1p포지션값  :x :%f, z:%f , roty:%f \n", char_info[0].posx, char_info[0].posz, char_info[0].rotY);
 								//printf("2p포지션값  :x :%f, z:%f , roty:%f \n", char_info[1].posx, char_info[1].posz, char_info[1].rotY);
 								//printf("3p포지션값  :x :%f, z:%f , roty:%f \n", char_info[2].posx, char_info[2].posz, char_info[2].rotY);
@@ -329,8 +335,15 @@ int main(int argc, char* argv[]) {
 											ingame_Char_Info[temproom - 1][tempid].size = 22;
 											ingame_Char_Info[temproom - 1][tempid].type = 1;
 											retval = send(SocketInfoArray[j].sock, (char*)&ingame_Char_Info[temproom - 1][tempid], sizeof(TB_CharPos), 0);
-											
+											if (ingamestate[temproom - 1].IsGameOver()) {
+												BYTE winnerid = ingamestate[temproom - 1].GetWinnerID();
+												TB_GAMEEND gameover = {3,CASE_GAMESET,winnerid };
+												retval = send(SocketInfoArray[j].sock, (char*)&gameover, sizeof(TB_GAMEEND), 0);
+												ingamestate[temproom - 1].InitClass();
+											}
 											if (tempbool) {
+												
+												
 												TB_DEAD tempd = { 3,CASE_DEAD,tempid };
 												retval = send(SocketInfoArray[j].sock, (char*)&tempd, sizeof(TB_DEAD), 0);
 											}
@@ -786,6 +799,7 @@ void ArrayMap() {
 			char_info[i].can_throw = 0;
 			char_info[i].bomb = 2;
 			char_info[i].fire = 2;
+
 			//char_info[i].speed = 2;
 
 		}
@@ -795,6 +809,7 @@ void ArrayMap() {
 		ingame_Char_Info[j][2].ingame_id = 2;
 		ingame_Char_Info[j][3].ingame_id = 3;
 		//char_info[0].hp = 10.0f;
+	
 
 		ingame_Char_Info[j][0].posx = 0.0f;
 		ingame_Char_Info[j][0].posz = 0.0f;
