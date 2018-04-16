@@ -20,7 +20,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 6}
-  m_MinSize: {x: 950, y: 321}
+  m_MinSize: {x: 950, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &2
 MonoBehaviour:
@@ -40,8 +40,8 @@ MonoBehaviour:
     y: 0
     width: 323
     height: 947
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 204, y: 221}
+  m_MaxSize: {x: 4004, y: 4021}
   m_ActualView: {fileID: 14}
   m_Panes:
   - {fileID: 14}
@@ -94,10 +94,10 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 913, y: 271}
-  m_MaxSize: {x: 22008, y: 10021}
+  m_MinSize: {x: 917, y: 271}
+  m_MaxSize: {x: 22012, y: 10021}
   vertical: 0
-  controlID: 83
+  controlID: 27
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -145,7 +145,7 @@ MonoBehaviour:
     y: 0
     width: 1920
     height: 997
-  m_MinSize: {x: 950, y: 321}
+  m_MinSize: {x: 950, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &7
 MonoBehaviour:
@@ -330,19 +330,19 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets/Animation
+    - Assets/Scene
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Animation
+  - Assets/Scene
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Users\WHO\Desktop\Turtle_Bomb\Turtle_Bomb\Turtle_Bomb_(Prototype)
   m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 5c2b0000
-    m_LastClickedID: 11100
-    m_ExpandedIDs: 00000000b6270000fe270000c22b0000d42b0000382c0000dc2c0000142d0000a82d0000c2310000223200006e3200007c340000e8340000bc3500001c3600001e36000060360000963a0000983a00009a3a00009c3a00009e3a0000a03a0000a23a0000a43a000000ca9a3bffffff7f
+    m_SelectedIDs: ca2b0000
+    m_LastClickedID: 11210
+    m_ExpandedIDs: 00000000be27000006280000ca2b0000dc2b0000402c0000e62c00001e2d0000b22d0000d2310000343200008032000090340000fc340000d0350000323600003436000076360000363b0000383b00003a3b00003c3b00003e3b0000403b0000423b0000443b000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -370,7 +370,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000b6270000fe270000c22b0000d42b0000382c0000dc2c0000142d0000a82d0000c2310000223200006e3200007c340000e8340000bc3500001c3600001e36000060360000963a0000983a00009a3a00009c3a00009e3a0000a03a0000a23a0000a43a0000
+    m_ExpandedIDs: 00000000be27000006280000ca2b0000dc2b0000402c0000e62c00001e2d0000b22d0000d2310000343200008032000090340000fc340000d0350000323600003436000076360000363b0000383b00003a3b00003c3b00003e3b0000403b0000423b0000443b0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -486,20 +486,20 @@ MonoBehaviour:
     height: 926
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 
-    m_LastClickedID: 0
-    m_ExpandedIDs: bce9feff4a09ffffa6fbffff000000008e39000098390000a2390000b4390000be390000c8390000
+    m_SelectedIDs: 64e5ffff
+    m_LastClickedID: -6812
+    m_ExpandedIDs: 58f4ffff8afbffff0000000084390000f43900006c3a0000863b0000903b0000ac3b0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: Competition_Button
-      m_OriginalName: Competition_Button
+      m_Name: MS_Text
+      m_OriginalName: MS_Text
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 14772
+      m_UserData: -6812
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
       m_OriginalEventType: 0
