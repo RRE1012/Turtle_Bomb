@@ -158,7 +158,7 @@ struct Socket_Info {
 	int sendbytes;
 	int remainbytes;
 	BYTE roomID; //디폴트는 0. 안 들어갔다는 뜻
-	BYTE is_guardian;//방장인지 아닌지 
+	BYTE is_guardian; //방장인지 아닌지 
 	BYTE is_ready;
 	//추가
 	BYTE fire;
@@ -189,7 +189,6 @@ struct TB_CharPos {//type:1
 	float posx;
 	float posz;
 	float rotY;
-
 };
 
 struct TB_BombPos { //type:2
@@ -253,8 +252,6 @@ struct TB_GAMEEND {
 	BYTE size; //3
 	BYTE type;//15
 	BYTE winner_id; //누가 이겼나!
-	
-
 };
 
 
@@ -278,7 +275,7 @@ struct TB_Room { //방장 추가(완)
 	BYTE type;//8
 	BYTE roomID;
 	BYTE people_count;
-	BYTE game_start;
+	BYTE game_start; //게임 시작 1
 	BYTE people_max; //최대 인원 수
 	BYTE made; //만들어진 방인가? 0-안 만들어짐, 1- 만들어짐(공개), 2-만들어짐(비공개)
 	BYTE guardian_pos; //배열에 넣을 때 -1할 것

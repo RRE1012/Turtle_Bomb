@@ -336,14 +336,14 @@ int main(int argc, char* argv[]) {
 											ingame_Char_Info[temproom - 1][tempid].type = 1;
 											retval = send(SocketInfoArray[j].sock, (char*)&ingame_Char_Info[temproom - 1][tempid], sizeof(TB_CharPos), 0);
 											if (ingamestate[temproom - 1].IsGameOver()) {
+												
 												BYTE winnerid = ingamestate[temproom - 1].GetWinnerID();
 												TB_GAMEEND gameover = {3,CASE_GAMESET,winnerid };
 												retval = send(SocketInfoArray[j].sock, (char*)&gameover, sizeof(TB_GAMEEND), 0);
 												ingamestate[temproom - 1].InitClass();
+												room[temproom - 1].game_start = 0;
 											}
 											if (tempbool) {
-												
-												
 												TB_DEAD tempd = { 3,CASE_DEAD,tempid };
 												retval = send(SocketInfoArray[j].sock, (char*)&tempd, sizeof(TB_DEAD), 0);
 											}
@@ -496,6 +496,7 @@ int main(int argc, char* argv[]) {
 								byte temproomid = startinfo->roomID;
 								printf("Get Start Data from No.%d Room\n", startinfo->roomID);
 								bool check_guard = (room[temproomid-1].guardian_pos == startinfo->my_pos);
+								room[temproomid - 1].game_start = 1;
 								printf("Start Check guardian_pos : %d == %d?\n", room[temproomid - 1].guardian_pos, startinfo->my_pos);
 								//bool check_all_ready= 전원 준비상태인가
 								if (check_guard) {
@@ -510,6 +511,7 @@ int main(int argc, char* argv[]) {
 												retval = send(SocketInfoArray[j].sock, (char*)&tempRE, sizeof(TB_GameStartRE), 0);
 												printf("Retval size : %d\n", retval);
 												retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap_room[temproomid-1], sizeof(TB_Map), 0); //초기화된 맵정보 클라이언트에게 전송
+												
 												printf("맵정보 전송 :%d바이트\n", retval);
 												
 											}
