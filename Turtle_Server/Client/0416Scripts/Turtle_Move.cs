@@ -202,31 +202,37 @@ public class Turtle_Move : MonoBehaviour {
         {
             m_RotationX += Input.GetAxis("Mouse X") * m_RotateSensX * Time.deltaTime;
             transform.localEulerAngles = new Vector3(0.0f, m_RotationX, 0.0f);
-             NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
+            if(!VSModeManager.instance.game_set)
+                NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
 
         }
         if (Input.GetKey(KeyCode.W))
         {
             
             transform.Translate(new Vector3(0.0f, 0.0f, m_PlayerSpeed * Time.deltaTime));
-            NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
+            if (!VSModeManager.instance.game_set)
+                NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
             
         }
         if (Input.GetKey(KeyCode.S)) { transform.Translate(new Vector3(0.0f, 0.0f, -m_PlayerSpeed * Time.deltaTime));
-            NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
+            if (!VSModeManager.instance.game_set)
+                NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
         }
         if (Input.GetKey(KeyCode.A)) { transform.Translate(new Vector3(-m_PlayerSpeed * Time.deltaTime, 0.0f, 0.0f));
-            NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
+            if (!VSModeManager.instance.game_set)
+                NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
         }
         if (Input.GetKey(KeyCode.D))
         {
             transform.Translate(new Vector3(m_PlayerSpeed * Time.deltaTime, 0.0f, 0.0f));
-            NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
+            if (!VSModeManager.instance.game_set)
+                NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
         }
         KeyBoard_Move();
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            SetBomb();
+            if (!VSModeManager.instance.game_set)
+                SetBomb();
         }
         
     }

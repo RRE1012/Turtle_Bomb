@@ -154,16 +154,21 @@ public class MapManager : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         g_text.text = "Player1 x :" + NetTest.instance.GetNetPosx(0) + ", z :" + NetTest.instance.GetNetPosz(0) + "\nPlayer2 x :" + NetTest.instance.GetNetPosx(1) + ", z:" + NetTest.instance.GetNetPosz(1) + "\nPlayer3 x :" + NetTest.instance.GetNetPosx(2) + ", z:" + NetTest.instance.GetNetPosz(2) + "\nPlayer4 x :" + NetTest.instance.GetNetPosx(3) + ", z:" + NetTest.instance.GetNetPosz(3); 
+
 	}
 
     public void GotoRoom()
     {
         Time.timeScale = 1;
+        Debug.Log("Go to Room");
+
         SceneChange.instance.GoTo_ModeSelect_Scene();
     }
     public void GotoLobby()
     {
         Time.timeScale = 1;
+        Debug.Log("Go to GotoLobby");
+        NetTest.instance.SendOUTPacket();
         SceneChange.instance.GoTo_Wait_Scene();
     }
     IEnumerator CheckMap_v2()

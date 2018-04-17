@@ -8,6 +8,7 @@ public class VSModeManager : MonoBehaviour {
     public static VSModeManager instance;
     public RawImage winner_image;
     public RawImage loser_image;
+    public bool game_set;
     void Awake()
     {
         instance = this;
@@ -15,17 +16,19 @@ public class VSModeManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         win_or_lose = 0;
-
+        game_set = false;
     }
 	public void GameOver_Set(byte id)
     {
         if (Turtle_Move.instance.GetId() == id)
         {
             win_or_lose = 1;
+            game_set = true;
         }
         else
         {
             win_or_lose = 2;
+            game_set = true;
         }
 
     }
@@ -36,16 +39,18 @@ public class VSModeManager : MonoBehaviour {
             
             winner_image.gameObject.SetActive(true);
             win_or_lose = 0;
+            Debug.Log("Win!!!!!!");
             Time.timeScale = 0;
-           
+            
         }
         if (win_or_lose == 2)
         {
             
             loser_image.gameObject.SetActive(true);
             win_or_lose = 0;
+            Debug.Log("Lose!!!!!!");
             Time.timeScale = 0;
-           
+            
         }
     }
     
