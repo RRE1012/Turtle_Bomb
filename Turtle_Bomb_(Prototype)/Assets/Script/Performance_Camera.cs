@@ -44,7 +44,7 @@ public class Performance_Camera : MonoBehaviour {
         else
         {
             m_CameraAnimator.SetTrigger("Intro_Normal");
-            Invoke("Intro_Performance_Over", 7.0f);
+            Invoke("Intro_Performance_Over", 6.0f);
         }
     }
 

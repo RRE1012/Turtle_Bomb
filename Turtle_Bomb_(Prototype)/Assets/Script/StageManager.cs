@@ -200,7 +200,6 @@ public class StageManager : MonoBehaviour {
 
         // 카메라
         m_CameraOffset = GameObject.Find("Camera_Offset");
-        m_is_Intro_Over = true;
 
         // 오브젝트 테이블 목록 로드
         m_Object_Table_List = new List<Object_Table_Data>(CSV_Manager.GetInstance().Get_Object_Table_List());

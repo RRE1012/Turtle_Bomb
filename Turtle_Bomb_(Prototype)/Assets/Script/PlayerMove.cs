@@ -193,7 +193,7 @@ public class PlayerMove : MonoBehaviour {
             // 스테이지 클리어시, 맵 이동시는 사망하지 않는다.
             if ((other.gameObject.tag == "Flame" || other.gameObject.tag == "Flame_Bush" || other.gameObject.tag == "Monster_Attack_Collider") && !StageManager.m_is_Stage_Clear)
             {
-                m_isAlive = false;
+                Set_Dead();
                 m_TurtleMan_Animator.SetBool("TurtleMan_isDead", true);
             }
             // ========================
@@ -700,6 +700,7 @@ public class PlayerMove : MonoBehaviour {
     //다른 스크립트에서 플레이어를 죽게 하는 함수-R
     public void Set_Dead()
 	{
+        MusicManager.manage_ESound.TryMute();
         m_isAlive = false;
 	}
 

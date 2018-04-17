@@ -126,11 +126,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4686776981150206, guid: 12a0e5eb2fe9d9b4b9b2a1e902c5337e, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 1.65
+      value: -0.35
       objectReference: {fileID: 0}
     - target: {fileID: 4686776981150206, guid: 12a0e5eb2fe9d9b4b9b2a1e902c5337e, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 50.7
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4686776981150206, guid: 12a0e5eb2fe9d9b4b9b2a1e902c5337e, type: 2}
       propertyPath: m_LocalRotation.x
@@ -165,6 +165,11 @@ Prefab:
     - target: {fileID: 1239551050024456, guid: 12a0e5eb2fe9d9b4b9b2a1e902c5337e, type: 2}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 20108299819344854, guid: 12a0e5eb2fe9d9b4b9b2a1e902c5337e,
+        type: 2}
+      propertyPath: m_Depth
+      value: -1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 12a0e5eb2fe9d9b4b9b2a1e902c5337e, type: 2}
@@ -2022,9 +2027,9 @@ MonoBehaviour:
     type: 2}
   m_SnowLand_Theme_Terrain: {fileID: 1242684535988222, guid: 9a080747edaa5d44eb17780e3c27e026,
     type: 2}
-  m_Prefab_Box: {fileID: 1135829912912126, guid: fcc32f3caf7ec8f4387e0aed0abc7c78,
+  m_Prefab_Box: {fileID: 1454096474618254, guid: 92d8c09d429eb354492797622d6c4898,
     type: 2}
-  m_Prefab_Rock: {fileID: 1790894514022560, guid: 290ee971efe272544a316ea68559287b,
+  m_Prefab_Rock: {fileID: 1681323776694122, guid: ee78f11a56db2a7499e77e2bfeadafbc,
     type: 2}
   m_Prefab_Grass: {fileID: 1650778712718808, guid: b8c5e5d4c870f544897b1d3935cec39c,
     type: 2}

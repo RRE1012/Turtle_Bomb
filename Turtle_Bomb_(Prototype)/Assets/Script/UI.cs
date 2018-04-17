@@ -294,80 +294,70 @@ public class UI : MonoBehaviour {
 
         if (!StageManager.m_is_Stage_Clear && !StageManager.c_Stage_Manager.m_is_Pause)
         {
-            // 게임 시작 카메라 이동 완료 시 시간 경과
-            if (PlayerMove.C_PM != null && StageManager.c_Stage_Manager.m_is_Intro_Over)
-            {
-                deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
-            }
-
-            // 죽었을 경우, 사운드 감소
-            if (PlayerMove.C_PM != null && !PlayerMove.C_PM.Get_IsAlive())
-            {
-                MusicManager.manage_ESound.TryMute();
-
-            }
-
-            else
+            if (StageManager.c_Stage_Manager.m_is_Intro_Over)
             {
                 // 시간 경과
                 if (time_Second > 0)
+                {
+                    deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
                     time_Second = time_Second - deltaTime;
-
-                // 시간 텍스트 출력
-                m_TLT.text = "Time: " + (int)time_Second / 60 + ":" + (int)time_Second % 60;
-
-                // 스탯 UI 출력
-                Stat_UI_Management();
-
-                // 미션 UI 출력
-                Mission_UI_Management();
-
-                // 아이템 획득 텍스트 출력
-                m_GIT.text = m_getItemText;
-
-                // 밀기버튼
-                Push_Button_Management();
-
-                // 부쉬 효과
-                HideInBush_Management();
-
-                // 던지기 버튼
-                Throw_Button_Management();
-
-                if (time_Second <= 30.0f && !StageManager.c_Stage_Manager.m_is_Boss_Stage)
-                {
-                    StageManager.c_Stage_Manager.m_is_SuddenDeath = true;
                 }
-                else
-                {
-                    StageManager.c_Stage_Manager.m_is_SuddenDeath = false;
-                }
+            }
 
-                // 시간촉박 애니매이션 출력, 초기에는 애니매이션을 꺼놨다가 발동 -R
-                if (time_Second < 15.0f)
-                {
-                    ani.enabled = true;
-                }
-                else
-                {
-                    ani.enabled = false;
-                }
+            // 시간 텍스트 출력
+            m_TLT.text = "Time: " + (int)time_Second / 60 + ":" + (int)time_Second % 60;
 
-                // 시간 초과 시 게임오버 - 캐릭터를 죽게 함으로서 처리 -R
-                if (time_Second <= 0)
-                {
-                    time_Second = 0;
-                    PlayerMove.C_PM.Set_Dead();
-                }
+            // 스탯 UI 출력
+            Stat_UI_Management();
 
-                if (m_GIT.text != "")
+            // 미션 UI 출력
+            Mission_UI_Management();
+
+            // 아이템 획득 텍스트 출력
+            m_GIT.text = m_getItemText;
+
+            // 밀기버튼
+            Push_Button_Management();
+
+            // 부쉬 효과
+            HideInBush_Management();
+
+            // 던지기 버튼
+            Throw_Button_Management();
+
+            if (time_Second <= 30.0f && !StageManager.c_Stage_Manager.m_is_Boss_Stage)
+            {
+                StageManager.c_Stage_Manager.m_is_SuddenDeath = true;
+            }
+            else
+            {
+                StageManager.c_Stage_Manager.m_is_SuddenDeath = false;
+            }
+
+            // 시간촉박 애니매이션 출력, 초기에는 애니매이션을 꺼놨다가 발동 -R
+            if (time_Second < 15.0f)
+            {
+                ani.enabled = true;
+            }
+            else
+            {
+                ani.enabled = false;
+            }
+
+            // 시간 초과 시 게임오버 - 캐릭터를 죽게 함으로서 처리 -R
+            if (time_Second <= 0)
+            {
+                time_Second = 0;
+                PlayerMove.C_PM.Set_Dead();
+            }
+
+            if (m_GIT.text != "")
+            {
+                m_GIT_CoolTime += Time.deltaTime;
+                if (m_GIT_CoolTime >= 2.0f)
                 {
-                    m_GIT_CoolTime += Time.deltaTime;
-                    if (m_GIT_CoolTime >= 2.0f)
-                    {
-                        m_getItemText = "";
-                        m_GIT_CoolTime = 0.0f;
-                    }
+                    m_getItemText = "";
+                    m_GIT_CoolTime = 0.0f;
                 }
             }
         }
