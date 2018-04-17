@@ -31,9 +31,11 @@ using namespace std;
 #define CASE_POS 1
 #define CASE_BOMB 2
 #define CASE_BOMB_EX 3
+#define CASE_MAP 4
 #define CASE_ID 5
 #define CASE_ITEM_GET 6
 #define CASE_DEAD 7
+#define CASE_ROOM 8
 #define CASE_GAMESET 15
 #define CASE_JOINROOM 9
 #define CASE_CREATEROOM 10
@@ -42,6 +44,27 @@ using namespace std;
 #define CASE_OUTROOM 13
 #define CASE_FORCEOUTROOM 14
 
+#define SIZEOF_TB_CharPos 22
+#define SIZEOF_TB_BombPos 17
+#define SIZEOF_TB_BombExplode 12
+#define SIZEOF_TB_MAP 227
+#define SIZEOF_TB_ID 3
+#define SIZEOF_TB_ItemGet 13
+#define SIZEOF_TB_GetItem 4
+#define SIZEOF_TB_DEAD 3
+#define SIZEOF_TB_GAMEEND 3
+#define SIZEOF_TB_Room 20
+#define SIZEOF_TB_join 12
+#define SIZEOF_TB_joinRE 10
+#define SIZEOF_TB_create  11
+#define SIZEOF_TB_createRE  4
+#define SIZEOF_TB_GameStart 4
+#define SIZEOF_TB_GameStartRE 3
+#define SIZEOF_CASE_READY 22
+#define SIZEOF_TB_RoomOut 4
+#define SIZEOF_TB_RoomOutRE 3
+#define SIZEOF_TB_GetOut  4
+#define SIZEOF_TB_GetOutRE  2
 
 
 #define MAX_EVENT_SIZE 64
@@ -211,6 +234,21 @@ struct TB_BombExplode { //type:3
 	int posz;
 
 };
+struct TB_BombExplodeRE { //type:3
+	BYTE size;//15
+	BYTE type;
+	BYTE upfire;
+	BYTE rightfire;
+	BYTE downfire;
+	BYTE leftfire;
+
+	BYTE room_id;
+	int posx;
+	int posz;
+
+};
+
+
 struct TB_Map { //type:4
 	BYTE size;//227
 	BYTE type;
