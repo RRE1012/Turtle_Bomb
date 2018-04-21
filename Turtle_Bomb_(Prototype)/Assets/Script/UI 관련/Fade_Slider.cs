@@ -10,7 +10,7 @@ public class Fade_Slider : MonoBehaviour {
 
     float m_FadeSpeed = 80.0f;
     float m_Curr_Fading_Time = 0.0f;
-    float m_Dest_Fading_Time = 1.0f;
+    float m_Dest_Fading_Time = 1.2f;
 
     public bool m_is_Stage_Select_Scene = false;
 

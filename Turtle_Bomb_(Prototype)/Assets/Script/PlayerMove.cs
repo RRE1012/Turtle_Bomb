@@ -226,6 +226,7 @@ public class PlayerMove : MonoBehaviour {
             // 목표 지점 도달 시 스테이지 클리어
             if (other.gameObject.CompareTag("Goal"))
             {
+                StageManager.c_Stage_Manager.SetGoalIn(true);
                 StageManager.c_Stage_Manager.Stage_Clear();
             }
             // ===============================
@@ -667,7 +668,7 @@ public class PlayerMove : MonoBehaviour {
         m_Selected_Bomb_For_Throwing.GetComponent<Bomb>().m_is_Rising_Start = true;
         m_Selected_Bomb_For_Throwing.GetComponent<Bomb>().m_isThrown = true;
         m_Selected_Bomb_For_Throwing.GetComponent<Bomb>().m_isKicked = false;
-        m_Selected_Bomb_For_Throwing.GetComponent<MeshRenderer>().enabled = false;
+        m_Selected_Bomb_For_Throwing.GetComponentInChildren<MeshRenderer>().enabled = false;
 
         // 선택 폭탄 해제
         m_Selected_Bomb_For_Throwing = null;

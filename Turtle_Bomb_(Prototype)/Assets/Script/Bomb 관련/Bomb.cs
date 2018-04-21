@@ -563,7 +563,7 @@ public class Bomb : MonoBehaviour
             if (transform.position.y > 2.0f)
             {
                 m_is_Rising_Start = false;
-                GetComponent<MeshRenderer>().enabled = true;
+                GetComponentInChildren<MeshRenderer>().enabled = true;
             }
         }
 

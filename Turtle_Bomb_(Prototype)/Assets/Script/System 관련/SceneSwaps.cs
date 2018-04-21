@@ -56,9 +56,9 @@ public class SceneSwaps : MonoBehaviour {
         if (LobbySound.instanceLS != null)
             LobbySound.instanceLS.SoundStop();
         
-        // 선택한 스테이지가 몇번인지 PlayerPrefs에 기록!
-        PlayerPrefs.SetInt("Mode_Adventure_Selected_Stage_ID", stage_ID);
-
+        // "맵 로드를 위한" 현재 스테이지 번호를 기록.
+        PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", stage_ID);
+        PlayerPrefs.Save();
         FadeSlider.gameObject.SetActive(true);
         FadeSlider.gameObject.GetComponent<Fade_Slider>().m_is_Stage_Select_Scene = true;
 
@@ -66,6 +66,13 @@ public class SceneSwaps : MonoBehaviour {
         Invoke("WaitForFadeSlider", 2.0f);
     }
    
+    public void Save_Selected_Stage(int stage_ID)
+    {
+        // 선택한 스테이지가 몇번인지 PlayerPrefs에 기록!
+        PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", stage_ID);
+        PlayerPrefs.Save();
+    }
+
     void WaitForFadeSlider()
     {
         SceneManager.LoadScene(3);
