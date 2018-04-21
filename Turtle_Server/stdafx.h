@@ -43,17 +43,22 @@ using namespace std;
 #define CASE_STARTGAME 12
 #define CASE_OUTROOM 13
 #define CASE_FORCEOUTROOM 14
+#define CASE_ROOMSETTING 15
+#define CASE_TEAMSETTING 16
+
+
 
 #define SIZEOF_TB_CharPos 22
 #define SIZEOF_TB_BombPos 17
 #define SIZEOF_TB_BombExplode 12
+#define SIZEOF_TB_BombExplodeRE 14
 #define SIZEOF_TB_MAP 227
 #define SIZEOF_TB_ID 3
 #define SIZEOF_TB_ItemGet 13
 #define SIZEOF_TB_GetItem 4
 #define SIZEOF_TB_DEAD 3
 #define SIZEOF_TB_GAMEEND 3
-#define SIZEOF_TB_Room 20
+#define SIZEOF_TB_Room 25
 #define SIZEOF_TB_join 12
 #define SIZEOF_TB_joinRE 10
 #define SIZEOF_TB_create  11
@@ -65,6 +70,8 @@ using namespace std;
 #define SIZEOF_TB_RoomOutRE 3
 #define SIZEOF_TB_GetOut  4
 #define SIZEOF_TB_GetOutRE  2
+#define SIZEOF_TB_RoomSetting 4
+#define SIZEOF_TB_TeamSetting 5
 
 
 #define MAX_EVENT_SIZE 64
@@ -105,11 +112,11 @@ using namespace std;
 
 class InGameCalculator {
 	bool id[4];
-	
+
 	bool gameover;
 public:
 	int deathcount;
-	InGameCalculator() { 
+	InGameCalculator() {
 		deathcount = 0;
 		id[0] = true;
 		id[1] = true;
@@ -164,7 +171,7 @@ struct PosOfBOMB {//recv :type:2, send: type:3
 	BYTE fire_power;
 	int x;
 	int y;
-	
+
 };
 
 
@@ -177,7 +184,7 @@ struct Socket_Info {
 	int type;
 	int id;
 	int recvbytes;
-	
+
 	int sendbytes;
 	int remainbytes;
 	BYTE roomID; //디폴트는 0. 안 들어갔다는 뜻
@@ -235,14 +242,12 @@ struct TB_BombExplode { //type:3
 
 };
 struct TB_BombExplodeRE { //type:3
-	BYTE size;//15
+	BYTE size;//14
 	BYTE type;
 	BYTE upfire;
 	BYTE rightfire;
 	BYTE downfire;
 	BYTE leftfire;
-
-	BYTE room_id;
 	int posx;
 	int posz;
 
@@ -271,13 +276,13 @@ struct TB_ItemGet { //type:6
 	int posz;
 };
 
-struct TB_GetItem{ //send : type 6 서버 전송-> 클라 수신
+struct TB_GetItem { //send : type 6 서버 전송-> 클라 수신
 	BYTE size; //4
 	BYTE type;//6
-	
+
 	BYTE ingame_id;
 	BYTE itemType; //타입에 따라 다른 문구가 출력된다 + 능력이 오른다.
-	
+
 };
 struct TB_DEAD { //죽었을 때 알려주는 패킷
 	BYTE size; //3
@@ -293,7 +298,7 @@ struct TB_GAMEEND {
 };
 
 
-struct TB_UserInfo{ //유저정보 - type: 7
+struct TB_UserInfo { //유저정보 - type: 7
 	BYTE size; //9
 	BYTE type;
 	BYTE id; //인게임 id와는 다르다.
@@ -309,7 +314,7 @@ struct TB_UserInfo{ //유저정보 - type: 7
 //프로토콜이 아닌 구조체에 맵데이터를 넣은 방 구조체 작성
 
 struct TB_Room { //방장 추가(완)
-	BYTE size; //20
+	BYTE size; //25
 	BYTE type;//8
 	BYTE roomID;
 	BYTE people_count;
@@ -318,7 +323,8 @@ struct TB_Room { //방장 추가(완)
 	BYTE made; //만들어진 방인가? 0-안 만들어짐, 1- 만들어짐(공개), 2-만들어짐(비공개)
 	BYTE guardian_pos; //배열에 넣을 때 -1할 것
 	BYTE people_inroom[4];
-	
+	BYTE roomstate;  //팀전인가 개인전인가? 0-개인전 1-팀전
+	BYTE team_inroom[4];
 	char password[8];
 };
 
@@ -348,7 +354,7 @@ struct TB_joinRE { //방장 추가
 	BYTE guard_pos; //방장 위치
 	BYTE people_inroom[4];
 
-	
+
 };
 struct TB_create { //type:10
 	BYTE size;
@@ -396,8 +402,23 @@ struct TB_RoomOutRE {
 	BYTE size;
 	BYTE type;
 	BYTE can; //가능하면 1, 불가능하면 0
-	
+
 };
+
+struct TB_RoomSetting {
+	BYTE size;//4
+	BYTE type;//15
+	BYTE roomid;
+	BYTE gametype; //0이면 개인전 1이면 팀전
+};
+struct TB_TeamSetting {
+	BYTE size;//5
+	BYTE type;//16
+	BYTE roomid; 
+	BYTE pos_in_room;
+	BYTE team;
+};
+
 struct TB_Room_Data { //방장 추가(완)
 
 	BYTE roomID;
