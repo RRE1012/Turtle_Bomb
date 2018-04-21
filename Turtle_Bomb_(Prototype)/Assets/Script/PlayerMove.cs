@@ -135,7 +135,7 @@ public class PlayerMove : MonoBehaviour {
         if (m_isAlive)
         {
             // 아이템 획득 관련
-            if (other.gameObject.CompareTag("Bomb_Item") && StageManager.c_Stage_Manager.m_is_Intro_Over)
+            if (other.gameObject.CompareTag("Bomb_Item"))
             {
                 Destroy(other.gameObject);
                 if (UI.m_cur_Max_Bomb_Count < MAX_VALUE_ITEM.retval)
@@ -185,6 +185,34 @@ public class PlayerMove : MonoBehaviour {
                     m_isGot_ThrowItem = true;
                     UI.m_getItemText = "Throw Activated~!";
                 }
+            }
+
+            if (other.gameObject.CompareTag("Airdrop_Item"))
+            {
+                Destroy(other.gameObject);
+                MusicManager.manage_ESound.ItemGetSound();
+
+                int temp = Random.Range(1, 3);
+
+                UI.m_cur_Max_Bomb_Count += temp;
+                UI.m_releasable_bomb_count += temp;
+                if (UI.m_cur_Max_Bomb_Count > MAX_VALUE_ITEM.retval)
+                {
+                    UI.m_cur_Max_Bomb_Count = MAX_VALUE_ITEM.retval;
+                    UI.m_releasable_bomb_count = MAX_VALUE_ITEM.retval;
+                }
+
+                temp = Random.Range(1, 3);
+                UI.m_fire_count += temp;
+                if (UI.m_fire_count > MAX_VALUE_ITEM.retval)
+                    UI.m_fire_count = MAX_VALUE_ITEM.retval;
+
+                temp = Random.Range(1, 3);
+                UI.m_speed_count += temp;
+                if (UI.m_speed_count > MAX_VALUE_ITEM.retval)
+                    UI.m_speed_count = MAX_VALUE_ITEM.retval;
+
+                UI.m_getItemText = "You've Got AirDrop!!";
             }
             // ========================
 
@@ -724,6 +752,7 @@ public class PlayerMove : MonoBehaviour {
     //다른 스크립트에서 폭탄을 장전할 때 쓰는 함수
     public void ReloadUp()
     {
-        UI.m_releasable_bomb_count += 1;
+        if (UI.m_releasable_bomb_count < MAX_VALUE_ITEM.retval)
+            UI.m_releasable_bomb_count += 1;
     }
 }

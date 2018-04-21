@@ -210,7 +210,6 @@ public class CSV_Manager : MonoBehaviour {
                 {
                     data = System.Convert.ToInt32(m_data[j + 5]);
                     List.Add(data);
-                    Debug.Log(data);
                 }
             }
         }
