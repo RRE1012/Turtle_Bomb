@@ -135,9 +135,10 @@ public:
 		id[3] = true;
 	}
 	void PlayerDead(BYTE idd) {
-
-		id[idd] = false;
-		deathcount++;
+		if (id[idd]) {
+			id[idd] = false;
+			deathcount++;
+		}
 	}
 	void SetGameOver() {
 		gameover = true;

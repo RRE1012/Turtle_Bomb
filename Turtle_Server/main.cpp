@@ -314,10 +314,12 @@ int main(int argc, char* argv[]) {
 								if (!ingame_Char_Info[temproom - 1][tempid].is_alive) {
 									ingamestate[temproom - 1].PlayerDead(tempid);
 									tempbool = true;
+									printf("%d\n", ingamestate[temproom - 1].deathcount);
 								}
 								//몇명이 죽었는가 테스트
 								if (ingamestate[temproom - 1].deathcount == (room[temproom - 1].people_count - 1)) {
 									ingamestate[temproom - 1].SetGameOver();
+									printf("GameOver!!!!%d\n", ingamestate[temproom - 1].deathcount);
 								}
 
 								//printf("1p포지션값  :x :%f, z:%f , roty:%f \n", char_info[0].posx, char_info[0].posz, char_info[0].rotY);
@@ -342,9 +344,8 @@ int main(int argc, char* argv[]) {
 												BYTE winnerid = ingamestate[temproom - 1].GetWinnerID();
 												TB_GAMEEND gameover = { SIZEOF_TB_GAMEEND,CASE_GAMESET,winnerid };
 												retval = send(SocketInfoArray[j].sock, (char*)&gameover, sizeof(TB_GAMEEND), 0);
-												ingamestate[temproom - 1].InitClass();
-												room[temproom - 1].game_start = 0;
-												SetGameRoomInit(temproom);
+												
+												
 											}
 											if (tempbool) {
 												TB_DEAD tempd = { SIZEOF_TB_DEAD,CASE_DEAD,tempid };
@@ -353,6 +354,11 @@ int main(int argc, char* argv[]) {
 										}
 										//printf("Retval size : %d\n", retval);
 									}
+								}
+								if (ingamestate[temproom - 1].IsGameOver()) {
+									ingamestate[temproom - 1].InitClass();
+									room[temproom - 1].game_start = 0;
+									SetGameRoomInit(temproom);
 								}
 
 
@@ -499,10 +505,23 @@ int main(int argc, char* argv[]) {
 								byte temproomid = startinfo->roomID;
 								printf("Get Start Data from No.%d Room\n", startinfo->roomID);
 								bool check_guard = (room[temproomid - 1].guardian_pos == startinfo->my_pos);
-								room[temproomid - 1].game_start = 1;
+								bool survivalgame = room[temproomid - 1].roomstate == 0;
+								int teamaCount = 0;
+								for (int t = 0; t < 4; ++t) {
+									if (room[temproomid - 1].team_inroom[t] == 0)
+										teamaCount++;
+								}
+								bool teamGame;
+								if(room[temproomid - 1].people_count<=2)
+									teamGame = (1 == teamaCount)&& room[temproomid - 1].roomstate==1;
+								else if (room[temproomid - 1].people_count == 3)
+									teamGame = (1 == teamaCount || 2 == teamaCount) && room[temproomid - 1].roomstate == 1;
+								else
+									teamGame = 2 == teamaCount&& room[temproomid - 1].roomstate == 1;
 								printf("Start Check guardian_pos : %d == %d?\n", room[temproomid - 1].guardian_pos, startinfo->my_pos);
 								//bool check_all_ready= 전원 준비상태인가
-								if (check_guard) {
+								if (check_guard&&(teamGame||survivalgame)) {
+									room[temproomid - 1].game_start = 1;
 									printf("True");
 									for (int j = 0; j < g_TotalSockets; ++j) {
 										//폭탄을 받았으므로 갱신된 맵정보를 접속해있는 유저에게 전송
@@ -511,6 +530,7 @@ int main(int argc, char* argv[]) {
 											if (SocketInfoArray[j].roomID == temproomid) {
 												printf("Connected\n");
 												TB_GameStartRE tempRE = { SIZEOF_TB_GameStartRE,CASE_STARTGAME,1 };
+
 												retval = send(SocketInfoArray[j].sock, (char*)&tempRE, sizeof(TB_GameStartRE), 0);
 												printf("Retval size : %d\n", retval);
 												retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap_room[temproomid - 1], sizeof(TB_Map), 0); //초기화된 맵정보 클라이언트에게 전송
