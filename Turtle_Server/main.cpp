@@ -150,7 +150,7 @@ int main(int argc, char* argv[]) {
 					{
 						BYTE temproom = bomb->room_num;
 						g_TurtleMap_room[temproom - 1].mapInfo[bomb->posx][bomb->posz] = MAP_NOTHING;
-						TB_BombExplodeRE temp_Bomb = { 15 };
+						TB_BombExplodeRE temp_Bomb = { SIZEOF_TB_BombExplodeRE };
 						CalculateMap(bomb->posx, bomb->posz, bomb->firepower, temproom,&temp_Bomb);
 						int tempx = bomb->posx;
 						int tempz = bomb->posz;
@@ -412,17 +412,19 @@ int main(int argc, char* argv[]) {
 									bool bool_b = room[temproomid - 1].game_start != 1;
 									bool bool_c = room[temproomid - 1].made == 1;
 									if (bool_a&&bool_b&&bool_c) {
-										byte tempcount = room[temproomid - 1].people_count + 1;
-										byte tempguard = room[temproomid - 1].guardian_pos;
+										BYTE tempcount = room[temproomid - 1].people_count + 1;
+										BYTE tempguard = room[temproomid - 1].guardian_pos;
 										room[temproomid - 1].people_count += 1;
-										for (int j = 0; j < 4; ++j) {
+										for (BYTE j = 0; j < 4; ++j) {
 											if (room[temproomid - 1].people_inroom[j] == 0) {
 												room[temproomid - 1].people_inroom[j] = joininfo->id;
-												printf("%d가 %d번방에 들어감\n", joininfo->id, joininfo->roomID);
+												tempcount = j + 1;
+												printf("%d가 %d번방에 들어감, %d+1번째 위치\n", joininfo->id, joininfo->roomID,j);
 												break;
 											}
 										}
 										ptr->roomID = temproomid;
+										ptr->is_guardian = 0;
 										TB_joinRE tempjoin = { SIZEOF_TB_joinRE,CASE_JOINROOM,1,temproomid,tempcount,tempguard };
 										for (int j = 0; j < 4; ++j)
 											tempjoin.people_inroom[j] = room[temproomid - 1].people_inroom[j];
@@ -471,6 +473,7 @@ int main(int argc, char* argv[]) {
 										room[a].made = 1;
 										room[a].people_count = 1;
 										room[a].people_inroom[0] = createinfo->id;
+										ptr->is_guardian = 1;
 										ptr->roomID = room[a].roomID;
 										printf("Created No.%d Room!!\n", ptr->roomID);
 										break;
@@ -560,15 +563,40 @@ int main(int argc, char* argv[]) {
 								TB_RoomOutRE tempRE = { SIZEOF_TB_RoomOutRE,CASE_OUTROOM,1 };
 								room[temproomid - 1].people_count -= 1;
 								room[temproomid - 1].people_inroom[temproompos - 1] = 0;
+								
 								if (room[temproomid - 1].people_count <= 0) {
 									room[temproomid - 1].made = 0;
 								}
+								if (ptr->is_guardian == 1 ) {
+									ptr->is_guardian = 0; //이제 자유의 몸이야!
+									for (int a = 0; a < 4;++a) {
+										if (room[temproomid - 1].people_inroom[a]!=0 && room[temproomid - 1].people_inroom[a] != ptr->id) {
+											room[temproomid - 1].guardian_pos = a + 1;
+											
+											break;
+										}
+									}
+									
+								}
+
 
 								for (int j = 0; j < g_TotalSockets; ++j) {
 									if (SocketInfoArray[j].m_connected) {
 										if (SocketInfoArray[j].roomID == temproomid) {
 											//printf("Send size : %d\n", g_TurtleMap.size);
+											
+												//for (int t = 0; t < 4; ++t) {
+											BYTE tempt = room[temproomid - 1].guardian_pos;
+											if (SocketInfoArray[j].id == room[temproomid - 1].people_inroom[tempt-1]) {
+												printf("Guardian Change\n");
+												SocketInfoArray[j].is_guardian = 1;
+											}
+												
+												//
+												
+											//자기한테 보내는 것을 방지해야 할 것
 											retval = send(SocketInfoArray[j].sock, (char*)&room[temproomid - 1], sizeof(TB_Room), 0); //초기화된 맵정보 클라이언트에게 전송
+											
 										}
 
 										if (SocketInfoArray[j].roomID == 0) {
@@ -871,6 +899,7 @@ void SetGameRoomInit(BYTE j) {
 void ArrayMap() {
 
 	for (int j = 0; j < 20; ++j) {
+		
 		room[j].game_start = 0;
 		room[j].size = SIZEOF_TB_Room;
 		room[j].type = CASE_ROOM;
