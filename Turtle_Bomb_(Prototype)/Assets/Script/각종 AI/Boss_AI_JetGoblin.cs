@@ -105,6 +105,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         m_Behavior_Landing = Behavior_Landing();
         m_Behavior_WallCrash = Behavior_WallCrash();
 
+
         // 보스 스테이지인지 판단하여 (StageManager에서 설정)
         // 처음 실행할 모드 설정 및 그에 따른 스탯 설정
         if (StageManager.c_Stage_Manager.m_is_Boss_Stage)
@@ -115,7 +116,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
 
             m_BossRenderer = GetComponentsInChildren<SkinnedMeshRenderer>();
             m_JetRenderer = GetComponentInChildren<MeshRenderer>();
-            GetComponentInChildren<LineRenderer>().enabled = false;
+            //GetComponentInChildren<LineRenderer>().enabled = false; // 실선 표시기 비활성화
             foreach (SkinnedMeshRenderer s in m_BossRenderer)
                 s.enabled = false;
             m_JetRenderer.enabled = false;
@@ -286,7 +287,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
             if (StageManager.c_Stage_Manager.m_is_Intro_Over)
             {
                 m_Current_Behavior = m_Behavior_Move;
-                GetComponentInChildren<LineRenderer>().enabled = true;
+                //GetComponentInChildren<LineRenderer>().enabled = true; // 실선 표시기 활성화
                 foreach (SkinnedMeshRenderer s in m_BossRenderer)
                     s.enabled = true;
                 m_JetRenderer.enabled = true;
@@ -515,20 +516,21 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         m_Health -= 20.0f;
         m_Boss_JetGoblin_Animator.SetTrigger("Hurt");
 
-        if (m_Health < 0.0f)
+        if (m_Health < 0.0f && StageManager.c_Stage_Manager.GetBossDead() == false)
         {
+            StageManager.c_Stage_Manager.SetBossDead(true);
+
             if (MusicManager.manage_ESound != null)
                 MusicManager.manage_ESound.Boss_Goblin_Dead_Sound();
             StopCoroutine(Do_Behavior());
             m_Boss_JetGoblin_Animator.SetTrigger("Dead");
-            Invoke("Dead", 3.0f);
+            Invoke("Dead", 2.0f);
         }
     }
 
     // 사망
     void Dead()
     {
-        StageManager.c_Stage_Manager.SetBossDead(true);
         Destroy(gameObject);
         StageManager.c_Stage_Manager.Stage_Clear(); // 보스를 잡으면 스테이지 클리어
     }

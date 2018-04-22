@@ -56,7 +56,8 @@ public class StageManager : MonoBehaviour {
     public GameObject m_Prefab_Start_Point;
     public GameObject m_Prefab_Next_Portal;
     public GameObject m_Prefab_End_Portal;
-    public GameObject m_Prefab_Giant_Boss1;
+    public GameObject m_Prefab_Ork_Boss;
+    public GameObject m_Prefab_Airplane;
 
     // ===== 생성한 오브젝트 관리 =====
     // ================================
@@ -171,11 +172,12 @@ public class StageManager : MonoBehaviour {
 
     // 스크립트(대사) 테이블
     List<Script_Data> m_Script_List = new List<Script_Data>();
-    // ====================
 
+    // 보스 스테이터스 데이터
     Adventure_Boss_Data m_Adventure_Boss_Data = new Adventure_Boss_Data();
 
-
+    // 미션 번호 리스트
+    int[] mission_list = new int[3];
 
 
     void Awake()
@@ -215,17 +217,21 @@ public class StageManager : MonoBehaviour {
         // 스테이지 번호 목록 로드
         m_Stage_Number_List = CSV_Manager.GetInstance().Get_Stage_Number_List(m_Stage_ID);
 
+        // 현재 스테이지의 미션 번호들 받아오기
+        CSV_Manager.GetInstance().Get_Adv_Mission_Num_List(ref mission_list, PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID"));
+
+
         // 퀘스트 목록 로딩
-        m_QuestList = new List<Adventure_Quest_Data>(CSV_Manager.GetInstance().Get_Adventure_Quest_List(m_Stage_ID));
+        m_QuestList = new List<Adventure_Quest_Data>(CSV_Manager.GetInstance().Get_Adventure_Quest_List(ref mission_list));
 
         // 퀘스트 목록에 보스 몬스터 처치가 있다는것은
         // 해당 스테이지가 보스 스테이지라는 뜻!
-        if (m_QuestList[2].Quest_ID == 4)
-            m_is_Boss_Stage = true;
-
-        // 터레인 생성
-        Create_Terrain();
-
+        foreach (Adventure_Quest_Data questdata in m_QuestList)
+        {
+            if (questdata.Quest_ID == 4)
+                m_is_Boss_Stage = true;
+        }
+        
         // 설정된 번호를 받아서 맵 생성!
         Create_Map(m_Stage_Number_List[m_Current_Stage_index_Count]);
 
@@ -269,6 +275,9 @@ public class StageManager : MonoBehaviour {
     // 맵 생성 및 설정
     void Create_Map(int stage_id)
     {
+        // 터레인 생성
+        Create_Terrain();
+
         // 오브젝트 스폰 위치 목록을 받아온다.
         m_Object_Spawn_Position_List = new List<Object_Spawn_Position_Data>(CSV_Manager.GetInstance().Get_Object_Spawn_Position_List(stage_id));
         
@@ -326,6 +335,15 @@ public class StageManager : MonoBehaviour {
                         // 생성
                         m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Goblin_Boss);
                         m_Object_Position.y = m_Prefab_Goblin_Boss.transform.position.y;
+
+                        // 생성한 객체 좌표 이동
+                        m_Current_Map_Objects[m_Current_Map_Objects_Count].transform.position = m_Object_Position;
+
+                        ++m_Current_Map_Objects_Count;
+
+                        // 보스전이므로 비행기도 부른다.
+                        m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Airplane);
+                        m_Object_Position = m_Prefab_Airplane.transform.position;
                     }
 
                     // 시작지점
@@ -349,11 +367,20 @@ public class StageManager : MonoBehaviour {
                         m_Object_Position.y = m_Prefab_End_Portal.transform.position.y;
                     }
 
-                    // 거대 보스
+                    // 오크 보스
                     else if (m_Object_Spawn_Position_List[z].Spawn_Node[x] == m_Object_Table_List[9].ID)
                     {
-                        m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Giant_Boss1);
-                        m_Object_Position.y = m_Prefab_Giant_Boss1.transform.position.y;
+                        m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Ork_Boss);
+                        m_Object_Position.y = m_Prefab_Ork_Boss.transform.position.y;
+
+                        // 생성한 객체 좌표 이동
+                        m_Current_Map_Objects[m_Current_Map_Objects_Count].transform.position = m_Object_Position;
+
+                        ++m_Current_Map_Objects_Count;
+
+                        // 보스전이므로 비행기도 부른다.
+                        m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Airplane);
+                        m_Object_Position = m_Prefab_Airplane.transform.position;
                     }
 
                     // 생성한 객체 좌표 이동
@@ -547,9 +574,12 @@ public class StageManager : MonoBehaviour {
             items = GameObject.FindGameObjectsWithTag("Throw_Item");
             foreach (GameObject i in items)
                 Destroy(i);
+            items = GameObject.FindGameObjectsWithTag("Airdrop_Item");
+            foreach (GameObject i in items)
+                Destroy(i);
             // ========================================
 
-            
+
             // 새 맵을 생성!
             Create_Map(m_Stage_Number_List[m_Current_Stage_index_Count]);
 
@@ -577,11 +607,7 @@ public class StageManager : MonoBehaviour {
     {
         m_is_Stage_Clear = true;
         m_is_Pause = true;
-
-        // 현재 스테이지의 미션 번호들 받아오기
-        int[] mission_list = new int[3];
-        CSV_Manager.GetInstance().Get_Adv_Mission_Num_List(ref mission_list, PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID"));
-
+        
         // 별 획득 조건 체크 및 저장
         Condition_For_Getting_Stars(ref mission_list);
 
@@ -616,53 +642,53 @@ public class StageManager : MonoBehaviour {
             {
                 if (QuestData.ID == list[i])
                 {
-                    if (QuestData.isCountable == 1)
+                    Debug.Log(QuestData.ID);
+                    Debug.Log(list[i]);
+
+                    if (QuestData.Quest_ID == 1)
                     {
-                        if (QuestData.Quest_Script == "잔여 시간")
+                        if (UI.time_Second >= QuestData.Quest_Goal)
                         {
-                            if (UI.time_Second >= QuestData.Quest_Goal)
-                            {
-                                m_Stars += 1;
-                                tempString = "Adventure_Stars_ID_" + list[i];
-                                PlayerPrefs.SetInt(tempString, 1);
-                            }
-                        }
-                        else if (QuestData.Quest_Script == "일반 몬스터 처치")
-                        {
-                            if (m_Total_Monster_Count - m_Left_Monster_Count >= QuestData.Quest_Goal)
-                            {
-                                m_Stars += 1;
-                                tempString = "Adventure_Stars_ID_" + list[i];
-                                PlayerPrefs.SetInt(tempString, 1);
-                            }
+                            m_Stars += 1;
+                            tempString = "Adventure_Stars_ID_" + list[i];
+                            PlayerPrefs.SetInt(tempString, 1);
+                            Debug.Log("시간");
                         }
                     }
-                    else
+                    else if (QuestData.Quest_ID == 2)
                     {
-                        if (QuestData.Quest_Script == "목표 지점 이동")
+                        if (m_Total_Monster_Count - m_Left_Monster_Count >= QuestData.Quest_Goal)
                         {
-                            if (m_is_Goal_In)
-                            {
-                                m_Stars += 1;
-                                tempString = "Adventure_Stars_ID_" + list[i];
-                                PlayerPrefs.SetInt(tempString, 1);
-                            }
+                            m_Stars += 1;
+                            tempString = "Adventure_Stars_ID_" + list[i];
+                            PlayerPrefs.SetInt(tempString, 1);
+                            Debug.Log("몹");
                         }
-                        else if (QuestData.Quest_Script == "보스 몬스터 처치")
+                    }
+                    else if (QuestData.Quest_ID == 3)
+                    {
+                        if (m_is_Goal_In)
                         {
-                            if (m_is_Boss_Dead)
-                            {
-                                m_Stars += 1;
-                                tempString = "Adventure_Stars_ID_" + list[i];
-                                PlayerPrefs.SetInt(tempString, 1);
-                            }
+                            m_Stars += 1;
+                            tempString = "Adventure_Stars_ID_" + list[i];
+                            PlayerPrefs.SetInt(tempString, 1);
+                            Debug.Log("목표");
+                        }
+                    }
+                    else if (QuestData.Quest_ID == 4)
+                    {
+                        if (m_is_Boss_Dead)
+                        {
+                            m_Stars += 1;
+                            tempString = "Adventure_Stars_ID_" + list[i];
+                            PlayerPrefs.SetInt(tempString, 1);
+                            Debug.Log("보스");
                         }
                     }
                 }
             }
-            
         }
-
+        Debug.Log(m_Stars);
         PlayerPrefs.Save();
     }
 
@@ -671,15 +697,20 @@ public class StageManager : MonoBehaviour {
         m_is_Boss_Dead = b;
     }
 
+    public bool GetBossDead()
+    {
+        return m_is_Boss_Dead;
+    }
+
     public void SetGoalIn(bool b)
     {
         m_is_Goal_In = b;
     }
 
-    // 퀘스트 리스트를 리턴해준다.
-    public List<Adventure_Quest_Data> GetQuestList()
+    // 퀘스트 내용 리스트를 리턴해준다. (UI에 띄우기 위해)
+    public void GetQuestList(ref List<Adventure_Quest_Data> list)
     {
-        return m_QuestList;
+        list = m_QuestList;
     }
 
     // 보스 데이터를 리턴해준다.

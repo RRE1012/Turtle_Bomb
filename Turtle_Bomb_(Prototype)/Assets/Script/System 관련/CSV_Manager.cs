@@ -92,7 +92,7 @@ public class CSV_Manager : MonoBehaviour {
 
 
     // 어드벤쳐모드 퀘스트 목록
-    public List<Adventure_Quest_Data> Get_Adventure_Quest_List(int stageID)
+    public List<Adventure_Quest_Data> Get_Adventure_Quest_List(ref int[] mission_list)
     {
         Adventure_Quest_Data data = new Adventure_Quest_Data();
         List<Adventure_Quest_Data> Quest_List = new List<Adventure_Quest_Data>();
@@ -109,15 +109,18 @@ public class CSV_Manager : MonoBehaviour {
             m_data = m_stringList[i].Split(',');
 
             // 스테이지 번호를 확인한다.
-            if (System.Convert.ToInt32(m_data[1]) == stageID)
+            for (int j = 0; j < 3; ++j)
             {
-                // 입력한 값과 일치한다면 필요한 데이터를 리스트에 삽입.
-                data.ID = System.Convert.ToInt32(m_data[0]);
-                data.Quest_ID = System.Convert.ToInt32(m_data[2]);
-                data.isCountable = System.Convert.ToInt32(m_data[3]);
-                data.Quest_Script = m_data[4];
-                data.Quest_Goal = System.Convert.ToInt32(m_data[5]);
-                Quest_List.Add(data);
+                if (System.Convert.ToInt32(m_data[0]) == mission_list[j])
+                {
+                    // 입력한 값과 일치한다면 필요한 데이터를 리스트에 삽입.
+                    data.ID = System.Convert.ToInt32(m_data[0]);
+                    data.Quest_ID = System.Convert.ToInt32(m_data[1]);
+                    data.isCountable = System.Convert.ToInt32(m_data[2]);
+                    data.Quest_Script = m_data[3];
+                    data.Quest_Goal = System.Convert.ToInt32(m_data[4]);
+                    Quest_List.Add(data);
+                }
             }
         }
         

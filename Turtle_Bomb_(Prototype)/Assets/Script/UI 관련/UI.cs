@@ -127,8 +127,10 @@ public class UI : MonoBehaviour {
         m_Text_StageNum.text = "Stage ID - " + StageManager.c_Stage_Manager.m_Stage_ID.ToString();
 
         m_Mission_Script = new string[3];
-        m_QuestList = new List<Adventure_Quest_Data>(StageManager.c_Stage_Manager.GetQuestList());
-        
+        m_QuestList = new List<Adventure_Quest_Data>();
+        StageManager.c_Stage_Manager.GetQuestList(ref m_QuestList);
+
+
         for (int i = 0; i < 3; ++i)
         {
             m_Mission_Script[i] = m_QuestList[i].Quest_Script;
@@ -185,9 +187,9 @@ public class UI : MonoBehaviour {
             if (s == 1)
                 m_Star_Image1.texture = m_Activated_Star_Texture;
             else if (s == 2)
-                m_Star_Image2.texture = m_Activated_Star_Texture;
-            else if (s == 3)
                 m_Star_Image3.texture = m_Activated_Star_Texture;
+            else if (s == 3)
+                m_Star_Image2.texture = m_Activated_Star_Texture;
         }
     }
     
@@ -406,6 +408,7 @@ public class UI : MonoBehaviour {
     {
         m_Ingame_Play_UI.SetActive(false);
         m_Option_UI.SetActive(true);
+        StageManager.c_Stage_Manager.m_is_Pause = true;
         m_Text_StageNum.text = "Stage ID - " + StageManager.c_Stage_Manager.m_Stage_ID.ToString();
     }
 

@@ -123,6 +123,7 @@ GameObject:
   - component: {fileID: 135916015}
   - component: {fileID: 135916014}
   - component: {fileID: 135916017}
+  - component: {fileID: 135916018}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -188,6 +189,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_bomb: {fileID: 1878062025}
   m_effect: {fileID: 804540600}
+--- !u!114 &135916018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 135916013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5742f31bb74b624895c6a412a0681ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneNumber: 9999
+  Activated_Star_Image: {fileID: 0}
+  Activated_Bomb_Image: {fileID: 0}
+  Activated_Boss_Image: {fileID: 0}
 --- !u!1001 &165467215
 Prefab:
   m_ObjectHideFlags: 0

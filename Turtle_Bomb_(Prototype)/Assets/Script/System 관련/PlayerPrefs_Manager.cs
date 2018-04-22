@@ -29,40 +29,33 @@ public class PlayerPrefs_Manager : MonoBehaviour {
 
     public Texture Activated_Star_Image;
     public Texture Activated_Bomb_Image;
+    public Texture Activated_Boss_Image;
 
     void Start()
     {
         // 타이틀 씬
         if (m_SceneNumber == PlayerPrefs_Manager_Constants.Title_Start_Scene)
         {
+            // 일단은 항상 초기화 하도록 함.
+            PlayerPrefs.SetInt("Have_you_been_Play", 1);
+
             // 최초 플레이어 정보 초기화
-            if (!PlayerPrefs.HasKey("Have_you_been_Play"))
-            {
-                PlayerPrefs.SetInt("Have_you_been_Play", 1);
-                PlayerPrefs.SetInt("is_Opened_Mode_Coop", 0);
-                PlayerPrefs.SetInt("is_Opened_Mode_Competition", 0);
-                PlayerPrefs.SetInt("Adventure_Stars_ID_1", 0);
-                PlayerPrefs.SetInt("Adventure_Stars_ID_2", 0);
-                PlayerPrefs.SetInt("Adventure_Stars_ID_3", 0);
-                PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", 1);
-                PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", 1);
-                PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", 1);
-                PlayerPrefs.Save();
-            }
+            if (PlayerPrefs.GetInt("Have_you_been_Play") == 0 || !PlayerPrefs.HasKey("Have_you_been_Play"))
+                Pref_Init();
         }
 
 
         // 모드 선택 씬
         else if (m_SceneNumber == PlayerPrefs_Manager_Constants.Mode_Select_Scene)
         {
-            if (PlayerPrefs.GetInt("isOpen_Mode_Coop") == 1)
-            {
-                Mode_Select_Scene_Manager.c_Mode_Select_manager.Open_Coop_Mode();
-            }
-
-            if (PlayerPrefs.GetInt("isOpen_Mode_Competition") == 1)
+            if (PlayerPrefs.GetInt("is_Open_Mode_Competition") == 1)
             {
                 Mode_Select_Scene_Manager.c_Mode_Select_manager.Open_Competition_Mode();
+            }
+
+            if (PlayerPrefs.GetInt("is_Open_Mode_Coop") == 1)
+            {
+                Mode_Select_Scene_Manager.c_Mode_Select_manager.Open_Coop_Mode();
             }
         }
 
@@ -82,10 +75,18 @@ public class PlayerPrefs_Manager : MonoBehaviour {
             {
                 // 버튼을 활성화 시킨다.
                 Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].interactable = true;
-                Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].gameObject.GetComponent<RawImage>().texture = Activated_Bomb_Image;
 
-                // 텍스트도 활성화 시킨다.
-                Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].transform.Find("Number").gameObject.SetActive(true);
+                // 버튼 이미지를 변경한다.
+                if (i == 5 || i == 9) // 보스 스테이지
+                {
+                    Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].gameObject.GetComponent<RawImage>().texture = Activated_Boss_Image;
+                }
+                else // 일반 스테이지
+                {
+                    Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].gameObject.GetComponent<RawImage>().texture = Activated_Bomb_Image;
+                    // 텍스트도 활성화 시킨다.
+                    Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].transform.Find("Number").gameObject.SetActive(true);
+                }
 
                 // 획득했던 별을 받아온다.
                 CSV_Manager.GetInstance().Get_Adv_Mission_Num_List(ref mission_nums, i);
@@ -93,7 +94,6 @@ public class PlayerPrefs_Manager : MonoBehaviour {
                 {
                     tempString = "Adventure_Stars_ID_" + mission_nums[j].ToString();
                     tempStars[j] = PlayerPrefs.GetInt(tempString);
-                    Debug.Log(tempStars[j]);
                 }
 
                 // 받아온 별만큼 활성화 시킨다.
@@ -107,6 +107,26 @@ public class PlayerPrefs_Manager : MonoBehaviour {
             }
         }
     }
+
+    // PlayerPrefs 초기화 함수
+    void Pref_Init()
+    {
+        PlayerPrefs.SetInt("Have_you_been_Play", 1);
+        PlayerPrefs.SetInt("is_Opened_Mode_Competition", 0); // 대전모드 -> 1 : 열기, 0 : 닫기
+        PlayerPrefs.SetInt("is_Opened_Mode_Coop", 0);
+        string temp;
+        for (int i = 1; i <= 27; ++i)
+        {
+            temp = "Adventure_Stars_ID_" + i.ToString();
+            PlayerPrefs.SetInt(temp, 0);
+        }
+        PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", 1);
+        PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", 1);
+        PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", 1);
+        PlayerPrefs.Save();
+    }
+
+
 }
 
 
@@ -118,9 +138,9 @@ public class PlayerPrefs_Manager : MonoBehaviour {
 
 // Have_you_been_Play   :   최초 플레이 여부 확인
 
-// is_Opened_Mode_Coop  :   협동모드 해제 여부 확인
-
 // is_Opened_Mode_Competition   :   대전모드 해제 여부 확인
+
+// is_Opened_Mode_Coop  :   협동모드 해제 여부 확인
 
 // Adventure_Stars_ID_??    :   모험모드 퀘스트ID-?? 의 획득 별 개수
 
