@@ -32,6 +32,7 @@ TagManager:
   - Ingame_Mission_UI
   - Monster_Attack_Collider
   - Start_Point
+  - Airdrop_Item
   layers:
   - Default
   - TransparentFX

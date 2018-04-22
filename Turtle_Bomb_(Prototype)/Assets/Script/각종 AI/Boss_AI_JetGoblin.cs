@@ -528,7 +528,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     // 사망
     void Dead()
     {
-        StageManager.c_Stage_Manager.m_is_Boss_Dead = true;
+        StageManager.c_Stage_Manager.SetBossDead(true);
         Destroy(gameObject);
         StageManager.c_Stage_Manager.Stage_Clear(); // 보스를 잡으면 스테이지 클리어
     }

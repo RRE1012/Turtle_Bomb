@@ -6,6 +6,7 @@ using System.IO;
 
 public struct Adventure_Quest_Data
 {
+    public int ID;
     public int Quest_ID;
     public int isCountable;
     public string Quest_Script;
@@ -111,6 +112,7 @@ public class CSV_Manager : MonoBehaviour {
             if (System.Convert.ToInt32(m_data[1]) == stageID)
             {
                 // 입력한 값과 일치한다면 필요한 데이터를 리스트에 삽입.
+                data.ID = System.Convert.ToInt32(m_data[0]);
                 data.Quest_ID = System.Convert.ToInt32(m_data[2]);
                 data.isCountable = System.Convert.ToInt32(m_data[3]);
                 data.Quest_Script = m_data[4];
@@ -202,11 +204,11 @@ public class CSV_Manager : MonoBehaviour {
         {
             m_data = m_stringList[i].Split(',');
 
-            if (stageNum == System.Convert.ToInt32(m_data[2]))
+            if (stageNum == System.Convert.ToInt32(m_data[5]))
             {
                 for (int j = 0; j < SPIL_MAX; ++j)
                 {
-                    data = System.Convert.ToInt32(m_data[j + 2]);
+                    data = System.Convert.ToInt32(m_data[j + 5]);
                     List.Add(data);
                 }
             }
@@ -214,6 +216,10 @@ public class CSV_Manager : MonoBehaviour {
 
         return List;
     }
+
+
+
+
 
 
     // 스크립트(대사) 목록
@@ -247,6 +253,12 @@ public class CSV_Manager : MonoBehaviour {
         return Script_List;
     }
 
+    
+
+
+
+
+    // 보스 테이블
     public Adventure_Boss_Data Get_Adventure_Boss_Data(int objectNum)
     {
         Adventure_Boss_Data boss_Data = new Adventure_Boss_Data();
@@ -271,5 +283,31 @@ public class CSV_Manager : MonoBehaviour {
             }
         }
         return boss_Data;
+    }
+
+
+
+
+
+
+    // 스테이지에 따른 미션번호 리스트
+    public void Get_Adv_Mission_Num_List(ref int[] list, int stage_ID)
+    {
+        int file_Line_Count = Counting_EOF(m_Stage_Table_csvFile);
+
+        m_Read_Text = m_Stage_Table_csvFile.text;
+        m_stringList = m_Read_Text.Split('\n');
+        for (int i = 3; i < file_Line_Count; ++i)
+        {
+            m_data = m_stringList[i].Split(',');
+
+            if (stage_ID == System.Convert.ToInt32(m_data[0]))
+            {
+                list[0] = System.Convert.ToInt32(m_data[2]);
+                list[1] = System.Convert.ToInt32(m_data[3]);
+                list[2] = System.Convert.ToInt32(m_data[4]);
+                break;
+            }
+        }
     }
 }

@@ -1,12 +1,22 @@
 fileFormatVersion: 2
 guid: 72a49064f38d56446a168ead55bb7976
-timeCreated: 1519301455
+timeCreated: 1524322486
 licenseType: Free
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
   - m_Adventure_Quest_csvFile: {fileID: 4900000, guid: 231f0db796b75fb458fa422c750582b4,
+      type: 3}
+  - m_Object_Table_csvFile: {fileID: 4900000, guid: 0c47031c1d449034d80a3b0950f4fc2c,
+      type: 3}
+  - m_Object_Spawn_Table_csvFile: {fileID: 4900000, guid: 1fd12a00dee119c458678bc042777488,
+      type: 3}
+  - m_Stage_Table_csvFile: {fileID: 4900000, guid: f6182e396c0e9e84a9af8695fecb8d31,
+      type: 3}
+  - m_Script_Table_csvFile: {fileID: 4900000, guid: cedd89fb51fffb9459a0ff11a57a4bcf,
+      type: 3}
+  - m_Adventure_Boss_Table_csvFile: {fileID: 4900000, guid: a30f4bf5aa4ea2b4ca5c5156c24489b5,
       type: 3}
   executionOrder: -100
   icon: {instanceID: 0}

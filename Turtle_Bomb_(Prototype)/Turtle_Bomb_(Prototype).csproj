@@ -252,6 +252,7 @@
     <Compile Include="Assets\Script\Bomb 관련\Fire_Effect.cs" />
     <Compile Include="Assets\Script\Bomb 관련\Flame_Remains.cs" />
     <Compile Include="Assets\Script\Bomb 관련\RingEffectCollider.cs" />
+    <Compile Include="Assets\Script\Object 관련\Airdrop_Item.cs" />
     <Compile Include="Assets\Script\Object 관련\Box.cs" />
     <Compile Include="Assets\Script\Object 관련\Bush.cs" />
     <Compile Include="Assets\Script\Object 관련\Item.cs" />
@@ -274,6 +275,7 @@
     <Compile Include="Assets\Script\UI 관련\Image_Fade.cs" />
     <Compile Include="Assets\Script\UI 관련\TitleScript.cs" />
     <Compile Include="Assets\Script\UI 관련\UI.cs" />
+    <Compile Include="Assets\Script\각종 AI\Airplane.cs" />
     <Compile Include="Assets\Script\각종 AI\Boss_AI_JetGoblin.cs" />
     <Compile Include="Assets\Script\각종 AI\Boss_Behavior.cs" />
     <Compile Include="Assets\Script\각종 AI\Detector_Box.cs" />

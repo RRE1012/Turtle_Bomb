@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 // #define SceneNumbers
 static class PlayerPrefs_Manager_Constants
@@ -26,19 +27,26 @@ public class PlayerPrefs_Manager : MonoBehaviour {
 
     public static List<int> m_Stage_Stars_List;
 
+    public Texture Activated_Star_Image;
+    public Texture Activated_Bomb_Image;
+
     void Start()
     {
         // 타이틀 씬
         if (m_SceneNumber == PlayerPrefs_Manager_Constants.Title_Start_Scene)
         {
             // 최초 플레이어 정보 초기화
-            if (!PlayerPrefs.HasKey("is_First_Play"))
+            if (!PlayerPrefs.HasKey("Have_you_been_Play"))
             {
-                PlayerPrefs.SetInt("is_First_Play", 1);
-                PlayerPrefs.SetInt("isOpen_Mode_Coop", 0);
-                PlayerPrefs.SetInt("isOpen_Mode_Competition", 0);
+                PlayerPrefs.SetInt("Have_you_been_Play", 1);
+                PlayerPrefs.SetInt("is_Opened_Mode_Coop", 0);
+                PlayerPrefs.SetInt("is_Opened_Mode_Competition", 0);
+                PlayerPrefs.SetInt("Adventure_Stars_ID_1", 0);
+                PlayerPrefs.SetInt("Adventure_Stars_ID_2", 0);
+                PlayerPrefs.SetInt("Adventure_Stars_ID_3", 0);
                 PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", 1);
-                PlayerPrefs.SetInt("Mode_Adventure_Selected_Stage_ID", 1);
+                PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", 1);
+                PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", 1);
                 PlayerPrefs.Save();
             }
         }
@@ -62,19 +70,62 @@ public class PlayerPrefs_Manager : MonoBehaviour {
         // 모험모드 스테이지 선택 씬
         else if (m_SceneNumber == PlayerPrefs_Manager_Constants.Mode_Adventure)
         {
-            // 별 개수 리스트 초기화;
-            //m_Stage_Stars_List = new List<int>();
-            //string temp_string;
-            //int stage_num = 0;
+            int[] mission_nums = new int[3];
+            string tempString;
+            int[] tempStars = new int[3]; // 1: 활성화, 0: 비활성화
 
+            // 플레이 가능한 최대 스테이지를 받아온다.
             int playable_max_stage = PlayerPrefs.GetInt("Mode_Adventure_Playable_Max_Stage");
 
+            // 1번부터 순차적으로 최대 스테이지 까지 수행한다.
             for (int i = 1; i <= playable_max_stage; ++i)
             {
-                // 버튼도 활성화 시킨다.
-                Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i-1].interactable = true;
+                // 버튼을 활성화 시킨다.
+                Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].interactable = true;
+                Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].gameObject.GetComponent<RawImage>().texture = Activated_Bomb_Image;
+
+                // 텍스트도 활성화 시킨다.
+                Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].transform.Find("Number").gameObject.SetActive(true);
+
+                // 획득했던 별을 받아온다.
+                CSV_Manager.GetInstance().Get_Adv_Mission_Num_List(ref mission_nums, i);
+                for (int j = 0; j < 3; ++j)
+                {
+                    tempString = "Adventure_Stars_ID_" + mission_nums[j].ToString();
+                    tempStars[j] = PlayerPrefs.GetInt(tempString);
+                    Debug.Log(tempStars[j]);
+                }
+
+                // 받아온 별만큼 활성화 시킨다.
+                for (int j = 0; j < 3; ++j)
+                {
+                    if (tempStars[j] == 1)
+                    {
+                        Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].gameObject.GetComponentsInChildren<RawImage>()[j+1].texture = Activated_Star_Image;
+                    }
+                }
             }
         }
-
     }
 }
+
+
+
+
+// ==========================================
+//            PlayerPref 내용물들
+// ==========================================
+
+// Have_you_been_Play   :   최초 플레이 여부 확인
+
+// is_Opened_Mode_Coop  :   협동모드 해제 여부 확인
+
+// is_Opened_Mode_Competition   :   대전모드 해제 여부 확인
+
+// Adventure_Stars_ID_??    :   모험모드 퀘스트ID-?? 의 획득 별 개수
+
+// Mode_Adventure_Playable_Max_Stage    :   모험모드 최대 이용가능 스테이지 번호
+
+// Mode_Adventure_Stage_ID_For_MapLoad     :   모험모드 입장시 선택한 스테이지 번호 (맵로드를 위한..)
+
+// Mode_Adventure_Current_Stage_ID      :   모험모드 입장시 선택한 스테이지 번호

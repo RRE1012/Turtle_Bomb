@@ -79,6 +79,9 @@ public class StageManager : MonoBehaviour {
     // 스테이지를 클리어했는가?
     public static bool m_is_Stage_Clear = false;
 
+    // 목표 지점에 들어갔는가?
+    bool m_is_Goal_In = false;
+
     // 획득한 별 개수
     public static int m_Stars = 0;
 
@@ -136,7 +139,7 @@ public class StageManager : MonoBehaviour {
     public bool m_is_SuddenDeath;
 
     // 보스 스테이지의 보스 몬스터가 죽었는가?
-    public bool m_is_Boss_Dead;
+    bool m_is_Boss_Dead;
     // =====================
 
 
@@ -207,7 +210,7 @@ public class StageManager : MonoBehaviour {
 
         // 스테이지 ID를 받아온다.
         if (m_Stage_ID == MAP.NOT_SET)
-            m_Stage_ID = PlayerPrefs.GetInt("Mode_Adventure_Selected_Stage_ID");
+            m_Stage_ID = PlayerPrefs.GetInt("Mode_Adventure_Stage_ID_For_MapLoad");
         
         // 스테이지 번호 목록 로드
         m_Stage_Number_List = CSV_Manager.GetInstance().Get_Stage_Number_List(m_Stage_ID);
@@ -266,11 +269,8 @@ public class StageManager : MonoBehaviour {
     // 맵 생성 및 설정
     void Create_Map(int stage_id)
     {
-        // 스테이지 ID 대입
-        m_Stage_ID = stage_id;
-        
         // 오브젝트 스폰 위치 목록을 받아온다.
-        m_Object_Spawn_Position_List = new List<Object_Spawn_Position_Data>(CSV_Manager.GetInstance().Get_Object_Spawn_Position_List(m_Stage_ID));
+        m_Object_Spawn_Position_List = new List<Object_Spawn_Position_Data>(CSV_Manager.GetInstance().Get_Object_Spawn_Position_List(stage_id));
         
         m_Current_Map_Objects_Count = 0;
 
@@ -576,20 +576,19 @@ public class StageManager : MonoBehaviour {
     public void Stage_Clear()
     {
         m_is_Stage_Clear = true;
+        m_is_Pause = true;
 
-        // 목표까지 이동시 or 보스 처치시 별 획득
-        m_Stars += 1;
+        // 현재 스테이지의 미션 번호들 받아오기
+        int[] mission_list = new int[3];
+        CSV_Manager.GetInstance().Get_Adv_Mission_Num_List(ref mission_list, PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID"));
 
-        // 다른 조건 체크
-        Condition_For_Getting_Stars();
-
-        // 별 개수 저장 및 플레이 가능 스테이지 증가
-        //PlayerPrefs.SetInt(tempString, m_Stars);
+        // 별 획득 조건 체크 및 저장
+        Condition_For_Getting_Stars(ref mission_list);
 
         // 현재 스테이지가 플레이 가능 최대 스테이지라면
         int tempMaxStage = PlayerPrefs.GetInt("Mode_Adventure_Playable_Max_Stage");
 
-        if (m_Stage_ID == tempMaxStage)
+        if (PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID") == tempMaxStage)
         {
             tempMaxStage += 1;
 
@@ -597,7 +596,6 @@ public class StageManager : MonoBehaviour {
             if (tempMaxStage <= PlayerPrefs_Manager_Constants.MAX_STAGE_NUM)
             {
                 PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", tempMaxStage);
-                Debug.Log("SetINT");
             }
         }
 
@@ -609,31 +607,74 @@ public class StageManager : MonoBehaviour {
 
 
     // 별 획득 조건 관리
-    void Condition_For_Getting_Stars()
+    void Condition_For_Getting_Stars(ref int[] list)
     {
         foreach(Adventure_Quest_Data QuestData in m_QuestList)
         {
-            if (QuestData.isCountable == 1)
+            string tempString;
+            for (int i = 0; i < 3; ++i)
             {
-                if (QuestData.Quest_Script == "잔여 시간")
+                if (QuestData.ID == list[i])
                 {
-                    if (UI.time_Second >= QuestData.Quest_Goal)
-                        m_Stars += 1;
-                }
-                else if (QuestData.Quest_Script == "일반 몬스터 처치")
-                {
-                    if (m_Total_Monster_Count - m_Left_Monster_Count >= QuestData.Quest_Goal)
-                        m_Stars += 1;
-                }
-                else if (m_is_Boss_Stage && QuestData.Quest_Script == "보스 몬스터 처치")
-                {
-                    if (m_is_Boss_Dead)
-                        m_Stars += 1;
+                    if (QuestData.isCountable == 1)
+                    {
+                        if (QuestData.Quest_Script == "잔여 시간")
+                        {
+                            if (UI.time_Second >= QuestData.Quest_Goal)
+                            {
+                                m_Stars += 1;
+                                tempString = "Adventure_Stars_ID_" + list[i];
+                                PlayerPrefs.SetInt(tempString, 1);
+                            }
+                        }
+                        else if (QuestData.Quest_Script == "일반 몬스터 처치")
+                        {
+                            if (m_Total_Monster_Count - m_Left_Monster_Count >= QuestData.Quest_Goal)
+                            {
+                                m_Stars += 1;
+                                tempString = "Adventure_Stars_ID_" + list[i];
+                                PlayerPrefs.SetInt(tempString, 1);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (QuestData.Quest_Script == "목표 지점 이동")
+                        {
+                            if (m_is_Goal_In)
+                            {
+                                m_Stars += 1;
+                                tempString = "Adventure_Stars_ID_" + list[i];
+                                PlayerPrefs.SetInt(tempString, 1);
+                            }
+                        }
+                        else if (QuestData.Quest_Script == "보스 몬스터 처치")
+                        {
+                            if (m_is_Boss_Dead)
+                            {
+                                m_Stars += 1;
+                                tempString = "Adventure_Stars_ID_" + list[i];
+                                PlayerPrefs.SetInt(tempString, 1);
+                            }
+                        }
+                    }
                 }
             }
+            
         }
+
+        PlayerPrefs.Save();
     }
 
+    public void SetBossDead(bool b)
+    {
+        m_is_Boss_Dead = b;
+    }
+
+    public void SetGoalIn(bool b)
+    {
+        m_is_Goal_In = b;
+    }
 
     // 퀘스트 리스트를 리턴해준다.
     public List<Adventure_Quest_Data> GetQuestList()

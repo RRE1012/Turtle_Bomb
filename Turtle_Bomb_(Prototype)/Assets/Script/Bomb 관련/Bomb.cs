@@ -161,9 +161,9 @@ public class Bomb : MonoBehaviour
             if (m_is_Thrown_Bomb_Moving && !m_is_Rising_Start)
             {
                 transform.position = new Vector3(transform.position.x, 0.0f, transform.position.z);
-                Bomb_MCL_And_Position_Update();
                 m_is_Thrown_Bomb_Moving = false;
                 m_isThrown = false;
+                Bomb_MCL_And_Position_Update();
             }
         }
 
@@ -187,6 +187,7 @@ public class Bomb : MonoBehaviour
             {
                 // ReRising 해야한다.
                 m_isThrown = false;
+                m_is_Rising_Start = true;
                 m_Thrown_Bomb_Speed = 3.0f;
                 m_is_Done_Rising = false;
             }
@@ -239,19 +240,24 @@ public class Bomb : MonoBehaviour
     // "화력 범위 오브젝트"의 위치를 갱신
     void Explosion_Range_Pos_Update()
     {
-        if (!m_isThrown)
+        if (!m_isThrown && !m_is_Thrown_Bomb_Moving)
         {
             m_Range_Base.transform.position = new Vector3(gameObject.transform.position.x, -0.7f, gameObject.transform.position.z);
 
             for (int i = 1; i <= m_FlameCount; ++i)
             {
-                m_Range_N[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
-
-                m_Range_S[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
-
-                m_Range_W[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
-
-                m_Range_E[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
+                if (m_My_MCL_Index + 17 * i <= 255)
+                    m_Range_N[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
+                //Debug.Log(StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x);
+                if (m_My_MCL_Index - 17 * i >= 0)
+                    m_Range_S[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
+                //Debug.Log(StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x);
+                if (m_My_MCL_Index + i <= 255)
+                    m_Range_W[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
+                //Debug.Log(StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].x);
+                if (m_My_MCL_Index - i >= 0)
+                    m_Range_E[i - 1].transform.position = new Vector3(StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, -0.7f, StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
+                //Debug.Log(StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].x);
             }
         }
     }
@@ -281,54 +287,66 @@ public class Bomb : MonoBehaviour
             {
                 if (!is_blocked_N)
                 {
-                    if (StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].isBlocked == false)
-                    {
-                        m_Range_N[i - 1].SetActive(true);
-                    }
-                    else
-                    {
-                        is_blocked_N = true;
-                        for (int j = i - 1; j < m_FlameCount; ++j)
-                            m_Range_N[j].SetActive(false);
+                    if (m_My_MCL_Index + 17 * i <= 255)
+                    { 
+                        if (StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].isBlocked == false)
+                        {
+                            m_Range_N[i - 1].SetActive(true);
+                        }
+                        else
+                        {
+                            is_blocked_N = true;
+                            for (int j = i - 1; j < m_FlameCount; ++j)
+                                m_Range_N[j].SetActive(false);
+                        }
                     }
                 }
                 if (!is_blocked_S)
                 {
-                    if (StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].isBlocked == false)
+                    if (m_My_MCL_Index - 17 * i >= 0)
                     {
-                        m_Range_S[i - 1].SetActive(true);
-                    }
-                    else
-                    {
-                        is_blocked_S = true;
-                        for (int j = i - 1; j < m_FlameCount; ++j)
-                            m_Range_S[j].SetActive(false);
+                        if (StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].isBlocked == false)
+                        {
+                            m_Range_S[i - 1].SetActive(true);
+                        }
+                        else
+                        {
+                            is_blocked_S = true;
+                            for (int j = i - 1; j < m_FlameCount; ++j)
+                                m_Range_S[j].SetActive(false);
+                        }
                     }
                 }
                 if (!is_blocked_W)
                 {
-                    if (StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].isBlocked == false)
+                    if (m_My_MCL_Index + i <= 255)
                     {
-                        m_Range_W[i - 1].SetActive(true);
-                    }
-                    else
-                    {
-                        is_blocked_W = true;
-                        for (int j = i - 1; j < m_FlameCount; ++j)
-                            m_Range_W[j].SetActive(false);
+                        if (StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].isBlocked == false)
+                        {
+                            m_Range_W[i - 1].SetActive(true);
+                        }
+                        else
+                        {
+                            is_blocked_W = true;
+                            for (int j = i - 1; j < m_FlameCount; ++j)
+                                m_Range_W[j].SetActive(false);
+                        }
                     }
                 }
                 if (!is_blocked_E)
                 {
-                    if (StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].isBlocked == false)
+                    if (m_My_MCL_Index - i >= 0)
                     {
-                        m_Range_E[i - 1].SetActive(true);
-                    }
-                    else
-                    {
-                        is_blocked_E = true;
-                        for (int j = i - 1; j < m_FlameCount; ++j)
-                            m_Range_E[j].SetActive(false);
+                        if (StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].isBlocked == false)
+                        {
+                            m_Range_E[i - 1].SetActive(true);
+                        }
+                        else
+                        {
+                            is_blocked_E = true;
+                            for (int j = i - 1; j < m_FlameCount; ++j)
+                                m_Range_E[j].SetActive(false);
+                        }
                     }
                 }
             }
@@ -448,18 +466,20 @@ public class Bomb : MonoBehaviour
             m_Range_S.Clear();
             m_Range_W.Clear();
             m_Range_E.Clear();
+
             // MCL 갱신
             StageManager.Update_MCL_isBlocked(m_My_MCL_Index, false);
+        }
 
-            //폭탄 수 다시 증가
-            if (m_Whose_Bomb_Type == WHOSE_BOMB.PLAYER)
-            {
-                m_Whose_Bomb.GetComponent<PlayerMove>().ReloadUp();
-            }
-            else if (m_Whose_Bomb_Type == WHOSE_BOMB.JETGOBLIN)
-            {
-                m_Whose_Bomb.GetComponent<Boss_AI_JetGoblin>().Bomb_Reload();
-            }
+        //폭탄 수 다시 증가
+        if (m_Whose_Bomb_Type == WHOSE_BOMB.PLAYER)
+        {
+            m_Whose_Bomb.GetComponent<PlayerMove>().ReloadUp();
+        }
+
+        else if (m_Whose_Bomb_Type == WHOSE_BOMB.JETGOBLIN)
+        {
+            m_Whose_Bomb.GetComponent<Boss_AI_JetGoblin>().Bomb_Reload();
         }
     }
 
@@ -563,7 +583,7 @@ public class Bomb : MonoBehaviour
             if (transform.position.y > 2.0f)
             {
                 m_is_Rising_Start = false;
-                GetComponent<MeshRenderer>().enabled = true;
+                GetComponentInChildren<MeshRenderer>().enabled = true;
             }
         }
 
