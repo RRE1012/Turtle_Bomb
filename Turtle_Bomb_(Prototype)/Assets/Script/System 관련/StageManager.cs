@@ -217,6 +217,11 @@ public class StageManager : MonoBehaviour {
         // 스테이지 번호 목록 로드
         m_Stage_Number_List = CSV_Manager.GetInstance().Get_Stage_Number_List(m_Stage_ID);
 
+        // ===============디버깅 때문에 적어둔 구문임=======================
+        //if (m_Stage_ID == 17)
+        //    PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", 9);
+        // =================================================================
+
         // 현재 스테이지의 미션 번호들 받아오기
         CSV_Manager.GetInstance().Get_Adv_Mission_Num_List(ref mission_list, PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID"));
 
@@ -229,7 +234,15 @@ public class StageManager : MonoBehaviour {
         foreach (Adventure_Quest_Data questdata in m_QuestList)
         {
             if (questdata.Quest_ID == 4)
+            {
                 m_is_Boss_Stage = true;
+
+                // 보스 테이블의 번호를 설정
+                if (PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID") == 5)
+                    m_Boss_ID = 1;
+                else if (PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID") == 9)
+                    m_Boss_ID = 2;
+            }
         }
         
         // 설정된 번호를 받아서 맵 생성!
@@ -329,8 +342,8 @@ public class StageManager : MonoBehaviour {
                     {
                         //Instantiate(m_Prefab_Intro_Boss);
 
-                        // 보스 데이터 읽어오기 (아이디는 어떻게 하지?)
-                        m_Adventure_Boss_Data = CSV_Manager.GetInstance().Get_Adventure_Boss_Data(2);
+                        // 보스 데이터 읽어오기
+                        m_Adventure_Boss_Data = CSV_Manager.GetInstance().Get_Adventure_Boss_Data(m_Boss_ID);
 
                         // 생성
                         m_Current_Map_Objects[m_Current_Map_Objects_Count] = Instantiate(m_Prefab_Goblin_Boss);

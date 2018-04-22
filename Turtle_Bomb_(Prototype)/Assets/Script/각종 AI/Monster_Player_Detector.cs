@@ -20,6 +20,8 @@ public class Monster_Player_Detector : MonoBehaviour {
         {
             m_isInRange = true;
 
+            // 방향 조정
+            
             Vector3 dir = other.transform.position - m_MainBody.transform.position;
             Vector3 dirXZ = new Vector3(dir.x, 0.0f, dir.z);
 
@@ -29,6 +31,7 @@ public class Monster_Player_Detector : MonoBehaviour {
 
                 m_MainBody.transform.rotation = targetRot;
             }
+            
         }
     }
 

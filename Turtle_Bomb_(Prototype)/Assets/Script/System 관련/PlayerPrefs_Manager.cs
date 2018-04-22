@@ -37,7 +37,9 @@ public class PlayerPrefs_Manager : MonoBehaviour {
         if (m_SceneNumber == PlayerPrefs_Manager_Constants.Title_Start_Scene)
         {
             // 일단은 항상 초기화 하도록 함.
-            PlayerPrefs.SetInt("Have_you_been_Play", 1);
+            //PlayerPrefs.SetInt("Have_you_been_Play", 1);
+            
+            Pref_All_Stage_Open(); // 디버깅용
 
             // 최초 플레이어 정보 초기화
             if (PlayerPrefs.GetInt("Have_you_been_Play") == 0 || !PlayerPrefs.HasKey("Have_you_been_Play"))
@@ -126,6 +128,22 @@ public class PlayerPrefs_Manager : MonoBehaviour {
         PlayerPrefs.Save();
     }
 
+    void Pref_All_Stage_Open()
+    {
+        PlayerPrefs.SetInt("Have_you_been_Play", 1);
+        PlayerPrefs.SetInt("is_Opened_Mode_Competition", 0);
+        PlayerPrefs.SetInt("is_Opened_Mode_Coop", 0);
+        string temp;
+        for (int i = 1; i <= 27; ++i)
+        {
+            temp = "Adventure_Stars_ID_" + i.ToString();
+            PlayerPrefs.SetInt(temp, 0);
+        }
+        PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", 8);
+        PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", 1);
+        PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", 1);
+        PlayerPrefs.Save();
+    }
 
 }
 

@@ -7,86 +7,94 @@ using UnityEngine.SceneManagement;
 // 게임 씬 UI 함수
 public class UI : MonoBehaviour {
 
-    // 인게임에 사용되는 UI들
-    public static GameObject m_Ingame_Play_UI;
-    public static GameObject m_Option_UI;
-    GameObject m_Ingame_Mission_UI;
+    // =============================
+    // ========= 인게임 UI =========
+    public static GameObject m_Ingame_Play_UI; // 총괄 UI
+    public static GameObject m_Option_UI; // 옵션 버튼
+    GameObject m_Ingame_Mission_UI; // 미션 버튼
 
-    // 플레이어 화력 텍스트
-    public Text m_FCT;
-    // 플레이어 폭탄 텍스트
-	public Text m_BCT;
-    // 플레이어 스피드 텍스트
-	public Text m_SCT;
+    public Text m_FCT; // 플레이어 화력 텍스트
+    public Text m_BCT; // 플레이어 폭탄 텍스트
+    public Text m_SCT; // 플레이어 스피드 텍스트
+    public Text m_GIT; // 아이템 획득시 출력 텍스트
+    public Text m_TLT; // 시간 텍스트
 
-    // 남은 몬스터 텍스트
-    //public Text m_MLT;
+    public Image m_InBushImage; // 부쉬 입장 효과
 
-    // 아이템 획득 텍스트
-    public Text m_GIT;
-
-    // 시간 텍스트
-    public Text m_TLT;
-
-    public Image m_InBushImage;
-   
-    // 밀기 버튼
-    public Button m_PushButton;
-
-    // 폭탄 설치 버튼
-    public Button m_Set_Bomb_Button;
-
-    // 폭탄 던지기 버튼
-    public Button m_Throw_Bomb_Button;
-
-    // 애니메이터
-    public Animator ani;
-    // 시간 변수
-    float deltaTime = 0.0f;
+    public Button m_PushButton; // 밀기 버튼
+    public Button m_Set_Bomb_Button; // 폭탄 설치 버튼
+    public Button m_Throw_Bomb_Button; // 폭탄 던지기 버튼
+    
+    public Animator ani; // 애니메이터
+    
+    float deltaTime = 0.0f; // 시간 변수
+    
+    // =============================
+    // =============================
 
 
-    // 스테이지 클리어시 출력할 UI들
+
+
+
+
+    // =============================
+    // ==== 스테이지 클리어 UI =====
     public static GameObject m_Stage_Clear_UI;
-    // 활성화된 별 텍스쳐
-    public Texture m_Activated_Star_Texture;
+    
+    public Texture m_Activated_Star_Texture; // 활성화된 별 텍스쳐
     static bool m_is_Init_Star_Count = false;
 
     public RawImage m_Star_Image1;
     public RawImage m_Star_Image2;
     public RawImage m_Star_Image3;
+    // =============================
+    // =============================
 
 
-    // 미션 UI
+
+
+
+
+    // =============================
+    // ===========미션 UI===========
     public Text[] m_MissionText;
 
     public RawImage m_Mission_Star_Image1;
     public RawImage m_Mission_Star_Image2;
     public RawImage m_Mission_Star_Image3;
 
-    // 게임오버시 출력할 UI들
-    public static GameObject m_GameOver_UI;
-
-    // UI에 표시될 변수
-    public static int m_fire_count;
-	public static int m_releasable_bomb_count;
-	public static int m_speed_count;
-    public static int m_cur_Max_Bomb_Count;
-
-
-    // 아이템획득 텍스트에 사용할 string변수
-    public static string m_getItemText;
-
-    public Text m_Text_StageNum;
-
-    float m_GIT_CoolTime = 0.0f;
-    public static float time_Second = 30.0f;
-
     string[] m_Mission_Script;
     int m_timeLimit = 0;
     int m_monsterKill = 0;
 
-    // 퀘스트 목록
-    List<Adventure_Quest_Data> m_QuestList;
+    List<Adventure_Quest_Data> m_QuestList; // 퀘스트 목록
+    // =============================
+    // =============================
+
+
+    
+    // =============================
+    // ======== 게임오버 UI ========
+    public static GameObject m_GameOver_UI;
+
+    // =============================
+    // =============================
+
+
+
+
+    // UI에 표시될 변수
+    public static int m_fire_count;
+    public static int m_releasable_bomb_count;
+    public static int m_speed_count;
+    public static int m_cur_Max_Bomb_Count;
+    // 아이템획득 텍스트에 사용할 string변수
+    public static string m_getItemText;
+    public Text m_Text_StageNum;
+    float m_GIT_CoolTime = 0.0f;
+    public static float time_Second = 30.0f;
+
+    
 
 
     // 시험중 -fps 고정
@@ -130,6 +138,7 @@ public class UI : MonoBehaviour {
         m_QuestList = new List<Adventure_Quest_Data>();
         StageManager.c_Stage_Manager.GetQuestList(ref m_QuestList);
 
+        
 
         for (int i = 0; i < 3; ++i)
         {
