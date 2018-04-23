@@ -91,6 +91,7 @@ int main(int argc, char* argv[]) {
 
 		//타임아웃에 걸릴 경우 - 폭탄 시간은 계속 체크하고 있어야 하므로, 여기서도 시간체크를 실행시킨다.
 		if (i == WSA_WAIT_FAILED || i == 258 || i == WAIT_TIMEOUT) {
+			
 			if (bomb_list.size() > 0) {
 				list<TB_BombPos>::iterator bomb = bomb_list.begin();
 				for (; bomb != bomb_list.end(); ++bomb) {
@@ -658,14 +659,20 @@ int main(int argc, char* argv[]) {
 								TB_RoomSetting* temproom = reinterpret_cast<TB_RoomSetting*>(c_buf);
 								BYTE temproomid = temproom->roomid;
 								BYTE temproomstate = temproom->gametype;
+								BYTE tempmaptype = temproom->mapnum;
 								room[temproomid - 1].roomstate = temproomstate;
+								room[temproomid - 1].map_mode = tempmaptype;
+
 								for (int j = 0; j < g_TotalSockets; ++j) {
 									if (SocketInfoArray[j].m_connected) {
 										if (SocketInfoArray[j].roomID == temproomid) {
 											//printf("Send size : %d\n", g_TurtleMap.size);
 											retval = send(SocketInfoArray[j].sock, (char*)&room[temproomid - 1], sizeof(TB_Room), 0); //초기화된 맵정보 클라이언트에게 전송
 										}
-
+										if (SocketInfoArray[j].roomID == 0) {
+											//printf("Send size : %d\n", g_TurtleMap.size);
+											retval = send(SocketInfoArray[j].sock, (char*)&room, sizeof(room), 0); //초기화된 맵정보 클라이언트에게 전송
+										}
 					
 									}
 

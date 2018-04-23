@@ -58,7 +58,7 @@ using namespace std;
 #define SIZEOF_TB_GetItem 4
 #define SIZEOF_TB_DEAD 3
 #define SIZEOF_TB_GAMEEND 3
-#define SIZEOF_TB_Room 25
+#define SIZEOF_TB_Room 26
 #define SIZEOF_TB_join 12
 #define SIZEOF_TB_joinRE 10
 #define SIZEOF_TB_create  11
@@ -70,7 +70,7 @@ using namespace std;
 #define SIZEOF_TB_RoomOutRE 3
 #define SIZEOF_TB_GetOut  4
 #define SIZEOF_TB_GetOutRE  2
-#define SIZEOF_TB_RoomSetting 4
+#define SIZEOF_TB_RoomSetting 5
 #define SIZEOF_TB_TeamSetting 5
 
 
@@ -315,7 +315,7 @@ struct TB_UserInfo { //유저정보 - type: 7
 //프로토콜이 아닌 구조체에 맵데이터를 넣은 방 구조체 작성
 
 struct TB_Room { //방장 추가(완)
-	BYTE size; //25
+	BYTE size; //26
 	BYTE type;//8
 	BYTE roomID;
 	BYTE people_count;
@@ -325,6 +325,7 @@ struct TB_Room { //방장 추가(완)
 	BYTE guardian_pos; //배열에 넣을 때 -1할 것
 	BYTE people_inroom[4];
 	BYTE roomstate;  //팀전인가 개인전인가? 0-개인전 1-팀전
+	BYTE map_mode;
 	BYTE team_inroom[4];
 	char password[8];
 };
@@ -407,10 +408,11 @@ struct TB_RoomOutRE {
 };
 
 struct TB_RoomSetting {
-	BYTE size;//4
+	BYTE size;//5
 	BYTE type;//15
 	BYTE roomid;
 	BYTE gametype; //0이면 개인전 1이면 팀전
+	BYTE mapnum;
 };
 struct TB_TeamSetting {
 	BYTE size;//5
