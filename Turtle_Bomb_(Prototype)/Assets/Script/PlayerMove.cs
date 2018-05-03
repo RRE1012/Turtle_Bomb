@@ -726,10 +726,11 @@ public class PlayerMove : MonoBehaviour {
         m_TurtleMan_Animator.SetBool("TurtleMan_isDrop", false);
     }
     
-    //다른 스크립트에서 플레이어를 죽게 하는 함수-R
+    //다른 스크립트에서 플레이어를 죽게 하는 함수
     public void Set_Dead()
 	{
         MusicManager.manage_ESound.TryMute();
+        StageManager.c_Stage_Manager.m_is_Pause = true;
         m_isAlive = false;
 	}
 

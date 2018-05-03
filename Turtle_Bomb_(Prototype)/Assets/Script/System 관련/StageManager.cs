@@ -151,7 +151,8 @@ public class StageManager : MonoBehaviour {
     // 게임이 일시정지 되었는가?
     public bool m_is_Pause;
 
-
+    // 게임이 끝났는가?
+    public bool m_Game_Over = false;
 
 
 
@@ -261,15 +262,16 @@ public class StageManager : MonoBehaviour {
         UI.time_Second = m_Stage_Time_Limit;
     }
 
-
-    
+    void Start()
+    {
+        // 페이드 인
+        Fade_Slider.c_Fade_Slider.Start_Fade_Slider(2);
+    }
 
     void Update()
     {
-        if (PlayerMove.C_PM != null && !PlayerMove.C_PM.Get_IsAlive())
-        {
-            m_Text.text = "Game Over";
-        }
+        Check_GameOver();
+
         if (!m_is_Boss_Stage && m_is_SuddenDeath && !m_is_Summon_SJG)
         {
             Instantiate(m_SuddenDeath_JetGoblin);
@@ -277,6 +279,24 @@ public class StageManager : MonoBehaviour {
         }
 	}
 
+    void Check_GameOver()
+    {
+        if (!PlayerMove.C_PM.Get_IsAlive()) // 죽어서 끝났거나,
+        {
+            m_Text.text = "Game Over";
+            m_Game_Over = true;
+        }
+
+        else if (m_is_Stage_Clear) // 클리어해서 끝났거나!
+        {
+            m_Game_Over = true;
+        }
+    }
+
+    public bool Get_Game_Over()
+    {
+        return m_Game_Over;
+    }
 
     // 터레인 생성
     void Create_Terrain()
@@ -547,51 +567,8 @@ public class StageManager : MonoBehaviour {
             // MCL을 재설정한다.
             MCL_init();
 
-
-
-            // 이하는 인스턴스 객체들을 제거한다.
-            // =========================================
-
-            // 현재 맵의 오브젝트들을 제거
-            for (int i = 0; i < m_Current_Map_Objects_Count; ++i)
-            {
-                if (m_Current_Map_Objects[i] != null)
-                {
-                    Destroy(m_Current_Map_Objects[i]);
-                }
-            }
-
-            // 혹여나 있을 폭탄들 제거
-            GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
-            foreach (GameObject b in bombs)
-                Destroy(b);
-
-            // 불 붙은 부쉬의 파티클도 제거
-            GameObject[] fBushs = GameObject.FindGameObjectsWithTag("Flame_Bush_Particle");
-            foreach (GameObject fb in fBushs)
-                Destroy(fb);
-
-            // 아이템들도 제거
-            GameObject[] items = GameObject.FindGameObjectsWithTag("Bomb_Item");
-            foreach (GameObject i in items)
-                Destroy(i);
-            items = GameObject.FindGameObjectsWithTag("Fire_Item");
-            foreach (GameObject i in items)
-                Destroy(i);
-            items = GameObject.FindGameObjectsWithTag("Speed_Item");
-            foreach (GameObject i in items)
-                Destroy(i);
-            items = GameObject.FindGameObjectsWithTag("Kick_Item");
-            foreach (GameObject i in items)
-                Destroy(i);
-            items = GameObject.FindGameObjectsWithTag("Throw_Item");
-            foreach (GameObject i in items)
-                Destroy(i);
-            items = GameObject.FindGameObjectsWithTag("Airdrop_Item");
-            foreach (GameObject i in items)
-                Destroy(i);
-            // ========================================
-
+            // 남아있는 오브젝트들을 제거한다.
+            Destroy_Objects();
 
             // 새 맵을 생성!
             Create_Map(m_Stage_Number_List[m_Current_Stage_index_Count]);
@@ -730,5 +707,61 @@ public class StageManager : MonoBehaviour {
     public Adventure_Boss_Data Get_Adventure_Boss_Data()
     {
         return m_Adventure_Boss_Data;
+    }
+
+    public void Destroy_Objects()
+    {
+        // 이하는 인스턴스 객체들을 제거한다.
+        // =========================================
+
+        // 테이블로 생성했던 오브젝트들을 제거
+        for (int i = 0; i < m_Current_Map_Objects_Count; ++i)
+        {
+            if (m_Current_Map_Objects[i] != null)
+            {
+                Destroy(m_Current_Map_Objects[i]);
+            }
+        }
+
+        // 동적생성 폭탄들 제거
+        GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
+        foreach (GameObject b in bombs)
+            Destroy(b);
+
+        // 동적생성 화염들 제거
+        GameObject[] flame = GameObject.FindGameObjectsWithTag("Flame");
+        foreach (GameObject f in flame)
+            Destroy(f);
+
+        // 동적생성 화염잔해들 제거
+        GameObject[] flame_remains = GameObject.FindGameObjectsWithTag("Flame_Remains");
+        foreach (GameObject fr in flame_remains)
+            Destroy(fr);
+
+        // 불 붙은 부쉬의 파티클도 제거
+        GameObject[] fBushs = GameObject.FindGameObjectsWithTag("Flame_Bush_Particle");
+        foreach (GameObject fb in fBushs)
+            Destroy(fb);
+
+        // 동적생성 아이템들도 제거
+        GameObject[] items = GameObject.FindGameObjectsWithTag("Bomb_Item");
+        foreach (GameObject i in items)
+            Destroy(i);
+        items = GameObject.FindGameObjectsWithTag("Fire_Item");
+        foreach (GameObject i in items)
+            Destroy(i);
+        items = GameObject.FindGameObjectsWithTag("Speed_Item");
+        foreach (GameObject i in items)
+            Destroy(i);
+        items = GameObject.FindGameObjectsWithTag("Kick_Item");
+        foreach (GameObject i in items)
+            Destroy(i);
+        items = GameObject.FindGameObjectsWithTag("Throw_Item");
+        foreach (GameObject i in items)
+            Destroy(i);
+        items = GameObject.FindGameObjectsWithTag("Airdrop_Item");
+        foreach (GameObject i in items)
+            Destroy(i);
+        // ========================================
     }
 }

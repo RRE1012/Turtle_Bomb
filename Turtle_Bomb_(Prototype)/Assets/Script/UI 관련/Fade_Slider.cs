@@ -4,47 +4,65 @@ using UnityEngine;
 
 public class Fade_Slider : MonoBehaviour {
 
-    float m_Wait_Time_Before_Fade = 0.5f;
-    float m_WaitTime = 0.0f;
-    bool m_is_wait_Over = false;
+    public static Fade_Slider c_Fade_Slider;
 
-    float m_FadeSpeed = 80.0f;
-    float m_Curr_Fading_Time = 0.0f;
-    float m_Dest_Fading_Time = 1.2f;
-
+    bool m_is_Fade_Over = false;
     public bool m_is_Stage_Select_Scene = false;
 
-    void Start()
+    int m_Fade_Number = 0;
+    bool m_is_Fade_Started = false;
+
+    void Awake()
     {
-        if (m_is_Stage_Select_Scene)
-        {
-            m_Wait_Time_Before_Fade = 0.0f;
-            m_FadeSpeed = 60.0f;
-        }
+        c_Fade_Slider = this;
     }
 
     void Update()
     {
-        if (m_is_wait_Over)
+        if (m_is_Fade_Started) // 페이드가 시작됐다면
         {
-            if (m_Curr_Fading_Time <= m_Dest_Fading_Time)
+            if (Check_Fade_Over()) // 페이드가 끝났는지 확인해서
             {
-                m_Curr_Fading_Time += Time.deltaTime;
-                transform.Translate(new Vector3(m_FadeSpeed * m_Curr_Fading_Time, 0.0f, 0.0f));
-            }
-
-            else
-            { 
-                if (!m_is_Stage_Select_Scene)
-                    gameObject.SetActive(false);
+                if (m_is_Stage_Select_Scene) // 스테이지 선택 창이면,
+                    m_is_Fade_Over = true; // 페이드 끝 알림.
+                else gameObject.SetActive(false); // 아니면 그냥 꺼버림.
             }
         }
 
-        else
+    }
+
+    public void Start_Fade_Slider(int num)
+    {
+        m_Fade_Number = num;
+
+        switch (m_Fade_Number)
         {
-            if (m_WaitTime < m_Wait_Time_Before_Fade)
-                m_WaitTime += Time.deltaTime;
-            else m_is_wait_Over = true;
+            case 1:
+                gameObject.GetComponent<Animation>().Play("Fade_Slider_Animation_1");
+                m_is_Fade_Started = true;
+                break;
+            case 2:
+                gameObject.GetComponent<Animation>().Play("Fade_Slider_Animation_2");
+                m_is_Fade_Started = true;
+                break;
         }
+    }
+
+    bool Check_Fade_Over()
+    {
+        switch (m_Fade_Number)
+        {
+            case 1:
+                return !gameObject.GetComponent<Animation>().IsPlaying("Fade_Slider_Animation_1");
+            case 2:
+                return !gameObject.GetComponent<Animation>().IsPlaying("Fade_Slider_Animation_2");
+        }
+
+        return false;
+    }
+
+    public bool Get_is_Fade_Over()
+    {
+        return m_is_Fade_Over;
     }
 }

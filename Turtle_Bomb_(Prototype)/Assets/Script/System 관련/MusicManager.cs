@@ -5,8 +5,10 @@ using UnityEngine;
 
 //게임씬에서의 사운드 조정 함수
 public class MusicManager : MonoBehaviour {
+
     //인스턴스로 사용
     public static MusicManager manage_ESound;
+
     //아이템 획득, 폭발사운드, 폭탄설치사운드
     public AudioClip itemGetSound;
     public AudioClip explodeSound;
@@ -24,13 +26,15 @@ public class MusicManager : MonoBehaviour {
 
     //게임 씬에서의 bgm 오디오소스
     public AudioSource bgmSource;
+
     //게임 씬에서의 효과음 오디오소스
     AudioSource source;
-    //게임오버 여부 판단 변수
-    bool gameover;
+
     //시간 측정 변수
     float deltatime;
-    
+
+    bool gameover = false;
+
     //인스턴싱
     void Awake()
     {
@@ -38,7 +42,6 @@ public class MusicManager : MonoBehaviour {
     }
     void Start () {
         source = GetComponent<AudioSource>();
-        gameover = false;
         deltatime = 0.0f;
 	}
 	
@@ -49,6 +52,7 @@ public class MusicManager : MonoBehaviour {
         {
             deltatime = deltatime + (Time.deltaTime);
             bgmSource.volume = 1.0f - deltatime / 10;
+            source.volume = 1.0f - deltatime / 10;
         }
     }
     //폭탄 폭발 사운드
@@ -57,6 +61,10 @@ public class MusicManager : MonoBehaviour {
         source.PlayOneShot(explodeSound, 1.0f);
     }
 
+    public void TryMute()
+    {
+        gameover = true;
+    }
     
     //아이템 획득 사운드
     public void ItemGetSound()
@@ -69,11 +77,7 @@ public class MusicManager : MonoBehaviour {
     {
         source.PlayOneShot(bombSetSound);
     }
-    //게임오버를 참으로 변환
-    public void TryMute()
-    {
-        gameover = true;
-    }
+
 
     // 고블린 기본
     public void Goblin_Idle_Sound()
