@@ -25,10 +25,10 @@ public class Front_Collider : MonoBehaviour {
         {
             Vector3 tmpPosition;
             tmpPosition = other.gameObject.transform.position + transform.forward * 1.2f;
-            int index = StageManager.Find_Own_MCL_Index(tmpPosition.x, tmpPosition.z, false);
+            int index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(tmpPosition.x, tmpPosition.z);
             if (index != -1)
             {
-                if (StageManager.m_Map_Coordinate_List[index].isBlocked == false)
+                if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(index) == false)
                 {
                     m_Player.m_Front_Box = other.gameObject;
                     m_Player.m_isBoxSelected = true;
