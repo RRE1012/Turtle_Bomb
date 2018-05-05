@@ -264,7 +264,7 @@ public class StageManager : MonoBehaviour
         // 스테이지 번호 목록 로드
         m_Stage_Number_List = CSV_Manager.GetInstance().Get_Stage_Number_List(m_Stage_ID);
 
-        if (m_Stage_ID == 10) // 튜토리얼 스테이지인가?
+        if (m_Stage_ID == 0) // 튜토리얼 스테이지인가?
             m_is_Tutorial_Stage = true;
 
         // ===============디버깅 때문에 적어둔 구문임=======================
@@ -314,7 +314,8 @@ public class StageManager : MonoBehaviour
     void Start()
     {
         // 페이드 인
-        Fade_Slider.c_Fade_Slider.Start_Fade_Slider(2);
+        if (Fade_Slider.c_Fade_Slider != null)
+            Fade_Slider.c_Fade_Slider.Start_Fade_Slider(2);
     }
 
     void Update()
@@ -707,9 +708,6 @@ public class StageManager : MonoBehaviour
             {
                 if (QuestData.ID == list[i])
                 {
-                    Debug.Log(QuestData.ID);
-                    Debug.Log(list[i]);
-
                     if (QuestData.Quest_ID == 1) // 시간
                     {
                         if (UI.time_Second >= QuestData.Quest_Goal)
@@ -749,7 +747,7 @@ public class StageManager : MonoBehaviour
                 }
             }
         }
-        Debug.Log(m_Stars);
+
         PlayerPrefs.Save();
     }
 

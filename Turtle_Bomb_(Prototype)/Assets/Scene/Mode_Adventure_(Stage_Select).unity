@@ -598,8 +598,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 81899181}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 578.5, y: 319, z: 0}
-  m_LocalScale: {x: 1.44625, y: 1.44625, z: 1.44625}
+  m_LocalPosition: {x: 579, y: 319, z: 0}
+  m_LocalScale: {x: 1.4475, y: 1.4475, z: 1.4475}
   m_Children:
   - {fileID: 1113495804}
   m_Father: {fileID: 0}
@@ -2253,7 +2253,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 10
+          m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -3153,6 +3153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0fd5f2b8d1dd9b4ca612b0f708c912f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Tutorial_Stage_button: {fileID: 843143242}
   m_Forest_Stage_1_button: {fileID: 1177023543}
   m_Forest_Stage_2_button: {fileID: 202652351}
   m_Forest_Stage_3_button: {fileID: 1491918747}
@@ -3480,7 +3481,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Texture: {fileID: 2800000, guid: 2338a5e8c3039604f84a5c30fd5296b0, type: 3}
+  m_Texture: {fileID: 2800000, guid: 4c8d989538b333f4abd1ea3ec0eddba2, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -3527,7 +3528,7 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1177023541}
   m_OnClick:
     m_PersistentCalls:
@@ -4786,7 +4787,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1909375757
 RectTransform:
   m_ObjectHideFlags: 0

@@ -246,18 +246,17 @@ public class Bomb : MonoBehaviour
             
             for (int i = 1; i <= m_FlameCount; ++i)
             {
-                if (m_My_MCL_Index + 17 * i <= 255)
-                    m_Range_N[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
-                //Debug.Log(StageManager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x);
-                if (m_My_MCL_Index - 17 * i >= 0)
-                    m_Range_S[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
-                //Debug.Log(StageManager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x);
-                if (m_My_MCL_Index + i <= 255)
-                    m_Range_W[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
-                //Debug.Log(StageManager.m_Map_Coordinate_List[m_My_MCL_Index - i].x);
+                if (m_My_MCL_Index + i <= 288)
+                    m_Range_N[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
+                
                 if (m_My_MCL_Index - i >= 0)
-                    m_Range_E[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
-                //Debug.Log(StageManager.m_Map_Coordinate_List[m_My_MCL_Index + i].x);
+                    m_Range_S[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
+                
+                if (m_My_MCL_Index - 17 * i >= 0)
+                    m_Range_W[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
+                
+                if (m_My_MCL_Index + 17 * i <= 288)
+                    m_Range_E[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
             }
         }
     }
@@ -289,9 +288,9 @@ public class Bomb : MonoBehaviour
             {
                 if (!is_blocked_N)
                 {
-                    if (m_My_MCL_Index + 17 * i <= 255)
+                    if (m_My_MCL_Index + i <= 288)
                     { 
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + 17 * i) == false)
+                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + i) == false)
                         {
                             m_Range_N[i - 1].SetActive(true);
                         }
@@ -305,9 +304,9 @@ public class Bomb : MonoBehaviour
                 }
                 if (!is_blocked_S)
                 {
-                    if (m_My_MCL_Index - 17 * i >= 0)
+                    if (m_My_MCL_Index - i >= 0)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - 17 * i) == false)
+                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - i) == false)
                         {
                             m_Range_S[i - 1].SetActive(true);
                         }
@@ -321,9 +320,9 @@ public class Bomb : MonoBehaviour
                 }
                 if (!is_blocked_W)
                 {
-                    if (m_My_MCL_Index + i <= 255)
+                    if (m_My_MCL_Index - 17 * i >= 0)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - i) == false)
+                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - 17 * i) == false)
                         {
                             m_Range_W[i - 1].SetActive(true);
                         }
@@ -337,9 +336,9 @@ public class Bomb : MonoBehaviour
                 }
                 if (!is_blocked_E)
                 {
-                    if (m_My_MCL_Index - i >= 0)
+                    if (m_My_MCL_Index + 17 * i <= 288)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + i) == false)
+                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + 17 * i) == false)
                         {
                             m_Range_E[i - 1].SetActive(true);
                         }
@@ -414,60 +413,60 @@ public class Bomb : MonoBehaviour
 
                     if (!m_Blocked_N)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + 17 * i) == false)
+                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + i) == false)
                         {
                             Instance_FlameDir_N = Instantiate(m_Flame);
-                            Instance_FlameDir_N.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
+                            Instance_FlameDir_N.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
                         }
                         else
                         {
                             m_Blocked_N = true;
                             GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
-                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
+                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
                         }
                     }
 
                     if (!m_Blocked_S)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - 17 * i) == false)
+                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - i) == false)
                         {
                             Instance_FlameDir_S = Instantiate(m_Flame);
-                            Instance_FlameDir_S.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
+                            Instance_FlameDir_S.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
                         }
                         else
                         {
                             m_Blocked_S = true;
                             GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
-                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
+                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
                         }
                     }
 
                     if (!m_Blocked_W)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - i) == false)
+                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - 17 * i) == false)
                         {
                             Instance_FlameDir_W = Instantiate(m_Flame);
-                            Instance_FlameDir_W.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
+                            Instance_FlameDir_W.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
                         }
                         else
                         {
                             m_Blocked_W = true;
                             GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
-                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
+                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
                         }
                     }
                     if (!m_Blocked_E)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + i) == false)
+                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + 17 * i) == false)
                         {
                             Instance_FlameDir_E = Instantiate(m_Flame);
-                            Instance_FlameDir_E.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
+                            Instance_FlameDir_E.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
                         }
                         else
                         {
                             m_Blocked_E = true;
                             GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
-                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
+                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
                         }
                     }
                 }

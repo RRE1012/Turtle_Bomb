@@ -36,8 +36,8 @@ public class PlayerPrefs_Manager : MonoBehaviour {
         // 타이틀 씬
         if (m_SceneNumber == PlayerPrefs_Manager_Constants.Title_Start_Scene)
         {
-            // 일단은 항상 초기화 하도록 함.
-            //PlayerPrefs.SetInt("Have_you_been_Play", 1);
+            // 초기화
+            //PlayerPrefs.SetInt("Have_you_been_Play", 0);
             
             Pref_All_Stage_Open(); // 디버깅용
 
@@ -73,21 +73,21 @@ public class PlayerPrefs_Manager : MonoBehaviour {
             int playable_max_stage = PlayerPrefs.GetInt("Mode_Adventure_Playable_Max_Stage");
 
             // 1번부터 순차적으로 최대 스테이지 까지 수행한다.
-            for (int i = 1; i <= playable_max_stage; ++i)
+            for (int i = 0; i <= playable_max_stage; ++i)
             {
                 // 버튼을 활성화 시킨다.
-                Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].interactable = true;
+                Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].interactable = true;
 
                 // 버튼 이미지를 변경한다.
                 if (i == 5 || i == 9) // 보스 스테이지
                 {
-                    Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].gameObject.GetComponent<RawImage>().texture = Activated_Boss_Image;
+                    Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].gameObject.GetComponent<RawImage>().texture = Activated_Boss_Image;
                 }
                 else // 일반 스테이지
                 {
-                    Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].gameObject.GetComponent<RawImage>().texture = Activated_Bomb_Image;
+                    Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].gameObject.GetComponent<RawImage>().texture = Activated_Bomb_Image;
                     // 텍스트도 활성화 시킨다.
-                    Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].transform.Find("Number").gameObject.SetActive(true);
+                    Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].transform.Find("Number").gameObject.SetActive(true);
                 }
 
                 // 획득했던 별을 받아온다.
@@ -103,7 +103,7 @@ public class PlayerPrefs_Manager : MonoBehaviour {
                 {
                     if (tempStars[j] == 1)
                     {
-                        Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i - 1].gameObject.GetComponentsInChildren<RawImage>()[j+1].texture = Activated_Star_Image;
+                        Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].gameObject.GetComponentsInChildren<RawImage>()[j + 1].texture = Activated_Star_Image;
                     }
                 }
             }
@@ -117,14 +117,14 @@ public class PlayerPrefs_Manager : MonoBehaviour {
         PlayerPrefs.SetInt("is_Opened_Mode_Competition", 0); // 대전모드 -> 1 : 열기, 0 : 닫기
         PlayerPrefs.SetInt("is_Opened_Mode_Coop", 0);
         string temp;
-        for (int i = 1; i <= 27; ++i)
+        for (int i = 1; i <= 28; ++i)
         {
             temp = "Adventure_Stars_ID_" + i.ToString();
             PlayerPrefs.SetInt(temp, 0);
         }
-        PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", 1);
-        PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", 1);
-        PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", 1);
+        PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", 0);
+        PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", 18);
+        PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", 0);
         PlayerPrefs.Save();
     }
 
@@ -139,9 +139,9 @@ public class PlayerPrefs_Manager : MonoBehaviour {
             temp = "Adventure_Stars_ID_" + i.ToString();
             PlayerPrefs.SetInt(temp, 0);
         }
-        PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", 8);
-        PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", 1);
-        PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", 1);
+        PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", 9);
+        PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", 18);
+        PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", 0);
         PlayerPrefs.Save();
     }
 

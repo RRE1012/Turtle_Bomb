@@ -222,7 +222,6 @@ public class PlayerMove : MonoBehaviour {
             if ((other.gameObject.tag == "Flame" || other.gameObject.tag == "Flame_Bush" || other.gameObject.tag == "Monster_Attack_Collider") && !StageManager.m_is_Stage_Clear)
             {
                 Set_Dead();
-                m_TurtleMan_Animator.SetBool("TurtleMan_isDead", true);
             }
             // ========================
 
@@ -730,6 +729,7 @@ public class PlayerMove : MonoBehaviour {
     public void Set_Dead()
 	{
         MusicManager.manage_ESound.TryMute();
+        m_TurtleMan_Animator.SetBool("TurtleMan_isDead", true);
         StageManager.c_Stage_Manager.m_is_Pause = true;
         m_isAlive = false;
 	}
