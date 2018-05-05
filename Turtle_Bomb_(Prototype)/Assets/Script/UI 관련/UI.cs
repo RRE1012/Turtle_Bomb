@@ -42,6 +42,7 @@ public class UI : MonoBehaviour {
     public static GameObject m_Stage_Clear_UI;
     
     public Texture m_Activated_Star_Texture; // 활성화된 별 텍스쳐
+    public Texture m_Deactivated_Star_Texture; // 비활성화된 별 텍스쳐
     static bool m_is_Init_Star_Count = false;
 
     public RawImage m_Star_Image1;
@@ -62,8 +63,7 @@ public class UI : MonoBehaviour {
     public RawImage m_Mission_Star_Image1;
     public RawImage m_Mission_Star_Image2;
     public RawImage m_Mission_Star_Image3;
-
-    string[] m_Mission_Script;
+    
     int m_timeLimit = 0;
     int m_monsterKill = 0;
 
@@ -114,7 +114,7 @@ public class UI : MonoBehaviour {
         m_GameOver_UI = GameObject.FindGameObjectWithTag("GameOver_UI");
         m_Option_UI = GameObject.FindGameObjectWithTag("Option_UI");
         m_Ingame_Mission_UI = GameObject.FindGameObjectWithTag("Ingame_Mission_UI");
-        
+
         m_is_Init_Star_Count = false;
 
         m_Stage_Clear_UI.SetActive(false);
@@ -133,8 +133,7 @@ public class UI : MonoBehaviour {
         m_Throw_Bomb_Button.gameObject.SetActive(false);
 
         m_Text_StageNum.text = "Stage ID - " + StageManager.c_Stage_Manager.m_Stage_ID.ToString();
-
-        m_Mission_Script = new string[3];
+        
         m_QuestList = new List<Adventure_Quest_Data>();
         StageManager.c_Stage_Manager.GetQuestList(ref m_QuestList);
 
@@ -142,8 +141,6 @@ public class UI : MonoBehaviour {
 
         for (int i = 0; i < 3; ++i)
         {
-            m_Mission_Script[i] = m_QuestList[i].Quest_Script;
-            
             // 퀘스트 id가 1번 (잔여시간) 이면 시간을 받아온다.
             if (m_QuestList[i].Quest_ID == 1)
                 m_timeLimit = m_QuestList[i].Quest_Goal;
@@ -206,6 +203,7 @@ public class UI : MonoBehaviour {
     // 나가기 버튼
     public void StageClear_ExitButton()
     {
+        StageManager.c_Stage_Manager.Destroy_Objects();
         if (LobbySound.instanceLS != null)
             LobbySound.instanceLS.SoundStart();
         SceneManager.LoadScene(2);
@@ -214,6 +212,7 @@ public class UI : MonoBehaviour {
     // 재시작 버튼
     public void StageClear_RestartButton()
     {
+        StageManager.c_Stage_Manager.Destroy_Objects();
         SceneManager.LoadScene(3);
     }
     
@@ -285,13 +284,25 @@ public class UI : MonoBehaviour {
     // 미션 UI 관리
     void Mission_UI_Management()
     {
-        m_MissionText[0].text = m_Mission_Script[0] + " " + ((int)time_Second).ToString() + " / " + m_timeLimit.ToString();
-        if (time_Second > m_timeLimit)
-            m_Mission_Star_Image1.texture = m_Activated_Star_Texture;
-        m_MissionText[1].text = m_Mission_Script[1] + " " + (StageManager.m_Total_Monster_Count - StageManager.m_Left_Monster_Count).ToString() + " / " + m_monsterKill.ToString();
-        if ((StageManager.m_Total_Monster_Count - StageManager.m_Left_Monster_Count) >= m_monsterKill)
-            m_Mission_Star_Image2.texture = m_Activated_Star_Texture;
-        m_MissionText[2].text = m_Mission_Script[2];
+        for (int i = 0; i < 3; ++i)
+        {
+            if (m_QuestList[i].Quest_ID == 1) // 시간제한
+            {
+                m_MissionText[i].text = m_QuestList[i].Quest_Script + " " + ((int)time_Second).ToString() + " / " + m_timeLimit.ToString();
+                if (time_Second > m_timeLimit)
+                    m_Mission_Star_Image1.texture = m_Activated_Star_Texture;
+                else m_Mission_Star_Image1.texture = m_Deactivated_Star_Texture;
+            }
+            else if (m_QuestList[i].Quest_ID == 2) // 일반 몬스터 처치
+            {
+                m_MissionText[i].text = m_QuestList[i].Quest_Script + " " + (StageManager.m_Total_Monster_Count - StageManager.m_Left_Monster_Count).ToString() + " / " + m_monsterKill.ToString();
+                if ((StageManager.m_Total_Monster_Count - StageManager.m_Left_Monster_Count) >= m_monsterKill)
+                    m_Mission_Star_Image2.texture = m_Activated_Star_Texture;
+            }
+            else // 목표도달, 보스 처치
+                m_MissionText[i].text = m_QuestList[i].Quest_Script;
+        }
+        
     }
 
     void Update()
@@ -424,6 +435,7 @@ public class UI : MonoBehaviour {
     // 옵션의 Return 버튼 (게임으로 돌아가기)
     public void Option_Return_Button()
     {
+        StageManager.c_Stage_Manager.m_is_Pause = false;
         m_Ingame_Play_UI.SetActive(true);
         m_Option_UI.SetActive(false);
     }

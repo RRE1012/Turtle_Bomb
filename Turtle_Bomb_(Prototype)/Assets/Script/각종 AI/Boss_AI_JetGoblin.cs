@@ -406,7 +406,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     {
         if (StageManager.m_is_init_MCL)
         {
-            m_MCL_Index = StageManager.Find_Own_MCL_Index(transform.position.x, transform.position.z, false);
+            m_MCL_Index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
         }
     }
 
@@ -415,14 +415,14 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     {
         if (StageManager.m_is_init_MCL)
         {
-            m_MCL_Index = StageManager.Find_Own_MCL_Index(transform.position.x, transform.position.z, false);
+            m_MCL_Index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
 
             if (m_MCL_Index != -1)
             {
                 Vector3 Loc;
-                Loc.x = StageManager.m_Map_Coordinate_List[m_MCL_Index].x;
+                Loc.x = StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_MCL_Index].x;
                 Loc.y = transform.position.y;
-                Loc.z = StageManager.m_Map_Coordinate_List[m_MCL_Index].z;
+                Loc.z = StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_MCL_Index].z;
                 transform.position = Loc;
             }
         }

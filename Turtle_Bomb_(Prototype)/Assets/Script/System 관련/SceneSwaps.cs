@@ -10,6 +10,7 @@ public class SceneSwaps : MonoBehaviour {
 
     public Canvas cv;
     public RawImage FadeSlider;
+    IEnumerator m_WaitForFadeSlider;
 
     // Use this for initialization
     void Start () {
@@ -17,7 +18,6 @@ public class SceneSwaps : MonoBehaviour {
         {
             cv.enabled = true;
         }
-
     }
 
     //쓰지 않는 함수(카메라 스위칭 함수)
@@ -61,9 +61,12 @@ public class SceneSwaps : MonoBehaviour {
         PlayerPrefs.Save();
         FadeSlider.gameObject.SetActive(true);
         FadeSlider.gameObject.GetComponent<Fade_Slider>().m_is_Stage_Select_Scene = true;
+        FadeSlider.gameObject.GetComponent<Fade_Slider>().Start_Fade_Slider(1);
 
-        // 모험모드 씬을 연다
-        Invoke("WaitForFadeSlider", 2.0f);
+
+        // 페이드 아웃 대기 후 모험모드 씬을 연다
+        m_WaitForFadeSlider = WaitForFadeSlider();
+        StartCoroutine(m_WaitForFadeSlider);
     }
    
     public void Save_Selected_Stage(int stage_ID)
@@ -73,9 +76,17 @@ public class SceneSwaps : MonoBehaviour {
         PlayerPrefs.Save();
     }
 
-    void WaitForFadeSlider()
+    IEnumerator WaitForFadeSlider()
     {
-        SceneManager.LoadScene(3);
+        while (true)
+        {
+            if (Fade_Slider.c_Fade_Slider.Get_is_Fade_Over())
+            {
+                StopCoroutine(m_WaitForFadeSlider);
+                SceneManager.LoadScene(3);
+            }
+            yield return null;
+        }
     }
-    
+
 }

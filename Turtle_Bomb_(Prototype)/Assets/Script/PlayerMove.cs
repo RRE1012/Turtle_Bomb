@@ -594,13 +594,13 @@ public class PlayerMove : MonoBehaviour {
             // 플레이어 위치 변환
 
             // 플레이어의 현재 MCL 인덱스를 찾는다.
-            int index = StageManager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
+            int index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
 
             // 플레이어의 위치를 MCL 내부 좌표로 이동시킨다.
             Vector3 Loc;
-            Loc.x = StageManager.m_Map_Coordinate_List[index].x;
+            Loc.x = StageManager.c_Stage_Manager.m_Map_Coordinate_List[index].x;
             Loc.y = transform.position.y;
-            Loc.z = StageManager.m_Map_Coordinate_List[index].z;
+            Loc.z = StageManager.c_Stage_Manager.m_Map_Coordinate_List[index].z;
             transform.position = Loc;
             // --------------------------------
 
@@ -633,9 +633,9 @@ public class PlayerMove : MonoBehaviour {
 
 
             // MCL 갱신
-            index = StageManager.Find_Own_MCL_Index(m_Front_Box.transform.position.x, m_Front_Box.transform.position.z, true);
+            index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(m_Front_Box.transform.position.x, m_Front_Box.transform.position.z);
 
-            StageManager.Update_MCL_isBlocked(index, false);
+            StageManager.c_Stage_Manager.Update_MCL_isBlocked(index, false);
         }
     }
 
@@ -653,15 +653,15 @@ public class PlayerMove : MonoBehaviour {
         // 밀고난 뒤 박스가 정확한 자리로 가도록 조정해준다.
         else
         {
-            int index = StageManager.Find_Own_MCL_Index(m_Front_Box.transform.position.x, m_Front_Box.transform.position.z, false);
+            int index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(m_Front_Box.transform.position.x, m_Front_Box.transform.position.z);
 
             Vector3 Loc;
-            Loc.x = StageManager.m_Map_Coordinate_List[index].x;
+            Loc.x = StageManager.c_Stage_Manager.m_Map_Coordinate_List[index].x;
             Loc.y = m_Front_Box.transform.position.y;
-            Loc.z = StageManager.m_Map_Coordinate_List[index].z;
+            Loc.z = StageManager.c_Stage_Manager.m_Map_Coordinate_List[index].z;
             m_Front_Box.transform.position = Loc;
 
-            StageManager.Update_MCL_isBlocked(index, true);
+            StageManager.c_Stage_Manager.Update_MCL_isBlocked(index, true);
 
             m_push_Distance = 0.0f;
             m_isPushing = false;
@@ -726,10 +726,11 @@ public class PlayerMove : MonoBehaviour {
         m_TurtleMan_Animator.SetBool("TurtleMan_isDrop", false);
     }
     
-    //다른 스크립트에서 플레이어를 죽게 하는 함수-R
+    //다른 스크립트에서 플레이어를 죽게 하는 함수
     public void Set_Dead()
 	{
         MusicManager.manage_ESound.TryMute();
+        StageManager.c_Stage_Manager.m_is_Pause = true;
         m_isAlive = false;
 	}
 

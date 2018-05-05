@@ -23,6 +23,7 @@ public class Boss_Behavior : MonoBehaviour
     Detector_Box m_Player_Detector;
     Transform m_Attack_Range_UI;
 
+    IEnumerator m_Do_Behavior;
     IEnumerator m_Current_Behavior;
     IEnumerator m_Behavior_Find;
     IEnumerator m_Behavior_Chase;
@@ -90,9 +91,10 @@ public class Boss_Behavior : MonoBehaviour
 
         // 플레이어 좌표를 얻기 위해 플레이어 객체를 받아옴
         m_playerTransform = GameObject.FindWithTag("Player").GetComponent<Transform>();
-        
+
 
         // 몬스터의 행동 코루틴들을 설정
+        m_Do_Behavior = Do_Behavior();
         m_Behavior_Find = FindPlayer();
         m_Behavior_Chase = Chase();
         m_Behavior_Attack = Attack();
@@ -100,7 +102,7 @@ public class Boss_Behavior : MonoBehaviour
 
         // 처음 실행할 행동 설정
         m_Current_Behavior = m_Behavior_Find;
-        StartCoroutine(Do_Behavior());
+        StartCoroutine(m_Do_Behavior);
     }
 
     void OnTriggerEnter(Collider other)
@@ -364,7 +366,7 @@ public class Boss_Behavior : MonoBehaviour
         {
             if (MusicManager.manage_ESound != null)
                 MusicManager.manage_ESound.Boss_Goblin_Dead_Sound();
-            StopCoroutine(Do_Behavior());
+            StopCoroutine(m_Do_Behavior);
             m_Boss_Animator.SetBool("Goblman_isDead", true);
             Invoke("Dead", 2.0f);
         }
