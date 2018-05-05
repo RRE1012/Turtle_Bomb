@@ -8,8 +8,8 @@ using UnityEngine.UI;
 static class Boss_Mode_List
 {
     public const int NORMAL_MODE = 0;
-    public const int Angry_MODE = 1;
-    public const int Groggy_MODE = 2;
+    public const int ANGRY_MODE = 1;
+    public const int GROGGY_MODE = 2;
 }
 
 public class Boss_Behavior : MonoBehaviour
@@ -179,17 +179,19 @@ public class Boss_Behavior : MonoBehaviour
     {
         while (true)
         {
-            Think();
-
-            if (!StageManager.c_Stage_Manager.m_is_Pause && m_Current_Behavior != null && m_Current_Behavior.MoveNext())
+            if (!StageManager.c_Stage_Manager.m_is_Pause)
             {
-                yield return m_Current_Behavior.Current;
+                Think();
+
+                if (m_Current_Behavior != null && m_Current_Behavior.MoveNext())
+                    yield return m_Current_Behavior.Current;
+
+                else
+                    yield return null;
             }
 
             else
-            {
                 yield return null;
-            }
         }
     }
 
@@ -285,7 +287,7 @@ public class Boss_Behavior : MonoBehaviour
 
             else // 시간이 되면
             {
-                if (StageManager.c_Stage_Manager.m_is_Intro_Over && PlayerMove.C_PM.Get_IsAlive() && !StageManager.m_is_Stage_Clear)
+                if (StageManager.c_Stage_Manager.m_is_Intro_Over && !StageManager.c_Stage_Manager.Get_Game_Over())
                 {
                     if (m_Attack_is_Done)
                     {
@@ -295,8 +297,6 @@ public class Boss_Behavior : MonoBehaviour
                         m_Boss_Animator.SetBool("Goblman_isAttack", true); // 마찬가지로 1번만 수행
                         m_Attack_is_Done = false;
                     }
-
-                    Debug.Log(m_Attack_is_Done);
 
                     if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).fullPathHash == Animator.StringToHash("Base Layer.Goblman_Attack"))
                     {
@@ -348,17 +348,15 @@ public class Boss_Behavior : MonoBehaviour
 
         if (m_Health - m_Boss_Data.Bomb_Damage >= 0)
             m_Health -= m_Boss_Data.Bomb_Damage;
-        if (GameObject.Find("Boss_Health"))
+
+        if (GameObject.Find("Boss_Health")) // 체력 표시 UI
             GameObject.Find("Boss_Health").GetComponentInChildren<Text>().text = "Boss Health: " + m_Health.ToString();
 
         // 체력에 따른 모드 전환
-        if (m_Health <= m_Boss_Data.Angry_Condition_Start_HP)
-        {
-            if (m_Health <= m_Boss_Data.Groggy_Condition_Start_HP)
-                ModeChange(Boss_Mode_List.Groggy_MODE);
-            else
-                ModeChange(Boss_Mode_List.Angry_MODE);
-        }
+        if (m_Health <= m_Boss_Data.Angry_Condition_Start_HP && m_curr_Mode_Number == Boss_Mode_List.NORMAL_MODE)
+            ModeChange(Boss_Mode_List.ANGRY_MODE);
+        if (m_Health <= m_Boss_Data.Groggy_Condition_Start_HP && m_curr_Mode_Number == Boss_Mode_List.ANGRY_MODE)
+            ModeChange(Boss_Mode_List.GROGGY_MODE);
 
         m_curr_Hurt_Time = 0.0f;
 
@@ -366,7 +364,9 @@ public class Boss_Behavior : MonoBehaviour
         {
             if (MusicManager.manage_ESound != null)
                 MusicManager.manage_ESound.Boss_Goblin_Dead_Sound();
+
             StopCoroutine(m_Do_Behavior);
+
             m_Boss_Animator.SetBool("Goblman_isDead", true);
             Invoke("Dead", 2.0f);
         }
@@ -395,7 +395,7 @@ public class Boss_Behavior : MonoBehaviour
         {
             case Boss_Mode_List.NORMAL_MODE:
                 m_Monster_Move_Speed = 2.0f; // 일반 이동속도 설정
-                m_NVAgent.speed = 2.5f; // 추격시 이동속도 설정
+                m_NVAgent.speed = 2.0f; // 추격시 이동속도 설정
                 m_NVAgent.angularSpeed = 360.0f; // 추격시 회전속도 설정
                 m_Attack_Speed_Slow = 0.2f; // 슬로우 모션 공격속도 설정
                 m_Attack_Speed = 1.0f; // 진짜 공격속도 설정
@@ -404,12 +404,12 @@ public class Boss_Behavior : MonoBehaviour
                 // 2. 피격 가능 시간 설정
                 break;
                 
-            case Boss_Mode_List.Angry_MODE:
+            case Boss_Mode_List.ANGRY_MODE:
                 // 1. 버프스킬 지속시간 증가
                 // 2. 피격 가능 시간 축소
                 break;
 
-            case Boss_Mode_List.Groggy_MODE:
+            case Boss_Mode_List.GROGGY_MODE:
                 // 아무것도 못하는 상태로 만들기
                 break;
         }

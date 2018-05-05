@@ -58,6 +58,7 @@ public class CSV_Manager : MonoBehaviour {
     public TextAsset m_Stage_Table_csvFile;
     public TextAsset m_Script_Table_csvFile;
     public TextAsset m_Adventure_Boss_Table_csvFile;
+    public TextAsset m_Adventure_Boss_AI_csvFile;
 
     protected string[] m_data;
     protected string[] m_stringList;

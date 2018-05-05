@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 72a49064f38d56446a168ead55bb7976
-timeCreated: 1524322486
+timeCreated: 1525536903
 licenseType: Free
 MonoImporter:
   externalObjects: {}
@@ -17,6 +17,8 @@ MonoImporter:
   - m_Script_Table_csvFile: {fileID: 4900000, guid: cedd89fb51fffb9459a0ff11a57a4bcf,
       type: 3}
   - m_Adventure_Boss_Table_csvFile: {fileID: 4900000, guid: a30f4bf5aa4ea2b4ca5c5156c24489b5,
+      type: 3}
+  - m_Adventure_Boss_AI_csvFile: {fileID: 4900000, guid: f1cbe478752057544afb85612260de36,
       type: 3}
   executionOrder: -100
   icon: {instanceID: 0}

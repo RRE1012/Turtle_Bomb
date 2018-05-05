@@ -119,9 +119,6 @@ public class MonsterAI : MonoBehaviour
         // 공격
         if (m_Attack_Detector.m_isInRange && !m_isAttacking)
         {
-            if (MusicManager.manage_ESound != null)
-                MusicManager.manage_ESound.Goblin_Attack_Sound();
-
             if (m_Current_Behavior != m_Behavior_Attack)
                 m_Current_Behavior = m_Behavior_Attack;
             //m_isAttacking = true;
@@ -213,8 +210,10 @@ public class MonsterAI : MonoBehaviour
 
             if (m_AttackTimer < Monster_AI_Constants.Attack_Time)
             {
-                if (StageManager.c_Stage_Manager.m_is_Intro_Over && PlayerMove.C_PM.Get_IsAlive() && !StageManager.m_is_Stage_Clear && !m_Goblman_Animator.GetBool("Goblman_isAttack"))
+                if (StageManager.c_Stage_Manager.m_is_Intro_Over && !StageManager.c_Stage_Manager.Get_Game_Over() && !m_Goblman_Animator.GetBool("Goblman_isAttack"))
                 {
+                    if (MusicManager.manage_ESound != null)
+                        MusicManager.manage_ESound.Goblin_Attack_Sound();
                     m_Attack_Collider.gameObject.SetActive(true);
                     m_Goblman_Animator.SetBool("Goblman_isAttack", true);
                     m_isAttacking = true;
