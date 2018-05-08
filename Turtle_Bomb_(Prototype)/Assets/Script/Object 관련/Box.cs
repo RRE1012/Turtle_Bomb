@@ -13,7 +13,7 @@ public class Box : MonoBehaviour {
     public GameObject m_Object_ThrowItem;
     public GameObject m_Object_Player;
 
-    GameObject Instance_Item;
+    
 
     public bool m_is_Destroyed = false;
     int index;
@@ -52,6 +52,7 @@ public class Box : MonoBehaviour {
         {
             if (Random.Range(0, 100) > 51)
             {
+                GameObject Instance_Item;
                 int dropRate = Random.Range(0, 100);
                 if (dropRate < 25)
                 {

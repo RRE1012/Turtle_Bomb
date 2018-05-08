@@ -82,7 +82,7 @@ public class MusicManager : MonoBehaviour {
     // 고블린 기본
     public void Goblin_Idle_Sound()
     {
-        source.PlayOneShot(m_Goblin_Idle_Sound, 0.2f);
+        source.PlayOneShot(m_Goblin_Idle_Sound, 0.6f);
     }
 
     // 고블린 공격

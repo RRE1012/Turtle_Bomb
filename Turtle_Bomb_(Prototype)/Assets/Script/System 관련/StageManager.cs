@@ -112,8 +112,6 @@ public class StageManager : MonoBehaviour
 
     public Text m_Text; // 게임 오버 텍스트
 
-    int m_Current_Map_Number = 0; // 현재 맵 번호 (인덱스)
-
     public static bool m_is_Stage_Clear = false; // 스테이지를 클리어했는가?
 
     bool m_is_Goal_In = false; // 목표 지점에 들어갔는가?
@@ -199,13 +197,13 @@ public class StageManager : MonoBehaviour
     // ================================
 
     // 현재 스테이지의 퀘스트 목록
-    List<Adventure_Quest_Data> m_QuestList;
+    List<Adventure_Quest_Data> m_QuestList = new List<Adventure_Quest_Data>();
 
     // 오브젝트 테이블
     List<Object_Table_Data> m_Object_Table_List;
 
     // 현재 스테이지의 오브젝트 배치 목록
-    List<Object_Spawn_Position_Data> m_Object_Spawn_Position_List;
+    List<Object_Spawn_Position_Data> m_Object_Spawn_Position_List = new List<Object_Spawn_Position_Data>();
 
     // 스테이지 번호 배열 테이블
     List<int> m_Stage_Number_List = new List<int>();
@@ -218,6 +216,11 @@ public class StageManager : MonoBehaviour
 
     // 미션 번호 리스트
     int[] mission_list = new int[3];
+
+    // 빅보스 AI 데이터들
+    Adventure_Big_Boss_Normal_Mode_AI_Data m_Adv_Big_Boss_Normal_AI = new Adventure_Big_Boss_Normal_Mode_AI_Data();
+    Adventure_Big_Boss_Angry_Mode_AI_Data m_Adv_Big_Boss_Angry_AI = new Adventure_Big_Boss_Angry_Mode_AI_Data();
+    Adventure_Big_Boss_Groggy_Mode_AI_Data m_Adv_Big_Boss_Groggy_AI = new Adventure_Big_Boss_Groggy_Mode_AI_Data();
 
     // ================================
     // ================================
@@ -239,7 +242,6 @@ public class StageManager : MonoBehaviour
         m_MCL_is_Blocked_List = new List<bool>();
 
         c_Stage_Manager = this;
-        m_Current_Map_Number = 0;
         m_is_Map_Changing = false;
 
         m_is_SuddenDeath = false;
@@ -262,9 +264,9 @@ public class StageManager : MonoBehaviour
             m_Stage_ID = PlayerPrefs.GetInt("Mode_Adventure_Stage_ID_For_MapLoad");
 
         // 스테이지 번호 목록 로드
-        m_Stage_Number_List = CSV_Manager.GetInstance().Get_Stage_Number_List(m_Stage_ID);
+        CSV_Manager.GetInstance().Get_Stage_Number_List(ref m_Stage_Number_List, m_Stage_ID);
 
-        if (m_Stage_ID == 0) // 튜토리얼 스테이지인가?
+        if (PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID") == 0) // 튜토리얼 스테이지인가?
             m_is_Tutorial_Stage = true;
 
         // ===============디버깅 때문에 적어둔 구문임=======================
@@ -277,7 +279,7 @@ public class StageManager : MonoBehaviour
 
 
         // 퀘스트 목록 로딩
-        m_QuestList = new List<Adventure_Quest_Data>(CSV_Manager.GetInstance().Get_Adventure_Quest_List(ref mission_list));
+        CSV_Manager.GetInstance().Get_Adventure_Quest_List(ref m_QuestList, ref mission_list);
 
         // 퀘스트 목록에 보스 몬스터 처치가 있다는것은
         // 해당 스테이지가 보스 스테이지라는 뜻!
@@ -362,7 +364,7 @@ public class StageManager : MonoBehaviour
         Create_Terrain();
 
         // 오브젝트 스폰 위치 목록을 받아온다.
-        m_Object_Spawn_Position_List = new List<Object_Spawn_Position_Data>(CSV_Manager.GetInstance().Get_Object_Spawn_Position_List(stage_id));
+        CSV_Manager.GetInstance().Get_Object_Spawn_Position_List(ref m_Object_Spawn_Position_List, stage_id);
 
         m_Current_Map_Objects_Count = 0;
 
@@ -402,10 +404,10 @@ public class StageManager : MonoBehaviour
                             break;
 
                         case OBJECT_TABLE_NUMBER.BOSS_GOBLIN: // 보스 고블린
-                                                              //Instantiate(m_Prefab_Intro_Boss);
+                            //Instantiate(m_Prefab_Intro_Boss);
 
                             // 보스 데이터 읽어오기
-                            m_Adventure_Boss_Data = CSV_Manager.GetInstance().Get_Adventure_Boss_Data(m_Boss_ID);
+                            CSV_Manager.GetInstance().Get_Adventure_Boss_Data(ref m_Adventure_Boss_Data, m_Boss_ID);
 
                             // 생성
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Goblin_Boss));
@@ -442,6 +444,13 @@ public class StageManager : MonoBehaviour
                             break;
 
                         case OBJECT_TABLE_NUMBER.BOSS_GIANT_1:
+
+                            // 보스 데이터 읽어오기
+                            CSV_Manager.GetInstance().Get_Adventure_Boss_Data(ref m_Adventure_Boss_Data, m_Boss_ID);
+                            Big_Boss_Data_Allocation();
+                            CSV_Manager.GetInstance().Get_Adventure_Big_Boss_AI_Data(ref m_Adv_Big_Boss_Normal_AI, ref m_Adv_Big_Boss_Angry_AI, ref m_Adv_Big_Boss_Groggy_AI);
+
+                            // 생성
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Ork_Boss));
                             m_Object_Position.y = m_Prefab_Ork_Boss.transform.position.y;
 
@@ -832,5 +841,64 @@ public class StageManager : MonoBehaviour
         foreach (GameObject i in items)
             Destroy(i);
         // ========================================
+    }
+
+
+
+
+
+
+
+    void Big_Boss_Data_Allocation() // 빅보스 데이터 메모리 할당작업
+    {
+        // Normal
+        m_Adv_Big_Boss_Normal_AI.Boss_Speed_Value = new double[4];
+        m_Adv_Big_Boss_Normal_AI.Skill_Time = new int[4];
+        m_Adv_Big_Boss_Normal_AI.Spawn_Monster_Value_Min = new int[2];
+        m_Adv_Big_Boss_Normal_AI.Spawn_Monster_Value_Max = new int[2];
+        m_Adv_Big_Boss_Normal_AI.Spawn_Monster_Speed_Value = new int[2];
+        m_Adv_Big_Boss_Normal_AI.First_Turn_Skill_Percentage = new int[4];
+        m_Adv_Big_Boss_Normal_AI.First_Turn_Skill_Duration = new int[4];
+        m_Adv_Big_Boss_Normal_AI.First_Turn_Link_Skill = new int[4];
+        m_Adv_Big_Boss_Normal_AI.Second_Turn_Skill_Percentage = new int[4];
+        m_Adv_Big_Boss_Normal_AI.Second_Turn_Skill_Duration = new int[4];
+        m_Adv_Big_Boss_Normal_AI.Second_Turn_Link_Skill = new int[4];
+        m_Adv_Big_Boss_Normal_AI.Third_Turn_Skill_Percentage = new int[4];
+        m_Adv_Big_Boss_Normal_AI.Third_Turn_Skill_Duration = new int[4];
+        m_Adv_Big_Boss_Normal_AI.Third_Turn_Link_Skill = new int[4];
+        m_Adv_Big_Boss_Normal_AI.Forth_Turn_Skill_Percentage = new int[4];
+        m_Adv_Big_Boss_Normal_AI.Forth_Turn_Skill_Duration = new int[4];
+        m_Adv_Big_Boss_Normal_AI.Forth_Turn_Link_Skill = new int[4];
+        m_Adv_Big_Boss_Normal_AI.Fifth_Turn_Skill_Percentage = new int[4];
+        m_Adv_Big_Boss_Normal_AI.Fifth_Turn_Skill_Duration = new int[4];
+        m_Adv_Big_Boss_Normal_AI.Fifth_Turn_Link_Skill = new int[4];
+
+        // ===============================================================
+
+
+
+
+        // Angry
+        m_Adv_Big_Boss_Angry_AI.Boss_Speed_Value = new double[4];
+        m_Adv_Big_Boss_Angry_AI.Skill_Time = new int[4];
+        m_Adv_Big_Boss_Angry_AI.Spawn_Monster_Value_Min = new int[2];
+        m_Adv_Big_Boss_Angry_AI.Spawn_Monster_Value_Max = new int[2];
+        m_Adv_Big_Boss_Angry_AI.Spawn_Monster_Speed_Value = new int[2];
+        m_Adv_Big_Boss_Angry_AI.First_Turn_Skill_Percentage = new int[4];
+        m_Adv_Big_Boss_Angry_AI.First_Turn_Skill_Duration = new int[4];
+        m_Adv_Big_Boss_Angry_AI.First_Turn_Link_Skill = new int[4];
+        m_Adv_Big_Boss_Angry_AI.Second_Turn_Skill_Percentage = new int[4];
+        m_Adv_Big_Boss_Angry_AI.Second_Turn_Skill_Duration = new int[4];
+        m_Adv_Big_Boss_Angry_AI.Second_Turn_Link_Skill = new int[4];
+        m_Adv_Big_Boss_Angry_AI.Third_Turn_Skill_Percentage = new int[4];
+        m_Adv_Big_Boss_Angry_AI.Third_Turn_Skill_Duration = new int[4];
+        m_Adv_Big_Boss_Angry_AI.Third_Turn_Link_Skill = new int[4];
+
+        // ===============================================================
+
+
+
+        // Groggy
+        m_Adv_Big_Boss_Groggy_AI.Boss_Speed_Value = new int[4];
     }
 }

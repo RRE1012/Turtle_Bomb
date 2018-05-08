@@ -35,7 +35,7 @@ public class SceneSwaps : MonoBehaviour {
     // "모드 선택 화면"으로 이동
     public void GoTo_ModeSelect_AfterFewSec()
     {
-        Invoke("GoTo_ModeSelect_Scene", 1.5f);
+        Invoke("GoTo_ModeSelect_Scene", 1.0f);
     }
     public void GoTo_ModeSelect_Scene()
     {

@@ -10,11 +10,11 @@ public class JoyStickMove : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
     Vector3 inputVector;
     public RawImage joystick_HandleImage;
     private RawImage joystick_BackGroundImage;
-    private Vector3 unNormalizedInput;
+    private Vector3 unNormalizedInput; //
     public int joystickHandleDistance = 2;
     private Vector3[] fourCornersArray = new Vector3[4]; // used to get the bottom right corner of the image in order to ensure that the pivot of the joystick's background image is always at the bottom right corner of the image (the pivot must always be placed on the bottom right corner of the joystick's background image in order to the script to work)
     private Vector2 bgImageStartPosition;
-    bool touched = false;
+    bool touched = false; //
 
     private void Awake()
     {

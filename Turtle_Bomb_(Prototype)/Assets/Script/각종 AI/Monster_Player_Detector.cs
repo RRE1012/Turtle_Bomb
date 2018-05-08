@@ -5,9 +5,10 @@ using UnityEngine;
 public class Monster_Player_Detector : MonoBehaviour {
 
     public bool m_isInRange = false;
-    public bool m_isRotated = false;
 
     Transform m_MainBody;
+
+    GameObject m_Target;
 
     void Start()
     {
@@ -20,18 +21,7 @@ public class Monster_Player_Detector : MonoBehaviour {
         {
             m_isInRange = true;
 
-            // 방향 조정
-            
-            Vector3 dir = other.transform.position - m_MainBody.transform.position;
-            Vector3 dirXZ = new Vector3(dir.x, 0.0f, dir.z);
-
-            if (dirXZ != Vector3.zero)
-            {
-                Quaternion targetRot = Quaternion.LookRotation(dirXZ);
-
-                m_MainBody.transform.rotation = targetRot;
-            }
-            
+            m_Target = other.gameObject;
         }
     }
 
@@ -40,8 +30,19 @@ public class Monster_Player_Detector : MonoBehaviour {
         if (other.gameObject.CompareTag("Player"))
         {
             m_isInRange = false;
+            
         }
     }
 
+    public GameObject Get_Target()
+    {
+        if (m_Target != null)
+            return m_Target;
+        else return null;
+    }
 
+    public void Set_Target(GameObject t)
+    {
+        m_Target = t;
+    }
 }

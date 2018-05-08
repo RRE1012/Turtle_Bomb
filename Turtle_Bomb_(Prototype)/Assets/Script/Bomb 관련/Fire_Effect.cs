@@ -8,8 +8,6 @@ public class Fire_Effect : MonoBehaviour {
 
     float FlameLifeTime;
 
-    bool is_OnBush = false;
-
     void Start()
     {
         FlameLifeTime = 0.7f;

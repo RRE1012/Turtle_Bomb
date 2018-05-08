@@ -67,30 +67,19 @@ public class PlayerMove : MonoBehaviour {
     float m_push_Distance = 0.0f;
 
 
-    // 맵이동애니메이션 관련
-
-    float m_MPA_Elapsed_Time = 0.0f;
-    float m_MPA_Rising_Speed = 5.0f;
-    float m_MPA_Rotating_Speed = 3.0f;
-
-
     // ======== Functions ========
     void Awake()
 	{
         C_PM = this;
         m_TurtleMan_Animator = GetComponent<Animator>();
         m_Player_Mesh_Renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
-        Vector3 pos;
-        pos.x = transform.position.x;
-        pos.y = transform.position.y + 2.0f;
-        pos.z = transform.position.z + 0.7f;
-        StageManager.c_Stage_Manager.m_CameraOffset.transform.position = pos;
         
-	}
+    }
 
     public void Player_Set_Start_Point(Vector3 p)
     {
-        transform.position = p;
+        transform.position = p; // 플레이어 위치를 시작지점으로 옮긴다.
+        GameObject.FindGameObjectWithTag("Camera_Offset").transform.position = transform.position; // 카메라 기본 위치를 플레이어에 맞춘다.
     }
 
     void Update ()

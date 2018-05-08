@@ -38,6 +38,7 @@ TagManager:
   - Info_Trigger_Fire
   - Info_Trigger_Kick
   - Info_Trigger_Throw
+  - Camera_Offset
   layers:
   - Default
   - TransparentFX

@@ -34,79 +34,107 @@ public class PlayerPrefs_Manager : MonoBehaviour {
     void Start()
     {
         // 타이틀 씬
-        if (m_SceneNumber == PlayerPrefs_Manager_Constants.Title_Start_Scene)
+        switch (m_SceneNumber)
         {
-            // 초기화
-            //PlayerPrefs.SetInt("Have_you_been_Play", 0);
-            
-            Pref_All_Stage_Open(); // 디버깅용
-
-            // 최초 플레이어 정보 초기화
-            if (PlayerPrefs.GetInt("Have_you_been_Play") == 0 || !PlayerPrefs.HasKey("Have_you_been_Play"))
-                Pref_Init();
-        }
 
 
-        // 모드 선택 씬
-        else if (m_SceneNumber == PlayerPrefs_Manager_Constants.Mode_Select_Scene)
-        {
-            if (PlayerPrefs.GetInt("is_Open_Mode_Competition") == 1)
-            {
-                Mode_Select_Scene_Manager.c_Mode_Select_manager.Open_Competition_Mode();
-            }
 
-            if (PlayerPrefs.GetInt("is_Open_Mode_Coop") == 1)
-            {
-                Mode_Select_Scene_Manager.c_Mode_Select_manager.Open_Coop_Mode();
-            }
-        }
+            case PlayerPrefs_Manager_Constants.Title_Start_Scene: // 타이틀 씬
+                // 초기화
+                //PlayerPrefs.SetInt("Have_you_been_Play", 0);
+
+                Pref_All_Stage_Open(); // 디버깅용
+
+                // 최초 플레이어 정보 초기화
+                if (PlayerPrefs.GetInt("Have_you_been_Play") == 0 || !PlayerPrefs.HasKey("Have_you_been_Play"))
+                    Pref_Init();
+                break;
 
 
-        // 모험모드 스테이지 선택 씬
-        else if (m_SceneNumber == PlayerPrefs_Manager_Constants.Mode_Adventure)
-        {
-            int[] mission_nums = new int[3];
-            string tempString;
-            int[] tempStars = new int[3]; // 1: 활성화, 0: 비활성화
 
-            // 플레이 가능한 최대 스테이지를 받아온다.
-            int playable_max_stage = PlayerPrefs.GetInt("Mode_Adventure_Playable_Max_Stage");
 
-            // 1번부터 순차적으로 최대 스테이지 까지 수행한다.
-            for (int i = 0; i <= playable_max_stage; ++i)
-            {
-                // 버튼을 활성화 시킨다.
-                Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].interactable = true;
 
-                // 버튼 이미지를 변경한다.
-                if (i == 5 || i == 9) // 보스 스테이지
+
+            case PlayerPrefs_Manager_Constants.Mode_Select_Scene: // 모드 선택 씬
+
+                if (PlayerPrefs.GetInt("is_Open_Mode_Competition") == 1)
                 {
-                    Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].gameObject.GetComponent<RawImage>().texture = Activated_Boss_Image;
-                }
-                else // 일반 스테이지
-                {
-                    Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].gameObject.GetComponent<RawImage>().texture = Activated_Bomb_Image;
-                    // 텍스트도 활성화 시킨다.
-                    Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].transform.Find("Number").gameObject.SetActive(true);
+                    Mode_Select_Scene_Manager.c_Mode_Select_manager.Open_Competition_Mode();
                 }
 
-                // 획득했던 별을 받아온다.
-                CSV_Manager.GetInstance().Get_Adv_Mission_Num_List(ref mission_nums, i);
-                for (int j = 0; j < 3; ++j)
+                if (PlayerPrefs.GetInt("is_Open_Mode_Coop") == 1)
                 {
-                    tempString = "Adventure_Stars_ID_" + mission_nums[j].ToString();
-                    tempStars[j] = PlayerPrefs.GetInt(tempString);
+                    Mode_Select_Scene_Manager.c_Mode_Select_manager.Open_Coop_Mode();
                 }
+                break;
 
-                // 받아온 별만큼 활성화 시킨다.
-                for (int j = 0; j < 3; ++j)
+
+
+
+
+
+            case PlayerPrefs_Manager_Constants.Mode_Adventure: // 모험모드 스테이지 선택 씬
+                int[] mission_nums = new int[3];
+                string tempString;
+                int tempStars = 0; // 1: 활성화, 0: 비활성화
+
+                // 플레이 가능한 최대 스테이지를 받아온다.
+                int playable_max_stage = PlayerPrefs.GetInt("Mode_Adventure_Playable_Max_Stage");
+
+                // 1번부터 순차적으로 최대 스테이지 까지 수행한다.
+                for (int i = 0; i <= playable_max_stage; ++i)
                 {
-                    if (tempStars[j] == 1)
+                    // 버튼을 활성화 시킨다.
+                    Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].interactable = true;
+
+                    // 버튼 이미지를 변경한다.
+                    if (i == 5 || i == 9) // 보스 스테이지
                     {
-                        Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].gameObject.GetComponentsInChildren<RawImage>()[j + 1].texture = Activated_Star_Image;
+                        Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].gameObject.GetComponent<RawImage>().texture = Activated_Boss_Image;
                     }
+                    else // 일반 스테이지
+                    {
+                        Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].gameObject.GetComponent<RawImage>().texture = Activated_Bomb_Image;
+                        // 텍스트도 활성화 시킨다.
+                        Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].transform.Find("Number").gameObject.SetActive(true);
+                    }
+
+
+                    // 획득했던 별을 받아온다.
+                    tempStars = 0;
+                    CSV_Manager.GetInstance().Get_Adv_Mission_Num_List(ref mission_nums, i);
+                    for (int j = 0; j < 3; ++j)
+                    {
+                        tempString = "Adventure_Stars_ID_" + mission_nums[j].ToString();
+                        if (PlayerPrefs.GetInt(tempString) == 1)
+                            ++tempStars;
+                    }
+
+                    
+                    // 받아온 별만큼 활성화 시킨다.
+                    for (int j = 0; j < tempStars; ++j)
+                        Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].gameObject.GetComponentsInChildren<RawImage>()[j + 1].texture = Activated_Star_Image;
+                    
                 }
-            }
+                break;
+
+
+
+
+
+
+            case PlayerPrefs_Manager_Constants.Mode_Competition:
+
+                break;
+
+
+
+
+
+
+            case PlayerPrefs_Manager_Constants.Mode_Coop:
+
+                break;
         }
     }
 

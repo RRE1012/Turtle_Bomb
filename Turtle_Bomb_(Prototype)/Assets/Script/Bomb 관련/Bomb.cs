@@ -51,9 +51,6 @@ public class Bomb : MonoBehaviour
     float m_Kicked_Bomb_Speed = 10.0f;
     float m_Thrown_Bomb_Speed = 15.0f;
 
-    Transform m_Model;
-
-
     public GameObject m_Whose_Bomb; // 어떤 객체의 폭탄인가?
     public int m_Whose_Bomb_Type; // 그 객체의 타입은 무엇인가?
 
@@ -85,8 +82,6 @@ public class Bomb : MonoBehaviour
         StageManager.c_Stage_Manager.Update_MCL_isBlocked(m_My_MCL_Index, true);
 
         c_Bomb = this;
-
-        m_Model = transform.Find("Bomb_리터칭");
 
         if (m_Whose_Bomb_Type == WHOSE_BOMB.PLAYER)
             m_FlameCount = UI.m_fire_count;
@@ -163,6 +158,8 @@ public class Bomb : MonoBehaviour
                 transform.position = new Vector3(transform.position.x, 0.0f, transform.position.z);
                 m_is_Thrown_Bomb_Moving = false;
                 m_isThrown = false;
+                transform.GetComponentInChildren<Animator>().SetBool("roll", false);
+                transform.Find("Bomb_리터칭").transform.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
                 Bomb_MCL_And_Position_Update();
             }
         }
@@ -177,9 +174,11 @@ public class Bomb : MonoBehaviour
             || collision.gameObject.CompareTag("Wall")
             || collision.gameObject.CompareTag("Bomb"))
         {
+            transform.GetComponentInChildren<Animator>().SetBool("roll", false);
+            transform.Find("Bomb_리터칭").transform.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
+
             if (m_isKicked)
             {
-                m_Model.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);
                 Bomb_MCL_And_Position_Update();
                 m_isKicked = false;
             }
@@ -552,7 +551,6 @@ public class Bomb : MonoBehaviour
 
 
         transform.Rotate(0.0f, bombAngleY, 0.0f);
-        transform.Find("Bomb_리터칭").Rotate(0.0f, bombAngleY, 0.0f);
     }
 
 
@@ -562,7 +560,7 @@ public class Bomb : MonoBehaviour
     // 차여진 폭탄의 이동
     void Kicked_Bomb_Move()
     {
-        m_Model.Rotate(transform.right, 70.0f);
+        transform.GetComponentInChildren<Animator>().SetBool("roll", true);
         transform.Translate(new Vector3(0.0f, 0.0f, (m_Kicked_Bomb_Speed * Time.deltaTime)));
     }
 
@@ -617,7 +615,8 @@ public class Bomb : MonoBehaviour
             transform.Translate(new Vector3(0.0f, -(m_Down_Speed * Time.deltaTime), 0.0f));
         }
 
-        
+        transform.GetComponentInChildren<Animator>().SetBool("roll", true);
+
         if (transform.position.x < -0.5f || transform.position.x > 28.5f
             || transform.position.z < 49.5f || transform.position.z > 78.5f)
         {

@@ -192,9 +192,9 @@ public class UI : MonoBehaviour {
             if (s == 1)
                 m_Star_Image1.texture = m_Activated_Star_Texture;
             else if (s == 2)
-                m_Star_Image3.texture = m_Activated_Star_Texture;
-            else if (s == 3)
                 m_Star_Image2.texture = m_Activated_Star_Texture;
+            else if (s == 3)
+                m_Star_Image3.texture = m_Activated_Star_Texture;
         }
     }
     
@@ -204,7 +204,7 @@ public class UI : MonoBehaviour {
     {
         StageManager.c_Stage_Manager.m_is_Pause = true;
         StageManager.c_Stage_Manager.Destroy_Objects();
-
+        GameObject.Find("Navigation_Plane").SetActive(false);
         if (LobbySound.instanceLS != null)
             LobbySound.instanceLS.SoundStart();
         SceneManager.LoadScene(2);
@@ -214,6 +214,7 @@ public class UI : MonoBehaviour {
     public void StageClear_RestartButton()
     {
         StageManager.c_Stage_Manager.m_is_Pause = true;
+        GameObject.Find("Navigation_Plane").SetActive(false);
         StageManager.c_Stage_Manager.Destroy_Objects();
         SceneManager.LoadScene(3);
     }

@@ -7,6 +7,7 @@ static class Monster_AI_Constants
 {
     public const float Walk_Time = 3.0f;
     public const float Attack_Time = 1.0f;
+    public const float Boss_Attack_Time = 0.3f;
 }
 
 public class MonsterAI : MonoBehaviour
@@ -183,6 +184,7 @@ public class MonsterAI : MonoBehaviour
                 {
                     transform.Translate(new Vector3(0.0f, 0.0f, (m_Monster_Basic_Speed * Time.deltaTime)));
                     m_Goblman_Animator.SetBool("Goblman_isWalk", true);
+                    m_Goblman_Animator.SetBool("Goblman_isIdle", false);
                     Find_My_Coord();
                 }
             }
@@ -192,6 +194,7 @@ public class MonsterAI : MonoBehaviour
                     MusicManager.manage_ESound.Goblin_Idle_Sound();
 
                 m_Goblman_Animator.SetBool("Goblman_isWalk", false);
+                m_Goblman_Animator.SetBool("Goblman_isIdle", true);
                 yield return new WaitForSeconds(2.0f);
                 m_WalkTimer = 0.0f;
             }
@@ -214,8 +217,9 @@ public class MonsterAI : MonoBehaviour
                 {
                     if (MusicManager.manage_ESound != null)
                         MusicManager.manage_ESound.Goblin_Attack_Sound();
-                    m_Attack_Collider.gameObject.SetActive(true);
+                    m_Attack_Collider.gameObject.SetActive(true); // 충돌체 활성화
                     m_Goblman_Animator.SetBool("Goblman_isAttack", true);
+                    m_Goblman_Animator.SetBool("Goblman_isIdle", false);
                     m_isAttacking = true;
                 }
             }
@@ -223,10 +227,10 @@ public class MonsterAI : MonoBehaviour
             else
             {
                 m_Goblman_Animator.SetBool("Goblman_isAttack", false);
+                m_Goblman_Animator.SetBool("Goblman_isIdle", true);
                 m_Attack_Collider.gameObject.SetActive(false);
                 m_isAttacking = false;
                 m_AttackTimer = 0.0f;
-                m_Attack_Detector.m_isRotated = false;
                 yield return new WaitForSeconds(0.5f);
             }
 
