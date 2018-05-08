@@ -13,7 +13,7 @@ public class Box : MonoBehaviour {
     public GameObject m_Object_ThrowItem;
     public GameObject m_Object_Player;
 
-    GameObject Instance_Item;
+    
 
     public bool m_is_Destroyed = false;
     int index;
@@ -21,8 +21,8 @@ public class Box : MonoBehaviour {
     void Start()
     {
         // 최초 시작 시 박스 자신의 위치의 isBlocked를 true로 갱신
-        index = StageManager.Find_Own_MCL_Index(transform.position.x, transform.position.z, false);
-        StageManager.Update_MCL_isBlocked(index, true);
+        index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
+        StageManager.c_Stage_Manager.Update_MCL_isBlocked(index, true);
     }
 
 
@@ -33,8 +33,8 @@ public class Box : MonoBehaviour {
             m_is_Destroyed = true;
 
             // MCL 갱신
-            index = StageManager.Find_Own_MCL_Index(transform.position.x, transform.position.z, true);
-            StageManager.Update_MCL_isBlocked(index, false);
+            index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
+            StageManager.c_Stage_Manager.Update_MCL_isBlocked(index, false);
 
             // 화염 잔해 파괴
             Destroy(other.gameObject);
@@ -52,6 +52,7 @@ public class Box : MonoBehaviour {
         {
             if (Random.Range(0, 100) > 51)
             {
+                GameObject Instance_Item;
                 int dropRate = Random.Range(0, 100);
                 if (dropRate < 25)
                 {

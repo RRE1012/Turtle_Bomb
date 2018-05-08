@@ -7,6 +7,7 @@ static class Monster_AI_Constants
 {
     public const float Walk_Time = 3.0f;
     public const float Attack_Time = 1.0f;
+    public const float Boss_Attack_Time = 0.3f;
 }
 
 public class MonsterAI : MonoBehaviour
@@ -119,9 +120,6 @@ public class MonsterAI : MonoBehaviour
         // 공격
         if (m_Attack_Detector.m_isInRange && !m_isAttacking)
         {
-            if (MusicManager.manage_ESound != null)
-                MusicManager.manage_ESound.Goblin_Attack_Sound();
-
             if (m_Current_Behavior != m_Behavior_Attack)
                 m_Current_Behavior = m_Behavior_Attack;
             //m_isAttacking = true;
@@ -186,6 +184,7 @@ public class MonsterAI : MonoBehaviour
                 {
                     transform.Translate(new Vector3(0.0f, 0.0f, (m_Monster_Basic_Speed * Time.deltaTime)));
                     m_Goblman_Animator.SetBool("Goblman_isWalk", true);
+                    m_Goblman_Animator.SetBool("Goblman_isIdle", false);
                     Find_My_Coord();
                 }
             }
@@ -195,6 +194,7 @@ public class MonsterAI : MonoBehaviour
                     MusicManager.manage_ESound.Goblin_Idle_Sound();
 
                 m_Goblman_Animator.SetBool("Goblman_isWalk", false);
+                m_Goblman_Animator.SetBool("Goblman_isIdle", true);
                 yield return new WaitForSeconds(2.0f);
                 m_WalkTimer = 0.0f;
             }
@@ -213,10 +213,13 @@ public class MonsterAI : MonoBehaviour
 
             if (m_AttackTimer < Monster_AI_Constants.Attack_Time)
             {
-                if (StageManager.c_Stage_Manager.m_is_Intro_Over && PlayerMove.C_PM.Get_IsAlive() && !StageManager.m_is_Stage_Clear && !m_Goblman_Animator.GetBool("Goblman_isAttack"))
+                if (StageManager.c_Stage_Manager.m_is_Intro_Over && !StageManager.c_Stage_Manager.Get_Game_Over() && !m_Goblman_Animator.GetBool("Goblman_isAttack"))
                 {
-                    m_Attack_Collider.gameObject.SetActive(true);
+                    if (MusicManager.manage_ESound != null)
+                        MusicManager.manage_ESound.Goblin_Attack_Sound();
+                    m_Attack_Collider.gameObject.SetActive(true); // 충돌체 활성화
                     m_Goblman_Animator.SetBool("Goblman_isAttack", true);
+                    m_Goblman_Animator.SetBool("Goblman_isIdle", false);
                     m_isAttacking = true;
                 }
             }
@@ -224,10 +227,10 @@ public class MonsterAI : MonoBehaviour
             else
             {
                 m_Goblman_Animator.SetBool("Goblman_isAttack", false);
+                m_Goblman_Animator.SetBool("Goblman_isIdle", true);
                 m_Attack_Collider.gameObject.SetActive(false);
                 m_isAttacking = false;
                 m_AttackTimer = 0.0f;
-                m_Attack_Detector.m_isRotated = false;
                 yield return new WaitForSeconds(0.5f);
             }
 
@@ -257,12 +260,12 @@ public class MonsterAI : MonoBehaviour
         m_Left_Object_Index = Find_Objects_Coord(m_V3_To_Find_my_leftObject.x, m_V3_To_Find_my_leftObject.z);
 
         
-        if (m_Left_Object_Index != -1 && StageManager.m_Map_Coordinate_List[m_Left_Object_Index].isBlocked == false)
+        if (m_Left_Object_Index != -1 && StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_Left_Object_Index) == false)
         {
             transform.Rotate(-transform.up * 90.0f);
         }
 
-        else if (m_Right_Object_Index != -1 && StageManager.m_Map_Coordinate_List[m_Right_Object_Index].isBlocked == false)
+        else if (m_Right_Object_Index != -1 && StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_Right_Object_Index) == false)
         {
             transform.Rotate(transform.up * 90.0f);
         }
@@ -283,7 +286,7 @@ public class MonsterAI : MonoBehaviour
     {
         if (StageManager.m_is_init_MCL)
         {
-            m_My_MCL_Index = StageManager.Find_Own_MCL_Index(transform.position.x, transform.position.z, false);
+            m_My_MCL_Index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
         }
     }
     // =========================================
@@ -294,14 +297,14 @@ public class MonsterAI : MonoBehaviour
     {
         if (StageManager.m_is_init_MCL)
         {
-            m_My_MCL_Index = StageManager.Find_Own_MCL_Index(transform.position.x, transform.position.z, false);
+            m_My_MCL_Index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
             
             if (m_My_MCL_Index != -1)
             {
                 Vector3 Loc;
-                Loc.x = StageManager.m_Map_Coordinate_List[m_My_MCL_Index].x;
+                Loc.x = StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index].x;
                 Loc.y = transform.position.y;
-                Loc.z = StageManager.m_Map_Coordinate_List[m_My_MCL_Index].z;
+                Loc.z = StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index].z;
                 transform.position = Loc;
             }
         }
@@ -314,7 +317,7 @@ public class MonsterAI : MonoBehaviour
     {
         if (StageManager.m_is_init_MCL)
         {
-            return StageManager.Find_Own_MCL_Index(x, z, false);
+            return StageManager.c_Stage_Manager.Find_Own_MCL_Index(x, z);
         }
         return -1;
     }

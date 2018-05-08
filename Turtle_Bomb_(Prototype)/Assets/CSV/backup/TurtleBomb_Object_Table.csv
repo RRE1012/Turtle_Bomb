@@ -9,3 +9,5 @@ int32,string,string,string,string
 6,Start_Point,,Start,0
 7,Next_Point,,Next,0
 8,End_Point,,End,0
+9,Character_Spawn,,Character,0
+10,Giant_Boss1_Spawn,,GiantBoss1Monster,1

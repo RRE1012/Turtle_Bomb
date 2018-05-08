@@ -254,7 +254,9 @@
     <Compile Include="Assets\Script\Bomb 관련\RingEffectCollider.cs" />
     <Compile Include="Assets\Script\Object 관련\Airdrop_Item.cs" />
     <Compile Include="Assets\Script\Object 관련\Box.cs" />
+    <Compile Include="Assets\Script\Object 관련\Box_None_Item.cs" />
     <Compile Include="Assets\Script\Object 관련\Bush.cs" />
+    <Compile Include="Assets\Script\Object 관련\Info_Trigger.cs" />
     <Compile Include="Assets\Script\Object 관련\Item.cs" />
     <Compile Include="Assets\Script\Object 관련\Rock.cs" />
     <Compile Include="Assets\Script\Object 관련\Start_Point.cs" />

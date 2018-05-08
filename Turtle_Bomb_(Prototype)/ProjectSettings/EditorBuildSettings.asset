@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scene/TB_Title.unity
-    guid: a61c727e68a20d743878a3f1632e9953
+    path: Assets/Scene/Title_Scene.unity
+    guid: 87df383ec86f4f94ca47a02670cd9090
   - enabled: 1
     path: Assets/Scene/Mode_Select_Scene.unity
     guid: 7ac2456672533a54f887564d6d2ae712
@@ -18,5 +18,5 @@ EditorBuildSettings:
     path: Assets/Scene/Mode_Adventure_Game_Stage.unity
     guid: 885aa0f129b1e474ea2ef531f06c45e0
   - enabled: 0
-    path: Assets/Scene/Title_Start.unity
-    guid: ea16ba3bac27c6d41b6b2be7371b3e21
+    path: Assets/Scene/TB_Title.unity
+    guid: a61c727e68a20d743878a3f1632e9953

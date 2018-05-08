@@ -7,8 +7,6 @@ public class Bush : MonoBehaviour
     public GameObject[] m_Object_temp;
     public GameObject fire_Effect;
 
-    Color color = new Color(1.0f,0.0f,0.0f,1);
-
     MeshRenderer meshrenderer;
     public Material m;
 

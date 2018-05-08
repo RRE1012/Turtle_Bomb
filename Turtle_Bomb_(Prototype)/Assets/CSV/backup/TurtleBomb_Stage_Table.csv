@@ -1,0 +1,12 @@
+﻿ID,Description,Adventure_Quest_ID_List,Adventure_Quest_ID_List,Adventure_Quest_ID_List,Stage_Pattern_ID_List,Stage_Pattern_ID_List,Stage_Pattern_ID_List
+all,design,0,1,2,0,1,2
+int32,string,array<int32>,array<int32>,array<int32>,array<int32>,array<int32>,array<int32>
+1,forest ,1,2,3,1,0,0
+2,forest ,4,5,6,2,0,0
+3,forest ,7,8,9,3,4,0
+4,forest ,10,11,12,5,6,0
+5,forest ,13,14,15,17,0,0
+6,forest ,16,17,18,9,10,0
+7,forest ,19,20,21,11,12,13
+8,forest ,22,23,24,14,15,16
+9,forest ,25,26,27,17,0,0
