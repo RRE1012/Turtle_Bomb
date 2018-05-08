@@ -23,7 +23,7 @@ void Refresh_Map(); //맵을 서버에서 갱신하기 위해 만든 함수 -> 계산도 추가할 예�
 BYTE g_total_member = 1;//현재 접속자의 수
 void SetGameRoomInit(BYTE);
 list<TB_BombPos> bomb_list;//폭탄 터지는 시간을 계산하기 위해 만든 리스트 - 현재까지는 앞에서만 터트리지만, 좀 더 개선이 필요
-
+list<Bomb_TB> bomb_List;
 void err_quit(char* msg); //에러 종료 및 출력 함수
 
 void err_display(char* msg); //에러 출력 함수
@@ -39,7 +39,7 @@ DWORD g_prevTime2; //GetTickCount()를 활용한 시간을 체크할 때 사용할 함수
 void ArrayMap(); //맵 초기화 및 정렬 함수
 
 void CalculateMap(int, int, byte, byte, TB_BombExplodeRE*);
-
+void Throw_Calculate_Map(int , int , BYTE , TB_ThrowBombRE*, BYTE);
 int main(int argc, char* argv[]) {
 
 	printf("-------------------------------------------------------------------------\n\n%d Server Start\n\n-------------------------------------------------------------------------\n\n", sizeof(char));
@@ -92,69 +92,21 @@ int main(int argc, char* argv[]) {
 		//타임아웃에 걸릴 경우 - 폭탄 시간은 계속 체크하고 있어야 하므로, 여기서도 시간체크를 실행시킨다.
 		if (i == WSA_WAIT_FAILED || i == 258 || i == WAIT_TIMEOUT) {
 			
-			if (bomb_list.size() > 0) {
-				list<TB_BombPos>::iterator bomb = bomb_list.begin();
-				for (; bomb != bomb_list.end(); ++bomb) {
-					bomb->settime = bomb->settime + ((float)elapsedTime / 1000);
-					//cout << "Timeout "<<bomb->settime << "  ";
-					if (bomb->settime >= 2.0f) {
-						int tempx = bomb->posx;
-						int tempz = bomb->posz;
-
-						BYTE roomid = bomb->room_num;
-						g_TurtleMap_room[roomid - 1].mapInfo[bomb->posx][bomb->posz] = MAP_NOTHING;
-						TB_BombExplodeRE temp_Bomb = { SIZEOF_TB_BombExplodeRE };
-						CalculateMap(bomb->posx, bomb->posz, bomb->firepower, roomid,&temp_Bomb);
-						printf("temp_Bomb Data : type: %d , uf:%d ,df:%d\n", temp_Bomb.type, temp_Bomb.upfire, temp_Bomb.downfire);
-						TB_BombExplode temp_bomb = { SIZEOF_TB_BombExplode,CASE_BOMB_EX, bomb->firepower,roomid,tempx ,tempz };
-						g_TurtleMap.size = SIZEOF_TB_MAP;
-						for (int j = 0; j < g_TotalSockets; ++j) {
-
-							//printf("폭발할 폭탄 전송!!!\n");
-
-							if (SocketInfoArray[j].m_connected) {
-								if (SocketInfoArray[j].roomID == roomid) {
-									//printf("Send size : %d\n", temp_bomb.size);
-
-									retval = send(SocketInfoArray[j].sock, (char*)&temp_Bomb, sizeof(TB_BombExplodeRE), 0);
-									printf("Retval size : %d\n", retval);
-									//printf("Send size : %d\n", g_TurtleMap.size);
-
-									retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap_room[roomid - 1], sizeof(TB_Map), 0);
-									printf("Retval size : %d\n", retval);
-								}
-							}
-
-						}
-
-
-						bomb_list.pop_front();
-						//Refresh_Map();
-						if (bomb_list.size() <= 0) {
-							break;
-						}
-						break;
-
-					}
-				}
-			}
-			continue;
-		}
-		else {
-			if (bomb_list.size() > 0) {
-				list<TB_BombPos>::iterator bomb = bomb_list.begin();
-				for (; bomb != bomb_list.end(); ++bomb)
+			if (bomb_List.size() > 0) {
+				list<Bomb_TB>::iterator bomb = bomb_List.begin();
+				for (; bomb != bomb_List.end(); ++bomb)
 				{
-					bomb->settime = bomb->settime + ((float)elapsedTime / 1000);
+					
 					//cout << "EventGet " << bomb->settime << "  ";
-					if (bomb->settime >= 2.0f)
+					if (bomb->GetTime())
 					{
+
 						BYTE temproom = bomb->room_num;
-						g_TurtleMap_room[temproom - 1].mapInfo[bomb->posx][bomb->posz] = MAP_NOTHING;
-						TB_BombExplodeRE temp_Bomb = { SIZEOF_TB_BombExplodeRE };
-						CalculateMap(bomb->posx, bomb->posz, bomb->firepower, temproom,&temp_Bomb);
-						int tempx = bomb->posx;
-						int tempz = bomb->posz;
+						g_TurtleMap_room[temproom - 1].mapInfo[bomb->x][bomb->z] = MAP_NOTHING;
+						TB_BombExplodeRE temp_Bomb = { SIZEOF_TB_BombExplodeRE,3 };
+						CalculateMap(bomb->x, bomb->z, bomb->firepower, temproom,&temp_Bomb);
+						int tempx = bomb->x;
+						int tempz = bomb->z;
 						printf("temp_Bomb Data : type: %d , uf:%d ,df:%d\n", temp_Bomb.type, temp_Bomb.upfire, temp_Bomb.downfire);
 						TB_BombExplode temp_bomb = { SIZEOF_TB_BombExplode,CASE_BOMB_EX, bomb->firepower,temproom,tempx ,tempz };
 						g_TurtleMap_room[temproom - 1].size = SIZEOF_TB_MAP;
@@ -176,9 +128,57 @@ int main(int argc, char* argv[]) {
 						}
 
 
-						bomb_list.pop_front();
+						bomb_List.erase(bomb++);
 						//Refresh_Map();
-						if (bomb_list.size() <= 0)
+						if (bomb_List.size() <= 0)
+						{
+							break;
+						}
+						break;
+					}
+				}
+			}
+			continue;
+		}
+		else {
+			if (bomb_List.size() > 0) {
+				list<Bomb_TB>::iterator bomb = bomb_List.begin();
+				for (; bomb != bomb_List.end(); ++bomb)
+				{
+					
+					//cout << "EventGet " << bomb->settime << "  ";
+					if (bomb->GetTime())
+					{
+						BYTE temproom = bomb->room_num;
+						g_TurtleMap_room[temproom - 1].mapInfo[bomb->x][bomb->z] = MAP_NOTHING;
+						TB_BombExplodeRE temp_Bomb = { SIZEOF_TB_BombExplodeRE,3 };
+						CalculateMap(bomb->x, bomb->z, bomb->firepower, temproom,&temp_Bomb);
+						int tempx = bomb->x;
+						int tempz = bomb->z;
+						printf("temp_Bomb Data : type: %d , uf:%d ,df:%d\n", temp_Bomb.type, temp_Bomb.upfire, temp_Bomb.downfire);
+						TB_BombExplode temp_bomb = { SIZEOF_TB_BombExplode,CASE_BOMB_EX, bomb->firepower,temproom,tempx ,tempz };
+						g_TurtleMap_room[temproom - 1].size = SIZEOF_TB_MAP;
+						for (int j = 0; j < g_TotalSockets; ++j)
+						{
+
+							printf("폭발할 폭탄 전송!!!\n");
+							if (SocketInfoArray[j].m_connected) {
+								if (SocketInfoArray[j].roomID == temproom) {
+									//printf("Send size : %d\n", temp_bomb.size);
+									retval = send(SocketInfoArray[j].sock, (char*)&temp_Bomb, sizeof(TB_BombExplodeRE), 0);
+									//printf("Retval size : %d\n", retval);
+									//printf("Send size : %d\n", g_TurtleMap.size);
+
+									retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap_room[temproom - 1], sizeof(TB_Map), 0);
+									//printf("Retval size : %d\n", retval);
+								}
+							}
+						}
+
+
+						bomb_List.erase(bomb++);
+						//Refresh_Map();
+						if (bomb_List.size() <= 0)
 						{
 							break;
 						}
@@ -339,6 +339,7 @@ int main(int argc, char* argv[]) {
 										if (SocketInfoArray[j].roomID == temproom) {
 											ingame_Char_Info[temproom - 1][tempid].size = SIZEOF_TB_CharPos;
 											ingame_Char_Info[temproom - 1][tempid].type = CASE_POS;
+											ingame_Char_Info[temproom - 1][tempid].anistate = 1;
 											retval = send(SocketInfoArray[j].sock, (char*)&ingame_Char_Info[temproom - 1][tempid], sizeof(TB_CharPos), 0);
 											if (ingamestate[temproom - 1].IsGameOver()) {
 
@@ -373,13 +374,14 @@ int main(int argc, char* argv[]) {
 								int tempz = b_pos->posz;
 								BYTE roomid = b_pos->room_id;
 								g_TurtleMap_room[roomid - 1].mapInfo[tempz][tempx] = MAP_BOMB;
-								//printf("폭탄포지션값  :x :%d, z:%d ,  \n", b_pos->posx, b_pos->posz);
+								printf("폭탄포지션값  :x :%d, z:%d ,  \n", b_pos->posx, b_pos->posz);
 
 								BYTE tempfire = b_pos->firepower;
 
 								TB_BombPos tempbomb = { SIZEOF_TB_BombPos,CASE_BOMB,0,tempfire,b_pos->room_id,tempx,tempz,0.0f };
+								
 								bomb_list.emplace_back(tempbomb);
-
+								bomb_List.emplace_back(Bomb_TB(tempx, tempz, roomid,tempfire));
 								ptr->remainbytes -= SIZEOF_TB_BombExplode;
 								memcpy(ptr->buf, c_buf + SIZEOF_TB_BombExplode, ptr->remainbytes);
 								memset(c_buf, 0, sizeof(c_buf));
@@ -395,7 +397,7 @@ int main(int argc, char* argv[]) {
 
 											retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap_room[roomid - 1], sizeof(TB_Map), 0);
 											printf("Retval size : %d\n", retval);
-											//printf("Bomb가 추가된 맵정보값 전송!\n");
+											printf("Bomb가 추가된 맵정보값 전송!\n");
 										}
 									}
 								}
@@ -433,12 +435,12 @@ int main(int argc, char* argv[]) {
 											if (SocketInfoArray[j].m_connected) {
 												if (SocketInfoArray[j].roomID == 0) {
 													//printf("Send size : %d\n", g_TurtleMap.size);
-													retval = send(SocketInfoArray[j].sock, (char*)&room, sizeof(room), 0); //초기화된 맵정보 클라이언트에게 전송
+													retval = send(SocketInfoArray[j].sock, (char*)&room, sizeof(room), 0); //방정보 전송
 												}
 												if (SocketInfoArray[j].roomID == temproomid) {
 													//printf("Send size : %d\n", g_TurtleMap.size);
 
-													retval = send(SocketInfoArray[j].sock, (char*)&room[temproomid - 1], sizeof(TB_Room), 0); //초기화된 맵정보 클라이언트에게 전송
+													retval = send(SocketInfoArray[j].sock, (char*)&room[temproomid - 1], sizeof(TB_Room), 0); //방에 들어있는 친구들에게도 전송
 												}
 
 												//retval = send(SocketInfoArray[j].sock, (char*)&tempjoin, sizeof(tempjoin), 0);
@@ -747,7 +749,113 @@ int main(int argc, char* argv[]) {
 								memcpy(c_buf, ptr->buf, sizeof(ptr->buf));
 							}
 							break;
+						case CASE_THROWBOMB:
+							if (ptr->remainbytes >= SIZEOF_TB_ThrowBomb) {
+								
+								TB_ThrowBomb* tempt = reinterpret_cast<TB_ThrowBomb*>(c_buf);
+								BYTE temproomid = tempt->roomid;
+								BYTE tempid = tempt->ingame_id;
+								int tempx = tempt->posx;
+								int tempz = tempt->posz;
+								
+								printf("던진다 폭탄!!! x:%d , z:%d \n",tempx,tempz);
+								BYTE tempdirect = tempt->direction;
+								if (bomb_List.size() > 0) {
+									list<Bomb_TB>::iterator bomb = bomb_List.begin();
+									for (; bomb != bomb_List.end(); ++bomb)
+									{
 
+										//cout << "EventGet " << bomb->settime << "  ";
+										//cout << "검색 중" << endl;
+										//if (bomb->GetXZ() == make_pair(tempx, tempz) && bomb->room_num == temproomid - 1)
+										if (bomb->GetXZ().first == tempx &&bomb->GetXZ().second == tempz&&bomb->room_num == temproomid)
+										{
+											printf("발견했다 폭탄!!!\n");
+											
+											
+									
+											
+											
+											
+											g_TurtleMap_room[temproomid - 1].size = SIZEOF_TB_MAP;
+											
+											TB_ThrowBombRE tempThrow = { SIZEOF_TB_ThrowBombRE,CASE_THROWBOMB,tempdirect,tempid,tempx,tempz };
+											
+											Throw_Calculate_Map(tempx, tempz, temproomid, &tempThrow, tempdirect);
+											g_TurtleMap_room[temproomid - 1].mapInfo[tempz][tempx] = MAP_NOTHING;
+											bomb->ResetExplodeTime();
+											bomb->is_throw = true;
+											bomb->x = tempThrow.posx_re;
+											bomb->z= tempThrow.posz_re;
+											bomb->xz = make_pair(tempThrow.posx_re, tempThrow.posz_re);
+											ingame_Char_Info[temproomid - 1][tempid].anistate = 3;//throw ani
+											for (int j = 0; j < g_TotalSockets; ++j)
+											{
+
+												
+												if (SocketInfoArray[j].m_connected) {
+													if (SocketInfoArray[j].roomID == temproomid) {
+														printf("보냈다 패킷!!!\n");
+
+														retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap_room[temproomid - 1], sizeof(TB_Map), 0);
+														retval = send(SocketInfoArray[j].sock, (char*)&ingame_Char_Info[temproomid - 1][tempid], sizeof(TB_CharPos), 0);
+														retval = send(SocketInfoArray[j].sock, (char*)&tempThrow, sizeof(TB_ThrowBombRE), 0);
+
+
+														
+														
+													}
+												}
+											}
+											break;
+										}
+									}
+								}
+								
+								
+
+								ptr->remainbytes -= SIZEOF_TB_ThrowBomb;
+								memcpy(ptr->buf, c_buf + SIZEOF_TB_ThrowBomb, ptr->remainbytes);
+								memset(c_buf, 0, sizeof(c_buf));
+								memcpy(c_buf, ptr->buf, sizeof(ptr->buf));
+							}
+							break;
+						case CASE_THROWCOMPLETE:
+							if (ptr->remainbytes >= SIZEOF_TB_ThrowComplete) {
+								TB_ThrowComplete* tempt = reinterpret_cast<TB_ThrowComplete*>(c_buf);
+								BYTE temproomid = tempt->roomid;
+								int tempx = tempt->posx;
+								int tempz = tempt->posz;
+								g_TurtleMap_room[temproomid - 1].mapInfo[tempx][tempz] = MAP_BOMB;
+								if (bomb_List.size() > 0) {
+									list<Bomb_TB>::iterator bomb = bomb_List.begin();
+									for (; bomb != bomb_List.end(); ++bomb) {
+										if (bomb->GetXZ() == make_pair(tempx, tempz)) {
+											bomb->is_throw = false;
+											bomb->ResetTime();
+
+										}
+									}
+
+								}
+								for (int j = 0; j < g_TotalSockets; ++j)
+								{
+									if (SocketInfoArray[j].m_connected) {
+										if (SocketInfoArray[j].roomID == temproomid) {
+
+							
+											retval = send(SocketInfoArray[j].sock, (char*)&g_TurtleMap_room[temproomid - 1], sizeof(TB_Map), 0);
+
+										}
+									}
+								}
+
+								ptr->remainbytes -= SIZEOF_TB_ThrowComplete;
+								memcpy(ptr->buf, c_buf + SIZEOF_TB_ThrowComplete, ptr->remainbytes);
+								memset(c_buf, 0, sizeof(c_buf));
+								memcpy(c_buf, ptr->buf, sizeof(ptr->buf));
+							}
+							break;
 						default:
 							printf("현재 버퍼 첫 바이트값 : %d\n", c_buf[0]);
 							break;
@@ -1390,6 +1498,171 @@ void CalculateMap(int x, int z, byte f, byte room_num, TB_BombExplodeRE* temppac
 	temppacket->posz = z;
 
 
+	memcpy(g_TurtleMap_room[room_num - 1].mapInfo, tempMap, sizeof(tempMap));
+
+}
+
+void Kick_CalculateMap(int x, int z,BYTE room_num, TB_BombExplodeRE* temppacket,BYTE direction) {
+	BYTE tempMap[15][15];
+	memcpy(tempMap, g_TurtleMap_room[room_num - 1].mapInfo, sizeof(tempMap));
+	tempMap[z][x] = MAP_NOTHING;
+	int tempx=x;
+	int tempz=z;
+	//direction에따라 어디로 차는지 알고 검색 1-우 2-좌 3-하 4-상
+	switch (direction) {
+	case 1:
+		for (int i = x; i < 15; ++i) {
+			if (tempMap[z][i] == MAP_BOMB || tempMap[z][i] == MAP_BOX || tempMap[z][i] == MAP_ROCK ) {
+				tempx = i-1;
+				tempz = z;
+				break;
+			}
+			if (i == 14) {
+				tempx = i;
+				tempz = z;
+				break;
+			}
+		}
+		break;
+	case 2:
+		for (int i = x; i >= 0; --i) {
+			if (tempMap[z][i] == MAP_BOMB || tempMap[z][i] == MAP_BOX || tempMap[z][i] == MAP_ROCK ) {
+				tempx = i + 1;
+				tempz = z;
+				break;
+			}
+			if (i == 0) {
+				tempx = i;
+				tempz = z;
+				break;
+			}
+		}
+		break;
+	case 3:
+		for (int i = z; i < 15; ++i) {
+			if (tempMap[i][x] == MAP_BOMB || tempMap[i][x] == MAP_BOX || tempMap[i][x] == MAP_ROCK) {
+				tempx = x;
+				tempz = i-1;
+				break;
+			}
+			if (i == 14) {
+				tempx = x;
+				tempz = i;
+				break;
+			}
+		}
+		break;
+	case 4:
+		for (int i = z; i >= 0; --i) {
+			if (tempMap[i][x] == MAP_BOMB || tempMap[i][x] == MAP_BOX || tempMap[i][x] == MAP_ROCK) {
+				tempx = x;
+				tempz = i + 1;
+				break;
+			}
+			if (i == 0) {
+				tempx = x;
+				tempz = i;
+				break;
+			}
+		}
+		break;
+	default:
+		printf("Unknown Direction!!!!\n");
+		break;
+
+
+
+	}
+	//kick관련 송신패킷구조체에 넣어줘야 한다.
+}
+
+void Throw_Calculate_Map(int x, int z, BYTE room_num, TB_ThrowBombRE* temppacket, BYTE direction) {
+	BYTE tempMap[15][15];
+	memcpy(tempMap, g_TurtleMap_room[room_num - 1].mapInfo, sizeof(tempMap));
+	tempMap[z][x] = MAP_NOTHING;
+	int tempx = x;
+	int tempz = z;
+	//direction에따라 어디로 차는지 알고 검색 1-우 2-좌 3-하 4-상
+	switch (direction) {
+	case 1:
+		tempx = x + 4;
+		if (tempx > 14)
+			tempx = 14;
+		for (int i = tempx; i < 15; ++i) {
+			if (tempMap[z][i] == MAP_NOTHING || tempMap[z][i] == MAP_ITEM || tempMap[z][i] == MAP_BUSH || tempMap[z][i] == MAP_ITEM_F || tempMap[z][i] == MAP_ITEM_S) {
+				tempx = i;
+				tempz = z;
+				break;
+			}
+			if (i == 14) {
+				tempx = i;
+				tempz = z;
+				break;
+			}
+		}
+		break;
+	case 2:
+		tempx = x - 4;
+		if (tempx < 0)
+			tempx = 0;
+		for (int i = tempx; i >= 0; --i) {
+			if (tempMap[z][i] == MAP_NOTHING || tempMap[z][i] == MAP_ITEM || tempMap[z][i] == MAP_BUSH || tempMap[z][i] == MAP_ITEM_F || tempMap[z][i] == MAP_ITEM_S) {
+				tempx = i;
+				tempz = z;
+				break;
+			}
+			if (i == 0) {
+				tempx = i;
+				tempz = z;
+				break;
+			}
+		}
+		break;
+	case 3:
+		tempz = z + 4;
+		if (tempz > 14)
+			tempz = 14;
+		for (int i = tempz; i < 15; ++i) {
+			if (tempMap[i][x] == MAP_NOTHING || tempMap[i][x] == MAP_ITEM || tempMap[i][x] == MAP_BUSH || tempMap[i][x] == MAP_ITEM_F || tempMap[i][x] == MAP_ITEM_S) {
+				tempx = x;
+				tempz = i;
+				break;
+			}
+			if (i == 14) {
+				tempx = x;
+				tempz = i;
+				break;
+			}
+		}
+		break;
+	case 4:
+		tempz = z - 4;
+		if (tempz < 0)
+			tempz = 0;
+		for (int i = z; i >= 0; --i) {
+			if (tempMap[i][x] == MAP_NOTHING || tempMap[i][x] == MAP_ITEM || tempMap[i][x] == MAP_BUSH || tempMap[i][x] == MAP_ITEM_F || tempMap[i][x] == MAP_ITEM_S) {
+				tempx = x;
+				tempz = i;
+				break;
+			}
+			if (i == 0) {
+				tempx = x;
+				tempz = i;
+				break;
+			}
+		}
+		break;
+	default:
+		printf("Unknown Direction!!!!\n");
+		break;
+	}
+	//throw관련 송신패킷구조체에 넣어줘야 한다.
+	temppacket->posx_re = tempx;
+	temppacket->posz_re = tempz;
+	temppacket->posx = x;
+	temppacket->posz = z;
+	temppacket->direction = direction;
+	
 	memcpy(g_TurtleMap_room[room_num - 1].mapInfo, tempMap, sizeof(tempMap));
 
 }

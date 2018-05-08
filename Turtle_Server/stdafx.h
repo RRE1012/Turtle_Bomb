@@ -45,8 +45,9 @@ using namespace std;
 #define CASE_FORCEOUTROOM 14
 #define CASE_ROOMSETTING 15
 #define CASE_TEAMSETTING 16
-
-
+#define CASE_THROWBOMB 17
+#define CASE_KICKBOMB 18
+#define CASE_THROWCOMPLETE 19
 
 #define SIZEOF_TB_CharPos 22
 #define SIZEOF_TB_BombPos 17
@@ -72,7 +73,9 @@ using namespace std;
 #define SIZEOF_TB_GetOutRE  2
 #define SIZEOF_TB_RoomSetting 5
 #define SIZEOF_TB_TeamSetting 5
-
+#define SIZEOF_TB_ThrowBomb 13
+#define SIZEOF_TB_ThrowBombRE 20
+#define SIZEOF_TB_ThrowComplete 11
 
 #define MAX_EVENT_SIZE 64
 
@@ -110,50 +113,7 @@ using namespace std;
 #define ITEM_SPEED 2
 #define ITEM_SUPER 3
 
-class InGameCalculator {
-	bool id[4];
 
-	bool gameover;
-public:
-	int deathcount;
-	InGameCalculator() {
-		deathcount = 0;
-		id[0] = true;
-		id[1] = true;
-		id[2] = true;
-		id[3] = true;
-
-		gameover = false;
-	}
-	~InGameCalculator() {}
-	void InitClass() {
-		deathcount = 0;
-		gameover = false;
-		id[0] = true;
-		id[1] = true;
-		id[2] = true;
-		id[3] = true;
-	}
-	void PlayerDead(BYTE idd) {
-		if (id[idd]) {
-			id[idd] = false;
-			deathcount++;
-		}
-	}
-	void SetGameOver() {
-		gameover = true;
-	}
-	bool IsGameOver() {
-		return gameover;
-	}
-	BYTE GetWinnerID() {
-		for (BYTE i = 0; i < 4; ++i) {
-			if (id[i])
-				return i;
-		}
-		return 4; //DRAW
-	}
-};
 
 #pragma pack(push,1)
 struct Pos {//type:1
@@ -227,6 +187,8 @@ struct TB_BombPos { //type:2
 	BYTE type;
 	BYTE ingame_id;
 	BYTE firepower; //화력
+	//BYTE throwing; //던져지고 있는지
+	//BYTE kicking; //차여지고 있는지
 	BYTE room_num;
 	int posx;
 	int posz;
@@ -252,6 +214,44 @@ struct TB_BombExplodeRE { //type:3
 	int posx;
 	int posz;
 
+};
+struct TB_ThrowBomb {
+	BYTE size;//13
+	BYTE type;//17
+	BYTE roomid;
+	BYTE ingame_id;
+	BYTE direction;
+	int posx;
+	int posz;
+};
+struct TB_ThrowBombRE {
+	BYTE size;//20
+	BYTE type;//17
+	BYTE direction;
+	BYTE ingame_id;
+	int posx;
+	int posz;
+	int posx_re;
+	int posz_re;
+
+};
+
+struct TB_ThrowComplete {
+	BYTE size;//11
+	BYTE type;//19
+	BYTE roomid;
+	int posx;
+	int posz;
+};
+
+struct TB_KickBomb {
+	BYTE size;//
+	BYTE type;//18
+	BYTE roomid;
+	BYTE ingame_id;
+	BYTE direction;
+	int posx;
+	int posz;
 };
 
 
@@ -434,4 +434,102 @@ struct TB_Room_Data { //방장 추가(완)
 	TB_Map map;
 	char password[8];
 };
+
+
 #pragma pack(pop)
+
+class InGameCalculator {
+	bool id[4];
+
+	bool gameover;
+public:
+	int deathcount;
+	InGameCalculator() {
+		deathcount = 0;
+		id[0] = true;
+		id[1] = true;
+		id[2] = true;
+		id[3] = true;
+
+		gameover = false;
+	}
+	~InGameCalculator() {}
+	void InitClass() {
+		deathcount = 0;
+		gameover = false;
+		id[0] = true;
+		id[1] = true;
+		id[2] = true;
+		id[3] = true;
+	}
+	void PlayerDead(BYTE idd) {
+		if (id[idd]) {
+			id[idd] = false;
+			deathcount++;
+		}
+	}
+	void SetGameOver() {
+		gameover = true;
+	}
+	bool IsGameOver() {
+		return gameover;
+	}
+	BYTE GetWinnerID() {
+		for (BYTE i = 0; i < 4; ++i) {
+			if (id[i])
+				return i;
+		}
+		return 4; //DRAW를 뜻한다.
+	}
+};
+
+
+class Bomb_TB {
+public:
+	int x, z;
+	pair<int, int> xz;
+	float time;
+	bool is_throw;
+	bool is_kicked;
+	BYTE firepower;
+	float explode_time;
+	BYTE room_num;
+	Bomb_TB() {
+		x = 0; z = 0; time = (float)GetTickCount() / 1000;
+		explode_time = 2.0f;
+		xz = make_pair(x, z);
+		is_throw = false;
+		is_kicked = false;
+	}
+	Bomb_TB(int a, int b) {
+		x = a; z = b; time = (float)GetTickCount() / 1000; explode_time = 2.0f;
+		xz = make_pair(a, b);
+		is_throw = false;
+		is_kicked = false;
+	}
+	Bomb_TB(int a, int b, BYTE r, BYTE f) {
+		x = a; z = b; time = (float)GetTickCount() / 1000; explode_time = 2.0f;
+		room_num = r;
+		firepower = f;
+		xz = make_pair(a, b);
+		is_throw = false;
+		is_kicked = false;
+	}
+	bool GetTime() {
+		float temptime = (float)GetTickCount() / 1000;
+		return (temptime - time >= explode_time) && !is_throw && !is_kicked;
+	}
+	void ResetExplodeTime() {
+		float temptime = (float)GetTickCount() / 1000;
+		temptime = temptime - time;
+		explode_time = explode_time - temptime;
+	}
+	void ResetTime() {
+		time = (float)GetTickCount() / 1000;
+
+	}
+	pair<int, int> GetXZ() {
+		return xz;
+	}
+
+};

@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scene/TB_Title.unity
+- path: Assets/Scene/Mode_Adventure_(Stage_Select).unity
   isLoaded: 1
   isActive: 1
