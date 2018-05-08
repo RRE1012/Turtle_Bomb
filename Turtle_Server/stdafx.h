@@ -48,6 +48,11 @@ using namespace std;
 #define CASE_THROWBOMB 17
 #define CASE_KICKBOMB 18
 #define CASE_THROWCOMPLETE 19
+#define CASE_KICKCOMPLETE 20
+#define CASE_MAPSET 21
+#define CASE_BOXPUSH 22
+#define CASE_BOXPUSHCOMPLETE 23
+
 
 #define SIZEOF_TB_CharPos 22
 #define SIZEOF_TB_BombPos 17
@@ -76,7 +81,10 @@ using namespace std;
 #define SIZEOF_TB_ThrowBomb 13
 #define SIZEOF_TB_ThrowBombRE 20
 #define SIZEOF_TB_ThrowComplete 11
-
+#define SIZEOF_TB_MapSetRE 11
+#define SIZEOF_TB_BoxPush 13
+#define SIZEOF_TB_BoxPushComplete 11
+#define SIZEOF_TB_BoxPushRE 21
 #define MAX_EVENT_SIZE 64
 
 #define MAP_BOMB 1
@@ -116,24 +124,11 @@ using namespace std;
 
 
 #pragma pack(push,1)
-struct Pos {//type:1
-
-	int id;
-	float posx;
-	float posz;
-	float roty;
-};
 
 
 
 
 
-struct PosOfBOMB {//recv :type:2, send: type:3
-	BYTE fire_power;
-	int x;
-	int y;
-
-};
 
 
 struct Socket_Info {
@@ -194,7 +189,13 @@ struct TB_BombPos { //type:2
 	int posz;
 	float settime;
 };
-
+struct TB_MapSetRE {
+	BYTE size;//11
+	BYTE type;//21
+	BYTE m_type;
+	int posx;
+	int posz;
+};
 struct TB_BombExplode { //type:3
 	BYTE size;//12
 	BYTE type;
@@ -215,6 +216,7 @@ struct TB_BombExplodeRE { //type:3
 	int posz;
 
 };
+
 struct TB_ThrowBomb {
 	BYTE size;//13
 	BYTE type;//17
@@ -254,7 +256,35 @@ struct TB_KickBomb {
 	int posz;
 };
 
+struct TB_BoxPush {
+	BYTE size;//13
+	BYTE type;//22
+	BYTE roomid; //0이면 안밀어, 1이면 밀어~!
+	BYTE ingame_id;
+	BYTE direction;
+	int posx;
+	int posz;
 
+};
+struct TB_BoxPushRE {
+	BYTE size;//21
+	BYTE type;//22
+	BYTE push; //0이면 안밀어, 1이면 밀어~!
+	BYTE ingame_id;
+	BYTE direction;
+	int posx;
+	int posz;
+	int posx_d;
+	int posz_d;
+
+};
+struct TB_BoxPushComplete {
+	BYTE size;//11
+	BYTE type;//19
+	BYTE roomid;
+	int posx;
+	int posz;
+};
 struct TB_Map { //type:4
 	BYTE size;//227
 	BYTE type;
@@ -467,6 +497,9 @@ public:
 			id[idd] = false;
 			deathcount++;
 		}
+	}
+	void PlayerBlank(int id_p) {
+		id[id_p] = false;
 	}
 	void SetGameOver() {
 		gameover = true;
