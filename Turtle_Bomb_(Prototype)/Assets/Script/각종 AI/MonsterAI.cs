@@ -158,7 +158,7 @@ public class MonsterAI : MonoBehaviour
         while (true)
         {
             Think();
-            if (!StageManager.c_Stage_Manager.m_is_Pause && !m_isDead && m_Current_Behavior != null && m_Current_Behavior.MoveNext())
+            if (!StageManager.c_Stage_Manager.Get_is_Pause() && !m_isDead && m_Current_Behavior != null && m_Current_Behavior.MoveNext())
             {
                 yield return m_Current_Behavior.Current;
             }
@@ -179,7 +179,7 @@ public class MonsterAI : MonoBehaviour
             
             if (m_WalkTimer < Monster_AI_Constants.Walk_Time)
             {
-                if (StageManager.c_Stage_Manager.m_is_Intro_Over && PlayerMove.C_PM.Get_IsAlive() && !StageManager.c_Stage_Manager.Get_is_Stage_Clear())
+                if (StageManager.c_Stage_Manager.Get_is_Intro_Over() && PlayerMove.C_PM.Get_IsAlive() && !StageManager.c_Stage_Manager.Get_is_Stage_Clear())
                 {
                     transform.Translate(new Vector3(0.0f, 0.0f, (m_Monster_Basic_Speed * Time.deltaTime)));
                     m_Goblman_Animator.SetBool("Goblman_isWalk", true);
@@ -212,7 +212,7 @@ public class MonsterAI : MonoBehaviour
 
             if (m_AttackTimer < Monster_AI_Constants.Attack_Time)
             {
-                if (StageManager.c_Stage_Manager.m_is_Intro_Over && !StageManager.c_Stage_Manager.Get_Game_Over() && !m_Goblman_Animator.GetBool("Goblman_isAttack"))
+                if (StageManager.c_Stage_Manager.Get_is_Intro_Over() && !StageManager.c_Stage_Manager.Get_Game_Over() && !m_Goblman_Animator.GetBool("Goblman_isAttack"))
                 {
                     if (MusicManager.manage_ESound != null)
                         MusicManager.manage_ESound.Goblin_Attack_Sound();

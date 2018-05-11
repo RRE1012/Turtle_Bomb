@@ -1484,8 +1484,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 989959d3b498ed748bcd5ead73b0ca56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CameraOffset: {fileID: 0}
-  m_is_Intro_Over: 0
   m_Forest_Theme_Terrain: {fileID: 1731116957976688, guid: b54521a4f13fa6b42a5b8c70c19fd73f,
     type: 2}
   m_SnowLand_Theme_Terrain: {fileID: 1970919265835146, guid: 9a080747edaa5d44eb17780e3c27e026,
@@ -1533,16 +1531,11 @@ MonoBehaviour:
   m_Prefab_Box_None_Item: {fileID: 1024158620818886, guid: 5ad3e4eece76a4345ba10dbf584bc265,
     type: 2}
   m_Text: {fileID: 1561299572}
-  m_is_Map_Changing: 0
-  m_Stage_ID: -1
-  m_Stage_Time_Limit: -1
-  m_is_Boss_Stage: 0
-  m_Boss_ID: 0
+  m_Boss_ID: -1
   m_SuddenDeath_JetGoblin: {fileID: 1421824778066548, guid: 26d73cefaf348a04896cbad9158a94de,
     type: 2}
-  m_is_SuddenDeath: 0
-  m_is_Pause: 0
-  m_Game_Over: 0
+  m_Stage_ID: -1
+  m_Stage_Time_Limit: -1
 --- !u!4 &238553181
 Transform:
   m_ObjectHideFlags: 0

@@ -28,7 +28,7 @@ public class Airplane : MonoBehaviour
     void Update()
     {
         // 일시정지 상태가 아닌 경우에만 수행
-        if (!StageManager.c_Stage_Manager.m_is_Pause)
+        if (!StageManager.c_Stage_Manager.Get_is_Pause())
         {
             // 1. 등장하라는 명령이 떨어지면
             if (m_is_Able_to_Appear)

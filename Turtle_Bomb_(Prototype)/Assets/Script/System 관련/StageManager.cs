@@ -135,9 +135,10 @@ public class StageManager : MonoBehaviour
     // ==================================
     // =========== 보스관련 =============
     
-    public bool m_is_Boss_Stage; // 현재 스테이지가 보스전인가? (*** 디버깅용 public ***)
+    bool m_is_Boss_Stage; // 현재 스테이지가 보스전인가?
 
     public int m_Boss_ID; // 보스 테이블 번호 (*** 디버깅용 public ***)
+                            // -1로 설정시 테이블에 따른다.
 
     public GameObject m_SuddenDeath_JetGoblin; // 서든데스 고블맨 객체
     
@@ -168,22 +169,21 @@ public class StageManager : MonoBehaviour
     public float m_Stage_Time_Limit; // 현재 스테이지의 제한시간
                                      // 디버깅용 변수이며, -1로 설정할 경우 기획 설정(테이블)에 따른다
 
-    public bool m_is_Intro_Over = false; // 인트로가 끝났는가?
+    bool m_is_Intro_Over = false; // 인트로가 끝났는가?
 
-    public bool m_is_Pause = false; // 게임이 일시정지 되었는가?
+    bool m_is_Pause = false; // 게임이 일시정지 되었는가?
 
     bool m_is_Goal_In = false; // 목표 지점에 들어갔는가?
 
     bool m_is_Stage_Clear = false; // 스테이지를 클리어했는가?
 
-    public bool m_Game_Over = false; // 게임이 끝났는가?
+    bool m_Game_Over = false; // 게임이 끝났는가?
 
     // 맵 사이즈
     int m_Map_Size_X = 17;
     int m_Map_Size_Z = 17;
 
-    public GameObject m_CameraOffset; // 퍼포먼스 카메라 객체
-    
+    //GameObject m_CameraOffset; // 퍼포먼스 카메라 객체
 
 
 
@@ -191,8 +191,9 @@ public class StageManager : MonoBehaviour
 
 
 
-    // =========== CSV 관련 ===========
     // ================================
+    // =========== CSV 관련 ===========
+
 
     // 현재 스테이지의 퀘스트 목록
     List<Adventure_Quest_Data> m_QuestList = new List<Adventure_Quest_Data>();
@@ -236,11 +237,11 @@ public class StageManager : MonoBehaviour
         
         MCL_init(); // MCL 초기화
 
-        m_CameraOffset = GameObject.Find("Camera_Offset"); // 카메라 객체 지정
+        //m_CameraOffset = GameObject.Find("Camera_Offset"); // 카메라 객체 지정
 
         m_Object_Table_List = new List<Object_Table_Data>(CSV_Manager.GetInstance().Get_Object_Table_List()); // 오브젝트 테이블 목록 로드
 
-        if (m_Stage_ID == MAP.NOT_SET)
+        if (m_Stage_ID == MAP.NOT_SET) // 설정이 안돼있다면
             m_Stage_ID = PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID"); // 스테이지 ID를 받아온다.
 
         // 스테이지 데이터 내부 리스트들의 공간 할당
@@ -251,20 +252,23 @@ public class StageManager : MonoBehaviour
         
         CSV_Manager.GetInstance().Get_Adventure_Quest_List(ref m_QuestList, ref m_Adventure_Stage_Data.Adventure_Quest_ID_List); // 퀘스트 데이터 로딩
 
-        foreach (Adventure_Quest_Data questdata in m_QuestList) // 보스 스테이지 검사
+        if (m_Boss_ID == MAP.NOT_SET) // 설정이 안돼있다면
         {
-            if (questdata.Quest_ID == 4) // 퀘스트 목록에 보스 몬스터 처치가 있다는것은
+            foreach (Adventure_Quest_Data questdata in m_QuestList) // 현재 스테이지의 퀘스트를 뒤져본다
             {
-                m_is_Boss_Stage = true; // 해당 스테이지가 보스 스테이지라는 뜻!
+                if (questdata.Quest_ID == 4) // 퀘스트 목록에 "보스 몬스터 처치"가 있다면
+                {
+                    m_is_Boss_Stage = true; // 해당 스테이지는 보스 스테이지라는 뜻!
 
-                // 보스 테이블의 번호를 설정
-                if (m_Stage_ID == 5)
-                    m_Boss_ID = 1;
-                else if (m_Stage_ID == 9)
-                    m_Boss_ID = 2;
+                    // 보스 테이블의 번호를 설정
+                    if (m_Stage_ID == 5)
+                        m_Boss_ID = 1;
+                    else if (m_Stage_ID == 9)
+                        m_Boss_ID = 2;
+                }
             }
         }
-        
+
         Create_Map(m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count]); // 설정된 번호를 받아서 맵 생성!
 
         //m_Script_List = CSV_Manager.GetInstance().Get_Script_List(스크립트ID); // 대사 받아오기
@@ -702,6 +706,33 @@ public class StageManager : MonoBehaviour
 
 
 
+    public void Set_is_Pause(bool b) // 일시정지 여부를 설정
+    {
+        m_is_Pause = b;
+    }
+
+    public bool Get_is_Pause() // 일시정지인가를 반환
+    {
+        return m_is_Pause;
+    }
+
+
+
+
+    public void Set_is_Intro_Over(bool b) // 인트로 모션 수행 여부를 설정
+    {
+        m_is_Intro_Over = b;
+    }
+
+    public bool Get_is_Intro_Over() // 인트로 모션 수행 여부를 반환
+    {
+        return m_is_Intro_Over;
+    }
+
+
+
+
+
     void Check_GameOver() // 게임오버인지 체크하여 설정
     {
         if (!PlayerMove.C_PM.Get_IsAlive()) // 죽어서 끝났거나,
@@ -722,6 +753,13 @@ public class StageManager : MonoBehaviour
     }
     
 
+
+
+
+    public bool Get_is_Boss_Stage() // 현재 스테이지가 보스 스테이지인지를 반환
+    {
+        return m_is_Boss_Stage;
+    }
 
 
     public void SetBossDead(bool b) // 보스가 죽었는지를 설정

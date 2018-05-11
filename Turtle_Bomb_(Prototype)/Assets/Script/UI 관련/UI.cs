@@ -205,7 +205,7 @@ public class UI : MonoBehaviour {
     // 나가기 버튼
     public void StageClear_ExitButton()
     {
-        StageManager.c_Stage_Manager.m_is_Pause = true;
+        StageManager.c_Stage_Manager.Set_is_Pause(true);
         StageManager.c_Stage_Manager.Destroy_Objects();
         GameObject.Find("Navigation_Plane").SetActive(false);
         if (LobbySound.instanceLS != null)
@@ -216,7 +216,7 @@ public class UI : MonoBehaviour {
     // 재시작 버튼
     public void StageClear_RestartButton()
     {
-        StageManager.c_Stage_Manager.m_is_Pause = true;
+        StageManager.c_Stage_Manager.Set_is_Pause(true);
         GameObject.Find("Navigation_Plane").SetActive(false);
         StageManager.c_Stage_Manager.Destroy_Objects();
         SceneManager.LoadScene(3);
@@ -320,9 +320,9 @@ public class UI : MonoBehaviour {
             m_is_Init_Star_Count = true;
         }
 
-        if (!StageManager.c_Stage_Manager.Get_is_Stage_Clear() && !StageManager.c_Stage_Manager.m_is_Pause)
+        if (!StageManager.c_Stage_Manager.Get_is_Stage_Clear() && !StageManager.c_Stage_Manager.Get_is_Pause())
         {
-            if (StageManager.c_Stage_Manager.m_is_Intro_Over)
+            if (StageManager.c_Stage_Manager.Get_is_Intro_Over())
             {
                 // 시간 경과
                 if (time_Second > 0)
@@ -417,14 +417,14 @@ public class UI : MonoBehaviour {
     {
         m_Ingame_Play_UI.SetActive(false);
         m_Option_UI.SetActive(true);
-        StageManager.c_Stage_Manager.m_is_Pause = true;
+        StageManager.c_Stage_Manager.Set_is_Pause(true);
         m_Text_StageNum.text = "Stage ID - " + StageManager.c_Stage_Manager.m_Stage_ID.ToString();
     }
 
     // 옵션의 Return 버튼 (게임으로 돌아가기)
     public void Option_Return_Button()
     {
-        StageManager.c_Stage_Manager.m_is_Pause = false;
+        StageManager.c_Stage_Manager.Set_is_Pause(false);
         m_Ingame_Play_UI.SetActive(true);
         m_Option_UI.SetActive(false);
     }

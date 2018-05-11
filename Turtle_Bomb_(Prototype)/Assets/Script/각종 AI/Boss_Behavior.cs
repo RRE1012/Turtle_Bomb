@@ -168,7 +168,7 @@ public class Boss_Behavior : MonoBehaviour
     {
         while (true)
         {
-            if (!StageManager.c_Stage_Manager.m_is_Pause && StageManager.c_Stage_Manager.m_is_Intro_Over)
+            if (!StageManager.c_Stage_Manager.Get_is_Pause() && StageManager.c_Stage_Manager.Get_is_Intro_Over())
             {
                 Think();
 
@@ -272,7 +272,7 @@ public class Boss_Behavior : MonoBehaviour
             }
             else
             {
-                if (StageManager.c_Stage_Manager.m_is_Intro_Over && !StageManager.c_Stage_Manager.Get_Game_Over())
+                if (StageManager.c_Stage_Manager.Get_is_Intro_Over() && !StageManager.c_Stage_Manager.Get_Game_Over())
                 {
                     if (m_Attack_is_Done)
                     {
@@ -418,9 +418,9 @@ public class Boss_Behavior : MonoBehaviour
         switch (m_curr_Mode_Number)
         {
             case Boss_Mode_List.NORMAL_MODE:
-                m_Monster_Move_Speed = 2.0f; // 일반 이동속도 설정
-                m_NVAgent.speed = 2.0f; // 추격시 이동속도 설정
-                m_NVAgent.angularSpeed = 360.0f; // 추격시 회전속도 설정
+                m_Monster_Move_Speed = 3.0f; // 일반 이동속도 설정
+                m_NVAgent.speed = 3.0f; // 추격시 이동속도 설정
+                m_NVAgent.angularSpeed = 720.0f; // 추격시 회전속도 설정
                 m_Attack_Speed_Slow = 0.2f; // 슬로우 모션 공격속도 설정
                 m_Attack_Speed = 1.0f; // 진짜 공격속도 설정
 

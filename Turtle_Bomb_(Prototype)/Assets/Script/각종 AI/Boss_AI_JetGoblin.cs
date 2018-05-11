@@ -111,7 +111,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
 
         // 보스 스테이지인지 판단하여 (StageManager에서 설정)
         // 처음 실행할 모드 설정 및 그에 따른 스탯 설정
-        if (StageManager.c_Stage_Manager.m_is_Boss_Stage)
+        if (StageManager.c_Stage_Manager.Get_is_Boss_Stage())
         {
             m_Current_Behavior = Wait_To_Intro();
 
@@ -182,7 +182,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         {
             Think();
 
-            if (!StageManager.c_Stage_Manager.m_is_Pause && m_Current_Behavior != null && m_Current_Behavior.MoveNext())
+            if (!StageManager.c_Stage_Manager.Get_is_Pause() && m_Current_Behavior != null && m_Current_Behavior.MoveNext())
             {
                 yield return m_Current_Behavior.Current;
             }
@@ -201,7 +201,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         // 착륙 쿨타임이 다 차기 전까지는 계속 이동한다.
         while (m_Current_Landing_Cooltime < m_Total_Landing_Cooltime)
         {
-            if (StageManager.c_Stage_Manager.m_is_Intro_Over)
+            if (StageManager.c_Stage_Manager.Get_is_Intro_Over())
             {
                 Move();
                 Drop_Bomb(); // 폭탄 투하
@@ -287,7 +287,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     {
         while (true)
         {
-            if (StageManager.c_Stage_Manager.m_is_Intro_Over)
+            if (StageManager.c_Stage_Manager.Get_is_Intro_Over())
             {
                 m_Current_Behavior = m_Behavior_Move;
                 //GetComponentInChildren<LineRenderer>().enabled = true; // 실선 표시기 활성화
