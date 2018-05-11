@@ -86,7 +86,7 @@ public class Bomb : MonoBehaviour
         if (m_Whose_Bomb_Type == WHOSE_BOMB.PLAYER)
             m_FlameCount = UI.m_fire_count;
         else if (m_Whose_Bomb_Type == WHOSE_BOMB.JETGOBLIN)
-            m_FlameCount = 1;
+            m_FlameCount = Boss_AI_JetGoblin.c_JetGoblin.Get_Fire_Count();
 
         m_Escape_Time = 0.0f;
         m_is_Rising_Start = false;
@@ -364,7 +364,7 @@ public class Bomb : MonoBehaviour
     {
         if (!StageManager.c_Stage_Manager.Get_Game_Over()) // 게임이 안끝났으면
         {
-            if (!StageManager.c_Stage_Manager.m_is_Map_Changing && !m_is_Thrown_Bomb_Moving)
+            if (!StageManager.c_Stage_Manager.Get_is_Map_Changing() && !m_is_Thrown_Bomb_Moving)
             {
                 // 폭발 사운드 출력
                 if (MusicManager.manage_ESound != null)
@@ -652,4 +652,9 @@ public class Bomb : MonoBehaviour
             Explosion_Range_Pos_Update();
     }
     
+
+    public void Set_Bomb_Fire_Count(int firecount)
+    {
+
+    }
 }

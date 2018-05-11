@@ -56,21 +56,13 @@ static class OBJECT_TABLE_NUMBER
 
 public class StageManager : MonoBehaviour
 {
+    // ================================
+    // =========== 프리팹들 ===========
 
-    // 맵 사이즈
-    int m_Map_Size_X = 17;
-    int m_Map_Size_Z = 17;
-
-    // 퍼포먼스 카메라
-    public GameObject m_CameraOffset;
-    public bool m_is_Intro_Over;
-
-    // 프리팹들
     public GameObject m_Forest_Theme_Terrain;
     public GameObject m_SnowLand_Theme_Terrain;
-
-    // 보스 스테이지 인트로용
-    //public GameObject m_Prefab_Intro_Boss;
+    
+    //public GameObject m_Prefab_Intro_Boss; // 인트로용 객체
 
     // 오브젝트 프리팹들
     public GameObject m_Prefab_Box;
@@ -97,96 +89,102 @@ public class StageManager : MonoBehaviour
     public GameObject m_Prefab_Box_None_Item;
 
 
-    // ===== 생성한 오브젝트 관리 =====
+
+
+
+
+
     // ================================
-    List<GameObject> m_Current_Map_Objects = new List<GameObject>();
+    // ===== 생성한 오브젝트 관리 =====
+
+    List<GameObject> m_Current_Map_Objects = new List<GameObject>(); // 테이블을 통해 현재 맵에 생성된 오브젝트들 + 비행기
+
     int m_Current_Map_Objects_Count; // 생성된 오브젝트 개수
 
     int m_Current_Stage_index_Count = 0; // 현재 스테이지의 맵 인덱스 카운트
 
-    Vector3 m_Object_Position; // 오브젝트 생성시 위치 변경에 이용
-                               // ================================
+    Vector3 m_Object_Position; // 오브젝트 생성시 위치 변경에 이용할 벡터
+
+    GameObject m_Airplane; // 비행기 객체
+    
 
 
 
+
+
+
+    // ================================
+    // =========== UI 관련 ============
 
     public Text m_Text; // 게임 오버 텍스트
 
-    public static bool m_is_Stage_Clear = false; // 스테이지를 클리어했는가?
+    int m_Star_Count = 0; // 획득한 별 개수
+
+    int m_Total_Monster_Count = 0; // 총 스폰된 일반 몹 수
+
+    int m_Left_Monster_Count = 0; // 남은 일반 몹 수
+
+
+
+    
+
+
+
+
+
+    // ==================================
+    // =========== 보스관련 =============
+    
+    public bool m_is_Boss_Stage; // 현재 스테이지가 보스전인가? (*** 디버깅용 public ***)
+
+    public int m_Boss_ID; // 보스 테이블 번호 (*** 디버깅용 public ***)
+
+    public GameObject m_SuddenDeath_JetGoblin; // 서든데스 고블맨 객체
+    
+    bool m_is_Boss_Dead; // 보스 스테이지의 보스 몬스터가 죽었는가?
+
+
+
+
+
+
+
+
+    // ==================================
+    // ========== 시스템관련 ============
+
+    public static StageManager c_Stage_Manager; // 스테이지 매니저 객체
+
+    public List<Map_Coordinate> m_Map_Coordinate_List; // MCL
+
+    public static List<bool> m_MCL_is_Blocked_List; // MCL의 is_Blocked를 따로 분리했다..
+
+    public static bool m_is_init_MCL = false; // MCL이 초기화 되었는가?
+
+    bool m_is_Map_Changing = false; // 맵 이동 시 폭탄을 무효화 하기 위한 변수
+
+    public int m_Stage_ID; // 현재 스테이지 번호 (*** 디버깅용 public ***)
+
+    public float m_Stage_Time_Limit; // 현재 스테이지의 제한시간
+                                     // 디버깅용 변수이며, -1로 설정할 경우 기획 설정(테이블)에 따른다
+
+    public bool m_is_Intro_Over = false; // 인트로가 끝났는가?
+
+    public bool m_is_Pause = false; // 게임이 일시정지 되었는가?
 
     bool m_is_Goal_In = false; // 목표 지점에 들어갔는가?
 
-    public static int m_Stars = 0; // 획득한 별 개수
+    bool m_is_Stage_Clear = false; // 스테이지를 클리어했는가?
 
-    public static int m_Total_Monster_Count = 0; // 총 스폰된 일반 몹 수
+    public bool m_Game_Over = false; // 게임이 끝났는가?
 
-    public static int m_Left_Monster_Count = 0;// 남은 일반 몹 수
+    // 맵 사이즈
+    int m_Map_Size_X = 17;
+    int m_Map_Size_Z = 17;
 
-    // MCL
-    public List<Map_Coordinate> m_Map_Coordinate_List;
+    public GameObject m_CameraOffset; // 퍼포먼스 카메라 객체
+    
 
-    // MCL_index_is_Blocked_List
-    public static List<bool> m_MCL_is_Blocked_List; // MCL의 is_Blocked를 따로 분리했다..
-
-    // MCL이 초기화 되었는가?
-    public static bool m_is_init_MCL;
-
-    // 스테이지 매니저 객체
-    public static StageManager c_Stage_Manager;
-
-
-
-    // 맵 이동 시 폭탄을 무효화 하기 위한 변수
-    public bool m_is_Map_Changing;
-
-    // 현재 스테이지 번호
-    public int m_Stage_ID;
-
-    // 현재 스테이지의 제한시간 설정
-    // -1로 설정할 경우 기획 설정(테이블)에 따른다.
-    public float m_Stage_Time_Limit;
-
-
-
-
-
-
-    // ===== 보스 관련 =====
-    // =====================
-
-    // 현재 스테이지가 보스전인지?
-    public bool m_is_Boss_Stage;
-
-    // 보스 테이블 번호!
-    public int m_Boss_ID;
-
-    // 서든데스 고블맨 객체
-    public GameObject m_SuddenDeath_JetGoblin;
-
-    // 서든데스 고블맨을 소환했는가? 
-    bool m_is_Summon_SJG;
-
-    // 서든데스 활성화?
-    public bool m_is_SuddenDeath;
-
-    // 보스 스테이지의 보스 몬스터가 죽었는가?
-    bool m_is_Boss_Dead;
-    // =====================
-
-
-
-    bool m_is_Tutorial_Stage;
-
-
-    // ========== 시스템관련 ============
-    // ==================================
-
-    // 게임이 일시정지 되었는가?
-    public bool m_is_Pause;
-
-    // 게임이 끝났는가?
-    public bool m_Game_Over = false;
-    // ==================================
 
 
 
@@ -205,112 +203,81 @@ public class StageManager : MonoBehaviour
     // 현재 스테이지의 오브젝트 배치 목록
     List<Object_Spawn_Position_Data> m_Object_Spawn_Position_List = new List<Object_Spawn_Position_Data>();
 
-    // 스테이지 번호 배열 테이블
-    List<int> m_Stage_Number_List = new List<int>();
-
     // 스크립트(대사) 테이블
     List<Script_Data> m_Script_List = new List<Script_Data>();
 
     // 보스 스테이터스 데이터
     Adventure_Boss_Data m_Adventure_Boss_Data = new Adventure_Boss_Data();
 
-    // 미션 번호 리스트
-    int[] mission_list = new int[3];
+    Adventure_Stage_Data m_Adventure_Stage_Data = new Adventure_Stage_Data();
 
     // 빅보스 AI 데이터들
     Adventure_Big_Boss_Normal_Mode_AI_Data m_Adv_Big_Boss_Normal_AI = new Adventure_Big_Boss_Normal_Mode_AI_Data();
     Adventure_Big_Boss_Angry_Mode_AI_Data m_Adv_Big_Boss_Angry_AI = new Adventure_Big_Boss_Angry_Mode_AI_Data();
     Adventure_Big_Boss_Groggy_Mode_AI_Data m_Adv_Big_Boss_Groggy_AI = new Adventure_Big_Boss_Groggy_Mode_AI_Data();
 
+
+
+
+
+
+
+
     // ================================
-    // ================================
+    // =========== Methods ============
 
 
-
-    void Awake()
+    void Awake() // 생성자
     {
-        m_is_Stage_Clear = false;
-        m_is_Pause = false;
+        c_Stage_Manager = this; // 스테이지 매니저 인스턴스 지정
 
-        m_Stars = 0;
-
-        m_Total_Monster_Count = 0;
-        m_Left_Monster_Count = 0;
-
-        m_is_init_MCL = false;
         m_Map_Coordinate_List = new List<Map_Coordinate>();
         m_MCL_is_Blocked_List = new List<bool>();
+        
+        MCL_init(); // MCL 초기화
 
-        c_Stage_Manager = this;
-        m_is_Map_Changing = false;
+        m_CameraOffset = GameObject.Find("Camera_Offset"); // 카메라 객체 지정
 
-        m_is_SuddenDeath = false;
-        m_is_Summon_SJG = false;
+        m_Object_Table_List = new List<Object_Table_Data>(CSV_Manager.GetInstance().Get_Object_Table_List()); // 오브젝트 테이블 목록 로드
 
-        m_is_Tutorial_Stage = false;
-
-        // 맵 좌표 리스트 초기화
-        MCL_init();
-
-        // 카메라
-        m_CameraOffset = GameObject.Find("Camera_Offset");
-
-        // 오브젝트 테이블 목록 로드
-        m_Object_Table_List = new List<Object_Table_Data>(CSV_Manager.GetInstance().Get_Object_Table_List());
-
-
-        // 스테이지 ID를 받아온다.
         if (m_Stage_ID == MAP.NOT_SET)
-            m_Stage_ID = PlayerPrefs.GetInt("Mode_Adventure_Stage_ID_For_MapLoad");
+            m_Stage_ID = PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID"); // 스테이지 ID를 받아온다.
 
-        // 스테이지 번호 목록 로드
-        CSV_Manager.GetInstance().Get_Stage_Number_List(ref m_Stage_Number_List, m_Stage_ID);
+        // 스테이지 데이터 내부 리스트들의 공간 할당
+        m_Adventure_Stage_Data.Adventure_Quest_ID_List = new int[3];
+        m_Adventure_Stage_Data.Stage_Pattern_ID_List = new int[3];
 
-        if (PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID") == 0) // 튜토리얼 스테이지인가?
-            m_is_Tutorial_Stage = true;
+        CSV_Manager.GetInstance().Get_Adventure_Stage_Data(ref m_Adventure_Stage_Data, m_Stage_ID); // 스테이지 테이블 데이터 로드
+        
+        CSV_Manager.GetInstance().Get_Adventure_Quest_List(ref m_QuestList, ref m_Adventure_Stage_Data.Adventure_Quest_ID_List); // 퀘스트 데이터 로딩
 
-        // ===============디버깅 때문에 적어둔 구문임=======================
-        //if (m_Stage_ID == 17)
-        //    PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", 9);
-        // =================================================================
-
-        // 현재 스테이지의 미션 번호들 받아오기
-        CSV_Manager.GetInstance().Get_Adv_Mission_Num_List(ref mission_list, PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID"));
-
-
-        // 퀘스트 목록 로딩
-        CSV_Manager.GetInstance().Get_Adventure_Quest_List(ref m_QuestList, ref mission_list);
-
-        // 퀘스트 목록에 보스 몬스터 처치가 있다는것은
-        // 해당 스테이지가 보스 스테이지라는 뜻!
-        foreach (Adventure_Quest_Data questdata in m_QuestList)
+        foreach (Adventure_Quest_Data questdata in m_QuestList) // 보스 스테이지 검사
         {
-            if (questdata.Quest_ID == 4)
+            if (questdata.Quest_ID == 4) // 퀘스트 목록에 보스 몬스터 처치가 있다는것은
             {
-                m_is_Boss_Stage = true;
+                m_is_Boss_Stage = true; // 해당 스테이지가 보스 스테이지라는 뜻!
 
                 // 보스 테이블의 번호를 설정
-                if (PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID") == 5)
+                if (m_Stage_ID == 5)
                     m_Boss_ID = 1;
-                else if (PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID") == 9)
+                else if (m_Stage_ID == 9)
                     m_Boss_ID = 2;
             }
         }
+        
+        Create_Map(m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count]); // 설정된 번호를 받아서 맵 생성!
 
-        // 설정된 번호를 받아서 맵 생성!
-        Create_Map(m_Stage_Number_List[m_Current_Stage_index_Count]);
-
-        // 대사 받아오기!
-        //m_Script_List = CSV_Manager.GetInstance().Get_Script_List(스크립트ID);
-
+        //m_Script_List = CSV_Manager.GetInstance().Get_Script_List(스크립트ID); // 대사 받아오기
+        
+        if (m_Stage_Time_Limit == MAP.NOT_SET) // 시간 설정
+            m_Stage_Time_Limit = m_Adventure_Stage_Data.Stage_Time;
 
 
-        // 시간 설정
-        if (m_Stage_Time_Limit == MAP.NOT_SET)
-            m_Stage_Time_Limit = 90.0f;
-
-        // UI에도 시간 적용
-        UI.time_Second = m_Stage_Time_Limit;
+        // 비행기 미리 소환
+        m_Airplane = Instantiate(m_Prefab_Airplane); // 인스턴스 생성
+        m_Current_Map_Objects.Add(m_Airplane);
+        m_Airplane.GetComponent<Airplane>().Set_Airdrop_Count(m_Adventure_Stage_Data.Number_Of_DropItem); // 드랍 개수 설정
+        ++m_Current_Map_Objects_Count; // 카운트 증가
     }
 
     void Start()
@@ -324,41 +291,21 @@ public class StageManager : MonoBehaviour
     {
         Check_GameOver();
 
-        if (!m_is_Boss_Stage && m_is_SuddenDeath && !m_is_Summon_SJG && !m_is_Tutorial_Stage)
-        {
-            Instantiate(m_SuddenDeath_JetGoblin);
-            m_is_Summon_SJG = true;
-        }
-    }
-
-    void Check_GameOver()
-    {
-        if (!PlayerMove.C_PM.Get_IsAlive()) // 죽어서 끝났거나,
-        {
-            m_Text.text = "Game Over";
-            m_Game_Over = true;
-        }
-
-        else if (m_is_Stage_Clear) // 클리어해서 끝났거나!
-        {
-            m_Game_Over = true;
-        }
-    }
-
-    public bool Get_Game_Over()
-    {
-        return m_Game_Over;
-    }
-
-    // 터레인 생성
-    void Create_Terrain()
-    {
-        Instantiate(m_Forest_Theme_Terrain);
+        Check_Airplane();
     }
 
 
-    // 맵 생성 및 설정
-    void Create_Map(int stage_id)
+
+
+
+
+
+
+
+    // =====================================================
+    // ==================== 맵 관련 ========================
+
+    void Create_Map(int stage_id) // 맵 생성 및 설정
     {
         // 터레인 생성
         Create_Terrain();
@@ -412,15 +359,6 @@ public class StageManager : MonoBehaviour
                             // 생성
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Goblin_Boss));
                             m_Object_Position.y = m_Prefab_Goblin_Boss.transform.position.y;
-
-                            // 생성한 객체 좌표 이동
-                            m_Current_Map_Objects[m_Current_Map_Objects_Count].transform.position = m_Object_Position;
-
-                            ++m_Current_Map_Objects_Count;
-
-                            // 보스전이므로 비행기도 부른다.
-                            m_Current_Map_Objects.Add(Instantiate(m_Prefab_Airplane));
-                            m_Object_Position = m_Prefab_Airplane.transform.position;
                             break;
 
                         case OBJECT_TABLE_NUMBER.START_POINT:
@@ -453,15 +391,6 @@ public class StageManager : MonoBehaviour
                             // 생성
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Ork_Boss));
                             m_Object_Position.y = m_Prefab_Ork_Boss.transform.position.y;
-
-                            // 생성한 객체 좌표 이동
-                            m_Current_Map_Objects[m_Current_Map_Objects_Count].transform.position = m_Object_Position;
-
-                            ++m_Current_Map_Objects_Count;
-
-                            // 보스전이므로 비행기도 부른다.
-                            m_Current_Map_Objects.Add(Instantiate(m_Prefab_Airplane));
-                            m_Object_Position = m_Prefab_Airplane.transform.position;
                             break;
 
                         case OBJECT_TABLE_NUMBER.ITEM_BOMB:
@@ -528,14 +457,52 @@ public class StageManager : MonoBehaviour
             }
         }
     }
+    
+    void Create_Terrain() // 터레인 생성
+    {
+        Instantiate(m_Forest_Theme_Terrain);
+    }
+    
+    public void Next_Map_Load() // 다음 맵 불러오기
+    {
+        ++m_Current_Stage_index_Count; // 다음 맵 번호를 지정하고
+
+        if (m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count] != 0) // 리스트에 맵 번호가 있으면 시작
+        {
+            m_is_Map_Changing = true; // 맵 변경 중이라고 알림
+            
+            MCL_init(); // MCL을 재설정한다.
+            
+            Destroy_Objects(); // 남아있는 오브젝트들을 제거한다.
+
+            Create_Map(m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count]); // 새 맵을 생성!
+
+            Invoke("Map_Changing_Over", 1.0f); // 1초 뒤 맵 변경 완료 알림
+        }
+    }
+    
+    void Map_Changing_Over() // 맵 전환이 끝났음을 알린다.
+    {
+        m_is_Map_Changing = false;
+    }
+
+    public bool Get_is_Map_Changing()
+    {
+        return m_is_Map_Changing;
+    }
 
 
 
-    // ==================== MCL 관련 =======================
+
+
+
+
+
+
     // =====================================================
+    // ==================== MCL 관련 =======================
 
-    // MCL 좌표 및 is_Blocked 초기화
-    void MCL_init()
+    void MCL_init() // MCL 좌표 및 is_Blocked 초기화
     {
         m_Map_Coordinate_List.Clear();
 
@@ -566,41 +533,43 @@ public class StageManager : MonoBehaviour
         m_is_init_MCL = true;
     }
 
+    public bool Get_is_init_MCL() // MCL이 초기화 되었는가를 반환
+    {
+        return m_is_init_MCL;
+    }
 
 
 
-    // 오브젝트들이 MCL의 isBlocked를 갱신할 수 있도록 해주는 메소드
-    public void Update_MCL_isBlocked(int index, bool isBlocked)
+
+    public void Update_MCL_isBlocked(int index, bool isBlocked) // isBlocked 갱신 메소드
     {
         if (index != -1)
         {
             m_MCL_is_Blocked_List[index] = isBlocked;
         }
     }
+    
 
 
 
-
-
-    // MCL 안의 해당 index가 막혀있는지를 반환해준다.
-    public bool Get_MCL_index_is_Blocked(int index)
+    public bool Get_MCL_index_is_Blocked(int index) // MCL 안의 해당 index가 막혀있는지를 반환해준다.
     {
         return m_MCL_is_Blocked_List[index];
     }
+    
 
 
 
-    public void Get_MCL_Coordinate(int index, ref float x, ref float z)
+    public void Get_MCL_Coordinate(int index, ref float x, ref float z) // 인덱스에 따른 위치로 설정해준다.
     {
         x = m_Map_Coordinate_List[index].x;
         z = m_Map_Coordinate_List[index].z;
     }
+    
 
 
 
-
-    // 받아온 좌표에 대한 MCL 인덱스 반환
-    public int Find_Own_MCL_Index(float x, float z)
+    public int Find_Own_MCL_Index(float x, float z) // 받아온 좌표로 MCL 인덱스를 반환해준다.
     {
         Map_Coordinate m_tmpCoordinate;
 
@@ -636,55 +605,23 @@ public class StageManager : MonoBehaviour
         return m_Map_Coordinate_List.IndexOf(m_tmpCoordinate);
     }
 
+
+
+
+
+
+
+
+
     // =====================================================
-    // =====================================================
+    // =================== 시스템 관련 =====================
 
-
-    public void Next_Map_Load()
+    public void Stage_Clear() // 스테이지 클리어시 호출
     {
-        // 다음 맵 번호를 지정하고
-        ++m_Current_Stage_index_Count;
+        m_is_Stage_Clear = true; // 스테이지 클리어라고 알림!
+        m_is_Pause = true; // 일시정지 시킨다.
 
-        if (m_Stage_Number_List[m_Current_Stage_index_Count] != 0)
-        {
-            m_is_Map_Changing = true;
-
-            // MCL을 재설정한다.
-            MCL_init();
-
-            // 남아있는 오브젝트들을 제거한다.
-            Destroy_Objects();
-
-            // 새 맵을 생성!
-            Create_Map(m_Stage_Number_List[m_Current_Stage_index_Count]);
-
-
-
-            Invoke("Map_Changing_Over", 1.0f);
-        }
-    }
-
-
-
-
-    // 맵 전환이 끝났음을 알리는
-    // Invoke를 위한 메소드
-    void Map_Changing_Over()
-    {
-        m_is_Map_Changing = false;
-    }
-
-
-
-
-    // 스테이지 클리어!
-    public void Stage_Clear()
-    {
-        m_is_Stage_Clear = true;
-        m_is_Pause = true;
-
-        // 별 획득 조건 체크 및 저장
-        Condition_For_Getting_Stars(ref mission_list);
+        Condition_For_Getting_Stars(ref m_Adventure_Stage_Data.Adventure_Quest_ID_List); // 별 획득 조건 체크 및 저장
 
         // 현재 스테이지가 플레이 가능 최대 스테이지라면
         int tempMaxStage = PlayerPrefs.GetInt("Mode_Adventure_Playable_Max_Stage");
@@ -702,13 +639,10 @@ public class StageManager : MonoBehaviour
 
         PlayerPrefs.Save();
 
-        // 클리어 화면 출력
-        UI.Draw_StageClearPage();
+        UI.Draw_StageClearPage(); // 클리어 화면 출력
     }
-
-
-    // 별 획득 조건 관리
-    void Condition_For_Getting_Stars(ref int[] list)
+    
+    void Condition_For_Getting_Stars(ref int[] list) // 별 획득 조건 관리
     {
         foreach (Adventure_Quest_Data QuestData in m_QuestList)
         {
@@ -719,9 +653,9 @@ public class StageManager : MonoBehaviour
                 {
                     if (QuestData.Quest_ID == 1) // 시간
                     {
-                        if (UI.time_Second >= QuestData.Quest_Goal)
+                        if (UI.c_UI.Get_Left_Time() >= QuestData.Quest_Goal)
                         {
-                            m_Stars += 1;
+                            m_Star_Count += 1;
                             tempString = "Adventure_Stars_ID_" + list[i];
                             PlayerPrefs.SetInt(tempString, 1);
                         }
@@ -730,7 +664,7 @@ public class StageManager : MonoBehaviour
                     {
                         if (m_Total_Monster_Count - m_Left_Monster_Count >= QuestData.Quest_Goal)
                         {
-                            m_Stars += 1;
+                            m_Star_Count += 1;
                             tempString = "Adventure_Stars_ID_" + list[i];
                             PlayerPrefs.SetInt(tempString, 1);
                         }
@@ -739,7 +673,7 @@ public class StageManager : MonoBehaviour
                     {
                         if (m_is_Goal_In)
                         {
-                            m_Stars += 1;
+                            m_Star_Count += 1;
                             tempString = "Adventure_Stars_ID_" + list[i];
                             PlayerPrefs.SetInt(tempString, 1);
                         }
@@ -748,7 +682,7 @@ public class StageManager : MonoBehaviour
                     {
                         if (m_is_Boss_Dead)
                         {
-                            m_Stars += 1;
+                            m_Star_Count += 1;
                             tempString = "Adventure_Stars_ID_" + list[i];
                             PlayerPrefs.SetInt(tempString, 1);
                         }
@@ -760,45 +694,117 @@ public class StageManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    public void SetBossDead(bool b)
+    public bool Get_is_Stage_Clear() // 스테이지가 클리어 되었는가를 반환
+    {
+        return m_is_Stage_Clear;
+    }
+
+
+
+
+    void Check_GameOver() // 게임오버인지 체크하여 설정
+    {
+        if (!PlayerMove.C_PM.Get_IsAlive()) // 죽어서 끝났거나,
+        {
+            m_Text.text = "Game Over";
+            m_Game_Over = true;
+        }
+
+        else if (m_is_Stage_Clear) // 클리어해서 끝났거나!
+        {
+            m_Game_Over = true;
+        }
+    }
+    
+    public bool Get_Game_Over() // 게임오버인가를 반환
+    {
+        return m_Game_Over;
+    }
+    
+
+
+
+    public void SetBossDead(bool b) // 보스가 죽었는지를 설정
     {
         m_is_Boss_Dead = b;
     }
 
-    public bool GetBossDead()
+    public bool GetBossDead() // 보스가 죽었는지를 반환
     {
         return m_is_Boss_Dead;
     }
+    
 
-    public void SetGoalIn(bool b)
+
+
+    public void SetGoalIn(bool b) // 목표지점에 도달했는지를 설정
     {
         m_is_Goal_In = b;
     }
 
-    // 퀘스트 내용 리스트를 리턴해준다. (UI에 띄우기 위해)
-    public void GetQuestList(ref List<Adventure_Quest_Data> list)
+
+
+
+    void Summon_SuddenDeath_Glider() // 서든데스 고블린 소환
     {
-        list = m_QuestList;
+        if (UI.c_UI.Get_Left_Time() <= m_Adventure_Stage_Data.SuddenDeath_Time)
+        {
+            for (int i = 0; i < m_Adventure_Stage_Data.Number_Of_GliderGoblin; ++i)
+                Instantiate(m_SuddenDeath_JetGoblin).GetComponent<Boss_AI_JetGoblin>().Set_Bomb_info(m_Adventure_Stage_Data.GliderGoblin_Bomb, m_Adventure_Stage_Data.GliderGoblin_Fire);
+        }
     }
 
-    // 보스 데이터를 리턴해준다.
-    public Adventure_Boss_Data Get_Adventure_Boss_Data()
+    void Check_Airplane() // 비행기 체크(소환)
     {
-        return m_Adventure_Boss_Data;
+        if (UI.c_UI.Get_Elapsed_Time() >= m_Adventure_Stage_Data.AirDrop_Time)
+            m_Airplane.GetComponent<Airplane>().Dispatch_Airplane(); // 비행기 출발
     }
 
-    public void Destroy_Objects()
-    {
-        // 이하는 인스턴스 객체들을 제거한다.
-        // =========================================
 
+
+
+    public void Increase_Normal_Monster_Count() // 일반몹 개수 증가시키기
+    {
+        ++m_Total_Monster_Count;
+        ++m_Left_Monster_Count;
+    }
+
+    public void Decrease_Normal_Monster_Count()
+    {
+        --m_Left_Monster_Count;
+    }
+
+    public int Get_Left_Normal_Monster_Count() // 남은 일반몹 수 반환
+    {
+        return m_Total_Monster_Count - m_Left_Monster_Count;
+    }
+
+
+
+
+    public void Init_Left_Time() // UI에 제한시간 설정
+    {
+        UI.c_UI.Set_Left_Time(m_Stage_Time_Limit);
+    }
+
+
+
+
+    public int Get_Star_Count() // 획득한 별 개수 반환
+    {
+        return m_Star_Count;
+    }
+
+
+
+
+    public void Destroy_Objects() // 씬전환 이전에 객체들을 제거한다.
+    {
         // 테이블로 생성했던 오브젝트들을 제거
         foreach (GameObject g in m_Current_Map_Objects)
         {
             if (g != null)
-            {
                 Destroy(g);
-            }
         }
 
         // 동적생성 폭탄들 제거
@@ -840,7 +846,6 @@ public class StageManager : MonoBehaviour
         items = GameObject.FindGameObjectsWithTag("Airdrop_Item");
         foreach (GameObject i in items)
             Destroy(i);
-        // ========================================
     }
 
 
@@ -848,6 +853,22 @@ public class StageManager : MonoBehaviour
 
 
 
+
+
+
+
+    // =====================================================
+    // ================ 테이블 데이터 관련 =================
+
+    public void GetQuestList(ref List<Adventure_Quest_Data> list) // 퀘스트 내용 리스트를 리턴해준다. (UI에 띄우기 위해)
+    {
+        list = m_QuestList;
+    }
+
+    public Adventure_Boss_Data Get_Adventure_Boss_Data() // 보스 데이터를 리턴해준다.
+    {
+        return m_Adventure_Boss_Data;
+    }
 
     void Big_Boss_Data_Allocation() // 빅보스 데이터 메모리 할당작업
     {

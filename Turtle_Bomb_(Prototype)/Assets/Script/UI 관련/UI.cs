@@ -7,6 +7,9 @@ using UnityEngine.SceneManagement;
 // 게임 씬 UI 함수
 public class UI : MonoBehaviour {
 
+    public static UI c_UI;
+
+
     // =============================
     // ========= 인게임 UI =========
     public static GameObject m_Ingame_Play_UI; // 총괄 UI
@@ -92,19 +95,20 @@ public class UI : MonoBehaviour {
     public static string m_getItemText;
     public Text m_Text_StageNum;
     float m_GIT_CoolTime = 0.0f;
-    public static float time_Second = 30.0f;
-
-    
+    float time_Second = 30.0f;
 
 
-    // 시험중 -fps 고정
-    /*
+    // 경과시간
+    float m_Elapsed_Time = 0.0f;
+
+
+
     void Awake()
     {
-        //QualitySettings.vSyncCount = 0;
-        //Application.targetFrameRate = 60;
+        c_UI = this;
+        StageManager.c_Stage_Manager.Init_Left_Time();
     }
-    */
+    
 
     void Start()
     {
@@ -121,6 +125,7 @@ public class UI : MonoBehaviour {
         m_GameOver_UI.SetActive(false);
         m_Option_UI.SetActive(false);
         //m_Ingame_Mission_UI.SetActive(false);
+
 
         m_getItemText = "";
         m_fire_count = 1;
@@ -158,7 +163,6 @@ public class UI : MonoBehaviour {
         GUIStyle style = new GUIStyle();
 
         Rect rect = new Rect(0, 0, w, h * 2 / 100);
-        // Rect rect2 = new Rect(0, h * 10 / 100, w, h * 20 / 100);
 
         style.alignment = TextAnchor.UpperLeft;
         style.fontSize = h * 2 / 100;
@@ -179,7 +183,6 @@ public class UI : MonoBehaviour {
     {
         m_Ingame_Play_UI.SetActive(false);
         m_Stage_Clear_UI.SetActive(true);
-        StageManager.m_is_Stage_Clear = true;
     }
 
 
@@ -187,7 +190,7 @@ public class UI : MonoBehaviour {
     // 획득 별 갯수 적용
     void Star_Count_Apply()
     {
-        for (int s = 1; s <= StageManager.m_Stars; ++s)
+        for (int s = 1; s <= StageManager.c_Stage_Manager.Get_Star_Count(); ++s)
         {
             if (s == 1)
                 m_Star_Image1.texture = m_Activated_Star_Texture;
@@ -298,8 +301,8 @@ public class UI : MonoBehaviour {
             }
             else if (m_QuestList[i].Quest_ID == 2) // 일반 몬스터 처치
             {
-                m_MissionText[i].text = m_QuestList[i].Quest_Script + " " + (StageManager.m_Total_Monster_Count - StageManager.m_Left_Monster_Count).ToString() + " / " + m_monsterKill.ToString();
-                if ((StageManager.m_Total_Monster_Count - StageManager.m_Left_Monster_Count) >= m_monsterKill)
+                m_MissionText[i].text = m_QuestList[i].Quest_Script + " " + StageManager.c_Stage_Manager.Get_Left_Normal_Monster_Count().ToString() + " / " + m_monsterKill.ToString();
+                if (StageManager.c_Stage_Manager.Get_Left_Normal_Monster_Count() >= m_monsterKill)
                     m_Mission_Star_Image2.texture = m_Activated_Star_Texture;
             }
             else // 목표도달, 보스 처치, 튜토리얼
@@ -311,13 +314,13 @@ public class UI : MonoBehaviour {
     void Update()
     {
         // 스테이지 클리어 후 별 갯수 적용
-        if (StageManager.m_is_Stage_Clear && !m_is_Init_Star_Count)
+        if (StageManager.c_Stage_Manager.Get_is_Stage_Clear() && !m_is_Init_Star_Count)
         {
             Star_Count_Apply();
             m_is_Init_Star_Count = true;
         }
 
-        if (!StageManager.m_is_Stage_Clear && !StageManager.c_Stage_Manager.m_is_Pause)
+        if (!StageManager.c_Stage_Manager.Get_is_Stage_Clear() && !StageManager.c_Stage_Manager.m_is_Pause)
         {
             if (StageManager.c_Stage_Manager.m_is_Intro_Over)
             {
@@ -326,6 +329,7 @@ public class UI : MonoBehaviour {
                 {
                     deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
                     time_Second = time_Second - deltaTime;
+                    m_Elapsed_Time += deltaTime;
                 }
             }
 
@@ -345,24 +349,11 @@ public class UI : MonoBehaviour {
             
             Throw_Button_Management(); // 던지기 버튼
 
-            if (time_Second <= 30.0f && !StageManager.c_Stage_Manager.m_is_Boss_Stage)
-            {
-                StageManager.c_Stage_Manager.m_is_SuddenDeath = true;
-            }
-            else
-            {
-                StageManager.c_Stage_Manager.m_is_SuddenDeath = false;
-            }
-
             // 시간촉박 애니매이션 출력, 초기에는 애니매이션을 꺼놨다가 발동 -R
             if (time_Second < 15.0f)
-            {
                 ani.enabled = true;
-            }
             else
-            {
                 ani.enabled = false;
-            }
 
             // 시간 초과 시 게임오버 - 캐릭터를 죽게 함으로서 처리 -R
             if (time_Second <= 0)
@@ -437,4 +428,25 @@ public class UI : MonoBehaviour {
         m_Ingame_Play_UI.SetActive(true);
         m_Option_UI.SetActive(false);
     }
+
+    public float Get_Left_Time()
+    {
+        return time_Second;
+    }
+    
+    public void Set_Left_Time(float t)
+    {
+        time_Second = t;
+    }
+
+
+    public float Get_Elapsed_Time()
+    {
+        return m_Elapsed_Time;
+    }
+    public void Set_Elapsed_Time(float t)
+    {
+        m_Elapsed_Time = t;
+    }
+
 }

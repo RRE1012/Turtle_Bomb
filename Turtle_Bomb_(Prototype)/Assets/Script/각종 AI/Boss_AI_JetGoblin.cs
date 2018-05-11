@@ -15,7 +15,9 @@ static class Boss_JetGoblin_Status
 {
     public const float JetGoblin__Base__Health = 10.0f;
     public const float JetGoblin__Base__Move_Speed = 5.0f;
-    public const int JetGoblin__Base__Bomb_Count = 3;
+    public const int JetGoblin__Base__Bomb_Count = 0;
+    public const int JetGoblin__Base__Fire_Count = 0;
+
 
     public const float JetGoblin__SuddenDeath__Extra_Move_Speed = 8.0f;
     public const float JetGoblin__SuddenDeath__BombDrop_Cooltime = 1.0f;
@@ -65,6 +67,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     float m_Move_Speed = Boss_JetGoblin_Status.JetGoblin__Base__Move_Speed; // 이동속도
     int m_Total_Bomb_Count = Boss_JetGoblin_Status.JetGoblin__Base__Bomb_Count; // 폭탄 개수
     int m_Usable_Bomb_Count = Boss_JetGoblin_Status.JetGoblin__Base__Bomb_Count; // 사용가능한 폭탄 개수
+    int m_Fire_Count = Boss_JetGoblin_Status.JetGoblin__Base__Fire_Count;
 
     float m_Total_Moving_Cooltime; // 이동 쿨타임
     float m_Current_Moving_Cooltime; // 이동 쿨타임 "체크"
@@ -356,9 +359,6 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         m_Health = 1.0f;
         m_MaxHealth = m_Health;
         m_Move_Speed += Boss_JetGoblin_Status.JetGoblin__SuddenDeath__Extra_Move_Speed;
-        m_Total_Bomb_Count += Boss_JetGoblin_Status.JetGoblin__SuddenDeath__Extra_Bomb_Count;
-        m_Usable_Bomb_Count += Boss_JetGoblin_Status.JetGoblin__SuddenDeath__Extra_Bomb_Count;
-
 
         m_Total_Bomb_Drop_Cooltime = Boss_JetGoblin_Status.JetGoblin__SuddenDeath__BombDrop_Cooltime;
         m_Current_Bomb_Drop_Cooltime = 0.0f;
@@ -677,4 +677,18 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     }
 
     // =============================================
+
+
+
+    public void Set_Bomb_info(int bombcount, int firecount)
+    {
+        m_Total_Bomb_Count = bombcount;
+        m_Usable_Bomb_Count = bombcount;
+        m_Fire_Count = firecount;
+    }
+
+    public int Get_Fire_Count()
+    {
+        return m_Fire_Count;
+    }
 }

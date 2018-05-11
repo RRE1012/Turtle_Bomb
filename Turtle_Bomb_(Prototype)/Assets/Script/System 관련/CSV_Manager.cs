@@ -23,6 +23,20 @@ public struct Object_Spawn_Position_Data
     public int[] Spawn_Node;
 }
 
+public struct Adventure_Stage_Data
+{
+    public int ID;
+    public int Stage_Time;
+    public int AirDrop_Time;
+    public int Number_Of_DropItem;
+    public int SuddenDeath_Time;
+    public int Number_Of_GliderGoblin;
+    public int GliderGoblin_Bomb;
+    public int GliderGoblin_Fire;
+    public int[] Adventure_Quest_ID_List;
+    public int[] Stage_Pattern_ID_List;
+}
+
 public struct Script_Data
 {
     public int Spawn_Number;
@@ -245,7 +259,7 @@ public class CSV_Manager : MonoBehaviour {
 
 
 
-
+    /*
     // 스테이지 번호 목록
     public void Get_Stage_Number_List(ref List<int> list, int stageNum)
     {
@@ -273,7 +287,7 @@ public class CSV_Manager : MonoBehaviour {
             }
         }
     }
-
+    */
 
 
 
@@ -344,7 +358,36 @@ public class CSV_Manager : MonoBehaviour {
 
 
 
-    // 스테이지에 따른 미션번호 리스트
+    // 스테이지 테이블
+    public void Get_Adventure_Stage_Data(ref Adventure_Stage_Data Stage_Data_Structure, int stage_ID)
+    {
+        int file_Line_Count = Counting_EOF(m_Stage_Table_csvFile);
+
+        m_Read_Text = m_Stage_Table_csvFile.text;
+        m_stringList = m_Read_Text.Split('\n');
+
+        m_data = m_stringList[3 + stage_ID].Split(',');
+
+        Stage_Data_Structure.ID = System.Convert.ToInt32(m_data[0]);
+        Stage_Data_Structure.Stage_Time = System.Convert.ToInt32(m_data[2]);
+        Stage_Data_Structure.AirDrop_Time = System.Convert.ToInt32(m_data[3]);
+        Stage_Data_Structure.Number_Of_DropItem = System.Convert.ToInt32(m_data[4]);
+        Stage_Data_Structure.SuddenDeath_Time = System.Convert.ToInt32(m_data[5]);
+        Stage_Data_Structure.Number_Of_GliderGoblin = System.Convert.ToInt32(m_data[6]);
+        Stage_Data_Structure.GliderGoblin_Bomb = System.Convert.ToInt32(m_data[7]);
+        Stage_Data_Structure.GliderGoblin_Fire = System.Convert.ToInt32(m_data[8]);
+        for (int i = 0; i < 3; ++i)
+        {
+            if (m_data[9 + i] != "0") // 빈칸이 아니면
+                Stage_Data_Structure.Adventure_Quest_ID_List[i] = System.Convert.ToInt32(m_data[9 + i]);
+            if (m_data[12 + i] != "0") // 빈칸이 아니면
+                Stage_Data_Structure.Stage_Pattern_ID_List[i] = System.Convert.ToInt32(m_data[12 + i]);
+        }
+    }
+
+
+
+    // 스테이지 별 퀘스트 번호만 받아오기 (PlayerPref용)
     public void Get_Adv_Mission_Num_List(ref int[] list, int stage_ID)
     {
         int file_Line_Count = Counting_EOF(m_Stage_Table_csvFile);
@@ -352,24 +395,17 @@ public class CSV_Manager : MonoBehaviour {
         m_Read_Text = m_Stage_Table_csvFile.text;
         m_stringList = m_Read_Text.Split('\n');
 
-        for (int i = 3; i < file_Line_Count; ++i)
-        {
-            m_data = m_stringList[i].Split(',');
+        m_data = m_stringList[3 + stage_ID].Split(',');
 
-            if (stage_ID == System.Convert.ToInt32(m_data[0]))
-            {
-                list[0] = System.Convert.ToInt32(m_data[2]);
-                list[1] = System.Convert.ToInt32(m_data[3]);
-                list[2] = System.Convert.ToInt32(m_data[4]);
-                break;
-            }
+        for (int i = 0; i < 3; ++i)
+        {
+            if (m_data[9 + i] != "0") // 빈칸이 아니면
+                list[i] = System.Convert.ToInt32(m_data[9 + i]);
         }
     }
 
 
-
-
-
+    // 보스 AI 데이터
     public void Get_Adventure_Big_Boss_AI_Data(ref Adventure_Big_Boss_Normal_Mode_AI_Data normal, ref Adventure_Big_Boss_Angry_Mode_AI_Data angry, ref Adventure_Big_Boss_Groggy_Mode_AI_Data groggy)
     {
         int file_Line_Count = Counting_EOF(m_Adventure_Boss_AI_csvFile);
