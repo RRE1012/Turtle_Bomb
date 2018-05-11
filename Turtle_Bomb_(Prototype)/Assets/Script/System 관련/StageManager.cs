@@ -212,11 +212,7 @@ public class StageManager : MonoBehaviour
 
     Adventure_Stage_Data m_Adventure_Stage_Data = new Adventure_Stage_Data();
 
-    // 빅보스 AI 데이터들
-    Adventure_Big_Boss_Normal_Mode_AI_Data m_Adv_Big_Boss_Normal_AI = new Adventure_Big_Boss_Normal_Mode_AI_Data();
-    Adventure_Big_Boss_Angry_Mode_AI_Data m_Adv_Big_Boss_Angry_AI = new Adventure_Big_Boss_Angry_Mode_AI_Data();
-    Adventure_Big_Boss_Groggy_Mode_AI_Data m_Adv_Big_Boss_Groggy_AI = new Adventure_Big_Boss_Groggy_Mode_AI_Data();
-
+    
 
 
 
@@ -389,9 +385,7 @@ public class StageManager : MonoBehaviour
 
                             // 보스 데이터 읽어오기
                             CSV_Manager.GetInstance().Get_Adventure_Boss_Data(ref m_Adventure_Boss_Data, m_Boss_ID);
-                            Big_Boss_Data_Allocation();
-                            CSV_Manager.GetInstance().Get_Adventure_Big_Boss_AI_Data(ref m_Adv_Big_Boss_Normal_AI, ref m_Adv_Big_Boss_Angry_AI, ref m_Adv_Big_Boss_Groggy_AI);
-
+                            
                             // 생성
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Ork_Boss));
                             m_Object_Position.y = m_Prefab_Ork_Boss.transform.position.y;
@@ -906,58 +900,5 @@ public class StageManager : MonoBehaviour
     public Adventure_Boss_Data Get_Adventure_Boss_Data() // 보스 데이터를 리턴해준다.
     {
         return m_Adventure_Boss_Data;
-    }
-
-    void Big_Boss_Data_Allocation() // 빅보스 데이터 메모리 할당작업
-    {
-        // Normal
-        m_Adv_Big_Boss_Normal_AI.Boss_Speed_Value = new double[4];
-        m_Adv_Big_Boss_Normal_AI.Skill_Time = new int[4];
-        m_Adv_Big_Boss_Normal_AI.Spawn_Monster_Value_Min = new int[2];
-        m_Adv_Big_Boss_Normal_AI.Spawn_Monster_Value_Max = new int[2];
-        m_Adv_Big_Boss_Normal_AI.Spawn_Monster_Speed_Value = new int[2];
-        m_Adv_Big_Boss_Normal_AI.First_Turn_Skill_Percentage = new int[4];
-        m_Adv_Big_Boss_Normal_AI.First_Turn_Skill_Duration = new int[4];
-        m_Adv_Big_Boss_Normal_AI.First_Turn_Link_Skill = new int[4];
-        m_Adv_Big_Boss_Normal_AI.Second_Turn_Skill_Percentage = new int[4];
-        m_Adv_Big_Boss_Normal_AI.Second_Turn_Skill_Duration = new int[4];
-        m_Adv_Big_Boss_Normal_AI.Second_Turn_Link_Skill = new int[4];
-        m_Adv_Big_Boss_Normal_AI.Third_Turn_Skill_Percentage = new int[4];
-        m_Adv_Big_Boss_Normal_AI.Third_Turn_Skill_Duration = new int[4];
-        m_Adv_Big_Boss_Normal_AI.Third_Turn_Link_Skill = new int[4];
-        m_Adv_Big_Boss_Normal_AI.Forth_Turn_Skill_Percentage = new int[4];
-        m_Adv_Big_Boss_Normal_AI.Forth_Turn_Skill_Duration = new int[4];
-        m_Adv_Big_Boss_Normal_AI.Forth_Turn_Link_Skill = new int[4];
-        m_Adv_Big_Boss_Normal_AI.Fifth_Turn_Skill_Percentage = new int[4];
-        m_Adv_Big_Boss_Normal_AI.Fifth_Turn_Skill_Duration = new int[4];
-        m_Adv_Big_Boss_Normal_AI.Fifth_Turn_Link_Skill = new int[4];
-
-        // ===============================================================
-
-
-
-
-        // Angry
-        m_Adv_Big_Boss_Angry_AI.Boss_Speed_Value = new double[4];
-        m_Adv_Big_Boss_Angry_AI.Skill_Time = new int[4];
-        m_Adv_Big_Boss_Angry_AI.Spawn_Monster_Value_Min = new int[2];
-        m_Adv_Big_Boss_Angry_AI.Spawn_Monster_Value_Max = new int[2];
-        m_Adv_Big_Boss_Angry_AI.Spawn_Monster_Speed_Value = new int[2];
-        m_Adv_Big_Boss_Angry_AI.First_Turn_Skill_Percentage = new int[4];
-        m_Adv_Big_Boss_Angry_AI.First_Turn_Skill_Duration = new int[4];
-        m_Adv_Big_Boss_Angry_AI.First_Turn_Link_Skill = new int[4];
-        m_Adv_Big_Boss_Angry_AI.Second_Turn_Skill_Percentage = new int[4];
-        m_Adv_Big_Boss_Angry_AI.Second_Turn_Skill_Duration = new int[4];
-        m_Adv_Big_Boss_Angry_AI.Second_Turn_Link_Skill = new int[4];
-        m_Adv_Big_Boss_Angry_AI.Third_Turn_Skill_Percentage = new int[4];
-        m_Adv_Big_Boss_Angry_AI.Third_Turn_Skill_Duration = new int[4];
-        m_Adv_Big_Boss_Angry_AI.Third_Turn_Link_Skill = new int[4];
-
-        // ===============================================================
-
-
-
-        // Groggy
-        m_Adv_Big_Boss_Groggy_AI.Boss_Speed_Value = new int[4];
     }
 }

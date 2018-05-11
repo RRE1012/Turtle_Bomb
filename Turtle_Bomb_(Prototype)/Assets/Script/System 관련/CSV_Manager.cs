@@ -56,7 +56,7 @@ public struct Adventure_Boss_Data
 
 public struct Adventure_Big_Boss_Normal_Mode_AI_Data
 {
-    public double[] Boss_Speed_Value;
+    public double Boss_Speed_Value;
     public int[] Skill_Time;
     public int[] Spawn_Monster_Value_Min;
     public int[] Spawn_Monster_Value_Max;
@@ -67,26 +67,14 @@ public struct Adventure_Big_Boss_Normal_Mode_AI_Data
     public int Skill_Fire_Range_Max;
     public int Fire_In_Range_Min;
     public int Fire_In_Range_Max;
-    public int[] First_Turn_Skill_Percentage;
-    public int[] First_Turn_Skill_Duration;
-    public int[] First_Turn_Link_Skill;
-    public int[] Second_Turn_Skill_Percentage;
-    public int[] Second_Turn_Skill_Duration;
-    public int[] Second_Turn_Link_Skill;
-    public int[] Third_Turn_Skill_Percentage;
-    public int[] Third_Turn_Skill_Duration;
-    public int[] Third_Turn_Link_Skill;
-    public int[] Forth_Turn_Skill_Percentage;
-    public int[] Forth_Turn_Skill_Duration;
-    public int[] Forth_Turn_Link_Skill;
-    public int[] Fifth_Turn_Skill_Percentage;
-    public int[] Fifth_Turn_Skill_Duration;
-    public int[] Fifth_Turn_Link_Skill;
+    public List<int[]> Skill_Percentage;
+    public List<int> Skill_Duration;
+    public List<int> Link_Skill;
 }
 
 public struct Adventure_Big_Boss_Angry_Mode_AI_Data
 {
-    public double[] Boss_Speed_Value;
+    public double Boss_Speed_Value;
     public int[] Skill_Time;
     public int[] Spawn_Monster_Value_Min;
     public int[] Spawn_Monster_Value_Max;
@@ -97,20 +85,14 @@ public struct Adventure_Big_Boss_Angry_Mode_AI_Data
     public int Skill_Fire_Range_Max;
     public int Fire_In_Range_Min;
     public int Fire_In_Range_Max;
-    public int[] First_Turn_Skill_Percentage;
-    public int[] First_Turn_Skill_Duration;
-    public int[] First_Turn_Link_Skill;
-    public int[] Second_Turn_Skill_Percentage;
-    public int[] Second_Turn_Skill_Duration;
-    public int[] Second_Turn_Link_Skill;
-    public int[] Third_Turn_Skill_Percentage;
-    public int[] Third_Turn_Skill_Duration;
-    public int[] Third_Turn_Link_Skill;
+    public List<int[]> Skill_Percentage;
+    public List<int> Skill_Duration;
+    public List<int> Link_Skill;
 }
 
 public struct Adventure_Big_Boss_Groggy_Mode_AI_Data
 {
-    public int[] Boss_Speed_Value;
+    public double Boss_Speed_Value;
 }
 
 public class CSV_Manager : MonoBehaviour {
@@ -255,40 +237,7 @@ public class CSV_Manager : MonoBehaviour {
             }
         }
     }
-
-
-
-
-    /*
-    // 스테이지 번호 목록
-    public void Get_Stage_Number_List(ref List<int> list, int stageNum)
-    {
-        int data = 0;
-        int SPIL_MAX = 3; // 스테이지 번호 배열의 최대 개수
-
-        int file_Line_Count = Counting_EOF(m_Stage_Table_csvFile);
-        
-        m_Read_Text = m_Stage_Table_csvFile.text;
-        m_stringList = m_Read_Text.Split('\n');
-
-        list.Clear();
-
-        for (int i = 3; i < file_Line_Count; ++i)
-        {
-            m_data = m_stringList[i].Split(',');
-
-            if (stageNum == System.Convert.ToInt32(m_data[5]))
-            {
-                for (int j = 0; j < SPIL_MAX; ++j)
-                {
-                    data = System.Convert.ToInt32(m_data[j + 5]);
-                    list.Add(data);
-                }
-            }
-        }
-    }
-    */
-
+    
 
 
 
@@ -421,12 +370,7 @@ public class CSV_Manager : MonoBehaviour {
             // normal
 
             if (i == 3)
-            {
-                for (int j = 0; j < 4; ++j)
-                {
-                    normal.Boss_Speed_Value[j] = System.Convert.ToDouble(m_data[j + 2]);
-                }
-            }
+                normal.Boss_Speed_Value = System.Convert.ToDouble(m_data[2]);
             else if (i == 4)
             {
                 for (int j = 0; j < 4; ++j)
@@ -481,6 +425,7 @@ public class CSV_Manager : MonoBehaviour {
             }
             else if (i == 14)
             {
+                int[] tmpArray = new int[4];
                 for (int j = 0; j < 4; ++j)
                 {
                     foreach (char c in m_data[j + 2])
@@ -488,22 +433,19 @@ public class CSV_Manager : MonoBehaviour {
                         if (c != '%')
                             tmpStr += c;
                     }
-                    normal.First_Turn_Skill_Percentage[j] = System.Convert.ToInt32(tmpStr);
+                    tmpArray[j] = System.Convert.ToInt32(tmpStr);
+                    
                     tmpStr = "";
                 }
+                normal.Skill_Percentage.Add(tmpArray);
             }
             else if (i == 15)
-            {
-                for (int j = 0; j < 4; ++j)
-                    normal.First_Turn_Skill_Duration[j] = System.Convert.ToInt32(m_data[j + 2]);
-            }
+                normal.Skill_Duration.Add(System.Convert.ToInt32(m_data[2]));
             else if (i == 16)
-            {
-                for (int j = 0; j < 4; ++j)
-                    normal.First_Turn_Link_Skill[j] = System.Convert.ToInt32(m_data[j + 2]);
-            }
+                normal.Link_Skill.Add(System.Convert.ToInt32(m_data[2]));
             else if (i == 17)
             {
+                int[] tmpArray = new int[4];
                 for (int j = 0; j < 4; ++j)
                 {
                     foreach (char c in m_data[j + 2])
@@ -511,26 +453,19 @@ public class CSV_Manager : MonoBehaviour {
                         if (c != '%')
                             tmpStr += c;
                     }
-                    normal.Second_Turn_Skill_Percentage[j] = System.Convert.ToInt32(tmpStr);
+                    tmpArray[j] = System.Convert.ToInt32(tmpStr);
+
                     tmpStr = "";
                 }
+                normal.Skill_Percentage.Add(tmpArray);
             }
             else if (i == 18)
-            {
-                for (int j = 0; j < 4; ++j)
-                {
-                    normal.Second_Turn_Skill_Duration[j] = System.Convert.ToInt32(m_data[j + 2]);
-                }
-            }
+                normal.Skill_Duration.Add(System.Convert.ToInt32(m_data[2]));
             else if (i == 19)
-            {
-                for (int j = 0; j < 4; ++j)
-                {
-                    normal.Second_Turn_Link_Skill[j] = System.Convert.ToInt32(m_data[j + 2]);
-                }
-            }
+                normal.Link_Skill.Add(System.Convert.ToInt32(m_data[2]));
             else if (i == 20)
             {
+                int[] tmpArray = new int[4];
                 for (int j = 0; j < 4; ++j)
                 {
                     foreach (char c in m_data[j + 2])
@@ -538,26 +473,19 @@ public class CSV_Manager : MonoBehaviour {
                         if (c != '%')
                             tmpStr += c;
                     }
-                    normal.Third_Turn_Skill_Percentage[j] = System.Convert.ToInt32(tmpStr);
+                    tmpArray[j] = System.Convert.ToInt32(tmpStr);
+
                     tmpStr = "";
                 }
+                normal.Skill_Percentage.Add(tmpArray);
             }
             else if (i == 21)
-            {
-                for (int j = 0; j < 4; ++j)
-                {
-                    normal.Third_Turn_Skill_Duration[j] = System.Convert.ToInt32(m_data[j + 2]);
-                }
-            }
+                normal.Skill_Duration.Add(System.Convert.ToInt32(m_data[2]));
             else if (i == 22)
-            {
-                for (int j = 0; j < 4; ++j)
-                {
-                    normal.Third_Turn_Link_Skill[j] = System.Convert.ToInt32(m_data[j + 2]);
-                }
-            }
+                normal.Link_Skill.Add(System.Convert.ToInt32(m_data[2]));
             else if (i == 23)
             {
+                int[] tmpArray = new int[4];
                 for (int j = 0; j < 4; ++j)
                 {
                     foreach (char c in m_data[j + 2])
@@ -565,26 +493,19 @@ public class CSV_Manager : MonoBehaviour {
                         if (c != '%')
                             tmpStr += c;
                     }
-                    normal.Forth_Turn_Skill_Percentage[j] = System.Convert.ToInt32(tmpStr);
+                    tmpArray[j] = System.Convert.ToInt32(tmpStr);
+
                     tmpStr = "";
                 }
+                normal.Skill_Percentage.Add(tmpArray);
             }
             else if (i == 24)
-            {
-                for (int j = 0; j < 4; ++j)
-                {
-                    normal.Forth_Turn_Skill_Duration[j] = System.Convert.ToInt32(m_data[j + 2]);
-                }
-            }
+                normal.Skill_Duration.Add(System.Convert.ToInt32(m_data[2]));
             else if (i == 25)
-            {
-                for (int j = 0; j < 4; ++j)
-                {
-                    normal.Forth_Turn_Link_Skill[j] = System.Convert.ToInt32(m_data[j + 2]);
-                }
-            }
+                normal.Link_Skill.Add(System.Convert.ToInt32(m_data[2]));
             else if (i == 26)
             {
+                int[] tmpArray = new int[4];
                 for (int j = 0; j < 4; ++j)
                 {
                     foreach (char c in m_data[j + 2])
@@ -592,24 +513,16 @@ public class CSV_Manager : MonoBehaviour {
                         if (c != '%')
                             tmpStr += c;
                     }
-                    normal.Fifth_Turn_Skill_Percentage[j] = System.Convert.ToInt32(tmpStr);
+                    tmpArray[j] = System.Convert.ToInt32(tmpStr);
+
                     tmpStr = "";
                 }
+                normal.Skill_Percentage.Add(tmpArray);
             }
             else if (i == 27)
-            {
-                for (int j = 0; j < 4; ++j)
-                {
-                    normal.Fifth_Turn_Skill_Duration[j] = System.Convert.ToInt32(m_data[j + 2]);
-                }
-            }
+                normal.Skill_Duration.Add(System.Convert.ToInt32(m_data[2]));
             else if (i == 28)
-            {
-                for (int j = 0; j < 4; ++j)
-                {
-                    normal.Fifth_Turn_Link_Skill[j] = System.Convert.ToInt32(m_data[j + 2]);
-                }
-            }
+                normal.Link_Skill.Add(System.Convert.ToInt32(m_data[2]));
 
 
 
@@ -622,40 +535,26 @@ public class CSV_Manager : MonoBehaviour {
 
 
             else if (i == 29)
-            {
-                for (int j = 0; j < 4; ++j)
-                {
-                    angry.Boss_Speed_Value[j] = System.Convert.ToDouble(m_data[j + 2]);
-                }
-            }
+                angry.Boss_Speed_Value = System.Convert.ToDouble(m_data[2]);
             else if (i == 30)
             {
                 for (int j = 0; j < 4; ++j)
-                {
-
                     angry.Skill_Time[j] = System.Convert.ToInt32(m_data[j + 2]);
-                }
             }
             else if (i == 31)
             {
                 for (int j = 0; j < 2; ++j)
-                {
                     angry.Spawn_Monster_Value_Min[j] = System.Convert.ToInt32(m_data[j + 3]);
-                }
             }
             else if (i == 32)
             {
                 for (int j = 0; j < 2; ++j)
-                {
                     angry.Spawn_Monster_Value_Max[j] = System.Convert.ToInt32(m_data[j + 3]);
-                }
             }
             else if (i == 33)
             {
                 for (int j = 0; j < 2; ++j)
-                {
                     angry.Spawn_Monster_Speed_Value[j] = System.Convert.ToInt32(m_data[j + 3]);
-                }
             }
             else if (i == 34)
             {
@@ -683,6 +582,7 @@ public class CSV_Manager : MonoBehaviour {
             }
             else if (i == 40)
             {
+                int[] tmpArray = new int[4];
                 for (int j = 0; j < 4; ++j)
                 {
                     foreach (char c in m_data[j + 2])
@@ -690,22 +590,19 @@ public class CSV_Manager : MonoBehaviour {
                         if (c != '%')
                             tmpStr += c;
                     }
-                    angry.First_Turn_Skill_Percentage[j] = System.Convert.ToInt32(tmpStr);
+                    tmpArray[j] = System.Convert.ToInt32(tmpStr);
+
                     tmpStr = "";
                 }
+                angry.Skill_Percentage.Add(tmpArray);
             }
             else if (i == 41)
-            {
-                for (int j = 0; j < 4; ++j)
-                    angry.First_Turn_Skill_Duration[j] = System.Convert.ToInt32(m_data[j + 2]);
-            }
+                angry.Skill_Duration.Add(System.Convert.ToInt32(m_data[2]));
             else if (i == 42)
-            {
-                for (int j = 0; j < 4; ++j)
-                    angry.First_Turn_Link_Skill[j] = System.Convert.ToInt32(m_data[j + 2]);
-            }
+                angry.Link_Skill.Add(System.Convert.ToInt32(m_data[2]));
             else if (i == 43)
             {
+                int[] tmpArray = new int[4];
                 for (int j = 0; j < 4; ++j)
                 {
                     foreach (char c in m_data[j + 2])
@@ -713,22 +610,19 @@ public class CSV_Manager : MonoBehaviour {
                         if (c != '%')
                             tmpStr += c;
                     }
-                    angry.Second_Turn_Skill_Percentage[j] = System.Convert.ToInt32(tmpStr);
+                    tmpArray[j] = System.Convert.ToInt32(tmpStr);
+
                     tmpStr = "";
                 }
+                angry.Skill_Percentage.Add(tmpArray);
             }
             else if (i == 44)
-            {
-                for (int j = 0; j < 4; ++j)
-                    angry.Second_Turn_Skill_Duration[j] = System.Convert.ToInt32(m_data[j + 2]);
-            }
+                angry.Skill_Duration.Add(System.Convert.ToInt32(m_data[2]));
             else if (i == 45)
-            {
-                for (int j = 0; j < 4; ++j)
-                    angry.Second_Turn_Link_Skill[j] = System.Convert.ToInt32(m_data[j + 2]);
-            }
+                angry.Link_Skill.Add(System.Convert.ToInt32(m_data[2]));
             else if (i == 46)
             {
+                int[] tmpArray = new int[4];
                 for (int j = 0; j < 4; ++j)
                 {
                     foreach (char c in m_data[j + 2])
@@ -736,20 +630,16 @@ public class CSV_Manager : MonoBehaviour {
                         if (c != '%')
                             tmpStr += c;
                     }
-                    angry.Third_Turn_Skill_Percentage[j] = System.Convert.ToInt32(tmpStr);
+                    tmpArray[j] = System.Convert.ToInt32(tmpStr);
+
                     tmpStr = "";
                 }
+                angry.Skill_Percentage.Add(tmpArray);
             }
             else if (i == 47)
-            {
-                for (int j = 0; j < 4; ++j)
-                    angry.Third_Turn_Skill_Duration[j] = System.Convert.ToInt32(m_data[j + 2]);
-            }
+                angry.Skill_Duration.Add(System.Convert.ToInt32(m_data[2]));
             else if (i == 48)
-            {
-                for (int j = 0; j < 4; ++j)
-                    angry.Third_Turn_Link_Skill[j] = System.Convert.ToInt32(m_data[j + 2]);
-            }
+                angry.Link_Skill.Add(System.Convert.ToInt32(m_data[2]));
 
 
 
@@ -758,13 +648,7 @@ public class CSV_Manager : MonoBehaviour {
 
 
             else if (i == 49)
-            {
-                for (int j = 0; j < 4; ++j)
-                {
-                    if (m_data[j + 2] != null)
-                        groggy.Boss_Speed_Value[j] = System.Convert.ToInt32(m_data[j + 2]);
-                }
-            }
+                groggy.Boss_Speed_Value = System.Convert.ToDouble(m_data[2]);
         }
     }
 }

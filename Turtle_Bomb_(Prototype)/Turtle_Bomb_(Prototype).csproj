@@ -255,6 +255,7 @@
     <Compile Include="Assets\Script\Object 관련\Airdrop_Item.cs" />
     <Compile Include="Assets\Script\Object 관련\Box.cs" />
     <Compile Include="Assets\Script\Object 관련\Box_None_Item.cs" />
+    <Compile Include="Assets\Script\Object 관련\Box_Particle_Manager.cs" />
     <Compile Include="Assets\Script\Object 관련\Bush.cs" />
     <Compile Include="Assets\Script\Object 관련\Info_Trigger.cs" />
     <Compile Include="Assets\Script\Object 관련\Item.cs" />
@@ -278,11 +279,12 @@
     <Compile Include="Assets\Script\UI 관련\TitleScript.cs" />
     <Compile Include="Assets\Script\UI 관련\UI.cs" />
     <Compile Include="Assets\Script\각종 AI\Airplane.cs" />
+    <Compile Include="Assets\Script\각종 AI\Big_Boss_Behavior.cs" />
     <Compile Include="Assets\Script\각종 AI\Boss_AI_JetGoblin.cs" />
-    <Compile Include="Assets\Script\각종 AI\Boss_Behavior.cs" />
     <Compile Include="Assets\Script\각종 AI\Detector_Box.cs" />
     <Compile Include="Assets\Script\각종 AI\Intro_Boss.cs" />
     <Compile Include="Assets\Script\각종 AI\Monster_Player_Detector.cs" />
+    <Compile Include="Assets\Script\각종 AI\Monster_Portal.cs" />
     <Compile Include="Assets\Script\각종 AI\MonsterAI.cs" />
     <Compile Include="Assets\Script\각종 AI\Performance_Camera.cs" />
   </ItemGroup>

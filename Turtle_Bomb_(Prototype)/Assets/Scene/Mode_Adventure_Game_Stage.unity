@@ -1500,9 +1500,9 @@ MonoBehaviour:
     type: 2}
   m_Prefab_Start_Point: {fileID: 1875812991857284, guid: d3343cedfabed454abd4bf78ee02b882,
     type: 2}
-  m_Prefab_Next_Portal: {fileID: 1587960238223566, guid: c80660c6282bba84fb51a0c22f3216e6,
+  m_Prefab_Next_Portal: {fileID: 1316137680677734, guid: c80660c6282bba84fb51a0c22f3216e6,
     type: 2}
-  m_Prefab_End_Portal: {fileID: 1886952346592292, guid: 70bbee7228a77f0408ae155fba6d2bd3,
+  m_Prefab_End_Portal: {fileID: 1494270890750824, guid: 70bbee7228a77f0408ae155fba6d2bd3,
     type: 2}
   m_Prefab_Ork_Boss: {fileID: 1732360386917890, guid: 1fb4c734ed160b64896f116e6cd4fa05,
     type: 2}

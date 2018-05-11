@@ -651,7 +651,7 @@ GameObject:
   - component: {fileID: 33742362914640446}
   - component: {fileID: 65617783595597654}
   - component: {fileID: 54297389392444834}
-  - component: {fileID: 114105260591401334}
+  - component: {fileID: 114524268224146172}
   - component: {fileID: 95172039246802670}
   - component: {fileID: 195132569309767294}
   m_Layer: 0
@@ -1601,17 +1601,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &114105260591401334
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1867051399299608}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2de3713aea9d37149bce696bc4f1e833, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114260458754358270
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1636,6 +1625,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_isInRange: 0
+--- !u!114 &114524268224146172
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1867051399299608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2de3713aea9d37149bce696bc4f1e833, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Normal_Monster_Portal: {fileID: 1483120067040278, guid: de622846cc6fdc645b91889ffa3f953b,
+    type: 2}
+  m_Glider_Goblin: {fileID: 1421824778066548, guid: 26d73cefaf348a04896cbad9158a94de,
+    type: 2}
+  m_Flame_Crash_Portal: {fileID: 1157881108644036, guid: b4eb5701c18b52b4e8c5a7e74d1c4b7a,
+    type: 2}
 --- !u!137 &137517983642433390
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
