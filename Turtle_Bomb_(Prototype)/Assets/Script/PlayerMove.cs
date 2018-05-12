@@ -36,8 +36,7 @@ public class PlayerMove : MonoBehaviour {
     public bool m_isAbleToKick = false;
     public static bool m_isAbleToThrow = false;
     
-    //마우스 클릭
-    bool m_isClicked = false;
+    
 
     // 이전 터치 지점 (x값)
     float m_Touch_PrevPoint_X;
@@ -398,61 +397,67 @@ public class PlayerMove : MonoBehaviour {
 
 
         // 플레이어 이동 관련 (조이스틱)
-        if (JoyStickMove.instance.GetJoyPosX()!=0 || JoyStickMove.instance.GetJoyPosZ() != 0)
+        if (JoyStickMove.instance.Get_NormalizedVector() != Vector3.zero)
         {
-            //inputVector = (inputVector.magnitude > 1.0f) ? inputVector.normalized : inputVector;
-            float inputx = (JoyStickMove.instance.GetJoyPosX() >= 25.0f|| JoyStickMove.instance.GetJoyPosX() <= -25.0f) ? 1.0f : 0.0f;
-            float inputz = (JoyStickMove.instance.GetJoyPosZ() >= 25.0f|| JoyStickMove.instance.GetJoyPosZ() <= 25.0f) ? 1.0f : 0.0f;
-            float inputx_minus=0.0f;
-            float inputz_minus=0.0f;
-            if (inputx!=0)
-                inputx_minus = (JoyStickMove.instance.GetJoyPosX() <= -25.0f) ? -1.0f : 1.0f;
-            if (inputz != 0)
-                inputz_minus = (JoyStickMove.instance.GetJoyPosZ() <= 25.0f) ? -1.0f : 1.0f;
-            transform.Translate(new Vector3((m_BasicSpeed + UI.m_speed_count) * inputx * inputx_minus * Time.deltaTime, 0.0f, (m_BasicSpeed + UI.m_speed_count)* inputz* inputz_minus * Time.deltaTime));
+            Vector3 normal = JoyStickMove.instance.Get_NormalizedVector();
+            normal.z = normal.y;
+            normal.y = 0.0f;
+            transform.Translate((m_BasicSpeed + UI.m_speed_count) * normal * Time.deltaTime);
         }
-        //*JoyStickMove.instance.GetJoyPosX() * JoyStickMove.instance.GetJoyPosZ()
         // ==================
 
 
-        
 
-        // 플레이어 회전 관련
         /*
-        if (Input.GetMouseButton(0) && m_isClicked)
+        // 플레이어 회전 관련
+        
+        if (Input.GetMouseButton(0) && UI.c_UI.Get_isClicked())
         {
             m_RotationX = Input.GetAxis("Mouse X") * m_RotateSensX * Time.deltaTime;
             transform.Rotate(transform.up, m_RotationX);
-        }*/
+        }
         // ====================
+        */
     }
 
-    // 실제환경에서 테스트 해야한다...
-    // (PC로는 안됨)
+
+    // 회전
     void BodyRotation()
     {
-        if (Input.touchCount >= 1 && m_isClicked)
+        if (Input.touchCount > 0 && UI.c_UI.Get_isClicked()) // 조이스틱 + 회전 + ...
         {
-            Debug.Log("Touched!");
-            if (Input.GetTouch(0).phase == TouchPhase.Began)
-                m_Touch_PrevPoint_X = Input.GetTouch(0).position.x;
-            if (Input.GetTouch(0).phase == TouchPhase.Moved)
+            int touchNum;
+
+            if (JoyStickMove.instance.Get_is_Joystick_First_Touched()) // 조이스틱이 먼저면
+                touchNum = 1;
+            else touchNum = 0; // 회전이 먼저면
+
+            switch (Input.GetTouch(touchNum).phase) // 회전 처리
             {
-                Debug.Log("Rotate");
-                transform.Rotate(0, Input.GetTouch(0).position.x - m_Touch_PrevPoint_X, 0);
-                m_Touch_PrevPoint_X = Input.GetTouch(0).position.x;
+                case TouchPhase.Began:
+                    m_Touch_PrevPoint_X = Input.GetTouch(touchNum).position.x;
+                    break;
+
+                case TouchPhase.Moved:
+                    transform.Rotate(0, (Input.GetTouch(touchNum).position.x - m_Touch_PrevPoint_X) * 0.5f, 0);
+                    m_Touch_PrevPoint_X = Input.GetTouch(touchNum).position.x;
+                    break;
             }
         }
     }
 
-    public void isClicked()
+    public void JoyStick_Move(Vector3 normalVector, float dist)
     {
-        m_isClicked = true;
+        m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
+        transform.Translate(normalVector * (m_BasicSpeed + UI.m_speed_count + dist) * Time.deltaTime);
     }
-    public void isClickedOff()
+
+    public void JoyStick_Move_End()
     {
-        m_isClicked = false;
+        m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", false);
     }
+
+    
 
 
     public void SetBomb() // 폭탄 설치

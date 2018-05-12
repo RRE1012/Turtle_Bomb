@@ -69,7 +69,7 @@ public class Bomb : MonoBehaviour
     float m_Rising_Speed = 10.0f; // 튕겨오르는 속도
     float m_Down_Speed = 15.0f; // 떨어지는 속도
 
-    float m_Escape_Time; 
+    float m_Escape_Time;
 
     public void MakeExplode()
     {
@@ -131,7 +131,6 @@ public class Bomb : MonoBehaviour
 
 
     // 충돌감지
-    
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Flame_Remains") || other.gameObject.CompareTag("Flame") || other.gameObject.CompareTag("Flame_Bush"))
@@ -149,7 +148,7 @@ public class Bomb : MonoBehaviour
         }
     }
 
-    
+
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Land"))
@@ -193,10 +192,10 @@ public class Bomb : MonoBehaviour
             }
         }
 
-        
+
     }
 
-    
+
     void OnCollisionStay(Collision collision)
     {
         // 폭탄 끼임 탈출
@@ -221,35 +220,19 @@ public class Bomb : MonoBehaviour
     // ==================================
 
 
-    // "화력 범위 오브젝트"를 등록
+    // "화력 범위 오브젝트"를 생성
     void Set_Explosion_Range()
     {
-        if (m_Range_Base)
-        {
-            m_Range_Base.SetActive(false);
-            for (int i = 0; i < m_FlameCount; ++i)
-            {
-                m_Range_N[i].SetActive(false);
-                m_Range_S[i].SetActive(false);
-                m_Range_W[i].SetActive(false);
-                m_Range_E[i].SetActive(false);
-            }
-            m_Range_N.Clear();
-            m_Range_S.Clear();
-            m_Range_W.Clear();
-            m_Range_E.Clear();
-        }
-    
         // 정위치
-        m_Range_Base = StageManager.c_Stage_Manager.Get_Fire_Range(StageManager.c_Stage_Manager.Find_Own_MCL_Index(gameObject.transform.position.x, gameObject.transform.position.z));
+        m_Range_Base = Instantiate(m_Explosion_Range);
 
         // 그리고 방향별로 8개씩 생성
         for (int i = 1; i <= m_FlameCount; ++i)
         {
-            m_Range_N.Add(StageManager.c_Stage_Manager.Get_Fire_Range(StageManager.c_Stage_Manager.Find_Own_MCL_Index(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].z)));
-            m_Range_S.Add(StageManager.c_Stage_Manager.Get_Fire_Range(StageManager.c_Stage_Manager.Find_Own_MCL_Index(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].z)));
-            m_Range_W.Add(StageManager.c_Stage_Manager.Get_Fire_Range(StageManager.c_Stage_Manager.Find_Own_MCL_Index(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z)));
-            m_Range_E.Add(StageManager.c_Stage_Manager.Get_Fire_Range(StageManager.c_Stage_Manager.Find_Own_MCL_Index(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z)));
+            m_Range_N.Add(Instantiate(m_Explosion_Range));
+            m_Range_S.Add(Instantiate(m_Explosion_Range));
+            m_Range_W.Add(Instantiate(m_Explosion_Range));
+            m_Range_E.Add(Instantiate(m_Explosion_Range));
         }
     }
 
@@ -258,21 +241,21 @@ public class Bomb : MonoBehaviour
     {
         if (!m_isThrown && !m_is_Thrown_Bomb_Moving)
         {
-            m_Range_Base.SetActive(true);
-            
+            m_Range_Base.transform.position = new Vector3(gameObject.transform.position.x, -0.7f, gameObject.transform.position.z);
+
             for (int i = 1; i <= m_FlameCount; ++i)
             {
-                if (m_My_MCL_Index + i <= 271)
-                    m_Range_N[i - 1].SetActive(true);
-                
-                if (m_My_MCL_Index - i >= 17)
-                    m_Range_S[i - 1].SetActive(true);
-                
-                if (m_My_MCL_Index - 17 * i >= 17)
-                    m_Range_W[i - 1].SetActive(true);
-                
-                if (m_My_MCL_Index + 17 * i <= 271)
-                    m_Range_E[i - 1].SetActive(true);
+                if (m_My_MCL_Index + i <= 288)
+                    m_Range_N[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
+
+                if (m_My_MCL_Index - i >= 0)
+                    m_Range_S[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
+
+                if (m_My_MCL_Index - 17 * i >= 0)
+                    m_Range_W[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
+
+                if (m_My_MCL_Index + 17 * i <= 288)
+                    m_Range_E[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
             }
         }
     }
@@ -293,8 +276,6 @@ public class Bomb : MonoBehaviour
 
         else
         {
-            Set_Explosion_Range();
-
             m_Range_Base.SetActive(true);
 
             bool is_blocked_N = false;
@@ -306,8 +287,8 @@ public class Bomb : MonoBehaviour
             {
                 if (!is_blocked_N)
                 {
-                    if (m_My_MCL_Index + i <= 271)
-                    { 
+                    if (m_My_MCL_Index + i <= 288)
+                    {
                         if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + i) == false)
                         {
                             m_Range_N[i - 1].SetActive(true);
@@ -322,7 +303,7 @@ public class Bomb : MonoBehaviour
                 }
                 if (!is_blocked_S)
                 {
-                    if (m_My_MCL_Index - i >= 17)
+                    if (m_My_MCL_Index - i >= 0)
                     {
                         if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - i) == false)
                         {
@@ -338,7 +319,7 @@ public class Bomb : MonoBehaviour
                 }
                 if (!is_blocked_W)
                 {
-                    if (m_My_MCL_Index - 17 * i >= 17)
+                    if (m_My_MCL_Index - 17 * i >= 0)
                     {
                         if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - 17 * i) == false)
                         {
@@ -354,7 +335,7 @@ public class Bomb : MonoBehaviour
                 }
                 if (!is_blocked_E)
                 {
-                    if (m_My_MCL_Index + 17 * i <= 271)
+                    if (m_My_MCL_Index + 17 * i <= 288)
                     {
                         if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + 17 * i) == false)
                         {
@@ -397,41 +378,48 @@ public class Bomb : MonoBehaviour
                 // 폭발 이펙트 생성 (큰것)
                 Instantiate(m_Boom_Effect).transform.position = new Vector3(gameObject.transform.position.x, -1.0f, gameObject.transform.position.z);
 
-                
                 // 범위 삭제
-                m_Range_Base.SetActive(false);
+                Destroy(m_Range_Base);
                 m_Range_Base = null;
 
                 for (int i = 1; i <= m_FlameCount; ++i)
                 {
-                    m_Range_N[i - 1].SetActive(false);
-                    m_Range_S[i - 1].SetActive(false);
-                    m_Range_W[i - 1].SetActive(false);
-                    m_Range_E[i - 1].SetActive(false);
+                    Destroy(m_Range_N[i - 1]);
+                    Destroy(m_Range_S[i - 1]);
+                    Destroy(m_Range_W[i - 1]);
+                    Destroy(m_Range_E[i - 1]);
                 }
-                
+
                 m_Range_N.Clear();
                 m_Range_S.Clear();
                 m_Range_W.Clear();
                 m_Range_E.Clear();
-                
 
                 // 폭발 전 위치 조정
                 Bomb_MCL_And_Position_Update();
 
                 // 이하는 화염 생성 구문
-                
+                GameObject Instance_Flame = Instantiate(m_Flame);
+
+                Instance_Flame.transform.position = new Vector3(gameObject.transform.position.x, 0.0f, gameObject.transform.position.z);
+
                 for (int i = 1; i <= m_FlameCount; ++i)
                 {
+                    GameObject Instance_FlameDir_N;
+                    GameObject Instance_FlameDir_S;
+                    GameObject Instance_FlameDir_W;
+                    GameObject Instance_FlameDir_E;
+
                     if (!m_Blocked_N)
                     {
                         if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + i) == false)
-                            StageManager.c_Stage_Manager.Set_On_Fire(StageManager.c_Stage_Manager.Find_Own_MCL_Index(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].z));
-
+                        {
+                            Instance_FlameDir_N = Instantiate(m_Flame);
+                            Instance_FlameDir_N.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
+                        }
                         else
                         {
                             m_Blocked_N = true;
-                            
                             GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
                             Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
                         }
@@ -440,12 +428,13 @@ public class Bomb : MonoBehaviour
                     if (!m_Blocked_S)
                     {
                         if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - i) == false)
-                            StageManager.c_Stage_Manager.Set_On_Fire(StageManager.c_Stage_Manager.Find_Own_MCL_Index(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].z));
-                            
+                        {
+                            Instance_FlameDir_S = Instantiate(m_Flame);
+                            Instance_FlameDir_S.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
+                        }
                         else
                         {
                             m_Blocked_S = true;
-                            
                             GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
                             Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
                         }
@@ -454,12 +443,13 @@ public class Bomb : MonoBehaviour
                     if (!m_Blocked_W)
                     {
                         if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - 17 * i) == false)
-                            StageManager.c_Stage_Manager.Set_On_Fire(StageManager.c_Stage_Manager.Find_Own_MCL_Index(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z));
-                            
+                        {
+                            Instance_FlameDir_W = Instantiate(m_Flame);
+                            Instance_FlameDir_W.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
+                        }
                         else
                         {
                             m_Blocked_W = true;
-                            
                             GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
                             Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
                         }
@@ -467,18 +457,19 @@ public class Bomb : MonoBehaviour
                     if (!m_Blocked_E)
                     {
                         if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + 17 * i) == false)
-                            StageManager.c_Stage_Manager.Set_On_Fire(StageManager.c_Stage_Manager.Find_Own_MCL_Index(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z));
-                            
+                        {
+                            Instance_FlameDir_E = Instantiate(m_Flame);
+                            Instance_FlameDir_E.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
+                        }
                         else
                         {
                             m_Blocked_E = true;
-                            
                             GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
                             Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
                         }
                     }
                 }
-                
+
                 // MCL 갱신
                 StageManager.c_Stage_Manager.Update_MCL_isBlocked(m_My_MCL_Index, false);
             }
@@ -659,5 +650,11 @@ public class Bomb : MonoBehaviour
 
         if (m_Range_Base)
             Explosion_Range_Pos_Update();
+    }
+
+
+    public void Set_Bomb_Fire_Count(int firecount)
+    {
+
     }
 }
