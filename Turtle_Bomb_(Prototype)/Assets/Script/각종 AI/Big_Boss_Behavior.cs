@@ -45,6 +45,7 @@ public class Big_Boss_Behavior : MonoBehaviour
     Vector3 Base_Position;
 
     // 스탯
+    int m_Boss_Number; // 어떤 보스인지 (애니메이션이 다르므로)
     int m_curr_Mode_Number; // 현재 모드 번호
     int m_curr_Turn_Number; // 현재 스킬 턴 번호
 
@@ -95,8 +96,16 @@ public class Big_Boss_Behavior : MonoBehaviour
 
     float m_idle_sound_Timer = 0.0f; // idle상태 사운드 타이머
     float m_idle_sound_Cooltime = 2.0f; // idle상태 사운드 쿨타임
-    
 
+
+    // 애니 이름
+    string m_Animation_idle;
+    string m_Animation_Walk;
+    string m_Animation_Attack;
+    string m_Animation_Dead;
+    string m_Animation_Summon;
+
+    string m_Attack_Motion_Checker; // 공격 모션 점검을 위한..
     
 
     void Start()
@@ -105,8 +114,35 @@ public class Big_Boss_Behavior : MonoBehaviour
         m_NVAgent = gameObject.GetComponent<NavMeshAgent>();
         m_NavPlane = GameObject.Find("Navigation_Plane");
 
-        // 애니메이터 등록
+        // 애니메이션 등록
         m_Boss_Animator = GetComponent<Animator>();
+        m_Animation_idle = "OrkBoss_isIdle";
+        m_Animation_Walk = "OrkBoss_isWalk";
+        m_Animation_Attack = "OrkBoss_isAttack";
+        m_Animation_Summon = "OrkBoss_isSummon";
+        m_Animation_Dead = "OrkBoss_isDead";
+
+        //m_Boss_Number = StageManager.c_Stage_Manager.Get_Boss_ID();
+        /*
+        switch (m_Boss_Number)
+        {
+            case 1:
+                
+                m_Animation_idle = "Goblman_isIdle";
+                m_Animation_Walk = "Goblman_isWalk";
+                m_Animation_Attack = "Goblman_isAttack";
+                m_Animation_Dead = "Goblman_isDead";
+                break;
+
+            case 2:
+                m_Animation_idle = "OrkBoss_isIdle";
+                m_Animation_Walk = "OrkBoss_isWalk";
+                m_Animation_Attack = "OrkBoss_isAttack";
+                m_Animation_Dead = "OrkBoss_isDead";
+                break;
+        }*/
+
+        m_Attack_Motion_Checker = "Base Layer.OrkBoss_Attack";
 
         // 플레이어 감지기 등록
         m_Target_Detector = GetComponentInChildren<Detector_Box>();
@@ -177,10 +213,15 @@ public class Big_Boss_Behavior : MonoBehaviour
     
     void Think() // 어떤 행동을 할지 생각하는 함수 (추후 가중치를 두어 어떤 행동을 할지 더 상세하게 구분해야함.)
     {
-        if (m_curr_Mode_Number != Boss_Mode_List.GROGGY_MODE && (m_Attack_is_Done || (m_Curr_Skill != 0 && (m_curr_Skill_Time >= m_Skill_Time)))) // 공격중이라면 공격이 끝나야 다른 행동을 할 수 있다. 또는 스킬 사용중이라면..
+        if (m_curr_Mode_Number != Boss_Mode_List.GROGGY_MODE && m_Attack_is_Done && !m_is_Summonning/*(m_Curr_Skill != 0 && (m_curr_Skill_Time >= m_Skill_Time))*/) // 공격중이라면 공격이 끝나야 다른 행동을 할 수 있다. 또는 스킬 사용중이라면..
         {
             if (m_Target_Detector.m_isInRange) // 감지 범위 안이라면
             {
+                Debug.Log("생각해버림");
+                Debug.Log(m_Attack_is_Done);
+                Debug.Log(m_Curr_Skill);
+                Debug.Log(m_curr_Skill_Time);
+                Debug.Log(m_Skill_Time);
                 // 추격
                 m_Current_Behavior = m_Behavior_Chase;
                 m_NVAgent.isStopped = false;
@@ -188,8 +229,8 @@ public class Big_Boss_Behavior : MonoBehaviour
                 if (m_Target != null)
                     m_NVAgent.destination = m_Target.transform.position;
                 m_Loss_Time = 0.0f;
-                m_Boss_Animator.SetBool("Goblman_isWalk", true);
-                m_Boss_Animator.SetBool("Goblman_isIdle", false);
+                m_Boss_Animator.SetBool(m_Animation_Walk, true);
+                m_Boss_Animator.SetBool(m_Animation_idle, false);
 
                 if (m_Attack_Detector.m_isInRange && !is_Blocked_Between_Target_And_Me()) // 그리고 공격 범위 안이라면
                 {
@@ -254,8 +295,8 @@ public class Big_Boss_Behavior : MonoBehaviour
             if (m_WalkTimer < Monster_AI_Constants.Walk_Time) // 일정 시간동안 걸어다님.
             {
                 transform.Translate(new Vector3(0.0f, 0.0f, (m_Move_Speed * Time.deltaTime)));
-                m_Boss_Animator.SetBool("Goblman_isWalk", true);
-                m_Boss_Animator.SetBool("Goblman_isIdle", false);
+                m_Boss_Animator.SetBool(m_Animation_Walk, true);
+                m_Boss_Animator.SetBool(m_Animation_idle, false);
                 m_WalkTimer += Time.deltaTime;
             }
 
@@ -264,8 +305,8 @@ public class Big_Boss_Behavior : MonoBehaviour
                 if (MusicManager.manage_ESound != null)
                     MusicManager.manage_ESound.Goblin_Idle_Sound();
 
-                m_Boss_Animator.SetBool("Goblman_isWalk", false);
-                m_Boss_Animator.SetBool("Goblman_isIdle", true);
+                m_Boss_Animator.SetBool(m_Animation_Walk, false);
+                m_Boss_Animator.SetBool(m_Animation_idle, true);
 
                 m_WalkTimer = 0.0f;
                 yield return new WaitForSeconds(3.0f); // 3초간 idle 상태 유지
@@ -292,7 +333,7 @@ public class Big_Boss_Behavior : MonoBehaviour
             {
                 m_Loss_Time += Time.deltaTime;
                 m_NVAgent.isStopped = false;
-                m_Boss_Animator.SetBool("Goblman_isWalk", true);
+                m_Boss_Animator.SetBool(m_Animation_Walk, true);
             }
 
             else // 잊어버렸다면 기본 위치로 돌아간다.
@@ -303,8 +344,8 @@ public class Big_Boss_Behavior : MonoBehaviour
                 {
                     m_NVAgent.isStopped = false;
                     m_NVAgent.destination = Base_Position;
-                    m_Boss_Animator.SetBool("Goblman_isWalk", true);
-                    m_Boss_Animator.SetBool("Goblman_isIdle", false);
+                    m_Boss_Animator.SetBool(m_Animation_Walk, true);
+                    m_Boss_Animator.SetBool(m_Animation_idle, false);
                 }
             }
 
@@ -331,11 +372,11 @@ public class Big_Boss_Behavior : MonoBehaviour
                 {
                     if (m_Attack_is_Done)
                     {
-                        if (MusicManager.manage_ESound != null && !m_Boss_Animator.GetBool("Goblman_isAttack")) // 공격할때 1번만 소리냄.
+                        if (MusicManager.manage_ESound != null && !m_Boss_Animator.GetBool(m_Animation_Attack)) // 공격할때 1번만 소리냄.
                             MusicManager.manage_ESound.Goblin_Attack_Sound();
 
-                        m_Boss_Animator.SetBool("Goblman_isAttack", true); // 마찬가지로 1번만 수행
-                        m_Boss_Animator.SetBool("Goblman_isIdle", false);
+                        m_Boss_Animator.SetBool(m_Animation_Attack, true); // 마찬가지로 1번만 수행
+                        m_Boss_Animator.SetBool(m_Animation_Walk, false);
                         m_Attack_Range_UI.gameObject.SetActive(true); // 범위 표시기를 꺼낸다.
 
                         m_Target = m_Attack_Detector.GetComponent<Monster_Player_Detector>().Get_Target();
@@ -357,12 +398,12 @@ public class Big_Boss_Behavior : MonoBehaviour
                     }
                     else
                     {
-                        if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).fullPathHash == Animator.StringToHash("Base Layer.Goblman_Attack"))
+                        if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).fullPathHash == Animator.StringToHash(m_Attack_Motion_Checker))
                         {
                             if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f) // 애니메이션이 끝나면
                             {
-                                m_Boss_Animator.SetBool("Goblman_isAttack", false);
-                                m_Boss_Animator.SetBool("Goblman_isIdle", true);
+                                m_Boss_Animator.SetBool(m_Animation_Attack, false);
+                                m_Boss_Animator.SetBool(m_Animation_Walk, true);
                                 m_AttackTimer = 0.0f; // 시간도 초기화한다.
                                 m_Current_Behavior = m_Behavior_Return;
                                 m_Boss_Animator.SetFloat("Attack_Speed", m_Attack_Speed_Slow); // 공격속도를 슬로우모션으로 되돌린다.
@@ -418,8 +459,8 @@ public class Big_Boss_Behavior : MonoBehaviour
                 }
 
                 m_NVAgent.isStopped = true;
-                m_Boss_Animator.SetBool("Goblman_isWalk", false);
-                m_Boss_Animator.SetBool("Goblman_isIdle", true);
+                m_Boss_Animator.SetBool(m_Animation_Walk, false);
+                m_Boss_Animator.SetBool(m_Animation_idle, true);
                 m_is_First_Attack = true; // 기본 위치로 가면 첫 공격 여부 초기화
             }
             yield return null;
@@ -554,7 +595,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                 m_NVAgent.isStopped = true;
 
                 // 여기서 소환 애니메이션 수행
-                m_Boss_Animator.SetBool("Goblman_isAttack", true);
+                m_Boss_Animator.SetBool(m_Animation_Summon, true);
 
 
                 if (!m_is_Summonning) // 소환중이 아니라면
@@ -581,8 +622,6 @@ public class Big_Boss_Behavior : MonoBehaviour
                         GameObject temp = Instantiate(m_Normal_Monster_Portal);
                         temp.transform.position = pos; // 설정한 위치에 포탈 소환
                         temp.GetComponent<Monster_Portal>().Set_Monster_Speed(m_Normal_Monster_Speed_Value);
-
-                        Debug.Log("일반몹 한마리 소환!");
                     }
                 }
             }
@@ -590,8 +629,8 @@ public class Big_Boss_Behavior : MonoBehaviour
             else
             {
                 m_is_Summonning = false;
-                m_Boss_Animator.SetBool("Goblman_isAttack", false);
-                
+                m_Boss_Animator.SetBool(m_Animation_Summon, false);
+                Debug.Log("소환 끝");
                 m_Current_Behavior = m_Behavior_Chase; // 남은 시간동안 추격-공격 패턴
             }
 
@@ -612,7 +651,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                 m_NVAgent.isStopped = true;
 
                 // 여기서 소환 애니메이션 수행
-                m_Boss_Animator.SetBool("Goblman_isAttack", true);
+                m_Boss_Animator.SetBool(m_Animation_Summon, true);
 
 
                 if (!m_is_Summonning) // 소환중이 아니라면
@@ -635,7 +674,6 @@ public class Big_Boss_Behavior : MonoBehaviour
                         temp.transform.position = pos; // 설정한 위치에 글라이더 소환
                         temp.GetComponent<Boss_AI_JetGoblin>().Set_Bomb_info(m_Glider_Goblin_Bomb_Value, m_Glider_Goblin_Fire_Value);
                         temp.GetComponent<Boss_AI_JetGoblin>().Set_Glider_Speed(m_Glider_Monster_Speed_Value);
-                        Debug.Log("글라이더 한마리 소환!");
                     }
                 }
             }
@@ -643,8 +681,8 @@ public class Big_Boss_Behavior : MonoBehaviour
             else
             {
                 m_is_Summonning = false;
-                m_Boss_Animator.SetBool("Goblman_isAttack", false);
-
+                m_Boss_Animator.SetBool(m_Animation_Summon, false);
+                Debug.Log("소환 끝");
                 m_Current_Behavior = m_Behavior_Chase; // 남은 시간동안 추격-공격 패턴
             }
 
@@ -660,16 +698,14 @@ public class Big_Boss_Behavior : MonoBehaviour
     {
         while (true)
         {
-
             if (m_curr_Skill_Time < m_Skill_Time)
             {
                 m_curr_Skill_Time += Time.deltaTime;
                 m_NVAgent.isStopped = true;
-
-                Debug.Log("화염 마법진 소환 시작");
+               
 
                 // 여기서 소환 애니메이션 수행
-                m_Boss_Animator.SetBool("Goblman_isAttack", true);
+                m_Boss_Animator.SetBool(m_Animation_Summon, true);
                 
                 if (!m_is_Summonning) // 소환중이 아니라면
                 {
@@ -699,8 +735,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                         StageManager.c_Stage_Manager.Get_MCL_Coordinate(index, ref pos.x, ref pos.z);
 
                         Instantiate(m_Flame_Crash_Portal).transform.position = pos; // 설정한 위치에 화염 마법진 소환
-
-                        Debug.Log("화염 마법진 하나 소환!");
+                        
                     }
                 }
             }
@@ -708,8 +743,8 @@ public class Big_Boss_Behavior : MonoBehaviour
             else
             {
                 m_is_Summonning = false;
-                m_Boss_Animator.SetBool("Goblman_isAttack", false);
-
+                m_Boss_Animator.SetBool(m_Animation_Summon, false);
+                Debug.Log("소환 끝");
                 m_Current_Behavior = m_Behavior_Chase; // 남은 시간동안 추격-공격 패턴
             }
 
@@ -757,7 +792,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
             StopCoroutine(m_Do_Behavior);
 
-            m_Boss_Animator.SetBool("Goblman_isDead", true);
+            m_Boss_Animator.SetBool(m_Animation_Dead, true);
             Invoke("Dead", 2.0f);
         }
     }

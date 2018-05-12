@@ -14,6 +14,48 @@ ModelImporter:
     100012: "\uC624\uD06C_MeshPart1"
     100014: //RootNode
     100016: "\uD314\uCC0C"
+    100018: Bip001
+    100020: Bip001 Footsteps
+    100022: Bip001 Head
+    100024: Bip001 HeadNub
+    100026: Bip001 L Calf
+    100028: Bip001 L Clavicle
+    100030: Bip001 L Finger0
+    100032: Bip001 L Finger0Nub
+    100034: Bip001 L Finger1
+    100036: Bip001 L Finger1Nub
+    100038: Bip001 L Finger2
+    100040: Bip001 L Finger2Nub
+    100042: Bip001 L Foot
+    100044: Bip001 L Forearm
+    100046: Bip001 L Hand
+    100048: Bip001 L Thigh
+    100050: Bip001 L Toe0
+    100052: Bip001 L Toe01
+    100054: Bip001 L Toe02
+    100056: Bip001 L Toe0Nub
+    100058: Bip001 L UpperArm
+    100060: Bip001 Neck
+    100062: Bip001 Pelvis
+    100064: Bip001 R Calf
+    100066: Bip001 R Clavicle
+    100068: Bip001 R Finger0
+    100070: Bip001 R Finger0Nub
+    100072: Bip001 R Finger1
+    100074: Bip001 R Finger1Nub
+    100076: Bip001 R Finger2
+    100078: Bip001 R Finger2Nub
+    100080: Bip001 R Foot
+    100082: Bip001 R Forearm
+    100084: Bip001 R Hand
+    100086: Bip001 R Thigh
+    100088: Bip001 R Toe0
+    100090: Bip001 R Toe01
+    100092: Bip001 R Toe02
+    100094: Bip001 R Toe0Nub
+    100096: Bip001 R UpperArm
+    100098: Bip001 Spine
+    100100: Bip001 Spine1
     400000: "\uADC0\uC7A5\uC2DD"
     400002: "\uBAA8\uC790"
     400004: "\uBABD\uB465\uC774"
@@ -23,6 +65,48 @@ ModelImporter:
     400012: "\uC624\uD06C_MeshPart1"
     400014: //RootNode
     400016: "\uD314\uCC0C"
+    400018: Bip001
+    400020: Bip001 Footsteps
+    400022: Bip001 Head
+    400024: Bip001 HeadNub
+    400026: Bip001 L Calf
+    400028: Bip001 L Clavicle
+    400030: Bip001 L Finger0
+    400032: Bip001 L Finger0Nub
+    400034: Bip001 L Finger1
+    400036: Bip001 L Finger1Nub
+    400038: Bip001 L Finger2
+    400040: Bip001 L Finger2Nub
+    400042: Bip001 L Foot
+    400044: Bip001 L Forearm
+    400046: Bip001 L Hand
+    400048: Bip001 L Thigh
+    400050: Bip001 L Toe0
+    400052: Bip001 L Toe01
+    400054: Bip001 L Toe02
+    400056: Bip001 L Toe0Nub
+    400058: Bip001 L UpperArm
+    400060: Bip001 Neck
+    400062: Bip001 Pelvis
+    400064: Bip001 R Calf
+    400066: Bip001 R Clavicle
+    400068: Bip001 R Finger0
+    400070: Bip001 R Finger0Nub
+    400072: Bip001 R Finger1
+    400074: Bip001 R Finger1Nub
+    400076: Bip001 R Finger2
+    400078: Bip001 R Finger2Nub
+    400080: Bip001 R Foot
+    400082: Bip001 R Forearm
+    400084: Bip001 R Hand
+    400086: Bip001 R Thigh
+    400088: Bip001 R Toe0
+    400090: Bip001 R Toe01
+    400092: Bip001 R Toe02
+    400094: Bip001 R Toe0Nub
+    400096: Bip001 R UpperArm
+    400098: Bip001 Spine
+    400100: Bip001 Spine1
     2300000: "\uADC0\uC7A5\uC2DD"
     2300002: "\uBAA8\uC790"
     2300004: "\uBABD\uB465\uC774"
@@ -44,13 +128,20 @@ ModelImporter:
     4300008: "\uD314\uCC0C"
     4300010: "\uBAA8\uC790"
     4300012: "\uBC14\uC9C0"
+    7400000: Take 001
     9500000: //RootNode
+    13700000: "\uADC0\uC7A5\uC2DD"
+    13700002: "\uBAA8\uC790"
+    13700004: "\uBC14\uC9C0"
+    13700006: "\uC624\uD06C_MeshPart0"
+    13700008: "\uC624\uD06C_MeshPart1"
+    13700010: "\uD314\uCC0C"
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: 'Material #25'
-    second: {fileID: 2100000, guid: 22c727e0366ab29419361238de096be3, type: 2}
+    second: {fileID: 2100000, guid: 6d1ec991fc976f94e9263589add54b34, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

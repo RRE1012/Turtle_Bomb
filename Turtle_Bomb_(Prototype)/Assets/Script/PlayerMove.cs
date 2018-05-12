@@ -288,28 +288,6 @@ public class PlayerMove : MonoBehaviour {
 
     void OnCollisionEnter(Collision collision)
     {
-        /*
-        // 박스와 접촉시 밀기 활성화
-        if (!m_isBoxSelected && collision.gameObject.CompareTag("Box"))
-        {
-            Vector3 tmpPosition;
-            tmpPosition = collision.gameObject.transform.position + transform.forward * 1.2f;
-            int index = StageManager.Find_Own_MCL_Index(tmpPosition.x, tmpPosition.z, false);
-            if (index != -1)
-            {
-                if (StageManager.m_Map_Coordinate_List[index].isBlocked == false)
-                {
-                    m_Front_Box = collision.gameObject;
-                    m_isBoxSelected = true;
-                    m_isAbleToPush = true;
-                }
-            }
-        }
-        */
-        // ===========================
-        
-
-
         // 폭탄 발차기
         if (m_isGot_KickItem && collision.gameObject.CompareTag("Bomb"))
         {
@@ -327,19 +305,9 @@ public class PlayerMove : MonoBehaviour {
 
     }
 
-    /*
-    void OnCollisionExit(Collision collision)
-    {
-        // 박스와 접촉 해제시 밀기 비활성화
 
-        if (m_isBoxSelected && collision.gameObject.CompareTag("Box"))
-        {
-            m_isBoxSelected = false;
-            m_isAbleToPush = false;
-        }
 
-    }
-    */
+
 
 
     // ======== UDF =========
@@ -408,7 +376,7 @@ public class PlayerMove : MonoBehaviour {
 
 
 
-        /*
+        
         // 플레이어 회전 관련
         
         if (Input.GetMouseButton(0) && UI.c_UI.Get_isClicked())
@@ -417,7 +385,7 @@ public class PlayerMove : MonoBehaviour {
             transform.Rotate(transform.up, m_RotationX);
         }
         // ====================
-        */
+        
     }
 
 

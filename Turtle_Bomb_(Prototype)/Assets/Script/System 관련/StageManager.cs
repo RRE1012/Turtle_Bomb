@@ -877,7 +877,10 @@ public class StageManager : MonoBehaviour
             Destroy(i);
     }
 
-
+    public int Get_Boss_ID()
+    {
+        return m_Boss_ID;
+    }
 
 
 
