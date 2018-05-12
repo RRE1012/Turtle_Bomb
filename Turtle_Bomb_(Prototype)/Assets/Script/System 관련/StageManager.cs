@@ -116,8 +116,6 @@ public class StageManager : MonoBehaviour
     // ================================
     // =========== UI 관련 ============
 
-    public Text m_Text; // 게임 오버 텍스트
-
     int m_Star_Count = 0; // 획득한 별 개수
 
     int m_Total_Monster_Count = 0; // 총 스폰된 일반 몹 수
@@ -203,13 +201,11 @@ public class StageManager : MonoBehaviour
 
     // 현재 스테이지의 오브젝트 배치 목록
     List<Object_Spawn_Position_Data> m_Object_Spawn_Position_List = new List<Object_Spawn_Position_Data>();
-
-    // 스크립트(대사) 테이블
-    List<Script_Data> m_Script_List = new List<Script_Data>();
-
+    
     // 보스 스테이터스 데이터
     Adventure_Boss_Data m_Adventure_Boss_Data = new Adventure_Boss_Data();
 
+    // 스테이지 데이터
     Adventure_Stage_Data m_Adventure_Stage_Data = new Adventure_Stage_Data();
 
 
@@ -267,7 +263,7 @@ public class StageManager : MonoBehaviour
 
         Create_Map(m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count]); // 설정된 번호를 받아서 맵 생성!
 
-        //m_Script_List = CSV_Manager.GetInstance().Get_Script_List(스크립트ID); // 대사 받아오기
+        
 
         if (m_Stage_Time_Limit == MAP.NOT_SET) // 시간 설정
             m_Stage_Time_Limit = m_Adventure_Stage_Data.Stage_Time;
@@ -731,7 +727,6 @@ public class StageManager : MonoBehaviour
     {
         if (!PlayerMove.C_PM.Get_IsAlive()) // 죽어서 끝났거나,
         {
-            m_Text.text = "Game Over";
             m_Game_Over = true;
         }
 

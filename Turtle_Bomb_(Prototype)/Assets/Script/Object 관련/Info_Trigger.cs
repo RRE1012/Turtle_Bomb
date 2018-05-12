@@ -3,42 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Info_Trigger : MonoBehaviour {
-    
-	void Start ()
-    {
-		
 
-	}
+    public int m_Script_Num;
 
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Player")
         {
-            if (gameObject.tag == "Info_Trigger_Bomb")
-            {
-                // 대사 띄우기
-
-            }
-            else if (gameObject.tag == "Info_Trigger_Speed")
-            {
-                // 대사 띄우기
-
-            }
-            else if (gameObject.tag == "Info_Trigger_Fire")
-            {
-                // 대사 띄우기
-
-            }
-            else if (gameObject.tag == "Info_Trigger_Kick")
-            {
-                // 대사 띄우기
-
-            }
-            else if (gameObject.tag == "Info_Trigger_Throw")
-            {
-                // 대사 띄우기
-
-            }
+            Script_Box.c_Script_Box.Set_TextList(CSV_Manager.GetInstance().Get_Script(m_Script_Num)); // 대사 받아오기
+            Script_Box.c_Script_Box.gameObject.SetActive(true); // 박스 활성화
 
             // 트리거 제거
             GameObject[] triggers = GameObject.FindGameObjectsWithTag(gameObject.tag);

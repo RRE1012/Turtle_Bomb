@@ -37,13 +37,6 @@ public struct Adventure_Stage_Data
     public int[] Stage_Pattern_ID_List;
 }
 
-public struct Script_Data
-{
-    public int Spawn_Number;
-    public int NPC_ID;
-    public string Script;
-}
-
 public struct Adventure_Boss_Data
 {
     public int Boss_HP;
@@ -237,40 +230,46 @@ public class CSV_Manager : MonoBehaviour {
             }
         }
     }
-    
 
 
 
 
-    // 스크립트(대사) 목록
-    public List<Script_Data> Get_Script_List(int scriptID)
+
+    // 스크립트 하나 가져오기
+    public List<string> Get_Script(int scriptID)
     {
-        Script_Data data = new Script_Data();
-        List<Script_Data> Script_List = new List<Script_Data>();
+        List<string> script_List = new List<string>();
+        string temp = "";
+        string temp2 = "";
 
         // csv 파일의 길이를 세어준다.
         int file_Line_Count = Counting_EOF(m_Script_Table_csvFile);
 
         m_Read_Text = m_Script_Table_csvFile.text;
         m_stringList = m_Read_Text.Split('\n');
-
-        // 3 부터 시작
+        
         for (int i = 3; i < file_Line_Count; ++i)
         {
             m_data = m_stringList[i].Split(',');
-
-            // 스테이지 번호를 확인한다.
-            if (System.Convert.ToInt32(m_data[1]) == scriptID)
-            {
-                // 입력한 값과 일치한다면 필요한 데이터를 리스트에 삽입.
-                data.Spawn_Number = System.Convert.ToInt32(m_data[2]);
-                data.NPC_ID = System.Convert.ToInt32(m_data[3]);
-                data.Script = m_data[4];
-                Script_List.Add(data);
-            }
+            if (scriptID == System.Convert.ToInt32(m_data[0]))
+                temp = m_data[2];
         }
 
-        return Script_List;
+        for (int i = 0; i < temp.Length; ++i)
+        {
+            if (temp[i] == '-' && temp[i + 1] == 'n' && temp[i + 2] == '-') // "-n-" 를 만나면 리스트에 삽입
+            {
+                script_List.Add(temp2);
+                temp2 = "";
+                i += 2;
+            }
+            else
+                temp2 += temp[i]; // 임시변수에 한글자씩 담는다.
+        }
+        if (temp2.Length != 0) // 마지막 라인이 빈 글이 아니면 또 추가
+            script_List.Add(temp2);
+
+        return script_List;
     }
 
     

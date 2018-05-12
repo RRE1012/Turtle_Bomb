@@ -462,7 +462,7 @@ public class PlayerMove : MonoBehaviour {
 
     public void SetBomb() // 폭탄 설치
     {
-        if (UI.m_releasable_bomb_count > 0 && !m_isCrouch)
+        if (UI.m_releasable_bomb_count > 0 && !m_isCrouch && StageManager.c_Stage_Manager.Get_is_Intro_Over())
         {
             m_Bombindex_X = (int)transform.position.x;
             m_Bombindex_Z = (int)transform.position.z;
