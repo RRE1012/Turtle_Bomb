@@ -92,7 +92,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
 
 
     // 최초 소환 시 수행하는 메소드
-    void Awake ()
+    void Start ()
     {
         // 객체 설정
         c_JetGoblin = this;
@@ -108,9 +108,15 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         m_Behavior_Landing = Behavior_Landing();
         m_Behavior_WallCrash = Behavior_WallCrash();
 
+        m_Current_Behavior = Behavior_Move();
+
+        Mode_Change(Boss_Mode.SUDDENDEATH_MODE);
+
+        StartCoroutine(Do_Behavior());
 
         // 보스 스테이지인지 판단하여 (StageManager에서 설정)
         // 처음 실행할 모드 설정 및 그에 따른 스탯 설정
+        /*
         if (StageManager.c_Stage_Manager.Get_is_Boss_Stage())
         {
             m_Current_Behavior = Wait_To_Intro();
@@ -135,6 +141,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
 
             StartCoroutine(Do_Behavior());
         }
+        */
     }
     
 
@@ -633,13 +640,17 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
             m_Current_Behavior = m_Behavior_Move;
         }
     }
-    
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider other)
     {
-        
+        // 몬스터가 불에 닿으면 히트 판정
+        if ((other.gameObject.tag == "Flame" || other.gameObject.CompareTag("Flame_Bush")))
+        {
+            Hurt();
+        }
+
         // 울타리 밖으로 나가지 않도록
-        if (collision.gameObject.CompareTag("Wall"))
+        if (other.gameObject.CompareTag("Wall"))
         {
             // 서든데스 모드일 때
             if (m_Current_Mode == Boss_Mode.SUDDENDEATH_MODE)
@@ -654,15 +665,6 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
                     MusicManager.manage_ESound.Boss_Goblin_Wall_Crush_Sound();
                 m_Current_Behavior = m_Behavior_WallCrash;
             }
-        }
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        // 몬스터가 불에 닿으면 히트 판정
-        if ((other.gameObject.tag == "Flame" || other.gameObject.CompareTag("Flame_Bush")))
-        {
-            Hurt();
         }
         //===============================
     }
@@ -685,6 +687,11 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         m_Total_Bomb_Count = bombcount;
         m_Usable_Bomb_Count = bombcount;
         m_Fire_Count = firecount;
+    }
+
+    public void Set_Glider_Speed(float s)
+    {
+        m_Move_Speed = s;
     }
 
     public int Get_Fire_Count()

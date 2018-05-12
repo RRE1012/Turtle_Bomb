@@ -133,8 +133,6 @@ public class Big_Boss_Behavior : MonoBehaviour
 
         Big_Boss_Data_Allocation(); // 보스 AI 데이터의 리스트들을 할당
         CSV_Manager.GetInstance().Get_Adventure_Big_Boss_AI_Data(ref m_Adv_Big_Boss_Normal_AI, ref m_Adv_Big_Boss_Angry_AI, ref m_Adv_Big_Boss_Groggy_AI); // 보스 AI 테이블을 받아온다.
-
-        ModeChange(Boss_Mode_List.NORMAL_MODE); // 최초 시작시 노말모드로 시작
         // =========================
 
 
@@ -153,6 +151,9 @@ public class Big_Boss_Behavior : MonoBehaviour
         // 처음 실행할 행동 설정
         m_Current_Behavior = m_Behavior_Return;
         StartCoroutine(m_Do_Behavior);
+
+
+        ModeChange(Boss_Mode_List.NORMAL_MODE); // 최초 시작시 노말모드로 시작
     }
 
 
@@ -173,8 +174,8 @@ public class Big_Boss_Behavior : MonoBehaviour
 
 
 
-    // 어떤 행동을 할지 생각하는 함수 (추후 가중치를 두어 어떤 행동을 할지 더 상세하게 구분해야함.)
-    void Think()
+    
+    void Think() // 어떤 행동을 할지 생각하는 함수 (추후 가중치를 두어 어떤 행동을 할지 더 상세하게 구분해야함.)
     {
         if (m_curr_Mode_Number != Boss_Mode_List.GROGGY_MODE && (m_Attack_is_Done || (m_Curr_Skill != 0 && (m_curr_Skill_Time >= m_Skill_Time)))) // 공격중이라면 공격이 끝나야 다른 행동을 할 수 있다. 또는 스킬 사용중이라면..
         {
@@ -211,8 +212,8 @@ public class Big_Boss_Behavior : MonoBehaviour
 
 
 
-    // 모든 행동의 베이스가 되는 코루틴
-    IEnumerator Do_Behavior()
+    
+    IEnumerator Do_Behavior() // 모든 행동의 베이스가 되는 코루틴
     {
         while (true)
         {
@@ -234,7 +235,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
             else
             {
-                if (m_NavPlane.activeSelf)
+                if (StageManager.c_Stage_Manager.Get_is_Intro_Over() && m_NavPlane.activeSelf)
                     m_NVAgent.isStopped = true;
                 yield return null;
             }
@@ -245,8 +246,8 @@ public class Big_Boss_Behavior : MonoBehaviour
 
 
 
-    // 플레이어 찾기
-    IEnumerator FindPlayer()
+    
+    IEnumerator FindPlayer() // 플레이어 찾기 (일단 뺌)
     {
         while (true)
         {
@@ -282,8 +283,8 @@ public class Big_Boss_Behavior : MonoBehaviour
 
 
 
-    // 추격
-    IEnumerator Chase()
+    
+    IEnumerator Chase() // 추격
     {
         while(true)
         {
@@ -291,6 +292,7 @@ public class Big_Boss_Behavior : MonoBehaviour
             {
                 m_Loss_Time += Time.deltaTime;
                 m_NVAgent.isStopped = false;
+                m_Boss_Animator.SetBool("Goblman_isWalk", true);
             }
 
             else // 잊어버렸다면 기본 위치로 돌아간다.
@@ -314,8 +316,8 @@ public class Big_Boss_Behavior : MonoBehaviour
 
 
 
-    // 공격
-    IEnumerator Attack()
+    
+    IEnumerator Attack() // 공격
     {
         while (true)
         {
@@ -397,7 +399,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
 
 
-    IEnumerator Return()
+    IEnumerator Return() // 복귀
     {
         while(true)
         {
@@ -425,16 +427,15 @@ public class Big_Boss_Behavior : MonoBehaviour
     }
 
 
-    void Set_Next_Turn_Skill()
+    void Set_Next_Turn_Skill() // 다음 턴의 스킬을 설정하는 함수
     {
         ++m_curr_Turn_Number;
 
         m_curr_Turn_Duration = 0.0f; // 턴 경과 시간 초기화
         m_curr_Skill_Time = 0.0f; // 스킬 경과 시간 초기화
 
-        int random = Random.Range(1, 100);
-
-        Debug.Log(random);
+        int random = Random.Range(70, 100);
+        Debug.Log(m_curr_Turn_Number);
 
         switch (m_curr_Mode_Number)
         {
@@ -450,7 +451,6 @@ public class Big_Boss_Behavior : MonoBehaviour
                     // m_Behavior_Chase 초기화 작업
                     Debug.Log("Chase");
                     m_Skill_Time = m_Adv_Big_Boss_Normal_AI.Skill_Time[0];
-                    m_curr_Skill_Time = 0;
                     m_Current_Behavior = m_Behavior_Chase;
                 }
 
@@ -459,8 +459,9 @@ public class Big_Boss_Behavior : MonoBehaviour
                     // m_Behavior_Skill_Normal_Monster_Summon 초기화 작업
                     Debug.Log("Normal_Spawn");
                     m_Skill_Time = m_Adv_Big_Boss_Normal_AI.Skill_Time[1];
-                    m_curr_Skill_Time = 1;
                     m_Normal_Monster_Count = Random.Range(m_Adv_Big_Boss_Normal_AI.Spawn_Monster_Value_Min[0], m_Adv_Big_Boss_Normal_AI.Spawn_Monster_Value_Max[0]);
+                    m_Normal_Monster_Speed_Value = m_Adv_Big_Boss_Normal_AI.Spawn_Monster_Speed_Value[0];
+
                     m_Current_Behavior = m_Behavior_Skill_Normal_Monster_Summon;
                 }
 
@@ -469,18 +470,21 @@ public class Big_Boss_Behavior : MonoBehaviour
                     // m_Behavior_Skill_Glider_Goblin_Summon 초기화 작업
                     Debug.Log("Glider_Spawn");
                     m_Skill_Time = m_Adv_Big_Boss_Normal_AI.Skill_Time[2];
-                    m_curr_Skill_Time = 2;
-                    //m_Glider_Monster_Count = Random.Range(m_Adv_Big_Boss_Normal_AI.Spawn_Monster_Value_Min[1], m_Adv_Big_Boss_Normal_AI.Spawn_Monster_Value_Max[1]);
-                    //m_Current_Behavior = m_Behavior_Skill_Glider_Goblin_Summon;
+                    m_Glider_Monster_Count = Random.Range(m_Adv_Big_Boss_Normal_AI.Spawn_Monster_Value_Min[1], m_Adv_Big_Boss_Normal_AI.Spawn_Monster_Value_Max[1]);
+                    m_Glider_Monster_Speed_Value = m_Adv_Big_Boss_Normal_AI.Spawn_Monster_Speed_Value[1];
+                    m_Glider_Goblin_Bomb_Value = m_Adv_Big_Boss_Normal_AI.Glider_Goblin_Bomb_Value;
+                    m_Glider_Goblin_Fire_Value = m_Adv_Big_Boss_Normal_AI.Glider_Goblin_Fire_Value;
+                    m_Current_Behavior = m_Behavior_Skill_Glider_Goblin_Summon;
                 }
-
+                
                 else
                 {
                     // m_Behavior_Skill_Flame_Crash 초기화 작업
                     Debug.Log("Flame_Crash");
                     m_Skill_Time = m_Adv_Big_Boss_Normal_AI.Skill_Time[3];
-                    m_curr_Skill_Time = 3;
-                    //m_Current_Behavior = m_Behavior_Skill_Flame_Crash;
+                    m_Flame_Crash_Range = Random.Range(m_Adv_Big_Boss_Normal_AI.Skill_Fire_Range_Min, m_Adv_Big_Boss_Normal_AI.Skill_Fire_Range_Max);
+                    m_Flame_Crash_Count = Random.Range(m_Adv_Big_Boss_Normal_AI.Fire_In_Range_Min, m_Adv_Big_Boss_Normal_AI.Fire_In_Range_Max);
+                    m_Current_Behavior = m_Behavior_Skill_Flame_Crash;
                 }
 
                 break;
@@ -499,35 +503,39 @@ public class Big_Boss_Behavior : MonoBehaviour
                 if (random <= m_Adv_Big_Boss_Angry_AI.Skill_Percentage[m_curr_Turn_Number - 1][0])
                 {
                     // m_Behavior_Chase 초기화 작업
-                    m_Skill_Time = m_Adv_Big_Boss_Normal_AI.Skill_Time[0];
-                    m_curr_Skill_Time = 0;
+                    m_Skill_Time = m_Adv_Big_Boss_Angry_AI.Skill_Time[0];
                     m_Current_Behavior = m_Behavior_Chase;
                 }
 
                 else if (random <= m_Adv_Big_Boss_Angry_AI.Skill_Percentage[m_curr_Turn_Number - 1][0] + m_Adv_Big_Boss_Angry_AI.Skill_Percentage[m_curr_Turn_Number - 1][1])
                 {
                     // m_Behavior_Skill_Normal_Monster_Summon 초기화 작업
-                    m_Skill_Time = m_Adv_Big_Boss_Normal_AI.Skill_Time[1];
-                    m_curr_Skill_Time = 1;
+                    m_Skill_Time = m_Adv_Big_Boss_Angry_AI.Skill_Time[1];
                     m_Normal_Monster_Count = Random.Range(m_Adv_Big_Boss_Angry_AI.Spawn_Monster_Value_Min[0], m_Adv_Big_Boss_Angry_AI.Spawn_Monster_Value_Max[0]);
+                    m_Normal_Monster_Speed_Value = m_Adv_Big_Boss_Angry_AI.Spawn_Monster_Speed_Value[0];
+
                     m_Current_Behavior = m_Behavior_Skill_Normal_Monster_Summon;
                 }
 
                 else if (random <= m_Adv_Big_Boss_Angry_AI.Skill_Percentage[m_curr_Turn_Number - 1][0] + m_Adv_Big_Boss_Angry_AI.Skill_Percentage[m_curr_Turn_Number - 1][1] + m_Adv_Big_Boss_Angry_AI.Skill_Percentage[m_curr_Turn_Number - 1][2])
                 {
                     // m_Behavior_Skill_Glider_Goblin_Summon 초기화 작업
-                    m_Skill_Time = m_Adv_Big_Boss_Normal_AI.Skill_Time[2];
-                    m_curr_Skill_Time = 2;
+                    m_Skill_Time = m_Adv_Big_Boss_Angry_AI.Skill_Time[2];
                     m_Glider_Monster_Count = Random.Range(m_Adv_Big_Boss_Angry_AI.Spawn_Monster_Value_Min[1], m_Adv_Big_Boss_Angry_AI.Spawn_Monster_Value_Max[1]);
-                    //m_Current_Behavior = m_Behavior_Skill_Glider_Goblin_Summon;
-                }
+                    m_Glider_Monster_Speed_Value = m_Adv_Big_Boss_Angry_AI.Spawn_Monster_Speed_Value[1];
+                    m_Glider_Goblin_Bomb_Value = m_Adv_Big_Boss_Angry_AI.Glider_Goblin_Bomb_Value;
+                    m_Glider_Goblin_Fire_Value = m_Adv_Big_Boss_Angry_AI.Glider_Goblin_Fire_Value;
 
+                    m_Current_Behavior = m_Behavior_Skill_Glider_Goblin_Summon;
+                }
+                
                 else
                 {
                     // m_Behavior_Skill_Flame_Crash 초기화 작업
-                    m_Skill_Time = m_Adv_Big_Boss_Normal_AI.Skill_Time[3];
-                    m_curr_Skill_Time = 3;
-                    //m_Current_Behavior = m_Behavior_Skill_Flame_Crash;
+                    m_Skill_Time = m_Adv_Big_Boss_Angry_AI.Skill_Time[3];
+                    m_Flame_Crash_Range = Random.Range(m_Adv_Big_Boss_Angry_AI.Skill_Fire_Range_Min, m_Adv_Big_Boss_Angry_AI.Skill_Fire_Range_Max);
+                    m_Flame_Crash_Count = Random.Range(m_Adv_Big_Boss_Angry_AI.Fire_In_Range_Min, m_Adv_Big_Boss_Angry_AI.Fire_In_Range_Max);
+                    m_Current_Behavior = m_Behavior_Skill_Flame_Crash;
                 }
 
                 break;
@@ -535,7 +543,7 @@ public class Big_Boss_Behavior : MonoBehaviour
     }
 
 
-    IEnumerator Skill_Normal_Monster_Summon()
+    IEnumerator Skill_Normal_Monster_Summon() // 일반몹 소환 스킬
     {
         while (true)
         {
@@ -543,6 +551,7 @@ public class Big_Boss_Behavior : MonoBehaviour
             {
                 m_curr_Skill_Time += Time.deltaTime;
 
+                m_NVAgent.isStopped = true;
 
                 // 여기서 소환 애니메이션 수행
                 m_Boss_Animator.SetBool("Goblman_isAttack", true);
@@ -550,26 +559,31 @@ public class Big_Boss_Behavior : MonoBehaviour
 
                 if (!m_is_Summonning) // 소환중이 아니라면
                 {
+                    m_is_Summonning = true; // 소환중이라 알림
+
+                    int index; // 소환 위치 (인덱스)
+                    Vector3 pos;
+                    pos.y = m_Normal_Monster_Portal.transform.position.y;
+
                     for (int i = 0; i < m_Normal_Monster_Count; ++i)
                     {
-                        int index; // 소환 위치 (인덱스)
-
                         while (true) // 루프를 돌면서 지형 탐색
                         {
                             index = Random.Range(17, 271); // 맵 범위
                             if (!StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(index)) // 막혀있지 않으면
                                 break; // 탈출
                         }
-
-                        Vector3 pos;
+                        
                         pos.x = 0.0f;
-                        pos.y = -0.74f;
                         pos.z = 0.0f;
                         StageManager.c_Stage_Manager.Get_MCL_Coordinate(index, ref pos.x, ref pos.z);
 
-                        Instantiate(m_Normal_Monster_Portal).transform.position = pos; // 설정한 위치에 포탈 소환
+                        GameObject temp = Instantiate(m_Normal_Monster_Portal);
+                        temp.transform.position = pos; // 설정한 위치에 포탈 소환
+                        temp.GetComponent<Monster_Portal>().Set_Monster_Speed(m_Normal_Monster_Speed_Value);
+
+                        Debug.Log("일반몹 한마리 소환!");
                     }
-                    m_is_Summonning = true; // 소환중이라 알림
                 }
             }
             
@@ -577,6 +591,7 @@ public class Big_Boss_Behavior : MonoBehaviour
             {
                 m_is_Summonning = false;
                 m_Boss_Animator.SetBool("Goblman_isAttack", false);
+                
                 m_Current_Behavior = m_Behavior_Chase; // 남은 시간동안 추격-공격 패턴
             }
 
@@ -587,11 +602,52 @@ public class Big_Boss_Behavior : MonoBehaviour
 
 
 
-    IEnumerator Skill_Glider_Goblin_Summon()
+    IEnumerator Skill_Glider_Goblin_Summon() // 글라이더 고블린 소환 스킬
     {
         while (true)
         {
-            
+            if (m_curr_Skill_Time < m_Skill_Time)
+            {
+                m_curr_Skill_Time += Time.deltaTime;
+                m_NVAgent.isStopped = true;
+
+                // 여기서 소환 애니메이션 수행
+                m_Boss_Animator.SetBool("Goblman_isAttack", true);
+
+
+                if (!m_is_Summonning) // 소환중이 아니라면
+                {
+                    m_is_Summonning = true; // 소환중이라 알림
+
+                    int index;
+                    Vector3 pos;
+                    pos.y = m_Glider_Goblin.transform.position.y;
+
+                    for (int i = 0; i < m_Glider_Monster_Count; ++i)
+                    {
+                        index = Random.Range(17, 271); // 소환 위치 (인덱스)
+                        
+                        pos.x = 0.0f;
+                        pos.z = 0.0f;
+                        StageManager.c_Stage_Manager.Get_MCL_Coordinate(index, ref pos.x, ref pos.z);
+
+                        GameObject temp = Instantiate(m_Glider_Goblin);
+                        temp.transform.position = pos; // 설정한 위치에 글라이더 소환
+                        temp.GetComponent<Boss_AI_JetGoblin>().Set_Bomb_info(m_Glider_Goblin_Bomb_Value, m_Glider_Goblin_Fire_Value);
+                        temp.GetComponent<Boss_AI_JetGoblin>().Set_Glider_Speed(m_Glider_Monster_Speed_Value);
+                        Debug.Log("글라이더 한마리 소환!");
+                    }
+                }
+            }
+
+            else
+            {
+                m_is_Summonning = false;
+                m_Boss_Animator.SetBool("Goblman_isAttack", false);
+
+                m_Current_Behavior = m_Behavior_Chase; // 남은 시간동안 추격-공격 패턴
+            }
+
             yield return null;
         }
     }
@@ -600,11 +656,63 @@ public class Big_Boss_Behavior : MonoBehaviour
 
 
 
-    IEnumerator Skill_Flame_Crash()
+    IEnumerator Skill_Flame_Crash() // 화염폭발 스킬
     {
         while (true)
         {
-            
+
+            if (m_curr_Skill_Time < m_Skill_Time)
+            {
+                m_curr_Skill_Time += Time.deltaTime;
+                m_NVAgent.isStopped = true;
+
+                Debug.Log("화염 마법진 소환 시작");
+
+                // 여기서 소환 애니메이션 수행
+                m_Boss_Animator.SetBool("Goblman_isAttack", true);
+                
+                if (!m_is_Summonning) // 소환중이 아니라면
+                {
+                    m_is_Summonning = true; // 소환중이라 알림
+
+                    float range_X;
+                    float range_Z;
+                    int index;
+                    Vector3 pos;
+                    pos.y = m_Flame_Crash_Portal.transform.position.y;
+
+                    for (int i = 0; i < m_Flame_Crash_Count; ++i)
+                    {
+                        while (true)
+                        {
+                            range_X = Random.Range(transform.position.x - m_Flame_Crash_Range, transform.position.x + m_Flame_Crash_Range); // 소환 위치 (X값)
+                            range_Z = Random.Range(transform.position.z - m_Flame_Crash_Range, transform.position.z + m_Flame_Crash_Range); // 소환 위치 (Z값)
+                            if (range_X < -1.0f || range_X > 29.0f || range_Z < 49.0f || range_Z > 79.0f) // 맵을 벗어나면 다시
+                                continue;
+                            index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(range_X, range_Z);
+                            if (!StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(index)) // 막혀있지 않으면 탈출
+                                break;
+                        }
+                        
+                        pos.x = 0.0f;
+                        pos.z = 0.0f;
+                        StageManager.c_Stage_Manager.Get_MCL_Coordinate(index, ref pos.x, ref pos.z);
+
+                        Instantiate(m_Flame_Crash_Portal).transform.position = pos; // 설정한 위치에 화염 마법진 소환
+
+                        Debug.Log("화염 마법진 하나 소환!");
+                    }
+                }
+            }
+
+            else
+            {
+                m_is_Summonning = false;
+                m_Boss_Animator.SetBool("Goblman_isAttack", false);
+
+                m_Current_Behavior = m_Behavior_Chase; // 남은 시간동안 추격-공격 패턴
+            }
+
             yield return null;
         }
     }
@@ -673,7 +781,6 @@ public class Big_Boss_Behavior : MonoBehaviour
     {
         m_curr_Mode_Number = Mode_Number;
         m_curr_Turn_Number = 0; // 모드전환 시 초기화
-        Set_Next_Turn_Skill(); // 다음 턴 스킬 설정
 
         switch (m_curr_Mode_Number)
         {
@@ -708,6 +815,8 @@ public class Big_Boss_Behavior : MonoBehaviour
         }
 
         m_Boss_Animator.SetFloat("Attack_Speed", m_Attack_Speed_Slow); // 설정한 공격속도 (슬로우)로 변경
+
+        Set_Next_Turn_Skill(); // 다음 턴 스킬 설정
     }
 
     bool is_Blocked_Between_Target_And_Me() // 타겟과 나 사이에 장애물이 있는가?

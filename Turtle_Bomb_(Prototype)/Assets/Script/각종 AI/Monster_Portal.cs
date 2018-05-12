@@ -21,4 +21,9 @@ public class Monster_Portal : MonoBehaviour {
             Destroy(gameObject);
         }
 	}
+
+    public void Set_Monster_Speed(float s)
+    {
+        m_Normal_Monster.GetComponent<MonsterAI>().Set_Basic_Speed(s);
+    }
 }

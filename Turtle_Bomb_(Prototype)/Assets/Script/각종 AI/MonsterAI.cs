@@ -276,7 +276,10 @@ public class MonsterAI : MonoBehaviour
 
     
 
-        
+    public void Set_Basic_Speed(float s)
+    {
+        m_Monster_Basic_Speed = s;
+    }
 
 
 

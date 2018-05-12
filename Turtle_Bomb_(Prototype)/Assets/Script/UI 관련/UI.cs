@@ -107,6 +107,7 @@ public class UI : MonoBehaviour {
     {
         c_UI = this;
         StageManager.c_Stage_Manager.Init_Left_Time();
+        Application.targetFrameRate = 60;
     }
     
 

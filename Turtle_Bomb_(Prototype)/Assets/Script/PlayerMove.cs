@@ -91,7 +91,7 @@ public class PlayerMove : MonoBehaviour {
             if (!m_isPushing)
             {
                 Move();
-                //BodyRotation();
+                BodyRotation();
             }
             else
                 Pushing();
@@ -418,12 +418,12 @@ public class PlayerMove : MonoBehaviour {
         
 
         // 플레이어 회전 관련
-        
+        /*
         if (Input.GetMouseButton(0) && m_isClicked)
         {
             m_RotationX = Input.GetAxis("Mouse X") * m_RotateSensX * Time.deltaTime;
             transform.Rotate(transform.up, m_RotationX);
-        }
+        }*/
         // ====================
     }
 
@@ -431,7 +431,7 @@ public class PlayerMove : MonoBehaviour {
     // (PC로는 안됨)
     void BodyRotation()
     {
-        if (Input.touchCount >= 1)
+        if (Input.touchCount >= 1 && m_isClicked)
         {
             Debug.Log("Touched!");
             if (Input.GetTouch(0).phase == TouchPhase.Began)

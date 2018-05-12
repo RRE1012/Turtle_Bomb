@@ -23,8 +23,14 @@ public class Fire_Effect : MonoBehaviour {
             }
             else
             {
-                Destroy(gameObject);
+                gameObject.SetActive(false);
+                //StageManager.c_Stage_Manager.Set_Off_Fire_Range(StageManager.c_Stage_Manager.Find_Own_MCL_Index(gameObject.transform.position.x, gameObject.transform.position.z)); // 범위도 꺼준다.
             }
         }
+    }
+
+    public void ResetLifeTime()
+    {
+        FlameLifeTime = 0.7f;
     }
 }

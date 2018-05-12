@@ -163,7 +163,7 @@ MonoBehaviour:
     type: 2}
   m_Object_ThrowItem: {fileID: 1089656375657424, guid: 5b9b2bc73e50fc648942c510106ab3e4,
     type: 2}
-  m_Particle: {fileID: 1898993433043882, guid: ab9ce5e15fa5a8949a187e0d70acac71, type: 2}
+  m_Particle: {fileID: 1586823418298534, guid: ab9ce5e15fa5a8949a187e0d70acac71, type: 2}
   m_is_Destroyed: 0
 --- !u!208 &208692789111319316
 NavMeshObstacle:

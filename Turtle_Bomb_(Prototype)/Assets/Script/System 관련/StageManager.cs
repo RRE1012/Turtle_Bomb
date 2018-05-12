@@ -88,10 +88,12 @@ public class StageManager : MonoBehaviour
     public GameObject m_Prefab_Info_Trigger_Throw;
     public GameObject m_Prefab_Box_None_Item;
 
+    public GameObject m_Flame; // 화염
+    List<GameObject> m_Flame_List; // 화염 리스트
 
-
-
-
+    public GameObject m_Flame_Range; // 화염 범위
+    List<GameObject> m_Flame_Range_List; // 화염 범위 리스트
+    
 
 
     // ================================
@@ -265,6 +267,8 @@ public class StageManager : MonoBehaviour
             }
         }
 
+        
+        Create_Terrain(); // 터레인 생성
         Create_Map(m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count]); // 설정된 번호를 받아서 맵 생성!
 
         //m_Script_List = CSV_Manager.GetInstance().Get_Script_List(스크립트ID); // 대사 받아오기
@@ -275,10 +279,13 @@ public class StageManager : MonoBehaviour
 
         // 비행기 미리 소환
         m_Airplane = Instantiate(m_Prefab_Airplane); // 인스턴스 생성
-        m_Current_Map_Objects.Add(m_Airplane);
         m_Airplane.GetComponent<Airplane>().Set_Airdrop_Count(m_Adventure_Stage_Data.Number_Of_DropItem); // 드랍 개수 설정
-        ++m_Current_Map_Objects_Count; // 카운트 증가
+
+        Init_Fire();
+        Init_Fire_Range();
     }
+
+    
 
     void Start()
     {
@@ -307,9 +314,6 @@ public class StageManager : MonoBehaviour
 
     void Create_Map(int stage_id) // 맵 생성 및 설정
     {
-        // 터레인 생성
-        Create_Terrain();
-
         // 오브젝트 스폰 위치 목록을 받아온다.
         CSV_Manager.GetInstance().Get_Object_Spawn_Position_List(ref m_Object_Spawn_Position_List, stage_id);
 
@@ -838,6 +842,7 @@ public class StageManager : MonoBehaviour
             if (g != null)
                 Destroy(g);
         }
+        m_Current_Map_Objects.Clear();
 
         // 동적생성 폭탄들 제거
         GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
@@ -882,10 +887,75 @@ public class StageManager : MonoBehaviour
 
 
 
+    void Init_Fire()
+    {
+        // 폭탄 화염 풀링
+        Vector3 pos;
+        pos.y = m_Flame.transform.position.y;
+        GameObject flame;
+        m_Flame_List = new List<GameObject>();
 
+        for (int i = -1; i < 16; ++i)
+        {
+            for (int j = -1; j < 16; ++j)
+            {
+                pos.x = i * 2.0f;
+                pos.z = j * 2.0f + 50.0f;
+                flame = Instantiate(m_Flame);
+                flame.transform.position = pos;
+                flame.SetActive(false);
+                m_Flame_List.Add(flame);
+            }
+        }
+    }
 
+    void Init_Fire_Range()
+    {
+        // 폭탄 화염 풀링
+        Vector3 pos;
+        pos.y = m_Flame_Range.transform.position.y;
+        GameObject flame_Range;
+        m_Flame_Range_List = new List<GameObject>();
 
+        for (int i = -1; i < 16; ++i)
+        {
+            for (int j = -1; j < 16; ++j)
+            {
+                pos.x = i * 2.0f;
+                pos.z = j * 2.0f + 50.0f;
+                flame_Range = Instantiate(m_Flame_Range);
+                flame_Range.transform.position = pos;
+                flame_Range.SetActive(false);
+                m_Flame_Range_List.Add(flame_Range);
+            }
+        }
+    }
 
+    public void Set_On_Fire(int index)
+    {
+        m_Flame_List[index].SetActive(true);
+        m_Flame_List[index].GetComponent<Fire_Effect>().ResetLifeTime();
+    }
+
+    public void Set_Off_Fire(int index)
+    {
+        m_Flame_List[index].SetActive(false);
+    }
+
+    public void Set_On_Fire_Range(int index)
+    {
+        m_Flame_Range_List[index].SetActive(true);
+    }
+
+    public void Set_Off_Fire_Range(int index)
+    {
+        m_Flame_Range_List[index].SetActive(false);
+    }
+
+    public GameObject Get_Fire_Range(int index)
+    {
+        return m_Flame_Range_List[index];
+    }
 
 
 
