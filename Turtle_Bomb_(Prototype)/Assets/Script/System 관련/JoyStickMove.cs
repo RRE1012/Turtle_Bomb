@@ -16,11 +16,11 @@ public class JoyStickMove : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
     private Vector2 bgImageStartPosition;
     bool touched = false; //
 
-    private void Awake()
+    void Awake()
     {
         instance = this;
     }
-    // Use this for initialization
+
     void Start () {
         joystick_BackGroundImage = GetComponent<RawImage>();
         joystick_BackGroundImage.rectTransform.GetWorldCorners(fourCornersArray); 
@@ -32,16 +32,15 @@ public class JoyStickMove : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
         joystick_BackGroundImage.rectTransform.anchorMax = new Vector2(0, 0); 
         joystick_BackGroundImage.rectTransform.position = bgImageStartPosition;
     }
-	public float GetJoyPosX()
+
+    public Vector3 Get_NormalizedVector()
     {
-        return joystick_HandleImage.rectTransform.anchoredPosition.x;
+        return joystick_HandleImage.rectTransform.anchoredPosition.normalized;
     }
-    public float GetJoyPosZ()
+
+
+    public virtual void OnDrag (PointerEventData ped)
     {
-        return joystick_HandleImage.rectTransform.anchoredPosition.y;
-    }
-    // Update is called once per frame
-    public virtual void OnDrag (PointerEventData ped) {
         Vector2 localP = Vector2.zero;
        
         if (RectTransformUtility.ScreenPointToLocalPointInRectangle(joystick_BackGroundImage.rectTransform, ped.position, ped.pressEventCamera, out localP))
@@ -59,16 +58,9 @@ public class JoyStickMove : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
 
         }
     }
-    /*
-     Debug 용
-    private void Update()
-    {
-        Debug.Log(joystick_HandleImage.rectTransform.anchoredPosition);
-    }
-    */
+
     public virtual void OnPointerDown(PointerEventData eventP)
     {
-        Debug.Log("True");
         touched = true;
         OnDrag(eventP);
     }
@@ -84,5 +76,12 @@ public class JoyStickMove : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
     public void UnTouched()
     {
         touched = false;
+    }
+
+    public bool Get_is_Joystick_First_Touched() // 조이스틱이 먼저냐 회전이 먼저냐!
+    {
+        if (UI.c_UI.Get_isClicked()) // 이미 회전중이면
+            return false; // 회전이 먼저다!
+        else return true; // 조이스틱이 먼저다!
     }
 }

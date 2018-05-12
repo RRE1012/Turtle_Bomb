@@ -61,7 +61,7 @@ public class StageManager : MonoBehaviour
 
     public GameObject m_Forest_Theme_Terrain;
     public GameObject m_SnowLand_Theme_Terrain;
-    
+
     //public GameObject m_Prefab_Intro_Boss; // 인트로용 객체
 
     // 오브젝트 프리팹들
@@ -88,12 +88,10 @@ public class StageManager : MonoBehaviour
     public GameObject m_Prefab_Info_Trigger_Throw;
     public GameObject m_Prefab_Box_None_Item;
 
-    public GameObject m_Flame; // 화염
-    List<GameObject> m_Flame_List; // 화염 리스트
 
-    public GameObject m_Flame_Range; // 화염 범위
-    List<GameObject> m_Flame_Range_List; // 화염 범위 리스트
-    
+
+
+
 
 
     // ================================
@@ -108,7 +106,7 @@ public class StageManager : MonoBehaviour
     Vector3 m_Object_Position; // 오브젝트 생성시 위치 변경에 이용할 벡터
 
     GameObject m_Airplane; // 비행기 객체
-    
+
 
 
 
@@ -128,7 +126,7 @@ public class StageManager : MonoBehaviour
 
 
 
-    
+
 
 
 
@@ -136,14 +134,14 @@ public class StageManager : MonoBehaviour
 
     // ==================================
     // =========== 보스관련 =============
-    
+
     bool m_is_Boss_Stage; // 현재 스테이지가 보스전인가?
 
     public int m_Boss_ID; // 보스 테이블 번호 (*** 디버깅용 public ***)
-                            // -1로 설정시 테이블에 따른다.
+                          // -1로 설정시 테이블에 따른다.
 
     public GameObject m_SuddenDeath_JetGoblin; // 서든데스 고블맨 객체
-    
+
     bool m_is_Boss_Dead; // 보스 스테이지의 보스 몬스터가 죽었는가?
 
 
@@ -214,7 +212,7 @@ public class StageManager : MonoBehaviour
 
     Adventure_Stage_Data m_Adventure_Stage_Data = new Adventure_Stage_Data();
 
-    
+
 
 
 
@@ -232,7 +230,7 @@ public class StageManager : MonoBehaviour
 
         m_Map_Coordinate_List = new List<Map_Coordinate>();
         m_MCL_is_Blocked_List = new List<bool>();
-        
+
         MCL_init(); // MCL 초기화
 
         //m_CameraOffset = GameObject.Find("Camera_Offset"); // 카메라 객체 지정
@@ -247,7 +245,7 @@ public class StageManager : MonoBehaviour
         m_Adventure_Stage_Data.Stage_Pattern_ID_List = new int[3];
 
         CSV_Manager.GetInstance().Get_Adventure_Stage_Data(ref m_Adventure_Stage_Data, m_Stage_ID); // 스테이지 테이블 데이터 로드
-        
+
         CSV_Manager.GetInstance().Get_Adventure_Quest_List(ref m_QuestList, ref m_Adventure_Stage_Data.Adventure_Quest_ID_List); // 퀘스트 데이터 로딩
 
         if (m_Boss_ID == MAP.NOT_SET) // 설정이 안돼있다면
@@ -267,25 +265,20 @@ public class StageManager : MonoBehaviour
             }
         }
 
-        
-        Create_Terrain(); // 터레인 생성
         Create_Map(m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count]); // 설정된 번호를 받아서 맵 생성!
 
         //m_Script_List = CSV_Manager.GetInstance().Get_Script_List(스크립트ID); // 대사 받아오기
-        
+
         if (m_Stage_Time_Limit == MAP.NOT_SET) // 시간 설정
             m_Stage_Time_Limit = m_Adventure_Stage_Data.Stage_Time;
 
 
         // 비행기 미리 소환
         m_Airplane = Instantiate(m_Prefab_Airplane); // 인스턴스 생성
+        m_Current_Map_Objects.Add(m_Airplane);
         m_Airplane.GetComponent<Airplane>().Set_Airdrop_Count(m_Adventure_Stage_Data.Number_Of_DropItem); // 드랍 개수 설정
-
-        Init_Fire();
-        Init_Fire_Range();
+        ++m_Current_Map_Objects_Count; // 카운트 증가
     }
-
-    
 
     void Start()
     {
@@ -314,6 +307,9 @@ public class StageManager : MonoBehaviour
 
     void Create_Map(int stage_id) // 맵 생성 및 설정
     {
+        // 터레인 생성
+        Create_Terrain();
+
         // 오브젝트 스폰 위치 목록을 받아온다.
         CSV_Manager.GetInstance().Get_Object_Spawn_Position_List(ref m_Object_Spawn_Position_List, stage_id);
 
@@ -389,7 +385,7 @@ public class StageManager : MonoBehaviour
 
                             // 보스 데이터 읽어오기
                             CSV_Manager.GetInstance().Get_Adventure_Boss_Data(ref m_Adventure_Boss_Data, m_Boss_ID);
-                            
+
                             // 생성
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Ork_Boss));
                             m_Object_Position.y = m_Prefab_Ork_Boss.transform.position.y;
@@ -459,12 +455,12 @@ public class StageManager : MonoBehaviour
             }
         }
     }
-    
+
     void Create_Terrain() // 터레인 생성
     {
         Instantiate(m_Forest_Theme_Terrain);
     }
-    
+
     public void Next_Map_Load() // 다음 맵 불러오기
     {
         ++m_Current_Stage_index_Count; // 다음 맵 번호를 지정하고
@@ -472,9 +468,9 @@ public class StageManager : MonoBehaviour
         if (m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count] != 0) // 리스트에 맵 번호가 있으면 시작
         {
             m_is_Map_Changing = true; // 맵 변경 중이라고 알림
-            
+
             MCL_init(); // MCL을 재설정한다.
-            
+
             Destroy_Objects(); // 남아있는 오브젝트들을 제거한다.
 
             Create_Map(m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count]); // 새 맵을 생성!
@@ -482,7 +478,7 @@ public class StageManager : MonoBehaviour
             Invoke("Map_Changing_Over", 1.0f); // 1초 뒤 맵 변경 완료 알림
         }
     }
-    
+
     void Map_Changing_Over() // 맵 전환이 끝났음을 알린다.
     {
         m_is_Map_Changing = false;
@@ -550,7 +546,7 @@ public class StageManager : MonoBehaviour
             m_MCL_is_Blocked_List[index] = isBlocked;
         }
     }
-    
+
 
 
 
@@ -558,7 +554,7 @@ public class StageManager : MonoBehaviour
     {
         return m_MCL_is_Blocked_List[index];
     }
-    
+
 
 
 
@@ -567,7 +563,7 @@ public class StageManager : MonoBehaviour
         x = m_Map_Coordinate_List[index].x;
         z = m_Map_Coordinate_List[index].z;
     }
-    
+
 
 
 
@@ -643,7 +639,7 @@ public class StageManager : MonoBehaviour
 
         UI.Draw_StageClearPage(); // 클리어 화면 출력
     }
-    
+
     void Condition_For_Getting_Stars(ref int[] list) // 별 획득 조건 관리
     {
         foreach (Adventure_Quest_Data QuestData in m_QuestList)
@@ -744,12 +740,12 @@ public class StageManager : MonoBehaviour
             m_Game_Over = true;
         }
     }
-    
+
     public bool Get_Game_Over() // 게임오버인가를 반환
     {
         return m_Game_Over;
     }
-    
+
 
 
 
@@ -769,7 +765,7 @@ public class StageManager : MonoBehaviour
     {
         return m_is_Boss_Dead;
     }
-    
+
 
 
 
@@ -842,6 +838,7 @@ public class StageManager : MonoBehaviour
             if (g != null)
                 Destroy(g);
         }
+
         m_Current_Map_Objects.Clear();
 
         // 동적생성 폭탄들 제거
@@ -887,75 +884,10 @@ public class StageManager : MonoBehaviour
 
 
 
-    void Init_Fire()
-    {
-        // 폭탄 화염 풀링
-        Vector3 pos;
-        pos.y = m_Flame.transform.position.y;
-        GameObject flame;
-        m_Flame_List = new List<GameObject>();
 
-        for (int i = -1; i < 16; ++i)
-        {
-            for (int j = -1; j < 16; ++j)
-            {
-                pos.x = i * 2.0f;
-                pos.z = j * 2.0f + 50.0f;
-                flame = Instantiate(m_Flame);
-                flame.transform.position = pos;
-                flame.SetActive(false);
-                m_Flame_List.Add(flame);
-            }
-        }
-    }
 
-    void Init_Fire_Range()
-    {
-        // 폭탄 화염 풀링
-        Vector3 pos;
-        pos.y = m_Flame_Range.transform.position.y;
-        GameObject flame_Range;
-        m_Flame_Range_List = new List<GameObject>();
 
-        for (int i = -1; i < 16; ++i)
-        {
-            for (int j = -1; j < 16; ++j)
-            {
-                pos.x = i * 2.0f;
-                pos.z = j * 2.0f + 50.0f;
-                flame_Range = Instantiate(m_Flame_Range);
-                flame_Range.transform.position = pos;
-                flame_Range.SetActive(false);
-                m_Flame_Range_List.Add(flame_Range);
-            }
-        }
-    }
 
-    public void Set_On_Fire(int index)
-    {
-        m_Flame_List[index].SetActive(true);
-        m_Flame_List[index].GetComponent<Fire_Effect>().ResetLifeTime();
-    }
-
-    public void Set_Off_Fire(int index)
-    {
-        m_Flame_List[index].SetActive(false);
-    }
-
-    public void Set_On_Fire_Range(int index)
-    {
-        m_Flame_Range_List[index].SetActive(true);
-    }
-
-    public void Set_Off_Fire_Range(int index)
-    {
-        m_Flame_Range_List[index].SetActive(false);
-    }
-
-    public GameObject Get_Fire_Range(int index)
-    {
-        return m_Flame_Range_List[index];
-    }
 
 
 

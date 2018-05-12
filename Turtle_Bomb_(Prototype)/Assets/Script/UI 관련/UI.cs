@@ -101,13 +101,14 @@ public class UI : MonoBehaviour {
     // 경과시간
     float m_Elapsed_Time = 0.0f;
 
-
+    // 클릭
+    bool m_isClicked = false;
 
     void Awake()
     {
         c_UI = this;
         StageManager.c_Stage_Manager.Init_Left_Time();
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 30;
     }
     
 
@@ -450,4 +451,17 @@ public class UI : MonoBehaviour {
         m_Elapsed_Time = t;
     }
 
+    public void isClicked()
+    {
+        m_isClicked = true;
+    }
+    public void isClickedOff()
+    {
+        m_isClicked = false;
+    }
+
+    public bool Get_isClicked()
+    {
+        return m_isClicked;
+    }
 }
