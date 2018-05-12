@@ -84,7 +84,7 @@ public class PlayerMove : MonoBehaviour {
 
     void Update ()
     {
-        if (m_isAlive && !StageManager.m_is_Stage_Clear && StageManager.c_Stage_Manager.m_is_Intro_Over && !StageManager.c_Stage_Manager.m_is_Pause)
+        if (m_isAlive && !StageManager.c_Stage_Manager.Get_is_Stage_Clear() && StageManager.c_Stage_Manager.Get_is_Intro_Over() && !StageManager.c_Stage_Manager.Get_is_Pause())
         {
             GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 0.0f);
 
@@ -208,7 +208,7 @@ public class PlayerMove : MonoBehaviour {
 
             // 사망 판정
             // 스테이지 클리어시, 맵 이동시는 사망하지 않는다.
-            if ((other.gameObject.tag == "Flame" || other.gameObject.tag == "Flame_Bush" || other.gameObject.tag == "Monster_Attack_Collider") && !StageManager.m_is_Stage_Clear)
+            if ((other.gameObject.tag == "Flame" || other.gameObject.tag == "Flame_Bush" || other.gameObject.tag == "Monster_Attack_Collider") && !StageManager.c_Stage_Manager.Get_is_Stage_Clear())
             {
                 Set_Dead();
             }
@@ -554,7 +554,7 @@ public class PlayerMove : MonoBehaviour {
 
     public void Crouch() // 플레이어 숙이기
     {
-        if(StageManager.c_Stage_Manager.m_is_Intro_Over && !m_isPress_LShift)
+        if(StageManager.c_Stage_Manager.Get_is_Intro_Over() && !m_isPress_LShift)
         {
             if (CrouchButton.m_isClicked)
             {
@@ -577,7 +577,7 @@ public class PlayerMove : MonoBehaviour {
     
     public void BoxPush() // 박스 밀기 시작
     {
-        if (m_isBoxSelected && m_isAbleToPush && StageManager.c_Stage_Manager.m_is_Intro_Over && !m_isCrouch)
+        if (m_isBoxSelected && m_isAbleToPush && StageManager.c_Stage_Manager.Get_is_Intro_Over() && !m_isCrouch)
         {
             // 플레이어 위치 변환
 
@@ -719,7 +719,7 @@ public class PlayerMove : MonoBehaviour {
 	{
         MusicManager.manage_ESound.TryMute();
         m_TurtleMan_Animator.SetBool("TurtleMan_isDead", true);
-        StageManager.c_Stage_Manager.m_is_Pause = true;
+        StageManager.c_Stage_Manager.Set_is_Pause(true);
         m_isAlive = false;
 	}
 

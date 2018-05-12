@@ -1,7 +1,7 @@
 ﻿,Skill ID,1,2,3,4
 ,Skill Name,보스 기본 공격,보스 스킬 공격1,보스 스킬 공격2,보스 스킬 공격3
 ,Description,보스가 몽둥이로 캐릭터 팸,일반 고블린을 소환함,글라이더 고블린을 소환함,몽둥이로 땅을 후려 불꽃이 솟아 오름
-Normal,Boss Speed Value,2,2,2,2
+Normal,Boss Speed Value,3,3,3,3
 ,Skill Time (연출),0,5,5,10
 ,Spawn Monster Value - Min,,3,1,
 ,Spawn Monster Value - Max,,5,2,
@@ -27,7 +27,7 @@ Normal,Boss Speed Value,2,2,2,2
 ,5 Turn Skill Percentage,5%,10%,15%,70%
 ,5 Turn Skill Duration,10,10,10,10
 ,5 Turn Link Skill (Duration 내에 스킬 발동 후 연계 스킬 ID),1,1,1,1
-Angry,Boss Speed Value,2.5,2.5,2.5,2.5
+Angry,Boss Speed Value,4,4,4,4
 ,Skill Time (연출),0,5,5,10
 ,Spawn Monster Value - Min,,4,2,
 ,Spawn Monster Value - Max,,7,3,

@@ -153,7 +153,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b2c920048c5b0b4daedce51425ef51f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Object_temp: []
   m_Object_FireItem: {fileID: 1445955212869970, guid: 1bae4b1396c72c545b168880e8cfdc3c,
     type: 2}
   m_Object_BombItem: {fileID: 1700884374256354, guid: 0be0efcbbd3ebdd45954cfc3a5449ef6,
@@ -164,8 +163,7 @@ MonoBehaviour:
     type: 2}
   m_Object_ThrowItem: {fileID: 1089656375657424, guid: 5b9b2bc73e50fc648942c510106ab3e4,
     type: 2}
-  m_Object_Player: {fileID: 1814952725692748, guid: 70136da78ae65f74988b74da74edf8e5,
-    type: 2}
+  m_Particle: {fileID: 1898993433043882, guid: ab9ce5e15fa5a8949a187e0d70acac71, type: 2}
   m_is_Destroyed: 0
 --- !u!208 &208692789111319316
 NavMeshObstacle:

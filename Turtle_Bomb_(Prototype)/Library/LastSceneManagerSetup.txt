@@ -1,8 +1,4 @@
 sceneSetups:
-<<<<<<< HEAD
-- path: Assets/Scene/Mode_Adventure_(Stage_Select).unity
-=======
 - path: Assets/Scene/Mode_Adventure_Game_Stage.unity
->>>>>>> 0914f4b5ae39af79b65910b139e20591a1f251bc
   isLoaded: 1
   isActive: 1
