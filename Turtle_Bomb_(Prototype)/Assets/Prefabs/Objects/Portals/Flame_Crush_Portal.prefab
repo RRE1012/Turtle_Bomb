@@ -37,6 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4896678729508408}
   - component: {fileID: 198947791557312154}
+  - component: {fileID: 114843254964179780}
   - component: {fileID: 199532393845421978}
   m_Layer: 0
   m_Name: Flame_Crush_Portal
@@ -103,6 +104,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114843254964179780
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1157881108644036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27a597cd4c26e9545988ea7d737498e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Flame_Crash: {fileID: 1784224531714388, guid: c4c7ea95868cd5146a9d1c880dbca975,
+    type: 2}
 --- !u!198 &198362617245325666
 ParticleSystem:
   m_ObjectHideFlags: 1

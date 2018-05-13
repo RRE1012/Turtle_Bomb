@@ -197,11 +197,10 @@ public class Big_Boss_Behavior : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         // 불에 닿을 시 데미지 판정
-        if (!m_isDead && (other.gameObject.tag == "Flame" || other.gameObject.CompareTag("Flame_Bush")))
+		if (!m_isDead && (other.gameObject.CompareTag("Flame") || other.gameObject.CompareTag("Flame_Bush")))
         {
             if (m_curr_Hurt_Time > m_Hurt_CoolTime)
                 Hurt();
-            else m_curr_Hurt_Time += Time.deltaTime;
         }
         //===============================
     }
@@ -213,15 +212,12 @@ public class Big_Boss_Behavior : MonoBehaviour
     
     void Think() // 어떤 행동을 할지 생각하는 함수 (추후 가중치를 두어 어떤 행동을 할지 더 상세하게 구분해야함.)
     {
-        if (m_curr_Mode_Number != Boss_Mode_List.GROGGY_MODE && m_Attack_is_Done && !m_is_Summonning/*(m_Curr_Skill != 0 && (m_curr_Skill_Time >= m_Skill_Time))*/) // 공격중이라면 공격이 끝나야 다른 행동을 할 수 있다. 또는 스킬 사용중이라면..
+		if (m_curr_Mode_Number != Boss_Mode_List.GROGGY_MODE && m_Current_Behavior == m_Behavior_Chase/*(m_Curr_Skill != 0 && (m_curr_Skill_Time >= m_Skill_Time))*/) // 공격중이라면 공격이 끝나야 다른 행동을 할 수 있다. 또는 스킬 사용중이라면..
         {
             if (m_Target_Detector.m_isInRange) // 감지 범위 안이라면
             {
                 Debug.Log("생각해버림");
-                Debug.Log(m_Attack_is_Done);
-                Debug.Log(m_Curr_Skill);
-                Debug.Log(m_curr_Skill_Time);
-                Debug.Log(m_Skill_Time);
+
                 // 추격
                 m_Current_Behavior = m_Behavior_Chase;
                 m_NVAgent.isStopped = false;
@@ -263,6 +259,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                 Think();
 
                 m_curr_Turn_Duration += Time.deltaTime; // 턴 지속시간을 잰다.
+				m_curr_Hurt_Time += Time.deltaTime;
 
                 if (m_curr_Turn_Duration > m_Turn_Duration && m_curr_Skill_Time >= m_Skill_Time)
                     Set_Next_Turn_Skill();
@@ -795,6 +792,8 @@ public class Big_Boss_Behavior : MonoBehaviour
             m_Boss_Animator.SetBool(m_Animation_Dead, true);
             Invoke("Dead", 2.0f);
         }
+
+		Debug.Log ("피격!");
     }
 
 

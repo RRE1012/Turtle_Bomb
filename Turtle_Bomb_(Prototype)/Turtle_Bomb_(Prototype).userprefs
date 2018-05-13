@@ -1,0 +1,14 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script\Object 관련\Flame_Crash.cs">
+    <Files>
+      <File FileName="Assets\Script\각종 AI\Big_Boss_Behavior.cs" Line="219" Column="36" />
+      <File FileName="Assets\Script\Object 관련\Flame_Crash.cs" Line="22" Column="31" />
+      <File FileName="Assets\Script\PlayerMove.cs" Line="289" Column="46" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
