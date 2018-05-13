@@ -16,10 +16,9 @@ public class Flame_Crash : MonoBehaviour {
 			Destroy(gameObject); // 화염 소멸
 	}
 
-	void OnCollisionEnter(Collision collision)
-	{
-		if (collision.gameObject.CompareTag ("Player"))
-			PlayerMove.C_PM.Set_Dead();
-	}
-
+    void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+            PlayerMove.C_PM.Set_Dead();
+    }
 }

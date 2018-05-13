@@ -183,9 +183,11 @@ bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.Audi
 c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingCollider
 45f3431f0103c41611e8d4eec3d439df UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingRenderer
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Item
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Flame_Crash
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.LobbySound
 bbb27c9c17308a8590b6a6ad44b169c5 Assembly-CSharp.dll:.Mode_Select_Scene_Manager
+a1230c455d0c9e5a120633b480723109 Assembly-CSharp.dll:.Flame_Crash_Portal
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Image_Fade
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:DigitalRuby.PyroParticles.FireCollisionForwardScript
 e3659e54bdf8f8724570fa7d451db279 Assembly-CSharp.dll:.Monster_Portal

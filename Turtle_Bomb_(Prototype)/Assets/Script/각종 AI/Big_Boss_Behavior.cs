@@ -216,22 +216,11 @@ public class Big_Boss_Behavior : MonoBehaviour
         {
             if (m_Target_Detector.m_isInRange) // 감지 범위 안이라면
             {
-                Debug.Log("생각해버림");
-
-                // 추격
-                m_Current_Behavior = m_Behavior_Chase;
-                m_NVAgent.isStopped = false;
-                m_Target = m_Target_Detector.GetComponent<Detector_Box>().Get_Target();
-                if (m_Target != null)
-                    m_NVAgent.destination = m_Target.transform.position;
-                m_Loss_Time = 0.0f;
-                m_Boss_Animator.SetBool(m_Animation_Walk, true);
-                m_Boss_Animator.SetBool(m_Animation_idle, false);
+                m_Current_Behavior = m_Behavior_Chase; // 추격 상태로 전환
 
                 if (m_Attack_Detector.m_isInRange && !is_Blocked_Between_Target_And_Me()) // 그리고 공격 범위 안이라면
                 {
                     // 공격
-
                     if (m_is_First_Attack) // 첫 공격인가?
                     {
                         m_AttackTimer = Monster_AI_Constants.Boss_Attack_Time; // 바로 공격함
@@ -330,7 +319,12 @@ public class Big_Boss_Behavior : MonoBehaviour
             {
                 m_Loss_Time += Time.deltaTime;
                 m_NVAgent.isStopped = false;
+                m_Target = m_Target_Detector.GetComponent<Detector_Box>().Get_Target();
+                if (m_Target != null)
+                    m_NVAgent.destination = m_Target.transform.position;
+                m_Loss_Time = 0.0f;
                 m_Boss_Animator.SetBool(m_Animation_Walk, true);
+                m_Boss_Animator.SetBool(m_Animation_idle, false);
             }
 
             else // 잊어버렸다면 기본 위치로 돌아간다.
@@ -360,9 +354,8 @@ public class Big_Boss_Behavior : MonoBehaviour
         while (true)
         {
             if (m_AttackTimer < Monster_AI_Constants.Boss_Attack_Time)
-            {
                 m_AttackTimer += Time.deltaTime; // 공격타이머 증가
-            }
+
             else
             {
                 if (StageManager.c_Stage_Manager.Get_is_Intro_Over() && !StageManager.c_Stage_Manager.Get_Game_Over())
@@ -395,6 +388,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                     }
                     else
                     {
+                        Debug.Log("공격중");
                         if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).fullPathHash == Animator.StringToHash(m_Attack_Motion_Checker))
                         {
                             if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f) // 애니메이션이 끝나면
@@ -408,13 +402,13 @@ public class Big_Boss_Behavior : MonoBehaviour
                                 m_Attack_is_Done = true; // 공격 완료 알림
                             }
 
-                            else if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.6f) // 중간 부분
+                            else if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f) // 중간 부분
                             {
                                 m_Attack_Collider.gameObject.SetActive(false); // 공격용 충돌체를 집어넣는다.
                                 m_Attack_Range_UI.gameObject.SetActive(false); // 범위 표시기도 집어넣는다.
                             }
 
-                            else if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.2f) // 초기 부분
+                            else if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.15f) // 초기 부분
                             {
                                 m_Boss_Animator.SetFloat("Attack_Speed", m_Attack_Speed); // 슬로우모션 후 뒷부분은 빠르게하기 위해..
                                 m_Attack_Collider.gameObject.SetActive(true); // 공격용 충돌체를 꺼낸다.

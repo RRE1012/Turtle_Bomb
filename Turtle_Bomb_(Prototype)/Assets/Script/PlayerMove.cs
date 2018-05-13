@@ -376,7 +376,7 @@ public class PlayerMove : MonoBehaviour {
 
 
 
-        
+        /*
         // 플레이어 회전 관련
         
         if (Input.GetMouseButton(0) && UI.c_UI.Get_isClicked())
@@ -385,7 +385,7 @@ public class PlayerMove : MonoBehaviour {
             transform.Rotate(transform.up, m_RotationX);
         }
         // ====================
-        
+        */
     }
 
 
