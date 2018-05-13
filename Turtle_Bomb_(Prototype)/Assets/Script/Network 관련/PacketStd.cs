@@ -19,8 +19,8 @@ public struct CharInfo
     public float x;
     public float z;
     public float rotateY;
-    
-   
+
+
 }
 public struct TB_Room
 {
@@ -52,15 +52,15 @@ public struct TB_Room
 
 public enum PacketInfo
 {
-    
+
     CharPos = 1,  // 캐릭터 좌표 및 스테이터스
     BombPos,
-    BombExplode,     
+    BombExplode,
     MapData,// 맵 데이터
     ClientID,
     ItemData, // 아이템 데이터
     DeadNotice,      // 적 데이터
-    RoomData,   
+    RoomData,
     RoomAccept,
     RoomCreate,
     ReadyData,        // 오브젝트 데이터

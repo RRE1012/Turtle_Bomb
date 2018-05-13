@@ -39,7 +39,7 @@ public class SceneSwaps : MonoBehaviour {
     }
     public void GoTo_ModeSelect_Scene()
     {
-        Debug.Log("Clicked");
+        //Debug.Log("Clicked");
         SceneManager.LoadScene(1);
     }
 

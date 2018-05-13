@@ -92,7 +92,7 @@ public class TestNet : MonoBehaviour {
         {
             // 폭탄 일정량 상승
             gBomb.gameObject.transform.position = new Vector3(gBomb.gameObject.transform.position.x, (gBomb.gameObject.transform.position.y + (m_Rising_Speed * Time.deltaTime)), gBomb.gameObject.transform.position.z);
-            //Debug.Log("bombBombUp");
+            ////Debug.Log("bombBombUp");
             if (gBomb.gameObject.transform.position.y > 2.0f)
             {
                
@@ -104,7 +104,7 @@ public class TestNet : MonoBehaviour {
 
         else
         {
-            //Debug.Log("bombBombDown");
+            ////Debug.Log("bombBombDown");
             // 폭탄 전방 이동
             switch (direction)
             {
@@ -138,7 +138,7 @@ public class TestNet : MonoBehaviour {
         if (!m_is_Done_Rising && gBomb.gameObject.transform.position.y < m_Rising_Limit)
         {
             // 폭탄 상승
-            Debug.Log("올라간다");
+            //Debug.Log("올라간다");
             gBomb.gameObject.transform.Translate(new Vector3(0.0f, (m_Rising_Speed * Time.deltaTime), 0.0f));
         }
 
@@ -152,7 +152,7 @@ public class TestNet : MonoBehaviour {
         if (m_is_Done_Rising && gBomb.gameObject.transform.position.y > m_Down_Limit)
         {
             // 폭탄 하강
-            Debug.Log("떨어진다");
+            //Debug.Log("떨어진다");
             gBomb.gameObject.transform.Translate(new Vector3(0.0f, -(m_Rising_Speed * Time.deltaTime), 0.0f));
         }
 
@@ -186,7 +186,7 @@ public class TestNet : MonoBehaviour {
             {
                 if (x_dest == (int)bomb_list[g].gameObject.transform.position.x && z_dest == (int)bomb_list[g].gameObject.transform.position.z&& bomb_list[g].gameObject.transform.position.y==0)
                 {
-                    Debug.Log(g + "번째 투척완료!!!");
+                    //Debug.Log(g + "번째 투척완료!!!");
                     bomb_list[g].gameObject.SetActive(false);
                     m_is_rising_start[g] = true;
                     m_is_donerising[g] = false;
@@ -197,7 +197,7 @@ public class TestNet : MonoBehaviour {
                 {
                     // 폭탄 일정량 상승
                     bomb_list[g].gameObject.transform.position = new Vector3(bomb_list[g].gameObject.transform.position.x, (bomb_list[g].gameObject.transform.position.y + (m_Rising_Speed * Time.deltaTime)), bomb_list[g].gameObject.transform.position.z);
-                    //Debug.Log("bombBombUp");
+                    ////Debug.Log("bombBombUp");
                     if (bomb_list[g].gameObject.transform.position.y > 2.0f)
                     {
 
@@ -209,7 +209,7 @@ public class TestNet : MonoBehaviour {
 
                 else
                 {
-                    //Debug.Log("bombBombDown");
+                    ////Debug.Log("bombBombDown");
                     // 폭탄 전방 이동
                     switch (direction)
                     {
@@ -247,7 +247,7 @@ public class TestNet : MonoBehaviour {
                 if (!m_is_donerising[g] && bomb_list[g].gameObject.transform.position.y < m_Rising_Limit)
                 {
                     // 폭탄 상승
-                    //Debug.Log("올라간다");
+                    ////Debug.Log("올라간다");
                     bomb_list[g].gameObject.transform.Translate(new Vector3(0.0f, (m_Rising_Speed * Time.deltaTime), 0.0f));
                 }
 
@@ -261,7 +261,7 @@ public class TestNet : MonoBehaviour {
                 if (m_is_donerising[g] && bomb_list[g].gameObject.transform.position.y > m_Down_Limit && tempBool)
                 {
                     // 폭탄 하강
-                    //Debug.Log("떨어진다");
+                    ////Debug.Log("떨어진다");
                     bomb_list[g].gameObject.transform.Translate(new Vector3(0.0f, -(m_Rising_Speed * Time.deltaTime), 0.0f));
                 }
 

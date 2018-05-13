@@ -232,7 +232,7 @@ public class Big_Boss_Behavior : MonoBehaviour
             {
                 Think();
 
-                Debug.Log(m_Current_Behavior.ToString());
+                //Debug.Log(m_Current_Behavior.ToString());
 
                 m_curr_Turn_Duration += Time.deltaTime; // 턴 지속시간을 잰다.
 				m_curr_Hurt_Time += Time.deltaTime;

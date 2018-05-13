@@ -46,7 +46,7 @@ public class SceneChange : MonoBehaviour
     // "모드 선택 화면"으로 이동
     public void GoTo_ModeSelect_Scene()
     {
-        //Debug.Log("Clicked");
+        ////Debug.Log("Clicked");
         scene = 6;
         swap_scene = true;
 
@@ -92,7 +92,7 @@ public class SceneChange : MonoBehaviour
             {
                 SceneManager.LoadScene(scene);
                 swap_scene = false;
-                //Debug.Log("Go!!");
+                ////Debug.Log("Go!!");
             }
             yield return new WaitForSeconds(0.1f);
         }

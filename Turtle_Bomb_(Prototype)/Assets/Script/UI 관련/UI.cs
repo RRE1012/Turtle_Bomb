@@ -144,6 +144,7 @@ public class UI : MonoBehaviour {
         m_Stage_Clear_UI.SetActive(false);
         m_GameOver_UI.SetActive(false);
         m_Option_UI.SetActive(false);
+
         //m_Ingame_Mission_UI.SetActive(false);
         
         m_fire_count = 1;
@@ -482,8 +483,10 @@ public class UI : MonoBehaviour {
             }
 
             // 시간 텍스트 출력
-            m_TimeLimitText.text = "Time: " + (int)time_Second / 60 + ":" + (int)time_Second % 60;
-            
+            if(time_Second%60<10)
+                m_TimeLimitText.text = "0" + (int)time_Second / 60 + ":0" + (int)time_Second % 60;
+            else
+                m_TimeLimitText.text = "0" + (int)time_Second / 60 + ":" + (int)time_Second % 60;
             Mission_UI_Management(); // 미션 UI 출력
             
             Push_Button_Management(); // 밀기버튼

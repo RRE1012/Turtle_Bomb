@@ -16,7 +16,7 @@ public class IconTester : MonoBehaviour {
         float tempa = (float)(a + 1)%6/10.0f; 
         if (!Turtle_Move.instance.can_kick)
         {
-            icon[0].color = new Color(1.0f, 1.0f, 1.0f, color_a);
+            icon[0].color = new Color(0.25f, 0.25f, 0.25f, 1.0f);
         }
         else
         {
@@ -24,7 +24,7 @@ public class IconTester : MonoBehaviour {
         }
         if (!Turtle_Move.instance.can_throw)
         {
-            icon[1].color = new Color(1.0f, 1.0f, 1.0f, color_a);
+            icon[1].color = new Color(0.25f, 0.25f, 0.25f, 1.0f);
         }
         else
             icon[1].color = new Color(1.0f, 1.0f, 1.0f, 1.0f);

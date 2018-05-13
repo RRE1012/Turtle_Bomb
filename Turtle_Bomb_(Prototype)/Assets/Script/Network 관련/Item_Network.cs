@@ -29,17 +29,17 @@ public class Item_Network : MonoBehaviour {
                 int z = (int)transform.position.z;
                 if (gameObject.CompareTag("Bomb_Item"))
                 {
-                    //Debug.Log("Get Bomb Item");
+                    ////Debug.Log("Get Bomb Item");
                     item_type = 0;
                 }
                 if (gameObject.CompareTag("Fire_Item"))
                 {
-                    //Debug.Log("Get Fire Item");
+                    ////Debug.Log("Get Fire Item");
                     item_type = 1;
                 }
                 if (gameObject.CompareTag("Speed_Item"))
                 {
-                    //Debug.Log("Get Speed Item");
+                    ////Debug.Log("Get Speed Item");
                     item_type = 2;
                 }
                 if (gameObject.CompareTag("Kick_Item"))
@@ -51,7 +51,7 @@ public class Item_Network : MonoBehaviour {
                     item_type = 4;
                 }
 
-                //Debug.Log("Send Item Log");
+                ////Debug.Log("Send Item Log");
                 NetTest.instance.SendItemPacket(x, z, item_type);
                 gameObject.SetActive(false);
             }

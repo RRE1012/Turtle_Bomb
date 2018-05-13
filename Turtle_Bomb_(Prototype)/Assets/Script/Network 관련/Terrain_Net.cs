@@ -10,7 +10,7 @@ public class Terrain_Net : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         SplatPrototype[] tex = new SplatPrototype[1];
-        Debug.Log(VariableManager.instance.map_type);
+        //Debug.Log(VariableManager.instance.map_type);
         tex[0] = new SplatPrototype();
         tex[0].texture = m_terrainmat[VariableManager.instance.map_type];
         tex[0].tileSize = new Vector2(15, 15);

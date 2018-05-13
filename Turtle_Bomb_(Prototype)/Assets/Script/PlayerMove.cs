@@ -182,23 +182,23 @@ public class PlayerMove : MonoBehaviour {
                 Destroy(other.gameObject);
                 MusicManager.manage_ESound.ItemGetSound();
 
-                int temp = Random.Range(1, 3);
+                //int temp = Random.Range(1, 3);
 
-                UI.m_cur_Max_Bomb_Count += temp;
-                UI.m_releasable_bomb_count += temp;
+                UI.m_cur_Max_Bomb_Count += 1; //temp;
+                UI.m_releasable_bomb_count += 1; // temp;
                 if (UI.m_cur_Max_Bomb_Count > MAX_VALUE_ITEM.retval)
                 {
                     UI.m_cur_Max_Bomb_Count = MAX_VALUE_ITEM.retval;
                     UI.m_releasable_bomb_count = MAX_VALUE_ITEM.retval;
                 }
 
-                temp = Random.Range(1, 3);
-                UI.m_fire_count += temp;
+                //temp = Random.Range(1, 3);
+                UI.m_fire_count += 1; // temp;
                 if (UI.m_fire_count > MAX_VALUE_ITEM.retval)
                     UI.m_fire_count = MAX_VALUE_ITEM.retval;
 
-                temp = Random.Range(1, 3);
-                UI.m_speed_count += temp;
+                //temp = Random.Range(1, 3);
+                UI.m_speed_count += 1; // temp;
                 if (UI.m_speed_count > MAX_VALUE_ITEM.retval)
                     UI.m_speed_count = MAX_VALUE_ITEM.retval;
 

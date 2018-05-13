@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scene/Mode_Adventure_Game_Stage.unity
+- path: "D:/\uC878\uC791/\uC911\uAC04\uBC1C\uD45C/Turtle_Bomb_(Prototype)/Assets/Scene/TB_Title.unity"
   isLoaded: 1
   isActive: 1
