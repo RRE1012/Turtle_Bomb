@@ -1,4 +1,4 @@
-Android
+WindowsStandalone
 7001182191becf932c42c1fc6e8520f0 Assembly-CSharp.dll:.Box
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Rock
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Flame_Remains

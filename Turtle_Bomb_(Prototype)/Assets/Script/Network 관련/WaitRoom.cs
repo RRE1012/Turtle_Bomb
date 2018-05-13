@@ -173,13 +173,13 @@ public class WaitRoom : MonoBehaviour {
                     pop.transform.position = new Vector2(touchDeltaPosition.x,touchDeltaPosition.y);
                 //}
             
-            m_text.text = "Touch Position : " + touch.position;
+            //m_text.text = "Touch Position : " + touch.position;
         }
         if (Input.touchCount > 0)
         {
             //Debug.Log("Hi");
             touch2 = Input.GetTouch(0);
-            m_text.text = "Touch Position : " + touch2.position;
+            //m_text.text = "Touch Position : " + touch2.position;
         }
         Vector3 nv= Input.mousePosition;
         if (VariableManager.instance.forceout)

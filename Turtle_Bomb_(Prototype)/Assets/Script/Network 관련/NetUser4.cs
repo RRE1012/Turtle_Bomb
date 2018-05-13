@@ -229,6 +229,12 @@ public class NetUser4 : MonoBehaviour
                     //m_TM.color = new Color(1, 1, 0);
                     //m_TM.text = "Speed Up~";
                     break;
+                case 3:
+                    m_Rplane.sharedMaterial = icon_material[3];
+                    break;
+                case 4:
+                    m_Rplane.sharedMaterial = icon_material[4];
+                    break;
                 default:
                     break;
             }

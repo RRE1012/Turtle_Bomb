@@ -4368,8 +4368,8 @@ MonoBehaviour:
   m_Bomb_Icon: {fileID: 2800000, guid: 17559860e59e2db48b5124672f1dfd0d, type: 3}
   m_Fire_Icon: {fileID: 2800000, guid: 6f6c7cb23dcaeb04fbac49ec3e4135e0, type: 3}
   m_Speed_Icon: {fileID: 2800000, guid: e0646a75a61cbcd4cb9a534d745beb0b, type: 3}
-  m_Kick_Icon: {fileID: 2800000, guid: 6ca24087276fc0b4db47574d139c7c1f, type: 3}
-  m_Throw_Icon: {fileID: 2800000, guid: 52b5f680598e95b4ea96ba4d52484fb3, type: 3}
+  m_Kick_Icon: {fileID: 2800000, guid: d6ff21ee9ca1b384b9f3b4591161d4b4, type: 3}
+  m_Throw_Icon: {fileID: 2800000, guid: a13dc5b5671a6184e9eeb922c105f23c, type: 3}
   m_KickIcon_Animator: {fileID: 730669972}
   m_ThrowIcon_Animator: {fileID: 1129454465}
   m_GetItem_Animator: {fileID: 1124485964}

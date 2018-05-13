@@ -65,7 +65,7 @@
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\ParticleAddEffect.shader" />
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\ParticleBlendEffect.shader" />
  <Reference Include="Assembly-UnityScript">
- <HintPath>C:/Users/WHO/Desktop/Turtle_Bomb/Turtle_Bomb/Turtle_Bomb_(Prototype)/Library/ScriptAssemblies/Assembly-UnityScript.dll</HintPath>
+ <HintPath>D:/졸작/중간발표/Turtle_Bomb_(Prototype)/Library/ScriptAssemblies/Assembly-UnityScript.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
