@@ -20,3 +20,15 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scene/TB_Title.unity
     guid: a61c727e68a20d743878a3f1632e9953
+  - enabled: 1
+    path: Assets/Scene/Mode_VS(Connect).unity
+    guid: b477348d560c66b488fe0da0889f9394
+  - enabled: 1
+    path: Assets/Scene/Mode_VS(WaitRoom).unity
+    guid: cbaa5e22289b76848a290ce25eff5d9c
+  - enabled: 1
+    path: Assets/Scene/Mode_VS(InRoom).unity
+    guid: a653fd4921663a34b92a29f66629f1b8
+  - enabled: 1
+    path: Assets/Scene/Mode_VS(Play).unity
+    guid: 9899fccdf2376b4478112851b2455864

@@ -48,6 +48,7 @@ public class MusicManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         //게임오버 시 게임 씬 브금 서서히 감소
+        source = FindObjectOfType<AudioSource>();
         if (gameover)
         {
             deltatime = deltatime + (Time.deltaTime);

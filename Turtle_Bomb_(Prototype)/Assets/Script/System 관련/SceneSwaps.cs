@@ -49,7 +49,10 @@ public class SceneSwaps : MonoBehaviour {
     {    
         SceneManager.LoadScene(2);
     }
-
+    public void GoTo_Mode_VS_Wait_Scene()
+    {
+        SceneManager.LoadScene(4);
+    }
     // "선택한 해당 스테이지"로 이동
     public void GoTo_Mode_Adventure_Selected_Stage(int stage_ID)
     {

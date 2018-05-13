@@ -38,7 +38,14 @@ public class JoyStickMove : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
         return joystick_HandleImage.rectTransform.anchoredPosition.normalized;
     }
 
-
+    public float GetJoyPosX()
+    {
+        return joystick_HandleImage.rectTransform.anchoredPosition.x;
+    }
+    public float GetJoyPosZ()
+    {
+        return joystick_HandleImage.rectTransform.anchoredPosition.y;
+    }
     public virtual void OnDrag (PointerEventData ped)
     {
         Vector2 localP = Vector2.zero;
@@ -81,6 +88,12 @@ public class JoyStickMove : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
     public bool Get_is_Joystick_First_Touched() // 조이스틱이 먼저냐 회전이 먼저냐!
     {
         if (UI.c_UI.Get_isClicked()) // 이미 회전중이면
+            return false; // 회전이 먼저다!
+        else return true; // 조이스틱이 먼저다!
+    }
+    public bool Get_is_Joystick_First_Touched_Net() // 조이스틱이 먼저냐 회전이 먼저냐!
+    {
+        if (VSModeManager.instance.Get_isClicked()) // 이미 회전중이면
             return false; // 회전이 먼저다!
         else return true; // 조이스틱이 먼저다!
     }
