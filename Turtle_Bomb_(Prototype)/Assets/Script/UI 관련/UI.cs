@@ -16,11 +16,32 @@ public class UI : MonoBehaviour {
     public static GameObject m_Option_UI; // 옵션 버튼
     //GameObject m_Ingame_Mission_UI; // 미션UI
 
-    public Text m_FCT; // 플레이어 화력 텍스트
-    public Text m_BCT; // 플레이어 폭탄 텍스트
-    public Text m_SCT; // 플레이어 스피드 텍스트
-    public Text m_GIT; // 아이템 획득시 출력 텍스트
-    public Text m_TLT; // 시간 텍스트
+    public Text m_FireCountText; // 플레이어 화력 텍스트
+    public Text m_BombCountText; // 플레이어 폭탄 텍스트
+    public Text m_SpeedCountText; // 플레이어 스피드 텍스트
+    public Text m_GetItemText; // 아이템 획득 UI 텍스트
+    public Text m_TimeLimitText; // 시간 텍스트
+    public Text m_NoticeText; // 알림 UI 텍스트
+
+    public RawImage m_GetItemBackground; // 아이템 획득시 출력 이미지
+    public RawImage m_GetItemImage; // 아이템 획득시 출력 이미지
+    public RawImage m_NoticeBackground; // 알림 배경 이미지
+
+    public RawImage m_Boss_HP_Bar; // 보스 HP바 이미지
+    public Texture m_Boss_HP_Character; // 보스 HP바 캐릭터
+    public Animator m_Boss_HP_Character_Animator;
+
+
+    public Texture m_Bomb_Icon;
+    public Texture m_Fire_Icon;
+    public Texture m_Speed_Icon;
+    public Texture m_Kick_Icon;
+    public Texture m_Throw_Icon;
+
+    public Animator m_KickIcon_Animator; // 발차기 아이콘 애니메이터
+    public Animator m_ThrowIcon_Animator; // 던지기 아이콘 애니메이터
+    public Animator m_GetItem_Animator; // 아이템 획득 UI 애니메이터
+    public Animator m_Notice_Animator; // 알림 UI 애니메이터
 
     public Image m_InBushImage; // 부쉬 입장 효과
 
@@ -91,11 +112,8 @@ public class UI : MonoBehaviour {
     public static int m_releasable_bomb_count;
     public static int m_speed_count;
     public static int m_cur_Max_Bomb_Count;
-    // 아이템획득 텍스트에 사용할 string변수
-    public static string m_getItemText;
-    public Text m_Text_StageNum;
-    float m_GIT_CoolTime = 0.0f;
-    float time_Second = 30.0f;
+
+    float time_Second;
 
 
     // 경과시간
@@ -126,10 +144,9 @@ public class UI : MonoBehaviour {
         m_Stage_Clear_UI.SetActive(false);
         m_GameOver_UI.SetActive(false);
         m_Option_UI.SetActive(false);
+
         //m_Ingame_Mission_UI.SetActive(false);
-
-
-        m_getItemText = "";
+        
         m_fire_count = 1;
         m_releasable_bomb_count = 1;
         m_speed_count = 1;
@@ -139,8 +156,11 @@ public class UI : MonoBehaviour {
         m_Set_Bomb_Button.gameObject.SetActive(true);
         m_Throw_Bomb_Button.gameObject.SetActive(false);
 
-        m_Text_StageNum.text = "Stage ID - " + StageManager.c_Stage_Manager.m_Stage_ID.ToString();
-        
+        Stat_UI_Management();
+        GetItemUI_Deactivate();
+        NoticeUI_Deactivate();
+
+
         m_QuestList = new List<Adventure_Quest_Data>();
         StageManager.c_Stage_Manager.GetQuestList(ref m_QuestList);
 
@@ -226,12 +246,15 @@ public class UI : MonoBehaviour {
     
 
     // 아이템 스탯 UI 관리
-    void Stat_UI_Management()
+    public void Stat_UI_Management()
     {
         // 화력, 폭탄 설치 갯수, 스피드 정보 출력
-        m_FCT.text = " : " + m_fire_count.ToString();
-        m_BCT.text = " : " + m_releasable_bomb_count.ToString() + " / " + m_cur_Max_Bomb_Count.ToString();
-        m_SCT.text = " : " + m_speed_count.ToString();
+        m_FireCountText.text = m_fire_count.ToString();
+        if (m_cur_Max_Bomb_Count >= MAX_VALUE_ITEM.retval)
+            m_BombCountText.text = m_releasable_bomb_count.ToString() + " / max";
+        else
+            m_BombCountText.text = m_releasable_bomb_count.ToString() + " / " + m_cur_Max_Bomb_Count.ToString();
+        m_SpeedCountText.text = m_speed_count.ToString();
     }
 
 
@@ -313,6 +336,130 @@ public class UI : MonoBehaviour {
         
     }
 
+
+    public void Kick_Icon_Activate()
+    {
+        m_KickIcon_Animator.SetBool("is_Icon_Activated", true);
+    }
+
+    public void Throw_Icon_Activate()
+    {
+        m_ThrowIcon_Animator.SetBool("is_Icon_Activated", true);
+    }
+
+
+
+
+
+    public void NoticeUI_Activate(int Notice_Num)
+    {
+        switch (Notice_Num)
+        {
+            case 0:
+                m_NoticeText.text = "Air Drop Time !";
+                m_NoticeText.color = new Color(1.0f, 1.0f, 1.0f);
+                break;
+
+            case 1:
+                m_NoticeText.text = "Sudden Death Start !";
+                m_NoticeText.color = new Color(1.0f, 0.0f, 0.0f);
+                break;
+
+            case 2:
+                m_NoticeText.text = "Warning !";
+                m_NoticeText.color = new Color(1.0f, 0.0f, 0.0f);
+                break;
+
+            case 3:
+                m_NoticeText.text = "The Boss is Preparing the Skill !";
+                m_NoticeText.color = new Color(1.0f, 0.0f, 0.0f);
+                break;
+
+            case 4:
+                m_NoticeText.text = "The Boss is summoning the Goblin !";
+                m_NoticeText.color = new Color(1.0f, 0.0f, 0.0f);
+                break;
+        }
+
+        m_NoticeBackground.gameObject.SetActive(true);
+        m_NoticeText.gameObject.SetActive(true);
+        m_Notice_Animator.SetBool("is_Notice_Break;", true);
+        Invoke("NoticeUI_Deactivate", 1.4f);
+    }
+
+    void NoticeUI_Deactivate()
+    {
+        m_Notice_Animator.SetBool("is_Notice_Break", false);
+        m_NoticeBackground.gameObject.SetActive(false);
+        m_NoticeText.gameObject.SetActive(false);
+    }
+
+
+
+
+
+
+    public void GetItemUI_Activate(int Item_Num)
+    {
+        switch(Item_Num)
+        {
+            case 0:
+                m_GetItemText.text = "Bomb Up !";
+                m_GetItemImage.texture = m_Bomb_Icon;
+                break;
+
+            case 1:
+                m_GetItemText.text = "Fire Up !";
+                m_GetItemImage.texture = m_Fire_Icon;
+                break;
+
+            case 2:
+                m_GetItemText.text = "Speed Up !";
+                m_GetItemImage.texture = m_Speed_Icon;
+                break;
+
+            case 3:
+                m_GetItemText.text = "Kick Activated !";
+                m_GetItemImage.texture = m_Kick_Icon;
+                break;
+
+            case 4:
+                m_GetItemText.text = "Throw Activated !";
+                m_GetItemImage.texture = m_Throw_Icon;
+                break;
+
+            case 5:
+                m_GetItemText.text = "You've Got AirDrop !!";
+                m_GetItemImage.texture = m_Bomb_Icon;
+                break;
+        }
+
+        Stat_UI_Management(); // 스탯 갱신
+        
+        
+        m_GetItemBackground.gameObject.SetActive(true);
+        m_GetItemText.gameObject.SetActive(true);
+        m_GetItemImage.gameObject.SetActive(true);
+        m_GetItem_Animator.SetBool("is_Got_Item", true);
+        Invoke("GetItemUI_Deactivate", 1.4f);
+    }
+
+    void GetItemUI_Deactivate()
+    {
+        m_GetItem_Animator.SetBool("is_Got_Item", false);
+        m_GetItemBackground.gameObject.SetActive(false);
+        m_GetItemText.gameObject.SetActive(false);
+        m_GetItemImage.gameObject.SetActive(false);
+    }
+
+
+
+
+
+
+
+
+
     void Update()
     {
         // 스테이지 클리어 후 별 갯수 적용
@@ -336,20 +483,19 @@ public class UI : MonoBehaviour {
             }
 
             // 시간 텍스트 출력
-            m_TLT.text = "Time: " + (int)time_Second / 60 + ":" + (int)time_Second % 60;
-
-            
-            Stat_UI_Management(); // 스탯 UI 출력
-            
+            if(time_Second%60<10)
+                m_TimeLimitText.text = "0" + (int)time_Second / 60 + ":0" + (int)time_Second % 60;
+            else
+                m_TimeLimitText.text = "0" + (int)time_Second / 60 + ":" + (int)time_Second % 60;
             Mission_UI_Management(); // 미션 UI 출력
-
-            m_GIT.text = m_getItemText; // 아이템 획득 텍스트 출력
             
             Push_Button_Management(); // 밀기버튼
             
             HideInBush_Management(); // 부쉬 효과
             
             Throw_Button_Management(); // 던지기 버튼
+
+            StageManager.c_Stage_Manager.Summon_SuddenDeath_Glider();
 
             // 시간촉박 애니매이션 출력, 초기에는 애니매이션을 꺼놨다가 발동 -R
             if (time_Second < 15.0f)
@@ -362,16 +508,6 @@ public class UI : MonoBehaviour {
             {
                 time_Second = 0;
                 PlayerMove.C_PM.Set_Dead();
-            }
-
-            if (m_GIT.text != "")
-            {
-                m_GIT_CoolTime += Time.deltaTime;
-                if (m_GIT_CoolTime >= 2.0f)
-                {
-                    m_getItemText = "";
-                    m_GIT_CoolTime = 0.0f;
-                }
             }
         }
     }
@@ -420,7 +556,6 @@ public class UI : MonoBehaviour {
         m_Ingame_Play_UI.SetActive(false);
         m_Option_UI.SetActive(true);
         StageManager.c_Stage_Manager.Set_is_Pause(true);
-        m_Text_StageNum.text = "Stage ID - " + StageManager.c_Stage_Manager.m_Stage_ID.ToString();
     }
 
     // 옵션의 Return 버튼 (게임으로 돌아가기)
@@ -463,5 +598,38 @@ public class UI : MonoBehaviour {
     public bool Get_isClicked()
     {
         return m_isClicked;
+    }
+
+
+    public void Set_Boss_HP_Bar(float curr_HP)
+    {
+        float Max_HP = StageManager.c_Stage_Manager.Get_Boss_HP();
+        float unit = 100.0f / Max_HP;
+        
+        Vector3 newScale = new Vector3(1.0f, (curr_HP * unit) / 100.0f, 1.0f);
+        m_Boss_HP_Bar.rectTransform.localScale = newScale;
+        
+        Vector3 newPos;
+        newPos.x = m_Boss_HP_Bar.rectTransform.position.x + 0.0f;
+        newPos.y = m_Boss_HP_Bar.rectTransform.position.y - 10.0f;
+        newPos.z = 0.0f;
+        m_Boss_HP_Bar.rectTransform.position = newPos;
+        
+    }
+
+    public void Set_Boss_HP_Character()
+    {
+        m_Boss_HP_Bar.texture = m_Boss_HP_Character;
+    }
+
+    public void Shake_Boss_HP_Character()
+    {
+        m_Boss_HP_Character_Animator.SetBool("is_Hurt", true);
+        Invoke("Set_False_Shake", 0.4f);
+    }
+
+    void Set_False_Shake()
+    {
+        m_Boss_HP_Character_Animator.SetBool("is_Hurt", false);
     }
 }

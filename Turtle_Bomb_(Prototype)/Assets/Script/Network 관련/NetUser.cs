@@ -9,7 +9,7 @@ public class NetUser : MonoBehaviour
     public Text m_TurtleTXT;
     public TextMesh m_TM;
     public GameObject p;
-    bool textmesh_On=false;
+    bool textmesh_On = false;
     byte color = 0;
     byte id = 254;
     bool dead_ani = false;
@@ -17,6 +17,7 @@ public class NetUser : MonoBehaviour
     bool walk_ani = false;
     bool push_ani = false;
     bool kick_ani = false;
+    public GameObject parts;
     Animator m_animator;
     public Material[] icon_material;
     public GameObject m_plane;
@@ -89,11 +90,51 @@ public class NetUser : MonoBehaviour
         }
 
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Bush"))
+        {
+            parts.SetActive(false);
+        }
+    }
 
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Bush"))
+        {
+            parts.SetActive(false);
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Bush"))
+        {
+            parts.SetActive(true);
+        }
+    }
     public void SetText(byte itemtype)
     {
         textmesh_On = true;
 
+        switch (itemtype)
+        {
+            case 11:
+                color = 0;
+                break;
+            case 12:
+                color = 2;
+                break;
+            case 13:
+                color = 1;
+                break;
+            case 14:
+                color = 3;
+                break;
+            case 15:
+                color = 4;
+                break;
+        }
         color = itemtype;
 
     }
@@ -135,7 +176,7 @@ public class NetUser : MonoBehaviour
             m_TM.text = "1P - Dead!!!";
             m_animator.SetBool("TurtleMan_isDead", true);
             Invoke("SetTextOff", 2.0f);
-            
+
             Invoke("SetFalse", 1.1f);
             dead_ani = false;
         }
@@ -148,7 +189,7 @@ public class NetUser : MonoBehaviour
         SetPos(NetTest.instance.GetNetPosx(0), NetTest.instance.GetNetRoty(0), NetTest.instance.GetNetPosz(0));
         if (VariableManager.instance.people_inRoom[0] == 0)
             p.SetActive(false);
-        else if (VariableManager.instance.pos_inRoom-1 == 0)
+        else if (VariableManager.instance.pos_inRoom - 1 == 0)
         {
             p.SetActive(false);
         }
@@ -156,7 +197,7 @@ public class NetUser : MonoBehaviour
         {
             p.SetActive(true);
         }
-        m_TurtleTXT.text = "ID: " + Turtle_Move.instance.GetId();
+        //m_TurtleTXT.text = "ID: " + Turtle_Move.instance.GetId();
         //m_TurtleTXT.text = "X:" + transform.position.x+"\nZ:"+ transform.position.z;
         //m_TM.text = "X:" + transform.position.x;
         if (textmesh_On)
@@ -178,6 +219,12 @@ public class NetUser : MonoBehaviour
                     m_Rplane.sharedMaterial = icon_material[2];
                     //m_TM.color = new Color(1, 1, 0);
                     //m_TM.text = "Speed Up~";
+                    break;
+                case 3:
+                    m_Rplane.sharedMaterial = icon_material[3];
+                    break;
+                case 4:
+                    m_Rplane.sharedMaterial = icon_material[4];
                     break;
                 default:
                     break;

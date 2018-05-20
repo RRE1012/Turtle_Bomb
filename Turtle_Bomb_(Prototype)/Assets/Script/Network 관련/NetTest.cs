@@ -7,7 +7,8 @@ using System.Threading;
 using System.Text;
 using UnityEngine;
 
-public class NetTest : MonoBehaviour {
+public class NetTest : MonoBehaviour
+{
     public static NetTest instance = null;
 
     bool m_ingame = false;
@@ -23,7 +24,7 @@ public class NetTest : MonoBehaviour {
     float deltaTime = 0.0f;
     public static float time_Second = 30.0f;
     private string m_address3 = "127.0.0.1";
-    private string m_address= "13.209.49.50";
+    private string m_address = "13.209.49.50";
     private string m_address2 = "192.168.123.195";
 
     private byte[] R_Map_Info = new byte[225];
@@ -51,9 +52,9 @@ public class NetTest : MonoBehaviour {
 
     // 수신 데이터
     Byte[] recv_data = new Byte[m_packetSize];
-   
-    CharInfo[] m_chardata = new CharInfo[4]; 
-   
+
+    CharInfo[] m_chardata = new CharInfo[4];
+
 
     private void Awake()
     {
@@ -65,7 +66,7 @@ public class NetTest : MonoBehaviour {
     void Start()
     {
         //m_address = Client_IP();
-        ////Debug.Log(m_address);
+        //////Debug.Log(m_address);
         InitializePos();
         client_id.size = 15;
         Connect();
@@ -73,7 +74,7 @@ public class NetTest : MonoBehaviour {
         //StartCoroutine("DebugTest");
     }
 
-    void InitializePos()
+    public void InitializePos()
     {
         m_chardata[0].x = 0;
         m_chardata[0].z = 0;
@@ -95,7 +96,7 @@ public class NetTest : MonoBehaviour {
         //dns.gethostentry = 호스트ip주소를 확인
         //dns.gethostname - 로컬컴퓨터의 호스트 이름을 return
         IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
-        
+
         //임시변수 초기화
         string ClientIP = string.Empty;
         for (int i = 0; i < host.AddressList.Length; i++)
@@ -118,7 +119,7 @@ public class NetTest : MonoBehaviour {
     {
         return game_id;
     }
-   
+
     public void Connect()
     {
         try
@@ -131,11 +132,11 @@ public class NetTest : MonoBehaviour {
             // m_socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 10000);
             m_socket.Connect(ipEndPoint);
             m_socket.NoDelay = true;
-           
+
             m_isConnected = true;
-            
+
             m_socket.SendBufferSize = 0;
-           
+
             //byte[] recvBuffer = new byte[m_packetSize];
             m_socket.BeginReceive(this.recv_data, 0, recv_data.Length, SocketFlags.None,
                              new AsyncCallback(OnReceiveCallBack), m_socket);
@@ -147,18 +148,18 @@ public class NetTest : MonoBehaviour {
             m_socket = null;
             m_isConnected = false;
             Console.WriteLine("{0} Error code: {1}.", e.Message, e.ErrorCode);
-            //Debug.Log("Socket Connect Error.");
-            //Debug.Log("End client communication.");
+            ////Debug.Log("Socket Connect Error.");
+            ////Debug.Log("End client communication.");
         }
         if (m_socket == null)
         {
             Disconnect();
         }
 
-        
+
     }
 
-    
+
     public void Disconnect()
     {
         m_isConnected = false;
@@ -189,14 +190,14 @@ public class NetTest : MonoBehaviour {
         }
         catch (SocketException e)
         {
-            //Debug.Log("전송 에러 : " + e.Message);
+            ////Debug.Log("전송 에러 : " + e.Message);
         }
     }
 
     public void Receive()
     {
-        ////Debug.Log("Recv!!");
-        //Debug.Log("Receive Try");
+        //////Debug.Log("Recv!!");
+        ////Debug.Log("Receive Try");
         m_socket.BeginReceive(this.recv_data, 0, recv_data.Length, SocketFlags.None,
                              new AsyncCallback(OnReceiveCallBack), m_socket);
     }
@@ -206,15 +207,15 @@ public class NetTest : MonoBehaviour {
         {
             Socket tempSock = (Socket)IAR.AsyncState;
             int nReadSize = tempSock.EndReceive(IAR);
-            
-            Buffer.BlockCopy(recv_data,0,copy_data,0+ remain_size, nReadSize);
+
+            Buffer.BlockCopy(recv_data, 0, copy_data, 0 + remain_size, nReadSize);
             remain_size = remain_size + nReadSize;
             if (nReadSize != 0)
             {
                 ProcessPacket(copy_data);
 
             }
-            if (remain_size>=2)
+            if (remain_size >= 2)
             {
                 ProcessPacket(copy_data);
             }
@@ -224,7 +225,7 @@ public class NetTest : MonoBehaviour {
         {
             if (se.SocketErrorCode == SocketError.ConnectionReset)
             {
-                Debug.Log(se);
+                //Debug.Log(se);
                 //this.BeginConnect();
             }
         }
@@ -233,37 +234,37 @@ public class NetTest : MonoBehaviour {
     void SwapBuffer(byte size)
     {
         int temp = size;
-        //Debug.Log("Delete Size: "+temp+ " ");
+        ////Debug.Log("Delete Size: "+temp+ " ");
         Array.Clear(temp_buffer, 0, temp_buffer.Length);
-        ////Debug.Log("Clear Temp Array");
+        //////Debug.Log("Clear Temp Array");
         remain_size = remain_size - temp;
         Buffer.BlockCopy(copy_data, temp, temp_buffer, 0, remain_size);
-        ////Debug.Log("Copy to Temp Array");
-       
+        //////Debug.Log("Copy to Temp Array");
+
         Array.Clear(copy_data, 0, copy_data.Length);
-        ////Debug.Log("Clear Copy Array");
+        //////Debug.Log("Clear Copy Array");
         Buffer.BlockCopy(temp_buffer, 0, copy_data, 0, temp_buffer.Length);
-        ////Debug.Log("Swap Array");
-        //Debug.Log("Remain_Size2 : " + remain_size);
+        //////Debug.Log("Swap Array");
+        ////Debug.Log("Remain_Size2 : " + remain_size);
 
     }
 
     void ProcessPacket(byte[] recv_buff)
     {
-        //Debug.Log("Process P");
+        ////Debug.Log("Process P");
         while (remain_size >= 2)
         {
-            //Debug.Log("This Data : " + copy_data[1] +"\nThis Size:"+ copy_data[0]);
+            ////Debug.Log("This Data : " + copy_data[1] +"\nThis Size:"+ copy_data[0]);
             switch (copy_data[1])
             {
                 case (byte)PacketInfo.ClientID:
                     access_id = copy_data[2];
                     VariableManager.instance.SetID(copy_data[2]);
-                    ////Debug.Log("Get Id!! : " + (byte)access_id);
-                    
+                    //////Debug.Log("Get Id!! : " + (byte)access_id);
+
 
                     SwapBuffer(copy_data[0]);
-                    ////Debug.Log("Remain_Size : " + remain_size);
+                    //////Debug.Log("Remain_Size : " + remain_size);
 
                     break;
                 case (byte)PacketInfo.CharPos:
@@ -277,7 +278,7 @@ public class NetTest : MonoBehaviour {
                     m_chardata[tempid].rotateY = BitConverter.ToSingle(recv_buff, 18);
 
                     SwapBuffer(copy_data[0]);
-                    ////Debug.Log("Remain_Size : " + remain_size);
+                    //////Debug.Log("Remain_Size : " + remain_size);
                     break;
 
                 case (byte)PacketInfo.BombPos:
@@ -286,7 +287,7 @@ public class NetTest : MonoBehaviour {
                     MapManager.instance.Check_Map(recv_buff);
                     //SetCharPos(recv_buff);
                     SwapBuffer(copy_data[0]);
-                    ////Debug.Log("Remain_Size : " + remain_size);
+                    //////Debug.Log("Remain_Size : " + remain_size);
                     break;
                 case (byte)PacketInfo.BombExplode:
                     //폭탄정보 전송(터지는 폭탄)
@@ -295,19 +296,21 @@ public class NetTest : MonoBehaviour {
                     byte tempfirepower = copy_data[2];
                     int tempx = BitConverter.ToInt32(copy_data, 4);
                     int tempz = BitConverter.ToInt32(copy_data, 8);
-                    ////Debug.Log("Start Explode Bomb : " + remain_size);
+                    //////Debug.Log("Start Explode Bomb : " + remain_size);
                     MapManager.instance.Explode_Bomb(tempx, tempz, tempfirepower);
                     */
-                    int tempx = BitConverter.ToInt32(copy_data, 6);
-                    int tempz = BitConverter.ToInt32(copy_data, 10);
+                    byte reloadid = copy_data[6];
+                    Turtle_Move.instance.ReloadBomb(reloadid);
+                    int tempx = BitConverter.ToInt32(copy_data, 7);
+                    int tempz = BitConverter.ToInt32(copy_data, 11);
                     byte[] tempfire_array = new byte[4];
                     Buffer.BlockCopy(copy_data, 2, tempfire_array, 0, 4);
                     MapManager.instance.Explode_Bomb_v2(tempx, tempz, tempfire_array);
                     SwapBuffer(copy_data[0]);
-                    /////Debug.Log("Explode Bomb : " + remain_size);
+                    ///////Debug.Log("Explode Bomb : " + remain_size);
                     break;
                 case (byte)PacketInfo.MapData:
-                    ////Debug.Log("Get MapData!! : ");
+                    //////Debug.Log("Get MapData!! : ");
                     VariableManager.instance.Check_Map(copy_data);
                     SwapBuffer(copy_data[0]);
 
@@ -326,7 +329,7 @@ public class NetTest : MonoBehaviour {
                     SwapBuffer(copy_data[0]);
                     break;
                 case (byte)PacketInfo.GameOver:
-                    Debug.Log("Game Over!!!");
+                    //Debug.Log("Game Over!!!");
                     byte winnerid = copy_data[2];
                     VSModeManager.instance.GameOver_Set(winnerid);
                     SwapBuffer(copy_data[0]);
@@ -342,25 +345,25 @@ public class NetTest : MonoBehaviour {
 
                     break;
                 case (byte)PacketInfo.RoomData:
-                    //Debug.Log("Get Room data");
+                    ////Debug.Log("Get Room data");
                     VariableManager.instance.SetRoomState(copy_data);
-                    //Debug.Log("Room Info Set Complete");
+                    ////Debug.Log("Room Info Set Complete");
                     SwapBuffer(copy_data[0]);
-                    //Debug.Log("Buffer Changed"+remain_size);
+                    ////Debug.Log("Buffer Changed"+remain_size);
                     break;
                 case (byte)PacketInfo.RoomAccept:
-                    Debug.Log("Get Responce");
+                    //Debug.Log("Get Responce");
                     byte temp_bool = copy_data[2];
                     if (temp_bool == 1)
                     {
-                        Debug.Log("Get In");
+                        //Debug.Log("Get In");
                         //방으로 들어가는 함수
                         VariableManager.instance.SetRoomState_Respond(copy_data);
                         SceneChange.instance.GoTo_ModeSelect_Scene();
                     }
                     else
                     {
-                        Debug.Log("Rejected");
+                        //Debug.Log("Rejected");
                     }
                     SwapBuffer(copy_data[0]);
                     break;
@@ -369,25 +372,25 @@ public class NetTest : MonoBehaviour {
                     byte temp_bool2 = copy_data[2];
                     if (temp_bool2 == 1)
                     {
-                        //Debug.Log("Get In");
+                        ////Debug.Log("Get In");
                         //방으로 들어가는 함수
                         VariableManager.instance.SetRoomCreate_Respond(copy_data);
-                        
+
                         SceneChange.instance.GoTo_ModeSelect_Scene();
                     }
                     else
                     {
-                        Debug.Log("Cannot Create Room");
+                        //Debug.Log("Cannot Create Room");
                     }
                     SwapBuffer(copy_data[0]);
-                    //Debug.Log("Swap Data");
+                    ////Debug.Log("Swap Data");
                     break;
                 case (byte)PacketInfo.GameStart:
-                    Debug.Log("Get Game Start Data");
+                    //Debug.Log("Get Game Start Data");
                     byte temp_boolG_S = copy_data[2];
                     if (temp_boolG_S == 1)
                     {
-                        Debug.Log("Get In");
+                        //Debug.Log("Get In");
                         //방으로 들어가는 함수
                         //WaitRoom.instance.SetRoomCreate_Respond(copy_data);
                         m_ingame = true;
@@ -396,7 +399,7 @@ public class NetTest : MonoBehaviour {
                     else
                     {
 
-                        //Debug.Log("Cannot Start");
+                        ////Debug.Log("Cannot Start");
                     }
                     SwapBuffer(copy_data[0]);
                     break;
@@ -411,7 +414,7 @@ public class NetTest : MonoBehaviour {
                     SwapBuffer(copy_data[0]);
                     break;
                 case (byte)PacketInfo.OUTRoom:
-                    
+
                     VariableManager.instance.OutRoom();
                     GameRoom.instance.OutRoom();
 
@@ -419,7 +422,7 @@ public class NetTest : MonoBehaviour {
                     SwapBuffer(copy_data[0]);
                     break;
                 case (byte)PacketInfo.ForceOutRoom:
-                   
+
                     VariableManager.instance.F_OutRoom();
                     GameRoom.instance.OutRoom();
                     SceneChange.instance.GoTo_Wait_Scene();
@@ -428,14 +431,14 @@ public class NetTest : MonoBehaviour {
                 case (byte)PacketInfo.ThrowBomb:
 
                     // MapManager.instance.Throw_BombSet();
-                    Debug.Log("Throw!!Get");
+                    //Debug.Log("Throw!!Get");
                     byte direction2 = copy_data[2];
                     byte tempthrowid = copy_data[3];
                     int tempx2 = BitConverter.ToInt32(copy_data, 4);
                     int tempz2 = BitConverter.ToInt32(copy_data, 8);
                     int tempdx2 = BitConverter.ToInt32(copy_data, 12);
                     int tempdz2 = BitConverter.ToInt32(copy_data, 16);
-                    //Debug.Log("Get convert complete");
+                    ////Debug.Log("Get convert complete");
                     MapManager.instance.Throw_BombSet(tempx2, tempz2, tempdx2, tempdz2, direction2);
                     Turtle_Move.instance.Throw_Case(tempthrowid);
                     SwapBuffer(copy_data[0]);
@@ -481,18 +484,18 @@ public class NetTest : MonoBehaviour {
                     break;
 
                 case (byte)PacketInfo.GetTime:
-                    
+
                     float t_time = BitConverter.ToSingle(copy_data, 2);
-                    //Debug.Log("I got Time"+t_time);
+                    ////Debug.Log("I got Time"+t_time);
                     VariableManager.instance.ChangeTime(t_time);
                     SwapBuffer(copy_data[0]);
                     break;
 
                 default:
-                    Debug.Log(copy_data[1] + "Unknown PacketType!");
-                    if(copy_data[0]==0)
+                    //Debug.Log(copy_data[1] + "Unknown PacketType!");
+                    if (copy_data[0] == 0)
                         SwapBuffer(17);
-                    
+
                     break;
             }
         }
@@ -513,7 +516,7 @@ public class NetTest : MonoBehaviour {
             }
         }
     }
-    
+
     void DispatchReceive()
     {
         if (m_socket == null)
@@ -533,7 +536,7 @@ public class NetTest : MonoBehaviour {
                 if (recvSize == 0)
                 {
                     // 연결 끊기.
-                    //Debug.Log("Disconnect recv from other.");
+                    ////Debug.Log("Disconnect recv from other.");
                     Disconnect();
                 }
                 else if (recvSize > 0)
@@ -667,7 +670,7 @@ public class NetTest : MonoBehaviour {
         Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
         Buffer.BlockCopy(m_packet_roomid, 0, myInfo, 2, m_packet_roomid.Length);
         Buffer.BlockCopy(m_gametype, 0, myInfo, 3, m_gametype.Length);
-        Buffer.BlockCopy(m_mapthema, 0, myInfo,4, m_mapthema.Length);
+        Buffer.BlockCopy(m_mapthema, 0, myInfo, 4, m_mapthema.Length);
         Buffer.BlockCopy(m_mapnum, 0, myInfo, 5, 1);
 
 
@@ -700,8 +703,8 @@ public class NetTest : MonoBehaviour {
 
     }
 
-   
-    public void SendItemPacket(int x, int z,byte t)
+
+    public void SendItemPacket(int x, int z, byte t)
     {
         byte[] myInfo = new byte[13];
         byte t_size = 13;
@@ -713,8 +716,8 @@ public class NetTest : MonoBehaviour {
         byte t_ingameid = Turtle_Move.instance.GetId();
         byte[] m_packet_roomid = BitConverter.GetBytes(t_roomid);
         byte[] m_packet_ingameid = BitConverter.GetBytes(t_ingameid);
-        int tempx = x/2;
-        int tempz = z/2;
+        int tempx = x / 2;
+        int tempz = z / 2;
         byte[] m_item_type = BitConverter.GetBytes(t);
         byte[] m_packet_x = BitConverter.GetBytes(tempx);
         byte[] m_packet_z = BitConverter.GetBytes(tempz);
@@ -726,7 +729,7 @@ public class NetTest : MonoBehaviour {
         Buffer.BlockCopy(m_packet_x, 0, myInfo, 5, m_packet_x.Length);
         Buffer.BlockCopy(m_packet_z, 0, myInfo, 9, m_packet_z.Length);
 
-        
+
         m_socket.Send(myInfo);
 
     }
@@ -741,12 +744,12 @@ public class NetTest : MonoBehaviour {
 
             byte t_type = 1;
             byte[] m_packet_type = BitConverter.GetBytes(t_type);
-            byte t_id = (byte)((int)VariableManager.instance.pos_inRoom-1);
-            
+            byte t_id = (byte)((int)VariableManager.instance.pos_inRoom - 1);
+
             byte[] m_turtle_id = BitConverter.GetBytes(t_id);
             byte t_roomid = VariableManager.instance.m_roomid;
-            
-           
+
+
             byte t_alive = Turtle_Move.instance.alive;
             byte[] t_turtle_alive = BitConverter.GetBytes(t_alive);
             byte[] m_room_id = BitConverter.GetBytes(t_roomid);
@@ -767,14 +770,14 @@ public class NetTest : MonoBehaviour {
             Buffer.BlockCopy(m_turtle_roty, 0, ReceivebTurtles_Pos, 18, m_turtle_roty.Length);
 
 
-            ////Debug.Log(n);
+            //////Debug.Log(n);
             m_socket.Send(ReceivebTurtles_Pos);
-            ////Debug.Log("Send");
+            //////Debug.Log("Send");
 
             m_is_move = false;
         }
     }
-    
+
     void SendMyInfo()
     {
         byte[] myInfo = new byte[12];
@@ -791,7 +794,7 @@ public class NetTest : MonoBehaviour {
         Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
         Buffer.BlockCopy(m_packet_id, 0, myInfo, 2, m_packet_id.Length);
         Buffer.BlockCopy(m_packet_gameid, 0, myInfo, 3, m_packet_gameid.Length);
-        
+
         m_socket.Send(myInfo);
 
 
@@ -808,7 +811,7 @@ public class NetTest : MonoBehaviour {
         byte t_id = VariableManager.instance.m_accessid;
         byte[] m_packet_id = BitConverter.GetBytes(t_id);
         byte t_roomid = VariableManager.instance.GetRoomNum();
-        byte[] m_packet_roomid= BitConverter.GetBytes(t_roomid);
+        byte[] m_packet_roomid = BitConverter.GetBytes(t_roomid);
         Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
         Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
         Buffer.BlockCopy(m_packet_id, 0, myInfo, 2, m_packet_id.Length);
@@ -850,7 +853,7 @@ public class NetTest : MonoBehaviour {
         byte my_pos = GameRoom.instance.pos_inRoom;
         byte[] m_packet_my_pos = BitConverter.GetBytes(my_pos);
         myInfo[3] = my_pos;
-        //Debug.Log(myInfo[3]);
+        ////Debug.Log(myInfo[3]);
         Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
         Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
         Buffer.BlockCopy(m_packet_id, 0, myInfo, 2, m_packet_id.Length);
@@ -915,7 +918,7 @@ public class NetTest : MonoBehaviour {
         byte my_pos = GameRoom.instance.pos_inRoom;
         byte[] m_packet_my_pos = BitConverter.GetBytes(my_pos);
         myInfo[3] = my_pos;
-        //Debug.Log(myInfo[3]);
+        ////Debug.Log(myInfo[3]);
         Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
         Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
         Buffer.BlockCopy(m_packet_id, 0, myInfo, 2, m_packet_id.Length);
@@ -942,7 +945,7 @@ public class NetTest : MonoBehaviour {
         Buffer.BlockCopy(m_clicked_pos, 0, myInfo, 3, 1);
         m_socket.Send(myInfo);
     }
-    public void SendBomb_TPacket(byte direction,int x,int z)
+    public void SendBomb_TPacket(byte direction, int x, int z)
     {
         byte[] myInfo = new byte[13];
         byte t_size = 13;
@@ -958,7 +961,7 @@ public class NetTest : MonoBehaviour {
         byte[] m_bombx = BitConverter.GetBytes(x);
         byte[] m_bombz = BitConverter.GetBytes(z);
 
-        Debug.Log("Direction :" + direction);
+        //Debug.Log("Direction :" + direction);
         Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
         Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
         Buffer.BlockCopy(m_room_num, 0, myInfo, 2, m_room_num.Length);
@@ -986,7 +989,7 @@ public class NetTest : MonoBehaviour {
         byte[] m_bombx = BitConverter.GetBytes(x);
         byte[] m_bombz = BitConverter.GetBytes(z);
 
-        Debug.Log("Direction :" + direction);
+        //Debug.Log("Direction :" + direction);
         Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
         Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
         Buffer.BlockCopy(m_room_num, 0, myInfo, 2, m_room_num.Length);
@@ -1011,12 +1014,12 @@ public class NetTest : MonoBehaviour {
         byte[] m_room_num = BitConverter.GetBytes(t_roomnum);
         byte t_ingameid = Turtle_Move.instance.GetId();
         byte[] m_player_id = BitConverter.GetBytes(t_ingameid);
-       
+
         byte[] m_direction = BitConverter.GetBytes(direction);
         byte[] m_bombx = BitConverter.GetBytes(x);
         byte[] m_bombz = BitConverter.GetBytes(z);
 
-        Debug.Log("Direction :" + direction);
+        //Debug.Log("Direction :" + direction);
         Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
         Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
         Buffer.BlockCopy(m_room_num, 0, myInfo, 2, m_room_num.Length);
@@ -1037,7 +1040,7 @@ public class NetTest : MonoBehaviour {
         byte[] m_packet_type = BitConverter.GetBytes(t_type);
         byte t_roomnum = GameRoom.instance.GetRoomID();
         byte[] m_room_num = BitConverter.GetBytes(t_roomnum);
-        
+
         byte[] m_bombx = BitConverter.GetBytes(x);
         byte[] m_bombz = BitConverter.GetBytes(z);
         Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
@@ -1094,41 +1097,41 @@ public class NetTest : MonoBehaviour {
         bool tempbool = m_set_bomb;
         if (tempbool)
         {
-            byte[] TurtleBomb_Bomb = new byte[12];
+            byte[] TurtleBomb_Bomb = new byte[13];
 
-            byte t_size = 12;
+            byte t_size = 13;
             byte t_type = 2;
             byte t_ingameid = Turtle_Move.instance.GetId();
             byte[] m_player_id = BitConverter.GetBytes(t_ingameid);
             byte[] m_packet_size = BitConverter.GetBytes(t_size);
-            
+
             byte[] m_packet_type = BitConverter.GetBytes(t_type);
 
             byte t_room = VariableManager.instance.m_roomid;
             byte[] m_roomid = BitConverter.GetBytes(t_room);
             byte[] t_turtlefire = BitConverter.GetBytes(Turtle_Move.instance.GetFirePower());
-           
+
 
             Buffer.BlockCopy(m_packet_size, 0, TurtleBomb_Bomb, 0, m_packet_size.Length);
             Buffer.BlockCopy(m_packet_type, 0, TurtleBomb_Bomb, 1, m_packet_type.Length);
             Buffer.BlockCopy(t_turtlefire, 0, TurtleBomb_Bomb, 2, t_turtlefire.Length);
             Buffer.BlockCopy(m_roomid, 0, TurtleBomb_Bomb, 3, m_roomid.Length);
-            
+            Buffer.BlockCopy(m_player_id, 0, TurtleBomb_Bomb, 4, m_player_id.Length);
 
-            Buffer.BlockCopy(m_bomb_posx, 0, TurtleBomb_Bomb, 4, m_bomb_posx.Length);
-            Buffer.BlockCopy(m_bomb_posz, 0, TurtleBomb_Bomb, 8, m_bomb_posz.Length);
-            
+            Buffer.BlockCopy(m_bomb_posx, 0, TurtleBomb_Bomb, 5, m_bomb_posx.Length);
+            Buffer.BlockCopy(m_bomb_posz, 0, TurtleBomb_Bomb, 9, m_bomb_posz.Length);
+
 
             m_socket.Send(TurtleBomb_Bomb);
 
             m_set_bomb = false;
-            ////Debug.Log("폭탄보냄");
+            //////Debug.Log("폭탄보냄");
         }
     }
     IEnumerator SendTester()
     {
 
-        for (;;)
+        for (; ; )
         {
             if (m_ingame)
             {
@@ -1162,15 +1165,15 @@ public class NetTest : MonoBehaviour {
     void Update()
     {
         // 스테이지 클리어 후 별 갯수 적용
-      
-                // 시간 경과
-          
-       deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
-       //time_Second = time_Second - deltaTime;
-          
-          
-           
-      
+
+        // 시간 경과
+
+        deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
+        //time_Second = time_Second - deltaTime;
+
+
+
+
     }
-    
+
 }

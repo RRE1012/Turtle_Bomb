@@ -142,9 +142,9 @@ public class StageManager : MonoBehaviour
 
     bool m_is_Boss_Dead; // 보스 스테이지의 보스 몬스터가 죽었는가?
 
+    bool m_is_SuddenDeath_Summoned = false;
 
-
-
+    public GameObject m_Boss_HP_Bar;
 
 
 
@@ -244,6 +244,8 @@ public class StageManager : MonoBehaviour
 
         CSV_Manager.GetInstance().Get_Adventure_Quest_List(ref m_QuestList, ref m_Adventure_Stage_Data.Adventure_Quest_ID_List); // 퀘스트 데이터 로딩
 
+        m_Boss_HP_Bar.SetActive(false);
+
         if (m_Boss_ID == MAP.NOT_SET) // 설정이 안돼있다면
         {
             foreach (Adventure_Quest_Data questdata in m_QuestList) // 현재 스테이지의 퀘스트를 뒤져본다
@@ -251,6 +253,8 @@ public class StageManager : MonoBehaviour
                 if (questdata.Quest_ID == 4) // 퀘스트 목록에 "보스 몬스터 처치"가 있다면
                 {
                     m_is_Boss_Stage = true; // 해당 스테이지는 보스 스테이지라는 뜻!
+
+                    m_Boss_HP_Bar.SetActive(true);
 
                     // 보스 테이블의 번호를 설정
                     if (m_Stage_ID == 5)
@@ -772,19 +776,23 @@ public class StageManager : MonoBehaviour
 
 
 
-    void Summon_SuddenDeath_Glider() // 서든데스 고블린 소환
+    public void Summon_SuddenDeath_Glider() // 서든데스 고블린 소환
     {
-        if (UI.c_UI.Get_Left_Time() <= m_Adventure_Stage_Data.SuddenDeath_Time)
+        if (!m_is_SuddenDeath_Summoned && UI.c_UI.Get_Left_Time() <= m_Stage_Time_Limit - m_Adventure_Stage_Data.SuddenDeath_Time)
         {
+            UI.c_UI.NoticeUI_Activate(1);
             for (int i = 0; i < m_Adventure_Stage_Data.Number_Of_GliderGoblin; ++i)
                 Instantiate(m_SuddenDeath_JetGoblin).GetComponent<Boss_AI_JetGoblin>().Set_Bomb_info(m_Adventure_Stage_Data.GliderGoblin_Bomb, m_Adventure_Stage_Data.GliderGoblin_Fire);
+            m_is_SuddenDeath_Summoned = true;
         }
     }
 
     void Check_Airplane() // 비행기 체크(소환)
     {
         if (UI.c_UI.Get_Elapsed_Time() >= m_Adventure_Stage_Data.AirDrop_Time)
+        {
             m_Airplane.GetComponent<Airplane>().Dispatch_Airplane(); // 비행기 출발
+        }
     }
 
 
@@ -900,5 +908,10 @@ public class StageManager : MonoBehaviour
     public Adventure_Boss_Data Get_Adventure_Boss_Data() // 보스 데이터를 리턴해준다.
     {
         return m_Adventure_Boss_Data;
+    }
+
+    public float Get_Boss_HP()
+    {
+        return m_Adventure_Boss_Data.Boss_HP;
     }
 }

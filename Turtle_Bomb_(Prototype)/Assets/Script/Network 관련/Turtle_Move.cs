@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class Turtle_Move : MonoBehaviour {
+public class Turtle_Move : MonoBehaviour
+{
     public static Turtle_Move instance;
     int m_Bombindex_X = 0;
     int m_Bombindex_Z = 0;
@@ -12,39 +13,44 @@ public class Turtle_Move : MonoBehaviour {
     float m_BombLocX = 0.0f;
     float m_BombLocZ = 0.0f;
     public GameObject[] m_DropBomb;
-    bool m_YouCanSetBomb=false;
+    bool m_YouCanSetBomb = false;
     byte id = 0;
     public Text[] state_text;
     public Button bombButton;
     public Button throwButton;
     float m_Touch_PrevPoint_X;
 
-    public float m_PlayerSpeed=3.0f;
+    public float m_PlayerSpeed = 3.0f;
     float m_RotateSensX = 150.0f;
-    bool dead_ani=false;
+    bool dead_ani = false;
     bool throw_ani = false;
     bool walk_ani = false;
     bool push_ani = false;
     bool kick_ani = false;
     byte direction;
-    byte fire_power=1;
-    byte bomb_power=1;
-    byte speed_power=1;
-    public bool can_kick=false;
+    byte fire_power = 1;
+    byte bomb_power = 1;
+    byte bomb_set = 1;
+    byte speed_power = 1;
+    public bool can_kick = false;
     public bool can_throw = false;
+    Animator m_TurtleMan_Animator;
+    Animator m_animator;
+    int itemtype=0;
     bool getItem = false;
     bool kick_bomb;
     // 회전 각
     public byte alive = 1;
     float m_RotationX = 0.0f;
-    Animator m_animator;
+    public Animator animator_camera;
     void Awake()
     {
         instance = this;
 
     }
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         m_animator = GetComponent<Animator>();
         //Invoke("SetAnimation", 1.0f);
         fire_power = 1;
@@ -75,12 +81,12 @@ public class Turtle_Move : MonoBehaviour {
 
     void OnCollisionEnter(Collision collision)
     {
-        if (can_kick&&collision.gameObject.CompareTag("Bomb"))
+        if (can_kick && collision.gameObject.CompareTag("Bomb"))
         {
-            
-                //kick_bomb = true;
-                Bomb_Kick();
-            
+
+            //kick_bomb = true;
+            Bomb_Kick();
+
         }
 
     }
@@ -95,7 +101,7 @@ public class Turtle_Move : MonoBehaviour {
             }
 
         }
-        if(other.gameObject.CompareTag("Flame_Bush"))
+        if (other.gameObject.CompareTag("Flame_Bush"))
         {
             alive = 0;
             NetTest.instance.SetmoveTrue();
@@ -111,7 +117,7 @@ public class Turtle_Move : MonoBehaviour {
                 throwButton.gameObject.SetActive(false);
             }
             other.isTrigger = false;
-                
+
 
         }
     }
@@ -133,7 +139,7 @@ public class Turtle_Move : MonoBehaviour {
         {
             switch (m_id)
             {
-                
+
                 case 0:
                     NetUser.instance.SetThrowMotion();
                     break;
@@ -212,13 +218,13 @@ public class Turtle_Move : MonoBehaviour {
     {
         if (id == m_id)
         {
-             walk_ani= true;
+            walk_ani = true;
         }
         else
         {
             switch (m_id)
             {
-                
+
                 case 0:
                     NetUser.instance.SetMoveMotion();
                     break;
@@ -241,7 +247,7 @@ public class Turtle_Move : MonoBehaviour {
         if (id == m_id)
         {
             //죽음
-            throw_ani = true;
+            dead_ani = true;
         }
         else
         {
@@ -268,28 +274,61 @@ public class Turtle_Move : MonoBehaviour {
     }
     public void SetItem_Ability(byte m_id, byte type)
     {
-        if(id == m_id)
+        //getItem = true;
+        /*
+        switch (type)
+        {
+            case 0:
+                bomb_power++;
+                bomb_set++;
+                //Debug.Log("Bomb Up~");
+                break;
+            case 1:
+                fire_power++;
+                //Debug.Log("Fire Up~");
+                break;
+            case 2:
+                speed_power++;
+                //Debug.Log("Speed Up~");
+                break;
+            case 3:
+                can_kick = true;
+                break;
+            case 4:
+                can_throw = true;
+                break;
+            default:
+                break;
+        }*/
+
+        if (id == m_id)
         {
             getItem = true;
             switch (type)
             {
                 case 0:
                     bomb_power++;
-                    Debug.Log("Bomb Up~");
+                    bomb_set++;
+                    itemtype = 0;
+                    //Debug.Log("Bomb Up~");
                     break;
                 case 1:
                     fire_power++;
-                    Debug.Log("Fire Up~");
+                    itemtype = 1;
+                    //Debug.Log("Fire Up~");
                     break;
                 case 2:
                     speed_power++;
-                    Debug.Log("Speed Up~");
+                    itemtype = 2;
+                    //Debug.Log("Speed Up~");
                     break;
                 case 3:
                     can_kick = true;
+                    itemtype = 3;
                     break;
                 case 4:
                     can_throw = true;
+                    itemtype = 4;
                     break;
                 default:
                     break;
@@ -297,7 +336,7 @@ public class Turtle_Move : MonoBehaviour {
         }
         else
         {
-            Debug.Log("Not Mine");
+            //Debug.Log("Not Mine" + id + "!=" + m_id);
             switch (m_id)
             {
                 case 0:
@@ -316,6 +355,7 @@ public class Turtle_Move : MonoBehaviour {
                     break;
             }
         }
+
     }
 
     void SetPosition()
@@ -348,24 +388,27 @@ public class Turtle_Move : MonoBehaviour {
 
         }
     }
-    
 
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 0.0f);
-        state_text[0].text = ""+bomb_power;
+        state_text[0].text = bomb_set + " / " + bomb_power;
         state_text[1].text = "" + fire_power;
         state_text[2].text = "" + speed_power;
         BodyRotation();
+
         if (getItem)
         {
+            VSModeManager.instance.GetItemUI_Activate(itemtype);
             MusicManager.manage_ESound.ItemGetSound();
             getItem = false;
         }
-       
+
         if (dead_ani)
         {
-            Debug.Log("Dead!!!");
+            //Debug.Log("Dead!!!");
             m_animator.SetBool("TurtleMan_isDead", true);
 
             Invoke("SetFalse", 2.1f);
@@ -398,7 +441,7 @@ public class Turtle_Move : MonoBehaviour {
                 NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
 
         }*/
-        
+
         if (JoyStickMove.instance.Get_NormalizedVector() != Vector3.zero)
         {
             Vector3 normal = JoyStickMove.instance.Get_NormalizedVector();
@@ -408,21 +451,24 @@ public class Turtle_Move : MonoBehaviour {
             if (!VSModeManager.instance.game_set)
                 NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
         }
-        
+
         // ==================
         if (Input.GetKey(KeyCode.W))
         {
-            
+
             transform.Translate(new Vector3(0.0f, 0.0f, (m_PlayerSpeed + speed_power) * Time.deltaTime));
             if (!VSModeManager.instance.game_set)
                 NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
-            
+
         }
-        if (Input.GetKey(KeyCode.S)) { transform.Translate(new Vector3(0.0f, 0.0f, -(m_PlayerSpeed + speed_power) * Time.deltaTime));
+        if (Input.GetKey(KeyCode.S))
+        {
+            transform.Translate(new Vector3(0.0f, 0.0f, -(m_PlayerSpeed + speed_power) * Time.deltaTime));
             if (!VSModeManager.instance.game_set)
                 NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
         }
-        if (Input.GetKey(KeyCode.A)) {
+        if (Input.GetKey(KeyCode.A))
+        {
             transform.Translate(new Vector3(-(m_PlayerSpeed + speed_power) * Time.deltaTime, 0.0f, 0.0f));
             if (!VSModeManager.instance.game_set)
                 NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
@@ -433,16 +479,23 @@ public class Turtle_Move : MonoBehaviour {
             if (!VSModeManager.instance.game_set)
                 NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
         }
-        
-        
+
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (!VSModeManager.instance.game_set)
                 SetBomb();
         }
-        
-    }
 
+    }
+    public void ReloadBomb(byte tID)
+    {
+        if (id == tID)
+        {
+            bomb_set++;
+        }
+
+    }
     public byte GetId()
     {
         return id;
@@ -452,59 +505,59 @@ public class Turtle_Move : MonoBehaviour {
         m_YouCanSetBomb = true;
 
         // 폭탄 위치 설정
-        
-            m_Bombindex_X = (int)transform.position.x;
-            m_Bombindex_Z = (int)transform.position.z;
 
-            if (m_Bombindex_X % 2 == 1)
-            {
-                m_BombLocX = m_Bombindex_X + 1.0f;
-            }
-            else if (m_Bombindex_X % 2 == -1)
-            {
-                m_BombLocX = m_Bombindex_X - 1.0f;
-            }
-            else
-                m_BombLocX = m_Bombindex_X;
+        m_Bombindex_X = (int)transform.position.x;
+        m_Bombindex_Z = (int)transform.position.z;
+
+        if (m_Bombindex_X % 2 == 1)
+        {
+            m_BombLocX = m_Bombindex_X + 1.0f;
+        }
+        else if (m_Bombindex_X % 2 == -1)
+        {
+            m_BombLocX = m_Bombindex_X - 1.0f;
+        }
+        else
+            m_BombLocX = m_Bombindex_X;
 
 
-            if (m_Bombindex_Z % 2 == 1)
-            {
-                m_BombLocZ = m_Bombindex_Z + 1.0f;
-            }
-            else if (m_Bombindex_Z % 2 == -1)
-            {
-                m_BombLocZ = m_Bombindex_Z - 1.0f;
-            }
-            else
-                m_BombLocZ = m_Bombindex_Z;
+        if (m_Bombindex_Z % 2 == 1)
+        {
+            m_BombLocZ = m_Bombindex_Z + 1.0f;
+        }
+        else if (m_Bombindex_Z % 2 == -1)
+        {
+            m_BombLocZ = m_Bombindex_Z - 1.0f;
+        }
+        else
+            m_BombLocZ = m_Bombindex_Z;
 
         if (MapManager.instance.Check_BombSet((int)(m_BombLocX / 2), (int)(m_BombLocZ / 2)))
         {
-            Debug.Log("You can't set bomb");
+            //Debug.Log("You can't set bomb");
             m_YouCanSetBomb = false;
 
         }
         // 이미 놓인 폭탄 검사
-        
-            // 폭탄 생성
-            if (m_YouCanSetBomb)
-            {
 
-                
-                NetTest.instance.SetBombPos((int)m_BombLocX, (int)m_BombLocZ,fire_power);
-                NetTest.instance.SendBombPacket();
-                //UI.m_bomb_count = UI.m_bomb_count - 1;
-            }
-        
- 
+        // 폭탄 생성
+        if (m_YouCanSetBomb && bomb_set > 0)
+        {
+
+            bomb_set--;
+            NetTest.instance.SetBombPos((int)m_BombLocX, (int)m_BombLocZ, fire_power);
+            NetTest.instance.SendBombPacket();
+            //UI.m_bomb_count = UI.m_bomb_count - 1;
+        }
+
+
 
     }
 
     public void Box_Push()
     {
         float yRotation = gameObject.transform.eulerAngles.y;
-        //Debug.Log(yRotation);
+        ////Debug.Log(yRotation);
         if (yRotation >= 315.0f || yRotation < 45.0f)
             direction = 3;
         else if (yRotation >= 45.0f && yRotation < 135.0f)
@@ -543,9 +596,9 @@ public class Turtle_Move : MonoBehaviour {
     }
     public void Bomb_Throw() // 폭탄 던지기
     {
-        
+
         float yRotation = gameObject.transform.eulerAngles.y;
-        //Debug.Log(yRotation);
+        ////Debug.Log(yRotation);
         if (yRotation >= 315.0f || yRotation < 45.0f)
             direction = 3;
         else if (yRotation >= 45.0f && yRotation < 135.0f)
@@ -587,7 +640,7 @@ public class Turtle_Move : MonoBehaviour {
     public void Bomb_Kick()
     {
         float yRotation = gameObject.transform.eulerAngles.y;
-        //Debug.Log(yRotation);
+        ////Debug.Log(yRotation);
         if (yRotation >= 315.0f || yRotation < 45.0f)
             direction = 3;
         else if (yRotation >= 45.0f && yRotation < 135.0f)
@@ -651,10 +704,17 @@ public class Turtle_Move : MonoBehaviour {
             }
         }
     }
-
+    public void MakeGameOverAni()
+    {
+        animator_camera.SetTrigger("Dead");
+    }
+    public void AniBomb_Start()
+    {
+        animator_camera.SetTrigger("Ring");
+    }
 
     public void KeyBoard_Move() // 플레이어 이동 및 회전
     {
-       
+
     }
 }

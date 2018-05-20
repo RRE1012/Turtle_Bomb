@@ -29,12 +29,12 @@ public class WaitRoom : MonoBehaviour {
         instance = this;
     }
     void Start () {
-        //Debug.Log("Started");
+        ////Debug.Log("Started");
         StartCoroutine("RoomCheck");
     }
     public void Out()
     {
-        Debug.Log("Disconnect");
+        //Debug.Log("Disconnect");
         NetTest.instance.Disconnect();
         SceneChange.instance.DisConnect();
     }
@@ -53,14 +53,14 @@ public class WaitRoom : MonoBehaviour {
     }
     public void CancelPopMenu()
     {
-        //Debug.Log("Clicked");
+        ////Debug.Log("Clicked");
         pop.SetActive(false);
     }
     
    
     public void ToLeftRoomPage()
     {
-        Debug.Log("Left Page");
+        //Debug.Log("Left Page");
         if (page > 1)
         {
             page -= 1;
@@ -88,12 +88,12 @@ public class WaitRoom : MonoBehaviour {
     {
 
         VariableManager.instance.m_roomid = roomIDarray[0+((page-1)*8)];
-        //Debug.Log(m_roomid);
+        ////Debug.Log(m_roomid);
     }
     public void SetRoomNum1()
     {
         VariableManager.instance.m_roomid = roomIDarray[1 + ((page - 1) * 8)];
-        //Debug.Log(m_roomid);
+        ////Debug.Log(m_roomid);
     }
     public void SetRoomNum2()
     {
@@ -164,7 +164,7 @@ public class WaitRoom : MonoBehaviour {
         for (var i = 0; i < Input.touchCount; ++i)
         {
             Touch touch = Input.GetTouch(i);
-            Debug.Log("Hi3");
+            //Debug.Log("Hi3");
             
                 // Need to put .x
                 //if (touch.position.x > (Screen.width / 2))
@@ -173,13 +173,13 @@ public class WaitRoom : MonoBehaviour {
                     pop.transform.position = new Vector2(touchDeltaPosition.x,touchDeltaPosition.y);
                 //}
             
-            m_text.text = "Touch Position : " + touch.position;
+            //m_text.text = "Touch Position : " + touch.position;
         }
         if (Input.touchCount > 0)
         {
-            Debug.Log("Hi");
+            //Debug.Log("Hi");
             touch2 = Input.GetTouch(0);
-            m_text.text = "Touch Position : " + touch2.position;
+            //m_text.text = "Touch Position : " + touch2.position;
         }
         Vector3 nv= Input.mousePosition;
         if (VariableManager.instance.forceout)

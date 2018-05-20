@@ -46,7 +46,7 @@ public class SceneChange : MonoBehaviour
     // "모드 선택 화면"으로 이동
     public void GoTo_ModeSelect_Scene()
     {
-        //Debug.Log("Clicked");
+        ////Debug.Log("Clicked");
         scene = 6;
         swap_scene = true;
 
@@ -61,7 +61,11 @@ public class SceneChange : MonoBehaviour
 
         //SceneManager.LoadScene(2);
     }
-
+    public void GoTo_Select_Scene()
+    {
+        scene = 1;
+        swap_scene = true;
+    }
     // "선택한 해당 스테이지"로 이동
     public void GoTo_Mode_Adventure_Selected_Stage(int stage_ID)
     {
@@ -88,7 +92,7 @@ public class SceneChange : MonoBehaviour
             {
                 SceneManager.LoadScene(scene);
                 swap_scene = false;
-                //Debug.Log("Go!!");
+                ////Debug.Log("Go!!");
             }
             yield return new WaitForSeconds(0.1f);
         }

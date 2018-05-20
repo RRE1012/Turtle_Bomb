@@ -150,7 +150,7 @@ public class GameRoom : MonoBehaviour {
         for (int t = 0; t < 4; ++t)
             people_inRoom[t] = VariableManager.instance.people_inRoom[t];
         //Buffer.BlockCopy(temparray, 0, people_inRoom, 0, 4);
-        //Debug.Log(people_inRoom);
+        ////Debug.Log(people_inRoom);
         amIguard = VariableManager.instance.is_guardian;
         my_room_num = VariableManager.instance.m_roomid;
         mode = VariableManager.instance.game_mode;
@@ -310,7 +310,7 @@ public class GameRoom : MonoBehaviour {
     }
     // Update is called once per frame
     void Update () {
-        //Debug.Log(turtles.Length);
+        ////Debug.Log(turtles.Length);
         ready_num = 0;
         int people = 0;
         turtles[0].SetActive(true);
@@ -522,7 +522,7 @@ public class GameRoom : MonoBehaviour {
                         byte tempteamcolor = VariableManager.instance.team_Turtle[i];
                         turtles[people+(tempteamcolor*3)].SetActive(true);
                     }
-                    //Debug.Log(people + "th On!!");
+                    ////Debug.Log(people + "th On!!");
                    
                     
                 }

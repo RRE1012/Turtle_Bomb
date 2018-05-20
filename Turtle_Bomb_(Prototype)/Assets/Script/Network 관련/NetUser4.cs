@@ -17,6 +17,7 @@ public class NetUser4 : MonoBehaviour
     bool walk_ani = false;
     bool push_ani = false;
     bool kick_ani = false;
+    public GameObject parts;
     public Material[] icon_material;
     public GameObject m_plane;
     public Renderer m_Rplane;
@@ -32,6 +33,29 @@ public class NetUser4 : MonoBehaviour
         //p = GetComponent<GameObject>();
         //Invoke("IDCheck", 2.0f);
         dead_ani = false;
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Bush"))
+        {
+            parts.SetActive(false);
+        }
+    }
+
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Bush"))
+        {
+            parts.SetActive(false);
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Bush"))
+        {
+            parts.SetActive(true);
+        }
     }
     void SetFalse()
     {
@@ -76,6 +100,25 @@ public class NetUser4 : MonoBehaviour
     public void SetText(byte itemtype)
     {
         textmesh_On = true;
+
+        switch (itemtype)
+        {
+            case 11:
+                color = 0;
+                break;
+            case 12:
+                color = 2;
+                break;
+            case 13:
+                color = 1;
+                break;
+            case 14:
+                color = 3;
+                break;
+            case 15:
+                color = 4;
+                break;
+        }
         color = itemtype;
 
     }
@@ -92,8 +135,8 @@ public class NetUser4 : MonoBehaviour
             {
 
             }
-           // else
-               // StartCoroutine("NetworkCheck");
+            // else
+            // StartCoroutine("NetworkCheck");
         }
     }
     public void SetPos(float x, float y, float z)
@@ -185,6 +228,12 @@ public class NetUser4 : MonoBehaviour
                     m_Rplane.sharedMaterial = icon_material[2];
                     //m_TM.color = new Color(1, 1, 0);
                     //m_TM.text = "Speed Up~";
+                    break;
+                case 3:
+                    m_Rplane.sharedMaterial = icon_material[3];
+                    break;
+                case 4:
+                    m_Rplane.sharedMaterial = icon_material[4];
                     break;
                 default:
                     break;

@@ -17,6 +17,7 @@ public class NetUser3 : MonoBehaviour
     bool push_ani = false;
     bool walk_ani = false;
     bool kick_ani = false;
+    public GameObject parts;
     public Material[] icon_material;
     public GameObject m_plane;
     public Renderer m_Rplane;
@@ -32,6 +33,29 @@ public class NetUser3 : MonoBehaviour
         //p = GetComponent<GameObject>();
         //Invoke("IDCheck", 2.0f);
         m_animator = GetComponent<Animator>();
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Bush"))
+        {
+            parts.SetActive(false);
+        }
+    }
+
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Bush"))
+        {
+            parts.SetActive(false);
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Bush"))
+        {
+            parts.SetActive(true);
+        }
     }
     void SetFalse()
     {
@@ -81,17 +105,35 @@ public class NetUser3 : MonoBehaviour
             {
 
             }
-           // else
-              //  StartCoroutine("NetworkCheck");
+            // else
+            //  StartCoroutine("NetworkCheck");
         }
     }
     public void SetText(byte itemtype)
     {
         textmesh_On = true;
+
+        switch (itemtype)
+        {
+            case 11:
+                color = 0;
+                break;
+            case 12:
+                color = 2;
+                break;
+            case 13:
+                color = 1;
+                break;
+            case 14:
+                color = 3;
+                break;
+            case 15:
+                color = 4;
+                break;
+        }
         color = itemtype;
 
     }
-
     public void SetTextOff()
     {
         m_TM.gameObject.SetActive(false);
@@ -155,7 +197,7 @@ public class NetUser3 : MonoBehaviour
             Invoke("Throw_Ani_False", 1.0f);
             throw_ani = false;
         }
-        if(VariableManager.instance.people_inRoom[2]==0)
+        if (VariableManager.instance.people_inRoom[2] == 0)
             p.SetActive(false);
         else if (VariableManager.instance.pos_inRoom - 1 == 2)
         {
@@ -185,6 +227,12 @@ public class NetUser3 : MonoBehaviour
                     m_Rplane.sharedMaterial = icon_material[2];
                     //m_TM.color = new Color(1, 1, 0);
                     //m_TM.text = "Speed Up~";
+                    break;
+                case 3:
+                    m_Rplane.sharedMaterial = icon_material[3];
+                    break;
+                case 4:
+                    m_Rplane.sharedMaterial = icon_material[4];
                     break;
                 default:
                     break;

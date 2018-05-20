@@ -17,7 +17,7 @@ public class Fire_Effect_Net : MonoBehaviour {
                 
                 if (Turtle_Move.instance.alive != 0)
                 {
-                    Debug.Log("TTaGawa");
+                    //Debug.Log("TTaGawa");
                     Turtle_Move.instance.alive = 0;
                     NetTest.instance.SetmoveTrue();
                 }

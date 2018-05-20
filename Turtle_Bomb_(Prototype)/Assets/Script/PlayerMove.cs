@@ -131,7 +131,7 @@ public class PlayerMove : MonoBehaviour {
                     MusicManager.manage_ESound.ItemGetSound();
                     UI.m_cur_Max_Bomb_Count += 1;
                     UI.m_releasable_bomb_count += 1;
-                    UI.m_getItemText = "Bomb UP~!";
+                    UI.c_UI.GetItemUI_Activate(0);
                 }
             }
             if (other.gameObject.CompareTag("Fire_Item"))
@@ -141,7 +141,7 @@ public class PlayerMove : MonoBehaviour {
                 {
                     MusicManager.manage_ESound.ItemGetSound();
                     UI.m_fire_count += 1;
-                    UI.m_getItemText = "Fire UP~!";
+                    UI.c_UI.GetItemUI_Activate(1);
                 }
             }
             if (other.gameObject.CompareTag("Speed_Item"))
@@ -151,7 +151,7 @@ public class PlayerMove : MonoBehaviour {
                 {
                     MusicManager.manage_ESound.ItemGetSound();
                     UI.m_speed_count += 1;
-                    UI.m_getItemText = "Speed UP~!";
+                    UI.c_UI.GetItemUI_Activate(2);
                 }
             }
             if (other.gameObject.CompareTag("Kick_Item"))
@@ -161,7 +161,8 @@ public class PlayerMove : MonoBehaviour {
                 {
                     MusicManager.manage_ESound.ItemGetSound();
                     m_isGot_KickItem = true;
-                    UI.m_getItemText = "Kick Activated~!";
+                    UI.c_UI.Kick_Icon_Activate();
+                    UI.c_UI.GetItemUI_Activate(3);
                 }
             }
             if (other.gameObject.CompareTag("Throw_Item"))
@@ -171,7 +172,8 @@ public class PlayerMove : MonoBehaviour {
                 {
                     MusicManager.manage_ESound.ItemGetSound();
                     m_isGot_ThrowItem = true;
-                    UI.m_getItemText = "Throw Activated~!";
+                    UI.c_UI.Throw_Icon_Activate();
+                    UI.c_UI.GetItemUI_Activate(4);
                 }
             }
 
@@ -180,27 +182,27 @@ public class PlayerMove : MonoBehaviour {
                 Destroy(other.gameObject);
                 MusicManager.manage_ESound.ItemGetSound();
 
-                int temp = Random.Range(1, 3);
+                //int temp = Random.Range(1, 3);
 
-                UI.m_cur_Max_Bomb_Count += temp;
-                UI.m_releasable_bomb_count += temp;
+                UI.m_cur_Max_Bomb_Count += 1; //temp;
+                UI.m_releasable_bomb_count += 1; // temp;
                 if (UI.m_cur_Max_Bomb_Count > MAX_VALUE_ITEM.retval)
                 {
                     UI.m_cur_Max_Bomb_Count = MAX_VALUE_ITEM.retval;
                     UI.m_releasable_bomb_count = MAX_VALUE_ITEM.retval;
                 }
 
-                temp = Random.Range(1, 3);
-                UI.m_fire_count += temp;
+                //temp = Random.Range(1, 3);
+                UI.m_fire_count += 1; // temp;
                 if (UI.m_fire_count > MAX_VALUE_ITEM.retval)
                     UI.m_fire_count = MAX_VALUE_ITEM.retval;
 
-                temp = Random.Range(1, 3);
-                UI.m_speed_count += temp;
+                //temp = Random.Range(1, 3);
+                UI.m_speed_count += 1; // temp;
                 if (UI.m_speed_count > MAX_VALUE_ITEM.retval)
                     UI.m_speed_count = MAX_VALUE_ITEM.retval;
 
-                UI.m_getItemText = "You've Got AirDrop!!";
+                UI.c_UI.GetItemUI_Activate(5);
             }
             // ========================
 

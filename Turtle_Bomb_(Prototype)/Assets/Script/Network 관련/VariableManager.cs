@@ -67,7 +67,7 @@ public class VariableManager : MonoBehaviour {
             ready_Turtle[i] = 0;
         }
         
-        //Debug.Log(is_guardian);
+        ////Debug.Log(is_guardian);
     }
     public void F_OutRoom()
     {
@@ -133,7 +133,7 @@ public class VariableManager : MonoBehaviour {
         byte[] tempArray = new byte[26];
 
         Buffer.BlockCopy(b, 0, tempArray, 0, 26);
-        //Debug.Log("BlockCopy Completed");
+        ////Debug.Log("BlockCopy Completed");
         byte temproomID = tempArray[2];
         roominfo[temproomID - 1].roomID = temproomID;
         roominfo[temproomID - 1].people_count = tempArray[3];
@@ -185,7 +185,7 @@ public class VariableManager : MonoBehaviour {
                 }
             }
         }
-        //Debug.Log("SEtRoomState Completed");
+        ////Debug.Log("SEtRoomState Completed");
     }
     public void SetRoomState_Respond(byte[] b)
     {
@@ -194,7 +194,7 @@ public class VariableManager : MonoBehaviour {
         Buffer.BlockCopy(b, 0, tempArray, 0, 10);
         m_roomid = tempArray[3];
         pos_inRoom = tempArray[4];
-        Debug.Log(pos_inRoom);
+        //Debug.Log(pos_inRoom);
         pos_guardian = tempArray[5];
         for (byte i = 0; i < 4; ++i)
         {

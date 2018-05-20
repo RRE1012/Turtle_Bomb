@@ -4,7 +4,8 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 //explode에 gameid를 넣어 폭탄 수 reload
-public class MapManager : MonoBehaviour {
+public class MapManager : MonoBehaviour
+{
     public static MapManager instance;
     public GameObject m_bomb;
     public GameObject m_Tbomb;
@@ -65,7 +66,7 @@ public class MapManager : MonoBehaviour {
     int[] sx = new int[32];
     int[] sz = new int[32];
     GameObject[] land1 = new GameObject[225];
-    
+
 
     GameObject[] bush_list = new GameObject[225];
 
@@ -81,31 +82,32 @@ public class MapManager : MonoBehaviour {
     {
         instance = this;
     }
-    
+
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         //NetTest.instance.Receive();
-        
+
         LobbySound.instanceLS.SoundStop();
         for (byte i = 0; i < 4; ++i)
         {
-           
-            if (i==VariableManager.instance.pos_inRoom-1)
+
+            if (i == VariableManager.instance.pos_inRoom - 1)
                 m_turtle[i].SetActive(true);
         }
-        for(int i = 0; i < 50; ++i)
+        for (int i = 0; i < 50; ++i)
         {
             rock_list[i] = Instantiate(m_rock);
-           
+
             rock_list[i].SetActive(false);
             item_s_list[i] = Instantiate(m_item_speed);
-            
+
             item_s_list[i].SetActive(false);
             item_f_list[i] = Instantiate(m_item_fire);
-            
+
             item_f_list[i].SetActive(false);
             item_b_list[i] = Instantiate(m_item_bomb);
-            
+
             item_b_list[i].SetActive(false);
             item_t_list[i] = Instantiate(m_item_throw);
             item_k_list[i] = Instantiate(m_item_kick);
@@ -139,16 +141,16 @@ public class MapManager : MonoBehaviour {
                 dirc_kick[i] = 0;
             }
         }
-        
-		for(int z = 0; z < 15; ++z)
+
+        for (int z = 0; z < 15; ++z)
         {
-            for(int x = 0; x < 15; ++x)
+            for (int x = 0; x < 15; ++x)
             {
                 range_List[(z * 15) + x] = Instantiate(m_explode_warn_range);
                 range_List[(z * 15) + x].transform.position = new Vector3(x * 2, -0.7f, z * 2);
                 range_List[(z * 15) + x].SetActive(false);
                 item_set[(z * 15) + x] = false;
-                rock_set[(z * 15 )+x] = false;
+                rock_set[(z * 15) + x] = false;
                 if (((z * 15) + x) % 2 == 0)
                 {
 
@@ -168,11 +170,11 @@ public class MapManager : MonoBehaviour {
                 box_list[(z * 15) + x] = Instantiate(m_box[VariableManager.instance.map_type]);
                 box_list[(z * 15) + x].transform.position = new Vector3(x * 2, 0, z * 2);
                 box_list[(z * 15) + x].SetActive(false);
-                
+
                 bush_list[(z * 15) + x] = Instantiate(m_bush);
                 bush_list[(z * 15) + x].transform.position = new Vector3(x * 2, -0.75f, z * 2);
                 bush_list[(z * 15) + x].SetActive(false);
-               
+
                 bombexplode_list[(z * 15) + x] = 0;
                 up_bombexplode_list[(z * 15) + x] = 0;
                 down_bombexplode_list[(z * 15) + x] = 0;
@@ -183,57 +185,57 @@ public class MapManager : MonoBehaviour {
         }
         StartCoroutine("CheckMap_v2");
         StartCoroutine("CheckFire");
-	}
-    public void Push_Box_Move(int g, int x, int z, int x_dest,int z_dest,byte direction)
+    }
+    public void Push_Box_Move(int g, int x, int z, int x_dest, int z_dest, byte direction)
     {
         if (g >= 0)
         {
-            
+
             float m_PushBox_Speed = 4.0f;
-            if (x_dest == (int)push_box_list[g].gameObject.transform.position.x && z_dest == (int)push_box_list[g].gameObject.transform.position.z )
+            if (x_dest == (int)push_box_list[g].gameObject.transform.position.x && z_dest == (int)push_box_list[g].gameObject.transform.position.z)
             {
-                Debug.Log(g + "번째 투척완료!!!");
+                //Debug.Log(g + "번째 투척완료!!!");
                 push_box_list[g].gameObject.SetActive(false);
-                
+
                 is_alive_box[g] = false;
                 NetTest.instance.SendBox_Packet(x_dest / 2, z_dest / 2);
             }
             switch (direction)
             {
                 case (byte)1:
-                    //Debug.Log("bombBombDown1");
-                    
+                    ////Debug.Log("bombBombDown1");
+
                     if (push_box_list[g].gameObject.transform.position.x <= x_dest)
                         push_box_list[g].gameObject.transform.Translate(new Vector3((m_PushBox_Speed * Time.deltaTime), 0.0f, 0.0f));
                     else
                         push_box_list[g].gameObject.transform.position = (new Vector3(x_dest, 0, z_dest));
                     break;
                 case (byte)2:
-                    //Debug.Log("bombBombDown2");
-                    
+                    ////Debug.Log("bombBombDown2");
+
                     if (push_box_list[g].gameObject.transform.position.x >= x_dest)
                         push_box_list[g].gameObject.transform.Translate(new Vector3(-(m_PushBox_Speed * Time.deltaTime), 0.0f, 0.0f));
                     else
                         push_box_list[g].gameObject.transform.position = (new Vector3(x_dest, 0, z_dest));
                     break;
                 case (byte)3:
-                    //Debug.Log("bombBombDown3");
-                    
+                    ////Debug.Log("bombBombDown3");
+
                     if (push_box_list[g].gameObject.transform.position.z <= z_dest)
                         push_box_list[g].gameObject.transform.Translate(new Vector3(0.0f, 0.0f, (m_PushBox_Speed * Time.deltaTime)));
                     else
                         push_box_list[g].gameObject.transform.position = (new Vector3(x_dest, 0, z_dest));
                     break;
                 case (byte)4:
-                    //Debug.Log("bombBombDown4");
-                    
+                    ////Debug.Log("bombBombDown4");
+
                     if (push_box_list[g].gameObject.transform.position.z >= z_dest)
                         push_box_list[g].gameObject.transform.Translate(new Vector3(0.0f, 0.0f, -(m_PushBox_Speed * Time.deltaTime)));
                     else
                         push_box_list[g].gameObject.transform.position = (new Vector3(x_dest, 0, z_dest));
                     break;
                 default:
-                    Debug.Log("bombBombDownDefault");
+                    //Debug.Log("bombBombDownDefault");
                     break;
             }
         }
@@ -254,18 +256,18 @@ public class MapManager : MonoBehaviour {
             {
                 if (x_dest == (int)bombT_list[g].gameObject.transform.position.x && z_dest == (int)bombT_list[g].gameObject.transform.position.z && bombT_list[g].gameObject.transform.position.y == 0)
                 {
-                    Debug.Log(g + "번째 투척완료!!!");
+                    //Debug.Log(g + "번째 투척완료!!!");
                     bombT_list[g].gameObject.SetActive(false);
                     m_is_rising_start[g] = true;
                     m_is_donerising[g] = false;
                     is_alive[g] = false;
-                    NetTest.instance.SendBomb_TCPacket(x_dest/2, z_dest/2);
+                    NetTest.instance.SendBomb_TCPacket(x_dest / 2, z_dest / 2);
                 }
                 if (m_is_rising_start[g])
                 {
                     // 폭탄 일정량 상승
                     bombT_list[g].gameObject.transform.position = new Vector3(bombT_list[g].gameObject.transform.position.x, (bombT_list[g].gameObject.transform.position.y + (m_Rising_Speed * Time.deltaTime)), bombT_list[g].gameObject.transform.position.z);
-                    Debug.Log("bombBombUp");
+                    //Debug.Log("bombBombUp");
                     if (bombT_list[g].gameObject.transform.position.y > 2.0f)
                     {
 
@@ -277,12 +279,12 @@ public class MapManager : MonoBehaviour {
 
                 else
                 {
-                    
+
                     // 폭탄 전방 이동
                     switch (direction)
                     {
                         case (byte)1:
-                            Debug.Log("bombBombDown1");
+                            //Debug.Log("bombBombDown1");
                             tempBool = bombT_list[g].gameObject.transform.position.x >= x_dest - 3;
                             if (bombT_list[g].gameObject.transform.position.x <= x_dest)
                                 bombT_list[g].gameObject.transform.Translate(new Vector3((m_Thrown_Bomb_Speed * Time.deltaTime), 0.0f, 0.0f));
@@ -290,7 +292,7 @@ public class MapManager : MonoBehaviour {
                                 bombT_list[g].gameObject.transform.position = (new Vector3(x_dest, bombT_list[g].gameObject.transform.position.y, bombT_list[g].gameObject.transform.position.z));
                             break;
                         case (byte)2:
-                            Debug.Log("bombBombDown2");
+                            //Debug.Log("bombBombDown2");
                             tempBool = bombT_list[g].gameObject.transform.position.x <= x_dest + 3;
                             if (bombT_list[g].gameObject.transform.position.x >= x_dest)
                                 bombT_list[g].gameObject.transform.Translate(new Vector3(-(m_Thrown_Bomb_Speed * Time.deltaTime), 0.0f, 0.0f));
@@ -298,7 +300,7 @@ public class MapManager : MonoBehaviour {
                                 bombT_list[g].gameObject.transform.position = (new Vector3(x_dest, bombT_list[g].gameObject.transform.position.y, bombT_list[g].gameObject.transform.position.z));
                             break;
                         case (byte)3:
-                            Debug.Log("bombBombDown3");
+                            //Debug.Log("bombBombDown3");
                             tempBool = bombT_list[g].gameObject.transform.position.z >= z_dest - 3;
                             if (bombT_list[g].gameObject.transform.position.z <= z_dest)
                                 bombT_list[g].gameObject.transform.Translate(new Vector3(0.0f, 0.0f, (m_Thrown_Bomb_Speed * Time.deltaTime)));
@@ -306,7 +308,7 @@ public class MapManager : MonoBehaviour {
                             //    bomb_list[g].gameObject.transform.position = (new Vector3(bomb_list[g].gameObject.transform.position.x, bomb_list[g].gameObject.transform.position.y, z_dest));
                             break;
                         case (byte)4:
-                            Debug.Log("bombBombDown4");
+                            //Debug.Log("bombBombDown4");
                             tempBool = bombT_list[g].gameObject.transform.position.z <= z_dest + 3;
                             if (bombT_list[g].gameObject.transform.position.z >= z_dest)
                                 bombT_list[g].gameObject.transform.Translate(new Vector3(0.0f, 0.0f, -(m_Thrown_Bomb_Speed * Time.deltaTime)));
@@ -314,7 +316,7 @@ public class MapManager : MonoBehaviour {
                                 bombT_list[g].gameObject.transform.position = (new Vector3(bombT_list[g].gameObject.transform.position.x, bombT_list[g].gameObject.transform.position.y, z_dest));
                             break;
                         default:
-                            Debug.Log("bombBombDownDefault");
+                            //Debug.Log("bombBombDownDefault");
                             break;
                     }
                 }
@@ -322,7 +324,7 @@ public class MapManager : MonoBehaviour {
                 if (!m_is_donerising[g] && bombT_list[g].gameObject.transform.position.y < m_Rising_Limit)
                 {
                     // 폭탄 상승
-                    //Debug.Log("올라간다");
+                    ////Debug.Log("올라간다");
                     bombT_list[g].gameObject.transform.Translate(new Vector3(0.0f, (m_Rising_Speed * Time.deltaTime), 0.0f));
                 }
 
@@ -336,7 +338,7 @@ public class MapManager : MonoBehaviour {
                 if (m_is_donerising[g] && bombT_list[g].gameObject.transform.position.y > m_Down_Limit && tempBool)
                 {
                     // 폭탄 하강
-                   // Debug.Log("떨어진다");
+                    // //Debug.Log("떨어진다");
                     bombT_list[g].gameObject.transform.Translate(new Vector3(0.0f, -(m_Rising_Speed * Time.deltaTime), 0.0f));
                 }
 
@@ -361,65 +363,65 @@ public class MapManager : MonoBehaviour {
         {
 
             float m_PushBox_Speed = 15.0f;
-            
+
             if (x_dest == (int)bombK_list[g].gameObject.transform.position.x && z_dest == (int)bombK_list[g].gameObject.transform.position.z)
             {
-                Debug.Log(g + "번째 투척완료!!!");
+                //Debug.Log(g + "번째 투척완료!!!");
                 bombK_list[g].gameObject.SetActive(false);
 
                 is_alive_kick[g] = false;
                 NetTest.instance.SendKickCom_Packet(x_dest / 2, z_dest / 2);
             }
 
-            
+
             switch (direction)
             {
                 case (byte)1:
-                    //Debug.Log("bombBombDown1");
+                    ////Debug.Log("bombBombDown1");
 
                     if (bombK_list[g].gameObject.transform.position.x <= x_dest)
                     {
-                        
+
                         bombK_list[g].gameObject.transform.Translate(new Vector3((m_PushBox_Speed * Time.deltaTime), 0.0f, 0.0f));
                     }
                     else
                         bombK_list[g].gameObject.transform.position = (new Vector3(x_dest, 0, z_dest));
                     break;
                 case (byte)2:
-                    //Debug.Log("bombBombDown2");
+                    ////Debug.Log("bombBombDown2");
 
                     if (bombK_list[g].gameObject.transform.position.x >= x_dest)
                     {
-                        
+
                         bombK_list[g].gameObject.transform.Translate(new Vector3(-(m_PushBox_Speed * Time.deltaTime), 0.0f, 0.0f));
                     }
                     else
                         bombK_list[g].gameObject.transform.position = (new Vector3(x_dest, 0, z_dest));
                     break;
                 case (byte)3:
-                    //Debug.Log("bombBombDown3");
+                    ////Debug.Log("bombBombDown3");
 
                     if (bombK_list[g].gameObject.transform.position.z <= z_dest)
                     {
-                        
+
                         bombK_list[g].gameObject.transform.Translate(new Vector3(0.0f, 0.0f, (m_PushBox_Speed * Time.deltaTime)));
                     }
                     else
                         bombK_list[g].gameObject.transform.position = (new Vector3(x_dest, 0, z_dest));
                     break;
                 case (byte)4:
-                    //Debug.Log("bombBombDown4");
+                    ////Debug.Log("bombBombDown4");
 
                     if (bombK_list[g].gameObject.transform.position.z >= z_dest)
                     {
-                       
+
                         bombK_list[g].gameObject.transform.Translate(new Vector3(0.0f, 0.0f, -(m_PushBox_Speed * Time.deltaTime)));
                     }
                     else
                         bombK_list[g].gameObject.transform.position = (new Vector3(x_dest, 0, z_dest));
                     break;
                 default:
-                    Debug.Log("bombBombDownDefault");
+                    //Debug.Log("bombBombDownDefault");
                     break;
             }
         }
@@ -431,7 +433,7 @@ public class MapManager : MonoBehaviour {
     public void Check_Map(byte[] mapinfo)
     {
         Buffer.BlockCopy(mapinfo, 2, copy_map_info, 0, 225);
-        
+
     }
     int GetGameObject()
     {
@@ -440,7 +442,7 @@ public class MapManager : MonoBehaviour {
             if (!is_alive[i])
             {
                 is_alive[i] = true;
-                //Debug.Log("I get Bomb~To~Throw");
+                ////Debug.Log("I get Bomb~To~Throw");
                 return i;
             }
         }
@@ -453,7 +455,7 @@ public class MapManager : MonoBehaviour {
             if (!is_alive_kick[i])
             {
                 is_alive_kick[i] = true;
-                //Debug.Log("I get Bomb~To~Throw");
+                ////Debug.Log("I get Bomb~To~Throw");
                 return i;
             }
         }
@@ -466,7 +468,7 @@ public class MapManager : MonoBehaviour {
             if (!is_alive_box[i])
             {
                 is_alive_box[i] = true;
-                //Debug.Log("I get Bomb~To~Throw");
+                ////Debug.Log("I get Bomb~To~Throw");
                 return i;
             }
         }
@@ -486,7 +488,7 @@ public class MapManager : MonoBehaviour {
                             bomb_list[(z * 15) + (x)].SetActive(true);
                         break;
                     case 0: //Nothing
-                        //Debug.Log("Nothing:" + x+","+y);
+                        ////Debug.Log("Nothing:" + x+","+y);
                         break;
                     case 1: //Cube(Box)로
                         if (!box_list[(z * 15) + (x)].activeInHierarchy)
@@ -500,7 +502,7 @@ public class MapManager : MonoBehaviour {
                         if (!item_b_list[(z * 15) + (x)].activeInHierarchy)
                             item_b_list[(z * 15) + (x)].SetActive(true);
                         break;
-                    
+
                     default:
 
                         break;
@@ -524,7 +526,7 @@ public class MapManager : MonoBehaviour {
     }
     public bool Check_BombSet(int x, int z)
     {
-        if(bomb_list[((z * 15) + x)].activeInHierarchy)
+        if (bomb_list[((z * 15) + x)].activeInHierarchy)
             return true;
         else
             return false;
@@ -540,11 +542,11 @@ public class MapManager : MonoBehaviour {
             dz_box[tempx] = dzz * 2;
             dirc_box[tempx] = dircc;
             set_pos_box[tempx] = true;
-            //Debug.Log("SetBombThrow" +dirc[tempx]);
+            ////Debug.Log("SetBombThrow" +dirc[tempx]);
         }
         else
         {
-            Debug.Log("Don't have bomb");
+            //Debug.Log("Don't have bomb");
         }
     }
     public void Kick_BombSet(int x, int z, int dxx, int dzz, byte dircc)
@@ -558,17 +560,17 @@ public class MapManager : MonoBehaviour {
             dz_kick[tempx] = dzz * 2;
             dirc_kick[tempx] = dircc;
             set_pos_kick[tempx] = true;
-            //Debug.Log("SetBombThrow" +dirc[tempx]);
+            ////Debug.Log("SetBombThrow" +dirc[tempx]);
         }
         else
         {
-            Debug.Log("Don't have bomb");
+            //Debug.Log("Don't have bomb");
         }
     }
     public void Throw_BombSet(int x, int z, int dxx, int dzz, byte dircc)
     {
         int tempx = GetGameObject();
-        //Debug.Log("GetGameObjComplete");
+        ////Debug.Log("GetGameObjComplete");
         if (tempx >= 0)
         {
             sx[tempx] = x * 2;
@@ -577,17 +579,18 @@ public class MapManager : MonoBehaviour {
             dz[tempx] = dzz * 2;
             dirc[tempx] = dircc;
             set_pos[tempx] = true;
-            //Debug.Log("SetBombThrow" +dirc[tempx]);
+            ////Debug.Log("SetBombThrow" +dirc[tempx]);
         }
         else
         {
-            Debug.Log("Don't have bomb");
+            //Debug.Log("Don't have bomb");
         }
         //bombT_list[tempx].SetActive(true);
     }
-    
-    void Explode(byte fire_power,int x, int z)
+
+    void Explode(byte fire_power, int x, int z)
     {
+        range_List[(z * 15) + (x)].SetActive(false);
         for (byte y = 1; y <= fire_power; ++y)
         {
             if (x + y < 15)
@@ -600,7 +603,7 @@ public class MapManager : MonoBehaviour {
                 range_List[((z - y) * 15) + x].SetActive(false);
         }
     }
-    void Explode_V2(GameObject bomb,byte up, byte right, byte down, byte left)
+    void Explode_V2(GameObject bomb, byte up, byte right, byte down, byte left)
     {
         GameObject Instance_FlameDir_N;
         GameObject Instance_FlameDir_S;
@@ -613,7 +616,7 @@ public class MapManager : MonoBehaviour {
         {
             Instance_FlameDir_N = Instantiate(m_flame_effect);
             Instance_FlameDir_N.transform.position = new Vector3(bomb.transform.position.x, 0.0f, bomb.transform.position.z + (2.0f * (i + 1)));
-            
+
         }
         for (byte i = 0; i < down; ++i)
         {
@@ -634,7 +637,8 @@ public class MapManager : MonoBehaviour {
         bomb.SetActive(false);
     }
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         //g_text.text = "Player1 x :" + NetTest.instance.GetNetPosx(0) + ", z :" + NetTest.instance.GetNetPosz(0) + "\nPlayer2 x :" + NetTest.instance.GetNetPosx(1) + ", z:" + NetTest.instance.GetNetPosz(1) + "\nPlayer3 x :" + NetTest.instance.GetNetPosx(2) + ", z:" + NetTest.instance.GetNetPosz(2) + "\nPlayer4 x :" + NetTest.instance.GetNetPosx(3) + ", z:" + NetTest.instance.GetNetPosz(3);
         for (int i = 0; i < 32; ++i)
         {
@@ -663,26 +667,26 @@ public class MapManager : MonoBehaviour {
             }
             if (set_pos[i])
             {
-                //Debug.Log("get Throw!!!!");
+                ////Debug.Log("get Throw!!!!");
 
                 is_alive[i] = true;
 
                 bombT_list[i].SetActive(true);
                 bombT_list[i].transform.position = new Vector3(sx[i], 0, sz[i]);
                 set_pos[i] = false;
-                //Debug.Log("Destination  x: " + dx[i] + "z:" + dz[i] + "direction:" + dirc[i]);
+                ////Debug.Log("Destination  x: " + dx[i] + "z:" + dz[i] + "direction:" + dirc[i]);
             }
-            
+
             if (bombT_list[i].gameObject.activeInHierarchy)
             {
 
-                //Debug.Log(dirc[i]);
+                ////Debug.Log(dirc[i]);
                 Thrown_Bomb_Move(i, sx[i], sz[i], dx[i], dz[i], dirc[i]);
             }
             if (bombK_list[i].gameObject.activeInHierarchy)
             {
 
-                //Debug.Log(dirc[i]);
+                ////Debug.Log(dirc[i]);
                 Kick_Bomb_Move(i, sx_kick[i], sz_kick[i], dx_kick[i], dz_kick[i], dirc_kick[i]);
             }
         }
@@ -691,7 +695,7 @@ public class MapManager : MonoBehaviour {
     public void GotoRoom()
     {
         //Time.timeScale = 1;
-        Debug.Log("Go to Room");
+        //Debug.Log("Go to Room");
         LobbySound.instanceLS.SoundStart();
         SceneChange.instance.GoTo_ModeSelect_Scene();
     }
@@ -726,7 +730,7 @@ public class MapManager : MonoBehaviour {
                 for (int i = 0; i < 50; ++i)
                 {
                     if (!item_s_list[i].activeInHierarchy)
-                        return item_f_list[i];
+                        return item_s_list[i];
                 }
                 break;
             case 4:
@@ -746,7 +750,7 @@ public class MapManager : MonoBehaviour {
                 break;
             default:
                 return null;
-                
+
         }
         return null;
     }
@@ -754,9 +758,9 @@ public class MapManager : MonoBehaviour {
     {
         if (LiveList.Count > 0)
         {
-            for(int i=0;i<LiveList.Count;++i)
+            for (int i = 0; i < LiveList.Count; ++i)
             {
-                if (LiveList[i].activeInHierarchy && LiveList[i].transform.position.x == x*2 && LiveList[i].transform.position.z == z*2)
+                if (LiveList[i].activeInHierarchy && LiveList[i].transform.position.x == x * 2 && LiveList[i].transform.position.z == z * 2)
                 {
                     LiveList[i].SetActive(false);
                     LiveList.Remove(LiveList[i]);
@@ -767,7 +771,7 @@ public class MapManager : MonoBehaviour {
     public void GotoLobby()
     {
         //Time.timeScale = 1;
-        Debug.Log("Go to GotoLobby");
+        //Debug.Log("Go to GotoLobby");
         NetTest.instance.SendOUTPacket();
         //난 살아있다를 증명하자
         LobbySound.instanceLS.SoundStart();
@@ -775,8 +779,10 @@ public class MapManager : MonoBehaviour {
     }
     IEnumerator CheckFire()
     {
-        for (;;)
+        for (; ; )
         {
+
+
             for (int z = 0; z < 15; ++z)
             {
                 for (int x = 0; x < 15; ++x)
@@ -784,16 +790,42 @@ public class MapManager : MonoBehaviour {
                     byte fireinfo2 = VariableManager.instance.firepower_list[(z * 15) + (x)];
                     if (fireinfo2 != 0)
                     {
-                        for(byte y=1; y <= fireinfo2; ++y)
+
+                        range_List[(z * 15) + (x)].SetActive(true);
+                        bool upBlocked = false;
+                        bool downBlocked = false;
+                        bool rightBlocked = false;
+                        bool leftBlocked = false;
+                        for (byte y = 1; y <= fireinfo2; ++y)
                         {
-                            if(x+y<15)
-                                range_List[(z * 15) + (x + y)].SetActive(true);
-                            if(x-y>=0)
-                                range_List[(z * 15) + (x - y)].SetActive(true);
-                            if(z+y<15)
-                                range_List[((z+y) * 15) + x].SetActive(true);
-                            if(z-y>=0)
-                                range_List[((z - y) * 15) + x].SetActive(true);
+                            if (x + y < 15 && !rightBlocked)
+                            {
+                                if (rock_set[(z * 15) + (x + y)] || box_list[(z * 15) + (x + y)].activeInHierarchy)
+                                    rightBlocked = true;
+                                if (!rightBlocked)
+                                    range_List[(z * 15) + (x + y)].SetActive(true);
+                            }
+                            if (x - y >= 0 && !leftBlocked)
+                            {
+                                if (rock_set[(z * 15) + (x - y)] || box_list[(z * 15) + (x - y)].activeInHierarchy)
+                                    leftBlocked = true;
+                                if (!leftBlocked)
+                                    range_List[(z * 15) + (x - y)].SetActive(true);
+                            }
+                            if (z + y < 15 && !upBlocked)
+                            {
+                                if (rock_set[((z + y) * 15) + x] || box_list[((z + y) * 15) + x].activeInHierarchy)
+                                    upBlocked = true;
+                                if (!upBlocked)
+                                    range_List[((z + y) * 15) + x].SetActive(true);
+                            }
+                            if (z - y >= 0 && !downBlocked)
+                            {
+                                if (rock_set[((z - y) * 15) + x] || box_list[((z - y) * 15) + x].activeInHierarchy)
+                                    downBlocked = true;
+                                if (!downBlocked)
+                                    range_List[((z - y) * 15) + x].SetActive(true);
+                            }
                         }
                     }
                     //range_List
@@ -806,7 +838,7 @@ public class MapManager : MonoBehaviour {
     IEnumerator CheckMap_v2()
     {
 
-        for (;;)
+        for (; ; )
         {
             for (int z = 0; z < 15; ++z)
             {
@@ -817,19 +849,19 @@ public class MapManager : MonoBehaviour {
                     switch (Tile_Info2)
                     {
                         case 5: //Bomb
-                            if(!bomb_list[(z * 15) + (x)].activeInHierarchy)
+                            if (!bomb_list[(z * 15) + (x)].activeInHierarchy)
                             {
                                 bomb_list[(z * 15) + (x)].SetActive(true);
                                 MusicManager.manage_ESound.BombSetSound();
 
-                                //Debug.Log("Made Bomb");
+                                ////Debug.Log("Made Bomb");
                             }/*
                             else if (bombexplode_list[(z * 15) + (x)] != 0)
                             {
                                 Explode(bombexplode_list[(z * 15) + (x)], bomb_list[((z * 15) + x)]);
                                 bombexplode_list[(z * 15) + (x)] = 0;
                             }*/
-                            
+
                             if (tempbool)
                             {
                                 Explode_V2(bomb_list[((z * 15) + x)], up_bombexplode_list[((z * 15) + x)], right_bombexplode_list[((z * 15) + x)], down_bombexplode_list[((z * 15) + x)], left_bombexplode_list[((z * 15) + x)]);
@@ -840,12 +872,15 @@ public class MapManager : MonoBehaviour {
                             }
                             break;
                         case 0: //Nothing
-                                //Debug.Log("Nothing:" + x+","+y);
-                            Explode(VariableManager.instance.firepower_list[(z * 15) + (x)], x, z);
-                            VariableManager.instance.firepower_list[(z * 15) + (x)] = 0;
+                                ////Debug.Log("Nothing:" + x+","+y);
+                            if (VariableManager.instance.firepower_list[(z * 15) + (x)] != 0)
+                            {
+                                Explode(VariableManager.instance.firepower_list[(z * 15) + (x)], x, z);
+                                VariableManager.instance.firepower_list[(z * 15) + (x)] = 0;
+                            }
                             if (tempbool)
                             {
-                                
+
                                 Explode_V2(bomb_list[((z * 15) + x)], up_bombexplode_list[((z * 15) + x)], right_bombexplode_list[((z * 15) + x)], down_bombexplode_list[((z * 15) + x)], left_bombexplode_list[((z * 15) + x)]);
                                 down_bombexplode_list[((z * 15) + x)] = 0;
                                 up_bombexplode_list[((z * 15) + x)] = 0;
@@ -855,10 +890,10 @@ public class MapManager : MonoBehaviour {
                             bomb_list[((z * 15) + x)].SetActive(false);
                             box_list[(z * 15) + (x)].SetActive(false);
                             item_set[(z * 15) + x] = false;
-                            
+
                             DeleteItem(x, z);
                             bush_list[(z * 15) + (x)].SetActive(false);
-                            
+
                             break;
                         case 1: //Cube(Box)로
                             if (!box_list[(z * 15) + (x)].activeInHierarchy)
@@ -882,7 +917,7 @@ public class MapManager : MonoBehaviour {
                                 tempib.transform.position = new Vector3(x * 2, 0, z * 2);
 
                                 LiveList.Add(tempib);
-                                
+
                                 item_set[(z * 15) + (x)] = true;
                             }
                             break;
@@ -936,7 +971,7 @@ public class MapManager : MonoBehaviour {
                             }
                             break;
                         default:
-                            
+
                             //rock_list[(z * 15) + (x)].SetActive(true);
                             break;
 
