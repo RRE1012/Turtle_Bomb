@@ -1,0 +1,47 @@
+캐릭터 모델링
+로우 폴리곤 캐릭터 기본형 모델링 01
+https://www.youtube.com/watch?v=NPOCh07zFj0
+로우 폴리곤 캐릭터 기본형 모델링 02
+https://www.youtube.com/watch?v=hj7BGixfYxs
+로우 폴리곤 캐릭터 기본형 모델링 03
+https://www.youtube.com/watch?v=T_alhKFFkek
+얼굴 모델링 01
+https://www.youtube.com/watch?v=FrfuMVGEt1M
+얼굴 모델링 02
+https://www.youtube.com/watch?v=xmfOz6RumuA
+
+맵핑
+[독학 3D max 게임그래픽] 14_01
+https://www.youtube.com/watch?v=KtedUNd5X98&t=183s
+[독학 3Ds max 게임그래픽] 14_07. 인물 언랩 준비
+https://www.youtube.com/watch?v=P-nkny8MtjU
+[독학 3Ds max 게임그래픽] 14_08. 심라인 에디팅
+https://www.youtube.com/watch?v=5D62AD_i2ps
+[독학 3Ds max 게임그래픽] 14_09. 펠트와 릴렉스
+https://www.youtube.com/watch?v=Y-StXKV5Un0
+[독학 3Ds max 게임그래픽] 14_10. 멀티오브젝트 언랩
+https://www.youtube.com/watch?v=ejh3v_4DgbE
+[독학 3Ds max 게임그래픽] 14_11. UV와 디퓨즈맵의 관계 이해
+https://www.youtube.com/watch?v=ffs5StE82K4&t=19s
+[독학 3Ds max 게임그래픽] 14_12. 쉐이딩 및 노멀맵 이해
+https://www.youtube.com/watch?v=z7PvCzq6fr8
+[독학 3Ds max 게임그래픽] 14_13. 인물 얼굴 맵핑 정리
+https://www.youtube.com/watch?v=5BONVbAeowI
+
+스키닝
+[독학 3D max 게임그래픽] 16_01. 스키닝 준비
+https://www.youtube.com/watch?v=EF6K3HV26l8&t=10s
+[독학 3D max 게임그래픽] 16_02. 바이패드 구조
+https://www.youtube.com/watch?v=2CVgYfLhOEs
+[독학 3D max 게임그래픽] 16_03. 바이패드 셑업 피겨모드 정면
+https://www.youtube.com/watch?v=hvHU2rr7DKg
+[독학 3D max 게임그래픽] 16_04. 바이패드 셑업 피겨모드 측면
+https://www.youtube.com/watch?v=SFFhAC5FYvs
+[독학 3D max 게임그래픽] 16_05. XForm 리셑
+https://www.youtube.com/watch?v=kWvykiXbzzE
+[독학 3D max 게임그래픽] 16_06. 스킨 모디파이어 적용
+https://www.youtube.com/watch?v=l-2lfqcQ4n0
+[독학 3D max 게임그래픽] 16_07. 웨이트 값 조절
+https://www.youtube.com/watch?v=pQn-bvdezEQ
+[독학 3D max 게임그래픽] 16_08. 웨이트 값 좌우 복사 및 랜더링
+https://www.youtube.com/watch?v=UnICmSFwQ98&t=401s
