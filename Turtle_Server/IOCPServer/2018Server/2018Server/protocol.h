@@ -635,7 +635,62 @@ struct Map_TB {
 };
 
 #pragma pack(pop)
+class Bomb_TB {
+public:
 
+	pair<int, int> xz;
+	float time;
+	bool is_throw;
+	bool is_kicked;
+	unsigned char firepower;
+	float explode_time;
+	unsigned char room_num;
+	unsigned char game_id;
+
+	bool operator ==(const Bomb_TB& other) {
+		return xz == other.xz;
+	}
+
+	Bomb_TB() {
+		time = (float)GetTickCount() / 1000;
+		explode_time = 2.0f;
+		xz = make_pair(0, 0);
+		is_throw = false;
+		is_kicked = false;
+	}
+	Bomb_TB(int a, int b) {
+		time = (float)GetTickCount() / 1000; explode_time = 2.0f;
+		xz = make_pair(a, b);
+		is_throw = false;
+		is_kicked = false;
+	}
+	Bomb_TB(int a, int b, unsigned char r, unsigned char f, unsigned char g) {
+		time = (float)GetTickCount() / 1000; explode_time = 2.0f;
+		room_num = r;
+		firepower = f;
+		game_id = g;
+		xz = make_pair(a, b);
+		is_throw = false;
+		is_kicked = false;
+	}
+	bool GetTime() {
+		float temptime = (float)GetTickCount() / 1000;
+		return (temptime - time >= explode_time) && !is_throw && !is_kicked;
+	}
+	void ResetExplodeTime() {
+		float temptime = (float)GetTickCount() / 1000;
+		temptime = temptime - time;
+		explode_time = explode_time - temptime;
+	}
+	void ResetTime() {
+		time = (float)GetTickCount() / 1000;
+
+	}
+	pair<int, int> GetXZ() {
+		return xz;
+	}
+
+};
 class InGameCalculator {
 	bool id[4];
 	float time;
@@ -644,6 +699,7 @@ class InGameCalculator {
 	
 	
 public:
+	map<pair<int, int>, Bomb_TB> bomb_Map;
 	TB_Map map;
 	TB_CharPos ingame_Char_Info[4];
 	int deathcount;
@@ -769,62 +825,7 @@ Iter myFind(Iter a, Iter b, Value val) {
 
 }
 
-class Bomb_TB {
-public:
-	int x, z;
-	pair<int, int> xz;
-	float time;
-	bool is_throw;
-	bool is_kicked;
-	unsigned char firepower;
-	float explode_time;
-	unsigned char room_num;
-	unsigned char game_id;
 
-	bool operator ==(const Bomb_TB& other) {
-		return xz == other.xz;
-	}
-
-	Bomb_TB() {
-		x = 0; z = 0; time = (float)GetTickCount() / 1000;
-		explode_time = 2.0f;
-		xz = make_pair(x, z);
-		is_throw = false;
-		is_kicked = false;
-	}
-	Bomb_TB(int a, int b) {
-		x = a; z = b; time = (float)GetTickCount() / 1000; explode_time = 2.0f;
-		xz = make_pair(a, b);
-		is_throw = false;
-		is_kicked = false;
-	}
-	Bomb_TB(int a, int b, unsigned char r, unsigned char f, unsigned char g) {
-		x = a; z = b; time = (float)GetTickCount() / 1000; explode_time = 2.0f;
-		room_num = r;
-		firepower = f;
-		game_id = g;
-		xz = make_pair(a, b);
-		is_throw = false;
-		is_kicked = false;
-	}
-	bool GetTime() {
-		float temptime = (float)GetTickCount() / 1000;
-		return (temptime - time >= explode_time) && !is_throw && !is_kicked;
-	}
-	void ResetExplodeTime() {
-		float temptime = (float)GetTickCount() / 1000;
-		temptime = temptime - time;
-		explode_time = explode_time - temptime;
-	}
-	void ResetTime() {
-		time = (float)GetTickCount() / 1000;
-
-	}
-	pair<int, int> GetXZ() {
-		return xz;
-	}
-
-};
 struct EXOVER {
 	WSAOVERLAPPED m_over;
 	char m_iobuf[MAX_BUFF_SIZE];
@@ -864,3 +865,4 @@ public:
 		m_prev_packet_size = 0;
 	}
 };
+

@@ -14,6 +14,8 @@ Map_TB g_TB_Map[3][4];
 list<TB_Room> room_page;
 void SetMap(BYTE, BYTE, BYTE, TB_Map*);
 void SetMapToValue(int, int);
+void Throw_Calculate_Map(int x, int z, BYTE room_num, TB_ThrowBombRE* temppacket, BYTE direction);
+void BoxPush_Calculate_Map(int x, int z, BYTE room_num, TB_BoxPushRE* temppacket, BYTE direction, TB_MapSetRE* tempp);
 void CopyRoomAtoB(TB_Room* a, TB_RoomInfo*b);
 void error_display(const char *msg, int err_no)
 {
@@ -186,6 +188,178 @@ void ProcessPacket(int id, char *packet)
 			gameRoom_Manager[temproomid].deathcount = 0;
 
 
+	}
+		break;
+	case CASE_BOMB:
+	{
+		TB_BombExplode* b_pos = reinterpret_cast<TB_BombExplode*>(packet);
+		int tempx = b_pos->posx;
+		int tempz = b_pos->posz;
+		unsigned char roomid = b_pos->room_id;
+		gameRoom_Manager[roomid].map.mapInfo[tempz][tempx]= MAP_BOMB;
+		unsigned char tempfire = b_pos->firepower;
+		unsigned char tempgameid = b_pos->game_id;
+		//fireMap[roomid - 1][tempz][tempx] = tempfire;
+		TB_BombPos tempbomb = { SIZEOF_TB_BombPos,CASE_BOMB,tempgameid,tempfire,b_pos->room_id,tempx,tempz,0.0f };
+		gameRoom_Manager[roomid].bomb_Map.insert(pair<pair<int, int>, Bomb_TB>(make_pair(tempx, tempz), Bomb_TB(tempx, tempz, roomid, tempfire, tempgameid)));
+		TB_BombSetRE tBomb = { SIZEOF_TB_MapSetRE,CASE_BOMBSET,tempfire,tempx,tempz };
+		auto a = g_clients.begin();
+		for (; a != g_clients.end(); a++) {
+			if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == roomid) {
+
+				SendPacket(a->id - 1, &tBomb);
+			}
+
+		}
+		//retval = send(SocketInfoArray[j].sock, (char*)&tB, sizeof(TB_MapSetRE), 0);
+	}
+		break;
+	case CASE_ITEM_GET:
+		{
+			TB_ItemGet* tempitem = reinterpret_cast<TB_ItemGet*>(packet);
+			temproomid = tempitem->room_id;
+			unsigned char tempid = tempitem->ingame_id;
+
+			unsigned char tempi = tempitem->item_type;
+			printf("%d의 item type 획득\n", tempi);
+			int tempx = tempitem->posx;
+			int tempz = tempitem->posz;
+			bool tempbool = gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] != MAP_NOTHING;
+			printf("bool 초기화\n");
+			if (tempbool) {
+				gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] = MAP_NOTHING;
+				TB_GetItem tempIRE = { SIZEOF_TB_GetItem,CASE_ITEM_GET,tempid,tempi };
+				TB_MapSetRE tMap = { SIZEOF_TB_MapSetRE,CASE_MAPSET,MAP_NOTHING,tempx,tempz };
+				//retval = send(ptr->sock, (char*)&tempIRE, sizeof(TB_GetItem), 0);
+				
+				auto a = g_clients.begin();
+				for (; a != g_clients.end(); a++) {
+					if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
+						SendPacket(a->id - 1, &tempIRE);
+						SendPacket(a->id - 1, &tMap);
+					}
+				}			
+			}
+
+			
+		}
+		break;
+	case CASE_THROWBOMB:
+	{
+		TB_ThrowBomb* tempt = reinterpret_cast<TB_ThrowBomb*>(packet);
+		temproomid = tempt->roomid;
+		unsigned char tempid = tempt->ingame_id;
+		int tempx = tempt->posx;
+		int tempz = tempt->posz;
+		unsigned char tempdirect = tempt->direction;
+		if (gameRoom_Manager[temproomid].bomb_Map.size() > 0) {
+			auto bomb_b = gameRoom_Manager[temproomid].bomb_Map.find(make_pair(tempx, tempz));
+			if (bomb_b != gameRoom_Manager[temproomid].bomb_Map.end()) {
+				TB_ThrowBombRE tempThrow = { SIZEOF_TB_ThrowBombRE,CASE_THROWBOMB,tempdirect,tempid,tempx,tempz };
+				Throw_Calculate_Map(tempx, tempz, temproomid, &tempThrow, tempdirect);
+				gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] = MAP_NOTHING;
+				Bomb_TB tempBomb = Bomb_TB(tempThrow.posx_re, tempThrow.posz_re, temproomid, bomb_b->second.firepower, tempid);
+				tempBomb.time = bomb_b->second.time;
+				tempBomb.ResetExplodeTime();
+				tempBomb.is_throw = true;
+				TB_MapSetRE tMap = { SIZEOF_TB_MapSetRE,CASE_MAPSET,MAP_NOTHING,tempx,tempz };
+				gameRoom_Manager[temproomid].bomb_Map.insert(pair<pair<int, int>, Bomb_TB>(make_pair(tempThrow.posx_re, tempThrow.posz_re), tempBomb));
+				gameRoom_Manager[temproomid].bomb_Map.erase(bomb_b);
+				auto a = g_clients.begin();
+				for (; a != g_clients.end(); a++) {
+					if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
+						SendPacket(a->id - 1, &tMap);
+						SendPacket(a->id - 1, &tempThrow);
+					}
+
+				}
+			}
+		}
+	}
+	break;
+	case CASE_THROWCOMPLETE:
+	{
+			TB_ThrowComplete* tempt = reinterpret_cast<TB_ThrowComplete*>(packet);
+			temproomid = tempt->roomid;
+			int tempx = tempt->posx;
+			int tempz = tempt->posz;
+			gameRoom_Manager[temproomid].map.mapInfo[tempx][tempz] = MAP_BOMB;
+			TB_BombSetRE tB = { SIZEOF_TB_MapSetRE,CASE_BOMBSET,MAP_BOMB,tempx,tempz };
+			gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].is_throw = false;
+			gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].ResetTime();
+			//fireMap[temproomid - 1][tempz][tempx] = bomb_Map[temproomid - 1][pair<int, int>(tempx, tempz)].firepower;
+			auto a = g_clients.begin();
+			for (; a != g_clients.end(); a++) {
+				if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
+					SendPacket(a->id - 1, &tB);
+					
+				}
+
+			}
+		
+
+						
+
+				
+
+			
+	}
+		break;
+	case CASE_BOXPUSH:
+		{
+			TB_BoxPush* tB = reinterpret_cast<TB_BoxPush*>(packet);
+
+			unsigned char tempdirc = tB->direction;
+			unsigned char temproomid = tB->roomid;
+			unsigned char tempid = tB->ingame_id;
+			int tempx = tB->posx;
+			int tempz = tB->posz;
+
+
+			TB_MapSetRE tMap = { SIZEOF_TB_MapSetRE,CASE_MAPSET,MAP_NOTHING,tempx,tempz };
+			TB_BoxPushRE tBox = { SIZEOF_TB_BoxPushRE, CASE_BOXPUSH,0,tempid };
+			BoxPush_Calculate_Map(tempx, tempz, temproomid, &tBox, tempdirc, &tMap);
+			printf("box받았다!!!\n");
+			auto a = g_clients.begin();
+			for (; a != g_clients.end(); a++) {
+				if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
+					if (tBox.push == 1)
+						SendPacket(a->id - 1, &tMap);
+					SendPacket(a->id - 1, &tBox);
+					
+				}
+
+			}
+		
+						//printf("보냈다 패킷!!!\n");
+					
+						
+			
+		}
+		break;
+	case CASE_BOXPUSHCOMPLETE:
+	{
+			TB_BoxPushComplete* tB = reinterpret_cast<TB_BoxPushComplete*>(packet);
+			printf("boxcom받았다!!!\n");
+			temproomid = tB->roomid;
+			int tempx = tB->posx;
+			int tempz = tB->posz;
+			gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] = MAP_BOX;
+			TB_MapSetRE tBd = { SIZEOF_TB_MapSetRE,CASE_MAPSET,MAP_BOX,tempx,tempz };
+			
+			auto a = g_clients.begin();
+			for (; a != g_clients.end(); a++) {
+				if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
+					SendPacket(a->id - 1, &tBd);
+
+				}
+
+			}
+
+						
+
+
+			
 	}
 		break;
 	case CASE_JOINROOM:
@@ -928,5 +1102,213 @@ void CopyRoomAtoB(TB_Room* a, TB_RoomInfo*b) {
 	b->game_start = a->game_start;
 	b->people_max = a->people_max;
 	b->people_count = a->people_count;
+
+}
+void BoxPush_Calculate_Map(int x, int z, BYTE room_num, TB_BoxPushRE* temppacket, BYTE direction, TB_MapSetRE* tempp) {
+	BYTE tempMap[15][15];
+	memcpy(tempMap, gameRoom_Manager[room_num].map.mapInfo, sizeof(tempMap));
+	//tempMap[z][x] = MAP_NOTHING;
+	int tempx = x;
+	int tempz = z;
+	int startx = x;
+	int startz = z;
+	temppacket->push = 0;
+	//direction에따라 어디로 차는지 알고 검색 1-우 2-좌 3-하 4-상
+	switch (direction) {
+	case 1:
+
+		if (tempx > 14) {
+			temppacket->push = 0;
+			tempx = 14;
+		}
+		else if (tempMap[z][x + 1] == MAP_NOTHING || tempMap[z][x + 1] == MAP_ITEM || tempMap[z][x + 1] == MAP_ITEM_F || tempMap[z][x + 1] == MAP_ITEM_S) {
+			temppacket->push = 0;
+			tempx = x + 1;
+		}
+		else if (tempMap[z][x + 1] == MAP_BOX) {
+			startx = x + 1;
+			if (x + 2 > 14) {
+				temppacket->push = 0;
+				tempx = 14;
+			}
+			else if (tempMap[z][x + 2] == MAP_NOTHING || tempMap[z][x + 2] == MAP_ITEM || tempMap[z][x + 2] == MAP_ITEM_F || tempMap[z][x + 2] == MAP_ITEM_S) {
+				temppacket->push = 1;
+				tempx = x + 2;
+			}
+		}
+		break;
+	case 2:
+
+		if (tempx < 0)
+		{
+			temppacket->push = 0;
+			tempx = 0;
+		}
+		else if (tempMap[z][x - 1] == MAP_NOTHING || tempMap[z][x - 1] == MAP_ITEM || tempMap[z][x - 1] == MAP_ITEM_F || tempMap[z][x - 1] == MAP_ITEM_S) {
+			temppacket->push = 0;
+			tempx = x - 1;
+		}
+		else if (tempMap[z][x - 1] == MAP_BOX) {
+			startx = x - 1;
+			if (x - 2< 0) {
+				temppacket->push = 0;
+				tempx = 0;
+			}
+			else if (tempMap[z][x - 2] == MAP_NOTHING || tempMap[z][x - 2] == MAP_ITEM || tempMap[z][x - 2] == MAP_ITEM_F || tempMap[z][x - 2] == MAP_ITEM_S) {
+				temppacket->push = 1;
+				tempx = x - 2;
+			}
+		}
+		break;
+	case 3:
+
+		if (tempz > 14) {
+			temppacket->push = 0;
+			tempz = 14;
+		}
+		else if (tempMap[z + 1][x] == MAP_NOTHING || tempMap[z + 1][x] == MAP_ITEM || tempMap[z + 1][x] == MAP_ITEM_F || tempMap[z + 1][x] == MAP_ITEM_S) {
+			temppacket->push = 0;
+			tempz = z;
+		}
+		else if (tempMap[z + 1][x] == MAP_BOX) {
+			startz = z + 1;
+			if (z + 2 > 14) {
+				temppacket->push = 0;
+				tempz = 14;
+			}
+			else if (tempMap[z + 2][x] == MAP_NOTHING || tempMap[z + 2][x] == MAP_ITEM || tempMap[z + 2][x] == MAP_ITEM_F || tempMap[z + 2][x] == MAP_ITEM_S) {
+				temppacket->push = 1;
+				tempz = z + 2;
+			}
+		}
+		break;
+	case 4:
+
+		if (tempz < 0) {
+			temppacket->push = 0;
+			tempz = 0;
+		}
+		else if (tempMap[z - 1][x] == MAP_NOTHING || tempMap[z - 1][x] == MAP_ITEM || tempMap[z - 1][x] == MAP_ITEM_F || tempMap[z - 1][x] == MAP_ITEM_S) {
+			temppacket->push = 0;
+			tempz = z;
+		}
+		else if (tempMap[z - 1][x] == MAP_BOX) {
+			startz = z - 1;
+			if (z - 2 <0) {
+				temppacket->push = 0;
+				tempz = 0;
+			}
+			else if (tempMap[z - 2][x] == MAP_NOTHING || tempMap[z - 2][x] == MAP_ITEM || tempMap[z - 2][x] == MAP_ITEM_F || tempMap[z - 2][x] == MAP_ITEM_S) {
+				temppacket->push = 1;
+				tempz = z - 2;
+			}
+		}
+		break;
+	default:
+		printf("Unknown Direction!!!!\n");
+		break;
+	}
+	//throw관련 송신패킷구조체에 넣어줘야 한다.
+	if (temppacket->push == 1)
+		tempMap[startz][startx] = MAP_NOTHING;
+	temppacket->posx = startx;
+	temppacket->posz = startz;
+	temppacket->posx_d = tempx;
+	temppacket->posz_d = tempz;
+	temppacket->direction = direction;
+	tempp->posx = startx;
+	tempp->posz = startz;
+
+	memcpy(gameRoom_Manager[room_num].map.mapInfo, tempMap, sizeof(tempMap));
+
+}
+void Throw_Calculate_Map(int x, int z, BYTE room_num, TB_ThrowBombRE* temppacket, BYTE direction) {
+	BYTE tempMap[15][15];
+	memcpy(tempMap, gameRoom_Manager[room_num].map.mapInfo, sizeof(tempMap));
+	tempMap[z][x] = MAP_NOTHING;
+	int tempx = x;
+	int tempz = z;
+	//direction에따라 어디로 차는지 알고 검색 1-우 2-좌 3-하 4-상
+	switch (direction) {
+	case 1:
+		tempx = x + 4;
+		if (tempx > 14)
+			tempx = 14;
+		for (int i = tempx; i < 15; ++i) {
+			if (tempMap[z][i] == MAP_NOTHING || tempMap[z][i] == MAP_ITEM || tempMap[z][i] == MAP_BUSH || tempMap[z][i] == MAP_ITEM_F || tempMap[z][i] == MAP_ITEM_S) {
+				tempx = i;
+				tempz = z;
+				break;
+			}
+			if (i == 14) {
+				tempx = i;
+				tempz = z;
+				break;
+			}
+		}
+		break;
+	case 2:
+		tempx = x - 4;
+		if (tempx < 0)
+			tempx = 0;
+		for (int i = tempx; i >= 0; --i) {
+			if (tempMap[z][i] == MAP_NOTHING || tempMap[z][i] == MAP_ITEM || tempMap[z][i] == MAP_BUSH || tempMap[z][i] == MAP_ITEM_F || tempMap[z][i] == MAP_ITEM_S) {
+				tempx = i;
+				tempz = z;
+				break;
+			}
+			if (i == 0) {
+				tempx = i;
+				tempz = z;
+				break;
+			}
+		}
+		break;
+	case 3:
+		tempz = z + 4;
+		if (tempz > 14)
+			tempz = 14;
+		for (int i = tempz; i < 15; ++i) {
+			if (tempMap[i][x] == MAP_NOTHING || tempMap[i][x] == MAP_ITEM || tempMap[i][x] == MAP_BUSH || tempMap[i][x] == MAP_ITEM_F || tempMap[i][x] == MAP_ITEM_S) {
+				tempx = x;
+				tempz = i;
+				break;
+			}
+			if (i == 14) {
+				tempx = x;
+				tempz = i;
+				break;
+			}
+		}
+		break;
+	case 4:
+		tempz = z - 4;
+		if (tempz < 0)
+			tempz = 0;
+		for (int i = z; i >= 0; --i) {
+			if (tempMap[i][x] == MAP_NOTHING || tempMap[i][x] == MAP_ITEM || tempMap[i][x] == MAP_BUSH || tempMap[i][x] == MAP_ITEM_F || tempMap[i][x] == MAP_ITEM_S) {
+				tempx = x;
+				tempz = i;
+				break;
+			}
+			if (i == 0) {
+				tempx = x;
+				tempz = i;
+				break;
+			}
+		}
+		break;
+	default:
+		printf("Unknown Direction!!!!\n");
+		break;
+	}
+	//throw관련 송신패킷구조체에 넣어줘야 한다.
+	temppacket->posx_re = tempx;
+	temppacket->posz_re = tempz;
+	temppacket->posx = x;
+	temppacket->posz = z;
+	temppacket->direction = direction;
+
+	memcpy(gameRoom_Manager[room_num].map.mapInfo, tempMap, sizeof(tempMap));
 
 }
