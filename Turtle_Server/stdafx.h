@@ -6,13 +6,20 @@
 #include <mutex>
 #include <queue>
 #include <stack>
+#include <set>
+#include <map>
+
 #include <list>
 #include <thread>
+#include <string>
 #include <chrono>
 #include <WinSock2.h>
 #include <Windows.h>
 #include <random>
 #include <cmath>
+#include <atlstr.h>
+#include <windows.h>
+#include <wininet.h>
 #include <stdio.h>
 #include<fstream>
 #include<iterator>
@@ -52,31 +59,33 @@ using namespace std;
 #define CASE_MAPSET 21
 #define CASE_BOXPUSH 22
 #define CASE_BOXPUSHCOMPLETE 23
-
+#define CASE_TIME 24
+#define CASE_BOMBSET 25
 
 #define SIZEOF_TB_CharPos 22
 #define SIZEOF_TB_BombPos 17
-#define SIZEOF_TB_BombExplode 12
-#define SIZEOF_TB_BombExplodeRE 14
+#define SIZEOF_TB_BombExplode 13
+#define SIZEOF_TB_BombExplodeRE 15
 #define SIZEOF_TB_MAP 227
 #define SIZEOF_TB_ID 3
 #define SIZEOF_TB_ItemGet 13
 #define SIZEOF_TB_GetItem 4
 #define SIZEOF_TB_DEAD 3
 #define SIZEOF_TB_GAMEEND 3
-#define SIZEOF_TB_Room 26
+#define SIZEOF_TB_Room 31
 #define SIZEOF_TB_join 12
 #define SIZEOF_TB_joinRE 10
-#define SIZEOF_TB_create  11
+#define SIZEOF_TB_create  12
 #define SIZEOF_TB_createRE  4
 #define SIZEOF_TB_GameStart 4
 #define SIZEOF_TB_GameStartRE 3
-#define SIZEOF_CASE_READY 22
+#define SIZEOF_CASE_READY 5
+#define SIZEOF_TB_ReadyRE 5
 #define SIZEOF_TB_RoomOut 4
 #define SIZEOF_TB_RoomOutRE 3
 #define SIZEOF_TB_GetOut  4
 #define SIZEOF_TB_GetOutRE  2
-#define SIZEOF_TB_RoomSetting 5
+#define SIZEOF_TB_RoomSetting 6
 #define SIZEOF_TB_TeamSetting 5
 #define SIZEOF_TB_ThrowBomb 13
 #define SIZEOF_TB_ThrowBombRE 20
@@ -85,18 +94,22 @@ using namespace std;
 #define SIZEOF_TB_BoxPush 13
 #define SIZEOF_TB_BoxPushComplete 11
 #define SIZEOF_TB_BoxPushRE 21
+#define SIZEOF_TB_Time 6
 #define MAX_EVENT_SIZE 64
 
-#define MAP_BOMB 1
-#define MAP_NOTHING 2
-#define MAP_BOX 3
-#define MAP_ROCK 4
-#define MAP_ITEM 5
-#define MAP_BUSH 6
-#define MAP_ITEM_F 7
-#define MAP_ITEM_S 8
 
+#define MAP_NOTHING 0
+#define MAP_BOX 1
+#define MAP_ROCK 2
 
+#define MAP_BUSH 3
+#define MAP_ITEM 11
+#define MAP_BOMB 5
+#define MAP_ITEM_F 13
+#define MAP_ITEM_S 12
+#define MAP_FIREBUSH 10
+#define MAP_KICKITEM 14
+#define MAP_THROWITEM 15
 #define MAP_CHAR 7
 #define MAP_ENEMY 8
 #define MAP_BOSS 9
@@ -115,11 +128,12 @@ using namespace std;
 #define TURTLE_ANI_WALK 1
 #define TURTLE_ANI_HIDE 2
 #define TURTLE_ANI_DEAD 3
+#define TURTLE_ANI_KICK 4
+#define TURTLE_ANI_PUSH 5
 
-#define ITEM_BOMB 0
-#define ITEM_FIRE 1
-#define ITEM_SPEED 2
-#define ITEM_SUPER 3
+
+
+
 
 
 
@@ -150,6 +164,7 @@ struct Socket_Info {
 	BYTE fire;
 	BYTE bomb;
 	BYTE speed;
+	BYTE pos_inRoom;
 };
 
 
@@ -182,12 +197,19 @@ struct TB_BombPos { //type:2
 	BYTE type;
 	BYTE ingame_id;
 	BYTE firepower; //화력
-	//BYTE throwing; //던져지고 있는지
-	//BYTE kicking; //차여지고 있는지
+					//BYTE throwing; //던져지고 있는지
+					//BYTE kicking; //차여지고 있는지
 	BYTE room_num;
 	int posx;
 	int posz;
 	float settime;
+};
+struct TB_BombSetRE {
+	BYTE size;//11
+	BYTE type;//25
+	BYTE f_power;
+	int posx;
+	int posz;
 };
 struct TB_MapSetRE {
 	BYTE size;//11
@@ -197,21 +219,23 @@ struct TB_MapSetRE {
 	int posz;
 };
 struct TB_BombExplode { //type:3
-	BYTE size;//12
+	BYTE size;//13
 	BYTE type;
 	BYTE firepower;
 	BYTE room_id;
+	BYTE game_id;
 	int posx;
 	int posz;
 
 };
 struct TB_BombExplodeRE { //type:3
-	BYTE size;//14
+	BYTE size;//15
 	BYTE type;
 	BYTE upfire;
 	BYTE rightfire;
 	BYTE downfire;
 	BYTE leftfire;
+	BYTE gameID;
 	int posx;
 	int posz;
 
@@ -247,7 +271,7 @@ struct TB_ThrowComplete {
 };
 
 struct TB_KickBomb {
-	BYTE size;//
+	BYTE size;//13
 	BYTE type;//18
 	BYTE roomid;
 	BYTE ingame_id;
@@ -255,11 +279,28 @@ struct TB_KickBomb {
 	int posx;
 	int posz;
 };
-
+struct TB_KickComplete {
+	BYTE size;//11
+	BYTE type;//20
+	BYTE roomid;
+	int posx;
+	int posz;
+};
+struct TB_KickBombRE {
+	BYTE size;//21
+	BYTE type;//18
+	BYTE kick;
+	BYTE ingame_id;
+	BYTE direction;
+	int posx;
+	int posz;
+	int posx_re;
+	int posz_re;
+};
 struct TB_BoxPush {
 	BYTE size;//13
 	BYTE type;//22
-	BYTE roomid; //0이면 안밀어, 1이면 밀어~!
+	BYTE roomid; 
 	BYTE ingame_id;
 	BYTE direction;
 	int posx;
@@ -278,12 +319,16 @@ struct TB_BoxPushRE {
 	int posz_d;
 
 };
+
 struct TB_BoxPushComplete {
 	BYTE size;//11
 	BYTE type;//19
 	BYTE roomid;
 	int posx;
 	int posz;
+};
+struct TB_ReGame {
+
 };
 struct TB_Map { //type:4
 	BYTE size;//227
@@ -296,6 +341,7 @@ struct TB_ID {//type:5
 	BYTE type;
 	BYTE id;  //0330 수정 int에서- BYTE로 수정
 };
+
 
 struct TB_ItemGet { //type:6
 	BYTE size; //13
@@ -345,7 +391,7 @@ struct TB_UserInfo { //유저정보 - type: 7
 //프로토콜이 아닌 구조체에 맵데이터를 넣은 방 구조체 작성
 
 struct TB_Room { //방장 추가(완)
-	BYTE size; //26
+	BYTE size; //31
 	BYTE type;//8
 	BYTE roomID;
 	BYTE people_count;
@@ -355,12 +401,38 @@ struct TB_Room { //방장 추가(완)
 	BYTE guardian_pos; //배열에 넣을 때 -1할 것
 	BYTE people_inroom[4];
 	BYTE roomstate;  //팀전인가 개인전인가? 0-개인전 1-팀전
+	BYTE map_thema;
 	BYTE map_mode;
 	BYTE team_inroom[4];
+	BYTE ready[4];
 	char password[8];
 };
+struct TB_Ready {
+	BYTE size; //5
+	BYTE type;//11
+	BYTE room_num;
+	BYTE pos_in_room;
+	BYTE will_ready; // 0이면 레디하겠다고 보내온 것, 1이면 레디를 해제하겠다고 보내온 것.
 
-
+};
+struct TB_ReadyRE {
+	BYTE size; //5
+	BYTE type;//11
+	BYTE pos_in_room;
+	BYTE ready;//0이면 레디해제, 1이면 레디
+	BYTE roomid;
+};
+struct TB_GameStart {
+	BYTE size;//4
+	BYTE type;//12
+	BYTE roomID;
+	BYTE my_pos;
+};
+struct TB_GameStartRE {
+	BYTE size;
+	BYTE type;
+	BYTE startTB;//1이면 시작,0이면 땡
+};
 
 struct TB_Refresh { //type:?
 	BYTE size;
@@ -377,6 +449,7 @@ struct TB_join { //들어갈 때 보내는 패킷 9
 	BYTE roomID;
 	char password[8];
 };
+
 struct TB_joinRE { //방장 추가
 	BYTE size;//10
 	BYTE type;
@@ -392,6 +465,7 @@ struct TB_create { //type:10
 	BYTE size;
 	BYTE type;
 	BYTE id;
+	BYTE roomid;
 	char password[8];
 };
 
@@ -401,17 +475,7 @@ struct TB_createRE {
 	BYTE can; //가능하면 1, 불가능하면 0
 	BYTE roomid;
 };
-struct TB_GameStart {
-	BYTE size;//4
-	BYTE type;//12
-	BYTE roomID;
-	BYTE my_pos;
-};
-struct TB_GameStartRE {
-	BYTE size;
-	BYTE type;
-	BYTE startTB;//1이면 시작,0이면 땡
-};
+
 struct TB_GetOut {//클라 전송->서버 수신, 서버 전송할 경우 받은 클라는 강퇴 결과 출력
 	BYTE size;
 	BYTE type;//14
@@ -438,20 +502,28 @@ struct TB_RoomOutRE {
 };
 
 struct TB_RoomSetting {
-	BYTE size;//5
+	BYTE size;//6
 	BYTE type;//15
 	BYTE roomid;
-	BYTE gametype; //0이면 개인전 1이면 팀전
+	BYTE peoplemax; //인원수
+	BYTE mapthema;
 	BYTE mapnum;
+
 };
+
 struct TB_TeamSetting {
 	BYTE size;//5
 	BYTE type;//16
-	BYTE roomid; 
+	BYTE roomid;
 	BYTE pos_in_room;
 	BYTE team;
 };
+struct TB_Time {
+	BYTE size;//6
+	BYTE type;//24
+	float time;
 
+};
 struct TB_Room_Data { //방장 추가(완)
 
 	BYTE roomID;
@@ -464,13 +536,16 @@ struct TB_Room_Data { //방장 추가(완)
 	TB_Map map;
 	char password[8];
 };
+struct Map_TB {
 
+	BYTE mapTile[15][15];
+};
 
 #pragma pack(pop)
 
 class InGameCalculator {
 	bool id[4];
-
+	float time;
 	bool gameover;
 public:
 	int deathcount;
@@ -480,7 +555,7 @@ public:
 		id[1] = true;
 		id[2] = true;
 		id[3] = true;
-
+		time = 180.0f;
 		gameover = false;
 	}
 	~InGameCalculator() {}
@@ -491,6 +566,7 @@ public:
 		id[1] = true;
 		id[2] = true;
 		id[3] = true;
+		time = 180.0f;
 	}
 	void PlayerDead(BYTE idd) {
 		if (id[idd]) {
@@ -504,8 +580,19 @@ public:
 	void SetGameOver() {
 		gameover = true;
 	}
+
 	bool IsGameOver() {
 		return gameover;
+	}
+	float GetTime() {
+		return time;
+	}
+	void SetTime(DWORD a) {
+		float temp = ((float)a) / 1000.0f;
+		time = time - temp;
+	}
+	bool OneSec() {
+		return ((int)(time * 10)%10)<1;
 	}
 	BYTE GetWinnerID() {
 		for (BYTE i = 0; i < 4; ++i) {
@@ -516,6 +603,18 @@ public:
 	}
 };
 
+template <class Iter,class Value>
+Iter myFind(Iter a, Iter b, Value val) {
+	Iter p = a;
+	while (a != b) {
+		if (*a == val)
+			return a;
+		else
+			++a;
+	}
+	return b;
+
+}
 
 class Bomb_TB {
 public:
@@ -527,6 +626,12 @@ public:
 	BYTE firepower;
 	float explode_time;
 	BYTE room_num;
+	BYTE game_id;
+
+	bool operator ==(const Bomb_TB& other) {
+		return xz == other.xz;
+	}
+
 	Bomb_TB() {
 		x = 0; z = 0; time = (float)GetTickCount() / 1000;
 		explode_time = 2.0f;
@@ -540,10 +645,11 @@ public:
 		is_throw = false;
 		is_kicked = false;
 	}
-	Bomb_TB(int a, int b, BYTE r, BYTE f) {
+	Bomb_TB(int a, int b, BYTE r, BYTE f,BYTE g) {
 		x = a; z = b; time = (float)GetTickCount() / 1000; explode_time = 2.0f;
 		room_num = r;
 		firepower = f;
+		game_id = g;
 		xz = make_pair(a, b);
 		is_throw = false;
 		is_kicked = false;
