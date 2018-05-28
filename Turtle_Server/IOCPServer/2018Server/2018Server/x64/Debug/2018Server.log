@@ -1,0 +1,3 @@
+﻿  server_main_WT.cpp
+c:\users\who\desktop\게임서버\2018server\2018server\server_main_wt.cpp(272): warning C4101: 'new_room' :참조되지 않은 지역 변수입니다.
+  2018Server.vcxproj -> C:\Users\WHO\Desktop\게임서버\2018Server\x64\Debug\2018Server.exe

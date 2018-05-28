@@ -1,0 +1,6 @@
+﻿  server_main_WT.cpp
+server_main_WT.cpp(214): warning C4101: 'new_room' :참조되지 않은 지역 변수입니다.
+  코드를 생성하고 있습니다.
+  All 931 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  코드를 생성했습니다.
+  2018Server.vcxproj -> C:\Users\WHO\Desktop\게임서버\2018Server\x64\Release\2018Server.exe
