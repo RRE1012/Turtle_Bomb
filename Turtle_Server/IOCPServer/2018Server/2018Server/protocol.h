@@ -281,8 +281,8 @@ struct TB_BombPos { //type:2
 	unsigned char type;
 	unsigned char ingame_id;
 	unsigned char firepower; //화력
-					//unsigned char throwing; //던져지고 있는지
-					//unsigned char kicking; //차여지고 있는지
+							 //unsigned char throwing; //던져지고 있는지
+							 //unsigned char kicking; //차여지고 있는지
 	unsigned char room_num;
 	int posx;
 	int posz;
@@ -694,16 +694,20 @@ public:
 class InGameCalculator {
 	bool id[4];
 	float time;
-	
+
 	bool gameover;
-	
-	
+
+
 public:
 	map<pair<int, int>, Bomb_TB> bomb_Map;
+	vector<TB_BombExplodeRE> explode_List;
+
 	TB_Map map;
 	TB_CharPos ingame_Char_Info[4];
+	unsigned char fireMap[15][15];
 	int deathcount;
 	InGameCalculator() {
+		explode_List.clear();
 		deathcount = 0;
 		id[0] = true;
 		id[1] = true;
@@ -718,10 +722,15 @@ public:
 			ingame_Char_Info[i].type = CASE_POS;
 
 		}
+		for (int i = 0; i < 15; ++i) {
+			for (int j = 0; j < 15; ++j) {
+				fireMap[i][j] = 0;
+			}
+		}
 		ingame_Char_Info[0].ingame_id = 0;
-		ingame_Char_Info[1].ingame_id = 1;
-		ingame_Char_Info[2].ingame_id = 2;
-		ingame_Char_Info[3].ingame_id = 3;
+		ingame_Char_Info[1].ingame_id = 0;
+		ingame_Char_Info[2].ingame_id = 0;
+		ingame_Char_Info[3].ingame_id = 0;
 		ingame_Char_Info[0].posx = 0.0f;
 		ingame_Char_Info[0].posz = 0.0f;
 		ingame_Char_Info[0].is_alive = true;
@@ -748,15 +757,21 @@ public:
 		map.type = CASE_MAP;
 		deathcount = 0;
 		gameover = false;
+		explode_List.clear();
 		id[0] = true;
 		id[1] = true;
 		id[2] = true;
 		id[3] = true;
 		time = 180.0f;
+		for (int i = 0; i < 15; ++i) {
+			for (int j = 0; j < 15; ++j) {
+				fireMap[i][j] = 0;
+			}
+		}
 		ingame_Char_Info[0].ingame_id = 0;
-		ingame_Char_Info[1].ingame_id = 1;
-		ingame_Char_Info[2].ingame_id = 2;
-		ingame_Char_Info[3].ingame_id = 3;
+		ingame_Char_Info[1].ingame_id = 0;
+		ingame_Char_Info[2].ingame_id = 0;
+		ingame_Char_Info[3].ingame_id = 0;
 		ingame_Char_Info[0].posx = 0.0f;
 		ingame_Char_Info[0].posz = 0.0f;
 		ingame_Char_Info[0].is_alive = true;
@@ -782,6 +797,11 @@ public:
 			id[idd] = false;
 			deathcount++;
 		}
+	}
+	void ChangeID(int place, unsigned char id_p) {
+		
+		ingame_Char_Info[place].ingame_id = id_p;
+
 	}
 	void PlayerBlank(int id_p) {
 		id[id_p] = false;
@@ -809,6 +829,229 @@ public:
 				return i;
 		}
 		return 4; //DRAW를 뜻한다.
+	}
+	void CalculateMap(int x, int z, unsigned char f,unsigned char id_player) {
+		bool l_UpBlock = false;
+		bool l_DownBlock = false;
+		bool l_LeftBlock = false;
+		bool l_RightBlock = false;
+		unsigned char uf = f;
+		unsigned char df = f;
+		unsigned char lf = f;
+		unsigned char rf = f;
+		unsigned char tempMap[15][15];
+		memcpy(tempMap, map.mapInfo, sizeof(tempMap));
+		tempMap[z][x] = MAP_NOTHING;
+		for (unsigned char b = 1; b <= f; ++b) {
+			if (!l_DownBlock) {
+				if (z - b < 0) {
+					l_DownBlock = true;
+					df = b - 1;
+				}
+				else {
+					if (tempMap[z - b][x] == MAP_BOMB) {
+						tempMap[z - b][x] = MAP_NOTHING;
+						memcpy(map.mapInfo, tempMap, sizeof(tempMap));
+
+						//*tempB = true;
+						//CalculateMap_Simple(x, z - b, fireMap[room_num - 1][z - b][x], room_num);
+						if (bomb_Map[make_pair(x, z - b)].firepower != 0) {
+
+							CalculateMap(x, z- b, fireMap[z - b][x], bomb_Map[make_pair(x, z - b)].game_id);
+							auto a = bomb_Map.find(pair<int, int>(x, z - b));
+							bomb_Map.erase(a);
+						}
+						memcpy(tempMap, map.mapInfo, sizeof(tempMap));
+						l_DownBlock = true;
+						df = b;
+					}
+					else if (tempMap[z - b][x] == MAP_BOX) {
+						cout << "Box!!!" << endl;
+						int temp_rand = (rand() % 14);
+						if (temp_rand < 4)
+							tempMap[z - b][x] = MAP_NOTHING;
+						else if (temp_rand >= 4 && temp_rand <= 5)
+							tempMap[z - b][x] = MAP_ITEM;
+						else if (temp_rand >= 6 && temp_rand <= 7)
+							tempMap[z - b][x] = MAP_ITEM_F;
+						else if (temp_rand >= 8 && temp_rand <= 9)
+							tempMap[z - b][x] = MAP_ITEM_S;
+						else if (temp_rand >= 10 && temp_rand <= 11)
+							tempMap[z - b][x] = MAP_KICKITEM;
+						else if (temp_rand >= 12 && temp_rand <= 13)
+							tempMap[z - b][x] = MAP_THROWITEM;
+
+						l_DownBlock = true;
+						df = b - 1;
+					}
+					else if (tempMap[z - b][x] == MAP_ITEM || tempMap[z - b][x] == MAP_ITEM_F || tempMap[z - b][x] == MAP_ITEM_S || tempMap[z - b][x] == MAP_KICKITEM || tempMap[z - b][x] == MAP_THROWITEM) {
+						tempMap[z - b][x] = MAP_NOTHING;
+					}
+					else if (tempMap[z - b][x] == MAP_BUSH || tempMap[z - b][x] == MAP_FIREBUSH) {
+
+					}
+					else if (tempMap[z - b][x] == MAP_ROCK) {
+						l_DownBlock = true;
+						df = b - 1;
+					}
+				}
+			}
+			if (!l_UpBlock) {
+				if (z + b > 14) {
+					l_UpBlock = true;
+					uf = b - 1;
+				}
+				else {
+					if (tempMap[z + b][x] == MAP_BOMB) {
+						tempMap[z + b][x] = MAP_NOTHING;
+
+						l_UpBlock = true;
+						memcpy(map.mapInfo, tempMap, sizeof(tempMap));
+						if (bomb_Map[make_pair(x, z + b)].firepower != 0) {
+							
+							CalculateMap(x, z + b, fireMap[z + b][x], bomb_Map[make_pair(x, z + b)].game_id);
+							auto a = bomb_Map.find(pair<int, int>(x, z+b));
+							bomb_Map.erase(a);
+						}
+						
+
+						//*tempB = true;
+						//CalculateMap_Simple(x, z - b, fireMap[room_num - 1][z - b][x], room_num);
+						memcpy(tempMap, map.mapInfo, sizeof(tempMap));
+						uf = b;
+					}
+					else if (tempMap[z + b][x] == MAP_BOX) {
+						cout << "Box!!!" << endl;
+						int temp_rand = (rand() % 14);
+						if (temp_rand<4)
+							tempMap[z + b][x] = MAP_NOTHING;
+						else if (temp_rand >= 4 && temp_rand <= 5)
+							tempMap[z + b][x] = MAP_ITEM;
+						else if (temp_rand >= 6 && temp_rand <= 7)
+							tempMap[z + b][x] = MAP_ITEM_F;
+						else if (temp_rand >= 8 && temp_rand <= 9)
+							tempMap[z + b][x] = MAP_ITEM_S;
+						else if (temp_rand >= 10 && temp_rand <= 11)
+							tempMap[z + b][x] = MAP_KICKITEM;
+						else if (temp_rand >= 12 && temp_rand <= 13)
+							tempMap[z + b][x] = MAP_THROWITEM;
+						l_UpBlock = true;
+						uf = b - 1;
+					}
+					else if (tempMap[z + b][x] == MAP_ITEM || tempMap[z + b][x] == MAP_ITEM_F || tempMap[z + b][x] == MAP_ITEM_S || tempMap[z + b][x] == MAP_KICKITEM || tempMap[z + b][x] == MAP_THROWITEM) {
+						tempMap[z + b][x] = MAP_NOTHING;
+					}
+					else if (tempMap[z + b][x] == MAP_ROCK) {
+						l_UpBlock = true;
+						uf = b - 1;
+					}
+				}
+			}
+			if (!l_LeftBlock) {
+				if (x - b < 0) {
+					l_LeftBlock = true;
+					lf = b - 1;
+				}
+				else {
+					if (tempMap[z][x - b] == MAP_BOMB) {
+						tempMap[z][x - b] = MAP_NOTHING;
+						l_LeftBlock = true;
+						memcpy(map.mapInfo, tempMap, sizeof(tempMap));
+						//*tempB = true;
+						//CalculateMap_Simple(x, z - b, fireMap[room_num - 1][z - b][x], room_num);
+						if (bomb_Map[make_pair(x-b, z)].firepower != 0) {
+
+							CalculateMap(x-b, z, fireMap[z][x-b], bomb_Map[make_pair(x-b, z)].game_id);
+							auto a = bomb_Map.find(pair<int,int>(x - b, z));
+							bomb_Map.erase(a);
+						}
+						memcpy(tempMap, map.mapInfo, sizeof(tempMap));
+						lf = b;
+					}
+					else if (tempMap[z][x - b] == MAP_BOX) {
+						cout << "Box!!!" << endl;
+						int temp_rand = (rand() % 14);
+						if (temp_rand<4)
+							tempMap[z][x - b] = MAP_NOTHING;
+						else if (temp_rand >= 4 && temp_rand <= 5)
+							tempMap[z][x - b] = MAP_ITEM;
+						else if (temp_rand >= 6 && temp_rand <= 7)
+							tempMap[z][x - b] = MAP_ITEM_F;
+						else if (temp_rand >= 8 && temp_rand <= 9)
+							tempMap[z][x - b] = MAP_ITEM_S;
+						else if (temp_rand >= 10 && temp_rand <= 11)
+							tempMap[z][x - b] = MAP_KICKITEM;
+						else if (temp_rand >= 12 && temp_rand <= 13)
+							tempMap[z][x - b] = MAP_THROWITEM;
+						l_LeftBlock = true;
+						lf = b - 1;
+					}
+					else if (tempMap[z][x - b] == MAP_ITEM || tempMap[z][x - b] == MAP_KICKITEM || tempMap[z][x - b] == MAP_THROWITEM || tempMap[z][x - b] == MAP_ITEM_F || tempMap[z][x - b] == MAP_ITEM_S) {
+						tempMap[z][x - b] = MAP_NOTHING;
+					}
+					else if (tempMap[z][x - b] == MAP_ROCK) {
+						l_LeftBlock = true;
+						lf = b - 1;
+					}
+				}
+			}
+			if (!l_RightBlock) {
+				if (x + b > 14) {
+					l_RightBlock = true;
+					rf = b - 1;
+				}
+				else {
+					if (tempMap[z][x + b] == MAP_BOMB) {
+						tempMap[z][x + b] = MAP_NOTHING;
+						l_RightBlock = true;
+						memcpy(map.mapInfo, tempMap, sizeof(tempMap));
+						//*tempB = true;
+						//CalculateMap_Simple(x, z - b, fireMap[room_num - 1][z - b][x], room_num);
+						if (bomb_Map[make_pair(x + b, z)].firepower != 0) {
+
+							CalculateMap(x + b, z, fireMap[z][x + b], bomb_Map[make_pair(x + b, z)].game_id);
+							auto a = bomb_Map.find(pair<int, int>(x+b, z ));
+							bomb_Map.erase(a);
+						}
+						memcpy(tempMap, map.mapInfo, sizeof(tempMap));
+						rf = b;
+					}
+					else if (tempMap[z][x + b] == MAP_BOX) {
+						cout << "Box!!!" << endl;
+						int temp_rand = (rand() % 14);
+						if (temp_rand<4)
+							tempMap[z][x + b] = MAP_NOTHING;
+						else if (temp_rand >= 4 && temp_rand <= 5)
+							tempMap[z][x + b] = MAP_ITEM;
+						else if (temp_rand >= 6 && temp_rand <= 7)
+							tempMap[z][x + b] = MAP_ITEM_F;
+						else if (temp_rand >= 8 && temp_rand <= 9)
+							tempMap[z][x + b] = MAP_ITEM_S;
+						else if (temp_rand >= 10 && temp_rand <= 11)
+							tempMap[z][x + b] = MAP_KICKITEM;
+						else if (temp_rand >= 12 && temp_rand <= 13)
+							tempMap[z][x + b] = MAP_THROWITEM;
+						l_RightBlock = true;
+						rf = b - 1;
+					}
+					else if (tempMap[z][x + b] == MAP_ITEM || tempMap[z][x + b] == MAP_KICKITEM || tempMap[z][x + b] == MAP_THROWITEM || tempMap[z][x + b] == MAP_ITEM_F || tempMap[z][x + b] == MAP_ITEM_S) {
+						tempMap[z][x + b] = MAP_NOTHING;
+					}
+					else if (tempMap[z][x + b] == MAP_ROCK) {
+						l_RightBlock = true;
+						rf = b - 1;
+					}
+				}
+			}
+
+
+		}
+		TB_BombExplodeRE bomb = { SIZEOF_TB_BombExplodeRE,CASE_BOMB_EX,uf,rf,df,lf,id_player,x,z };
+		explode_List.emplace_back(bomb);
+		//explode_List
+		fireMap[z][x] = 0;
+		tempMap[z][x] = MAP_NOTHING;
+		memcpy(map.mapInfo, tempMap, sizeof(tempMap));
 	}
 };
 
@@ -865,4 +1108,3 @@ public:
 		m_prev_packet_size = 0;
 	}
 };
-

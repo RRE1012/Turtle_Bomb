@@ -5,6 +5,7 @@
 
 HANDLE gh_iocp;
 
+DWORD g_prevTime2; //GetTickCount()를 활용한 시간을 체크할 때 사용할 함수
 
 TB_Room room;
 array <Client, MAX_USER> g_clients;
@@ -16,7 +17,9 @@ void SetMap(BYTE, BYTE, BYTE, TB_Map*);
 void SetMapToValue(int, int);
 void Throw_Calculate_Map(int x, int z, BYTE room_num, TB_ThrowBombRE* temppacket, BYTE direction);
 void BoxPush_Calculate_Map(int x, int z, BYTE room_num, TB_BoxPushRE* temppacket, BYTE direction, TB_MapSetRE* tempp);
+void Kick_CalculateMap(int x, int z, BYTE room_num, TB_KickBombRE* temppacket, BYTE direction, TB_MapSetRE* tempp);
 void CopyRoomAtoB(TB_Room* a, TB_RoomInfo*b);
+void Timer_thread();
 void error_display(const char *msg, int err_no)
 {
 	WCHAR *lpMsgBuf;
@@ -37,25 +40,7 @@ void ErrorDisplay(const char *location)
 	error_display(location, WSAGetLastError());
 }
 
-/*
-bool CanSee(int a, int b)
-{
-int dist_x = g_clients[a].m_x - g_clients[b].m_x;
-int dist_y = g_clients[a].m_y - g_clients[b].m_y;
 
-int dist = (dist_x * dist_x) + (dist_y * dist_y);
-return (VIEW_RADIUS >= dist);
-}
-*/
-bool CanSee(int a, int b)
-{
-	return (
-		(g_clients[a].m_x - VIEW_RADIUS <= g_clients[b].m_x) &&
-		(g_clients[a].m_x + VIEW_RADIUS >= g_clients[b].m_x) &&
-		(g_clients[a].m_y - VIEW_RADIUS <= g_clients[b].m_y) &&
-		(g_clients[a].m_y + VIEW_RADIUS >= g_clients[b].m_y)
-		);
-}
 
 void initialize()
 {
@@ -85,7 +70,7 @@ void StartRecv(int id)
 
 void SendPacket(int id, void *ptr)
 {
-	cout <<"ID : "<< id << endl;
+	//cout <<"ID : "<< id << endl;
 	unsigned char *packet = reinterpret_cast<unsigned char *>(ptr);
 	EXOVER *s_over = new EXOVER;
 	s_over->is_recv = false;
@@ -142,7 +127,7 @@ void ProcessPacket(int id, char *packet)
 	{
 		TB_CharPos* pos = reinterpret_cast<TB_CharPos*>(packet);
 		bool tempbool = false;
-		BYTE tempid = pos->ingame_id;
+		unsigned char tempid = pos->ingame_id;
 		temproomid = pos->room_id;
 		gameRoom_Manager[temproomid].ingame_Char_Info[tempid].posx = pos->posx;
 		gameRoom_Manager[temproomid].ingame_Char_Info[tempid].posz = pos->posz;
@@ -161,7 +146,7 @@ void ProcessPacket(int id, char *packet)
 		}
 		auto a = g_clients.begin();
 		if (gameRoom_Manager[temproomid].IsGameOver() && gameRoom_Manager[temproomid].deathcount == (room_Map[temproomid].people_count - 1)) {
-			BYTE winnerid = gameRoom_Manager[temproomid].GetWinnerID();
+			unsigned char winnerid = gameRoom_Manager[temproomid].GetWinnerID();
 			TB_GAMEEND gameover = { SIZEOF_TB_GAMEEND,CASE_GAMESET,winnerid };
 			//retval = send(SocketInfoArray[j].sock, (char*)&gameover, sizeof(TB_GAMEEND), 0);
 			for (; a != g_clients.end(); a++) {
@@ -202,6 +187,7 @@ void ProcessPacket(int id, char *packet)
 		//fireMap[roomid - 1][tempz][tempx] = tempfire;
 		TB_BombPos tempbomb = { SIZEOF_TB_BombPos,CASE_BOMB,tempgameid,tempfire,b_pos->room_id,tempx,tempz,0.0f };
 		gameRoom_Manager[roomid].bomb_Map.insert(pair<pair<int, int>, Bomb_TB>(make_pair(tempx, tempz), Bomb_TB(tempx, tempz, roomid, tempfire, tempgameid)));
+		gameRoom_Manager[roomid].fireMap[tempz][tempx] = tempfire;
 		TB_BombSetRE tBomb = { SIZEOF_TB_MapSetRE,CASE_BOMBSET,tempfire,tempx,tempz };
 		auto a = g_clients.begin();
 		for (; a != g_clients.end(); a++) {
@@ -244,6 +230,90 @@ void ProcessPacket(int id, char *packet)
 			
 		}
 		break;
+	case CASE_KICKBOMB:
+		 {
+			TB_KickBomb* tK = reinterpret_cast<TB_KickBomb*>(packet);
+			unsigned char tempdirc = tK->direction;
+			unsigned char temproomid = tK->roomid;
+			unsigned char tempid = tK->ingame_id;
+			int tempx = tK->posx;
+			int tempz = tK->posz;
+			int ax = tempx;
+			int az = tempz;
+			switch (tempdirc) {
+			case 1:
+				ax = tempx + 1;
+				break;
+			case 2:
+				ax = tempx - 1;
+				break;
+			case 3:
+				az = tempz + 1;
+				break;
+			case 4:
+				az = tempz - 1;
+				break;
+			}
+			printf("발로까는캐릭터위치 %d,%d!!!\n", tempx, tempz);
+			if (gameRoom_Manager[temproomid].bomb_Map.size() > 0) {
+				auto bomb_b = gameRoom_Manager[temproomid].bomb_Map.find(pair<int, int>(ax, az));
+				if (bomb_b != gameRoom_Manager[temproomid].bomb_Map.end()) {
+					TB_KickBombRE tempKick = { SIZEOF_TB_ThrowBombRE,CASE_THROWBOMB,tempdirc,tempid,tempx,tempz };
+
+					gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] = MAP_NOTHING;
+					TB_MapSetRE tMap = { SIZEOF_TB_MapSetRE,CASE_MAPSET,MAP_NOTHING,tempx,tempz };
+					Kick_CalculateMap(tempx, tempz, temproomid, &tempKick, tempdirc, &tMap);
+					Bomb_TB tempBomb = Bomb_TB(tempKick.posx_re, tempKick.posz_re, temproomid, bomb_b->second.firepower, tempid);
+					tempBomb.time = bomb_b->second.time;
+					tempBomb.ResetExplodeTime();
+					tempBomb.is_kicked = true;
+
+					gameRoom_Manager[temproomid].bomb_Map.insert(pair<pair<int, int>, Bomb_TB>(make_pair(tempKick.posx_re, tempKick.posz_re), tempBomb));
+					gameRoom_Manager[temproomid].fireMap[tempz][tempx] = 0;
+					gameRoom_Manager[temproomid].bomb_Map.erase(bomb_b);
+					gameRoom_Manager[temproomid].ingame_Char_Info[tempid].anistate = TURTLE_ANI_KICK;//throw ani
+					auto a = g_clients.begin();
+					for (; a != g_clients.end(); a++) {
+						if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
+							if (tempKick.kick == 1) {
+								
+								SendPacket(a->id - 1, &tMap);
+							}
+							
+							SendPacket(a->id - 1, &tempKick);
+						}
+
+					}	
+				}
+			}
+		}
+		break;
+
+	case CASE_KICKCOMPLETE:
+		{
+			TB_KickComplete* tK = reinterpret_cast<TB_KickComplete*>(packet);
+
+			unsigned char temproomid = tK->roomid;
+
+			int tempx = tK->posx;
+			int tempz = tK->posz;
+			TB_BombSetRE tMap = { SIZEOF_TB_MapSetRE,CASE_BOMBSET,MAP_BOMB,tempx,tempz };
+			gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].is_kicked = false;
+			gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].ResetTime();
+			gameRoom_Manager[temproomid].fireMap[tempz][tempx] = gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].firepower;
+			gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] = MAP_BOMB;
+			auto a = g_clients.begin();
+			for (; a != g_clients.end(); a++) {
+				if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
+					SendPacket(a->id - 1, &tMap);
+
+				}
+
+			}
+
+					
+		}
+		break;
 	case CASE_THROWBOMB:
 	{
 		TB_ThrowBomb* tempt = reinterpret_cast<TB_ThrowBomb*>(packet);
@@ -258,6 +328,8 @@ void ProcessPacket(int id, char *packet)
 				TB_ThrowBombRE tempThrow = { SIZEOF_TB_ThrowBombRE,CASE_THROWBOMB,tempdirect,tempid,tempx,tempz };
 				Throw_Calculate_Map(tempx, tempz, temproomid, &tempThrow, tempdirect);
 				gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] = MAP_NOTHING;
+				gameRoom_Manager[temproomid].fireMap[tempz][tempx] = 0;
+
 				Bomb_TB tempBomb = Bomb_TB(tempThrow.posx_re, tempThrow.posz_re, temproomid, bomb_b->second.firepower, tempid);
 				tempBomb.time = bomb_b->second.time;
 				tempBomb.ResetExplodeTime();
@@ -285,6 +357,7 @@ void ProcessPacket(int id, char *packet)
 			int tempz = tempt->posz;
 			gameRoom_Manager[temproomid].map.mapInfo[tempx][tempz] = MAP_BOMB;
 			TB_BombSetRE tB = { SIZEOF_TB_MapSetRE,CASE_BOMBSET,MAP_BOMB,tempx,tempz };
+			gameRoom_Manager[temproomid].fireMap[tempz][tempx] = gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].firepower;
 			gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].is_throw = false;
 			gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].ResetTime();
 			//fireMap[temproomid - 1][tempz][tempx] = bomb_Map[temproomid - 1][pair<int, int>(tempx, tempz)].firepower;
@@ -411,7 +484,6 @@ void ProcessPacket(int id, char *packet)
 				TB_joinRE tempjoin = { SIZEOF_TB_joinRE,CASE_JOINROOM,0 };
 				SendPacket(id, &tempjoin);
 			}
-
 		}
 	}
 		break;
@@ -546,6 +618,67 @@ void ProcessPacket(int id, char *packet)
 		g_clients[id].m_mVl.unlock();
 	}
 		break;
+	case CASE_FORCEOUTROOM:
+		{
+			TB_GetOut* tempFO = reinterpret_cast<TB_GetOut*>(packet);
+			temproomid = tempFO->roomID;
+			unsigned char temproompos = tempFO->position;
+			
+			room_Map[temproomid].people_count -= 1;
+			unsigned char tempid = room_Map[temproomid].people_inroom[temproompos - 1];
+			room_Map[temproomid].people_inroom[temproompos - 1] = 0;
+
+			TB_GetOUTRE tempForceOut = { SIZEOF_TB_GetOutRE,CASE_FORCEOUTROOM };
+			auto a = g_clients.begin();
+			for (; a != g_clients.end(); a++) {
+				if (a->m_scene == 1 && a->m_isconnected&&a->roomNum == temproomid) {
+					
+					if (a->id == tempid) {
+						int tempcount = 0;
+						list<TB_Room>::iterator room_t = room_page.begin();
+
+						for (; room_t != room_page.end();) {
+							if (tempcount >= 8) {
+								break;
+							}
+							if (room_t->roomID != 0) {
+								cout << "Send RRRoominfo\n" << endl;
+								TB_Room roomList = { SIZEOF_TB_Room,CASE_ROOM,room_t->roomID,room_t->people_count,room_t->game_start,room_t->people_max,room_t->made,
+									room_t->guardian_pos,room_t->people_inroom[0],room_t->people_inroom[1],room_t->people_inroom[2],room_t->people_inroom[3],room_t->roomstate ,room_t->map_thema ,room_t->map_mode,
+									room_t->team_inroom[0],room_t->team_inroom[1],room_t->team_inroom[2],room_t->team_inroom[3],room_t->ready[0],room_t->ready[1],room_t->ready[2],room_t->ready[3] };
+
+
+								SendPacket(id, &roomList);
+								tempcount++;
+								room_t++;
+							}
+							else {
+								break;
+							}
+						}
+						SendPacket(a->id - 1, &tempForceOut);
+
+					}
+					else {
+						SendPacket(a->id - 1, &room_Map[temproomid]);
+					}
+
+				}
+
+			}
+				
+					
+					
+					
+					
+
+
+				
+
+			
+			
+		}
+		break;
 	case CASE_ROOMSETTING:
 	{
 		TB_RoomSetting* tempSetting = reinterpret_cast<TB_RoomSetting*>(packet);
@@ -627,14 +760,21 @@ void ProcessPacket(int id, char *packet)
 			room_Map[temproomid].game_start = 1;
 			for (int i = 0; i < 4; ++i) {
 				
-				if (room_Map[temproomid].people_inroom[i] == 0)
+				if (room_Map[temproomid].people_inroom[i] == 0) {
+					cout << "Player Blank!!!" << endl;
 					gameRoom_Manager[temproomid].PlayerBlank(i);
+				}
+				else {
+					cout << "Player Change ID!!!" << endl;
+					gameRoom_Manager[temproomid].ChangeID(i, room_Map[temproomid].people_inroom[i]);
+				}
 			}
 			g_clients[id].m_mVl.lock();
 			for (int i = 0; i < 4; ++i) {
 				if (room_Map[temproomid].people_inroom[i] != 0) {
+					cout << "Send Start\n" << endl;
 					SendPacket((int)(room_Map[temproomid].people_inroom[i]) - 1, &gameRoom_Manager[temproomid].map);
-					cout << "Send Map" << endl;
+					
 					
 				}
 			}
@@ -642,6 +782,7 @@ void ProcessPacket(int id, char *packet)
 			for (int i = 0; i < 4; ++i) {
 				if (room_Map[temproomid].people_inroom[i] != 0) {
 					g_clients[room_Map[temproomid].people_inroom[i]-1].m_scene = 2;
+					cout << "Send Map" << endl;
 					SendPacket((int)(room_Map[temproomid].people_inroom[i]) - 1, &p_startGame);
 				}
 			}
@@ -808,7 +949,7 @@ void worker_thread()
 		WSAOVERLAPPED *over;
 		BOOL ret = GetQueuedCompletionStatus(gh_iocp, &io_size, &iocp_key, &over, INFINITE);
 		int key = static_cast<int>(iocp_key);
-		cout << "WT::Network I/O with Client [" << key << "]\n";
+		//cout << "WT::Network I/O with Client [" << key << "]\n";
 		if (FALSE == ret) {
 			cout << "Error in GQCS\n";
 			DisconnectPlayer(key);
@@ -852,7 +993,7 @@ void worker_thread()
 			StartRecv(key);
 		}
 		else {  // Send 후처리
-			cout << "WT:A packet was sent to Client[" << key << "]\n";
+			//cout << "WT:A packet was sent to Client[" << key << "]\n";
 			delete p_over;
 		}
 	}
@@ -978,11 +1119,15 @@ void accept_thread()   //새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 int main()
 {
 	vector <thread> w_threads;
+	
 	initialize();
 	for (int i = 0; i < 4; ++i) w_threads.push_back(thread{ worker_thread });
+
 	thread a_thread{ accept_thread };
+	thread timer_Thread{ Timer_thread };
 	for (auto& th : w_threads) th.join();
 	a_thread.join();
+	timer_Thread.join();
 }
 
 
@@ -1311,4 +1456,202 @@ void Throw_Calculate_Map(int x, int z, BYTE room_num, TB_ThrowBombRE* temppacket
 
 	memcpy(gameRoom_Manager[room_num].map.mapInfo, tempMap, sizeof(tempMap));
 
+}
+
+void Kick_CalculateMap(int x, int z, BYTE room_num, TB_KickBombRE* temppacket, BYTE direction, TB_MapSetRE* tempp) {
+	BYTE tempMap[15][15];
+	memcpy(tempMap, gameRoom_Manager[room_num].map.mapInfo, sizeof(tempMap));
+	tempMap[z][x] = MAP_NOTHING;
+	int tempx = x;
+	int tempz = z;
+	int startx = x;
+	int startz = z;
+	temppacket->kick = 0;
+	//direction에따라 어디로 차는지 알고 검색 1-우 2-좌 3-하 4-상
+	switch (direction) {
+	case 1:
+		if (tempx > 14)
+			tempx = 14;
+		else if (tempMap[z][x + 1] == MAP_NOTHING || tempMap[z][x + 1] == MAP_ITEM || tempMap[z][x + 1] == MAP_ITEM_F || tempMap[z][x + 1] == MAP_ITEM_S) {
+			temppacket->kick = 0;
+			tempx = x + 1;
+		}
+		else if (tempMap[z][x + 1] == MAP_BOMB) {
+			startx = x + 1;
+			if (x + 2 > 14) {
+				temppacket->kick = 0;
+				tempx = 14;
+			}
+			else if (tempMap[z][x + 2] == MAP_NOTHING || tempMap[z][x + 2] == MAP_ITEM || tempMap[z][x + 2] == MAP_ITEM_F || tempMap[z][x + 2] == MAP_ITEM_S) {
+				for (int i = 1; i < 14; ++i) {
+					if (tempMap[z][x + 2 + i] == MAP_ROCK || tempMap[z][x + 2 + i] == MAP_BOMB || tempMap[z][x + 2 + i] == MAP_BOX || x + 2 + i>14) {
+						temppacket->kick = 1;
+						tempx = x + 1 + i;
+						break;
+					}
+				}
+			}
+		}
+		break;
+	case 2:
+		if (tempx < 0)
+			tempx = 0;
+		else if (tempMap[z][x - 1] == MAP_NOTHING || tempMap[z][x - 1] == MAP_ITEM || tempMap[z][x - 1] == MAP_ITEM_F || tempMap[z][x - 1] == MAP_ITEM_S) {
+			temppacket->kick = 0;
+			tempx = x - 1;
+		}
+		else if (tempMap[z][x - 1] == MAP_BOMB) {
+			startx = x - 1;
+			if (x - 2 <0) {
+				temppacket->kick = 0;
+				tempx = 0;
+			}
+			else if (tempMap[z][x - 2] == MAP_NOTHING || tempMap[z][x - 2] == MAP_ITEM || tempMap[z][x - 2] == MAP_ITEM_F || tempMap[z][x - 2] == MAP_ITEM_S) {
+				for (int i = 1; i < 14; ++i) {
+					if (tempMap[z][x - 2 - i] == MAP_ROCK || tempMap[z][x - 2 - i] == MAP_BOMB || tempMap[z][x - 2 - i] == MAP_BOX || x - 2 - i<0) {
+						temppacket->kick = 1;
+						tempx = x - 1 - i;
+						break;
+					}
+				}
+			}
+		}
+		break;
+	case 3:
+		if (tempz > 14)
+			tempz = 14;
+		else if (tempMap[z + 1][x] == MAP_NOTHING || tempMap[z + 1][x] == MAP_ITEM || tempMap[z + 1][x] == MAP_ITEM_F || tempMap[z + 1][x] == MAP_ITEM_S) {
+			temppacket->kick = 0;
+			tempz = z + 1;
+		}
+		else if (tempMap[z + 1][x] == MAP_BOMB) {
+			startz = z + 1;
+			if (z + 2 > 14) {
+				temppacket->kick = 0;
+				tempz = 14;
+			}
+			else if (tempMap[z + 2][x] == MAP_NOTHING || tempMap[z + 2][x] == MAP_ITEM || tempMap[z + 2][x] == MAP_ITEM_F || tempMap[z + 2][x] == MAP_ITEM_S) {
+				for (int i = 1; i < 14; ++i) {
+					if (tempMap[z + 2 + i][x] == MAP_ROCK || tempMap[z + 2 + i][x] == MAP_BOMB || tempMap[z + 2 + i][x] == MAP_BOX || z + 2 + i>14) {
+						temppacket->kick = 1;
+						tempz = z + 1 + i;
+						break;
+					}
+				}
+			}
+		}
+		break;
+	case 4:
+		if (tempz < 0)
+			tempz = 0;
+		else if (tempMap[z - 1][x] == MAP_NOTHING || tempMap[z - 1][x] == MAP_ITEM || tempMap[z - 1][x] == MAP_ITEM_F || tempMap[z - 1][x] == MAP_ITEM_S) {
+			temppacket->kick = 0;
+			tempz = z - 1;
+		}
+		else if (tempMap[z - 1][x] == MAP_BOMB) {
+			startz = z - 1;
+			if (x - 2 <0) {
+				temppacket->kick = 0;
+				tempz = 0;
+			}
+			else if (tempMap[z - 2][x] == MAP_NOTHING || tempMap[z - 2][x] == MAP_ITEM || tempMap[z - 2][x] == MAP_ITEM_F || tempMap[z - 2][x] == MAP_ITEM_S) {
+				for (int i = 1; i < 14; ++i) {
+					if (tempMap[z - 2 - i][x] == MAP_ROCK || tempMap[z - 2 - i][x] == MAP_BOMB || tempMap[z - 2 - i][x] == MAP_BOX || z - 2 - i<0) {
+						temppacket->kick = 1;
+						tempz = z - 1 - i;
+						break;
+					}
+				}
+			}
+		}
+		break;
+	default:
+		printf("Unknown Direction!!!!\n");
+		break;
+
+
+
+	}
+	//kick관련 송신패킷구조체에 넣어줘야 한다.
+	if (temppacket->kick == 1)
+		tempMap[startz][startx] = MAP_NOTHING;
+	temppacket->posx = startx;
+	temppacket->posz = startz;
+	temppacket->posx_re = tempx;
+	temppacket->posz_re = tempz;
+	temppacket->direction = direction;
+	tempp->posx = startx;
+	tempp->posz = startz;
+
+	memcpy(gameRoom_Manager[room_num].map.mapInfo, tempMap, sizeof(tempMap));
+}
+void Timer_thread() {
+	while (true)
+	{
+		Sleep(1);
+		DWORD currTime = GetTickCount();
+		DWORD elapsedTime = currTime - g_prevTime2;
+		g_prevTime2 = currTime;
+		auto a = gameRoom_Manager.begin();
+		for (; a != gameRoom_Manager.end();a++)
+		{
+			if (!a->second.IsGameOver())
+			{
+				a->second.SetTime(elapsedTime);
+				if (a->second.OneSec()) {
+					float tempT = a->second.GetTime();
+					TB_Time temp_t = { SIZEOF_TB_Time,CASE_TIME,tempT };
+					for (int i = 0; i < 4; ++i) {
+						//cout << "TimeSend" << endl;
+						if (a->second.ingame_Char_Info[i].ingame_id != 0) {
+							//cout << i << endl;
+							SendPacket(a->second.ingame_Char_Info[i].ingame_id-1, &temp_t);
+						}
+					}
+				}
+				if (a->second.bomb_Map.size() > 0)
+				{
+					auto b = a->second.bomb_Map.begin();
+					for (; b != a->second.bomb_Map.end();)
+					{
+						if (b->second.GetTime())
+						{
+							int tempx = b->second.GetXZ().first;
+							int tempz = b->second.GetXZ().second;
+							unsigned char tfire = b->second.firepower;
+							unsigned char tempid = b->second.game_id;
+							a->second.CalculateMap(tempx, tempz, tfire, tempid);
+							for (int i = 0; i < 4; ++i) {
+								
+
+								if (a->second.ingame_Char_Info[i].ingame_id != 0) {
+									auto c = a->second.explode_List.begin();
+									for (; c != a->second.explode_List.end();c++) {
+										//cout << (int)c->size<<"  "<<(int)c->type << endl;
+										c->size = SIZEOF_TB_BombExplodeRE;
+										c->type = CASE_BOMB_EX;
+										TB_BombExplodeRE bomb = { SIZEOF_TB_BombExplodeRE,CASE_BOMB_EX,c->upfire,c->rightfire,c->downfire,c->leftfire,c->gameID,c->posx,c->posz };
+										SendPacket(a->second.ingame_Char_Info[i].ingame_id-1, &bomb);
+										
+									}
+									//cout << "TimeMap" << endl;
+									SendPacket(a->second.ingame_Char_Info[i].ingame_id-1, &a->second.map);
+									
+								}
+
+							}
+							a->second.bomb_Map.erase(b++);
+							a->second.explode_List.clear();
+							//CalculateBomb();
+
+						}
+						else {
+							b++;
+						}
+					}
+				}
+			}
+
+		}
+	}
 }
