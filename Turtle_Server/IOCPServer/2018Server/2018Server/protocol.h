@@ -701,7 +701,7 @@ class InGameCalculator {
 public:
 	map<pair<int, int>, Bomb_TB> bomb_Map;
 	vector<TB_BombExplodeRE> explode_List;
-
+	unsigned char idList[4];
 	TB_Map map;
 	TB_CharPos ingame_Char_Info[4];
 	unsigned char fireMap[15][15];
@@ -720,7 +720,7 @@ public:
 		for (int i = 0; i < 4; ++i) {
 			ingame_Char_Info[i].size = SIZEOF_TB_CharPos;
 			ingame_Char_Info[i].type = CASE_POS;
-
+			idList[i] = 0;
 		}
 		for (int i = 0; i < 15; ++i) {
 			for (int j = 0; j < 15; ++j) {
@@ -728,9 +728,9 @@ public:
 			}
 		}
 		ingame_Char_Info[0].ingame_id = 0;
-		ingame_Char_Info[1].ingame_id = 0;
-		ingame_Char_Info[2].ingame_id = 0;
-		ingame_Char_Info[3].ingame_id = 0;
+		ingame_Char_Info[1].ingame_id = 1;
+		ingame_Char_Info[2].ingame_id = 2;
+		ingame_Char_Info[3].ingame_id = 3;
 		ingame_Char_Info[0].posx = 0.0f;
 		ingame_Char_Info[0].posz = 0.0f;
 		ingame_Char_Info[0].is_alive = true;
@@ -763,15 +763,20 @@ public:
 		id[2] = true;
 		id[3] = true;
 		time = 180.0f;
+		for (int i = 0; i < 4; ++i) {
+			ingame_Char_Info[i].size = SIZEOF_TB_CharPos;
+			ingame_Char_Info[i].type = CASE_POS;
+			idList[i] = 0;
+		}
 		for (int i = 0; i < 15; ++i) {
 			for (int j = 0; j < 15; ++j) {
 				fireMap[i][j] = 0;
 			}
 		}
 		ingame_Char_Info[0].ingame_id = 0;
-		ingame_Char_Info[1].ingame_id = 0;
-		ingame_Char_Info[2].ingame_id = 0;
-		ingame_Char_Info[3].ingame_id = 0;
+		ingame_Char_Info[1].ingame_id = 1;
+		ingame_Char_Info[2].ingame_id = 2;
+		ingame_Char_Info[3].ingame_id = 3;
 		ingame_Char_Info[0].posx = 0.0f;
 		ingame_Char_Info[0].posz = 0.0f;
 		ingame_Char_Info[0].is_alive = true;
@@ -800,7 +805,7 @@ public:
 	}
 	void ChangeID(int place, unsigned char id_p) {
 		
-		ingame_Char_Info[place].ingame_id = id_p;
+		idList[place] = id_p;
 
 	}
 	void PlayerBlank(int id_p) {

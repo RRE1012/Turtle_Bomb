@@ -1603,9 +1603,9 @@ void Timer_thread() {
 					TB_Time temp_t = { SIZEOF_TB_Time,CASE_TIME,tempT };
 					for (int i = 0; i < 4; ++i) {
 						//cout << "TimeSend" << endl;
-						if (a->second.ingame_Char_Info[i].ingame_id != 0) {
+						if (a->second.idList[i] != 0) {
 							//cout << i << endl;
-							SendPacket(a->second.ingame_Char_Info[i].ingame_id-1, &temp_t);
+							SendPacket(a->second.idList[i] - 1, &temp_t);
 						}
 					}
 				}
@@ -1624,18 +1624,18 @@ void Timer_thread() {
 							for (int i = 0; i < 4; ++i) {
 								
 
-								if (a->second.ingame_Char_Info[i].ingame_id != 0) {
+								if (a->second.idList[i] != 0) {
 									auto c = a->second.explode_List.begin();
 									for (; c != a->second.explode_List.end();c++) {
 										//cout << (int)c->size<<"  "<<(int)c->type << endl;
 										c->size = SIZEOF_TB_BombExplodeRE;
 										c->type = CASE_BOMB_EX;
 										TB_BombExplodeRE bomb = { SIZEOF_TB_BombExplodeRE,CASE_BOMB_EX,c->upfire,c->rightfire,c->downfire,c->leftfire,c->gameID,c->posx,c->posz };
-										SendPacket(a->second.ingame_Char_Info[i].ingame_id-1, &bomb);
+										SendPacket(a->second.idList[i] - 1, &bomb);
 										
 									}
 									//cout << "TimeMap" << endl;
-									SendPacket(a->second.ingame_Char_Info[i].ingame_id-1, &a->second.map);
+									SendPacket(a->second.idList[i]-1, &a->second.map);
 									
 								}
 
