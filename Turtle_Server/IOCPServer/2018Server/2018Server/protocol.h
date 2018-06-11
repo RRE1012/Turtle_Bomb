@@ -42,9 +42,15 @@ using namespace std;
 #define MAX_BUFF_SIZE   4000 // 작으면 성능이 떨어진다.
 #define MAX_PACKET_SIZE  255
 
+
 #define BOARD_WIDTH   400
 #define BOARD_HEIGHT  400
 
+#define DB_HOST "a"
+#define DB_USER "a"
+#define DB_PASS "a"
+#define DB_NAME "a"
+#define DB_PORT 3306
 #define SHOW_PLAYER_POS_X 10
 #define SHOW_PLAYER_POS_Y 10
 
@@ -99,6 +105,8 @@ using namespace std;
 #define CASE_BOXPUSHCOMPLETE 23
 #define CASE_TIME 24
 #define CASE_BOMBSET 25
+#define CASE_CONNECTSUCCESS 26
+#define CASE_DB1 27
 
 #define SIZEOF_TB_CharPos 22
 #define SIZEOF_TB_BombPos 17
@@ -109,7 +117,7 @@ using namespace std;
 #define SIZEOF_TB_ItemGet 13
 #define SIZEOF_TB_GetItem 4
 #define SIZEOF_TB_DEAD 3
-#define SIZEOF_TB_GAMEEND 3
+#define SIZEOF_TB_GAMEEND 4
 #define SIZEOF_TB_Room 31
 #define SIZEOF_TB_join 12
 #define SIZEOF_TB_joinRE 10
@@ -134,7 +142,9 @@ using namespace std;
 #define SIZEOF_TB_BoxPushRE 21
 #define SIZEOF_TB_Time 6
 #define MAX_EVENT_SIZE 64
-
+#define SIZEOF_TB_Connect_Success 2
+#define SIZEOF_TB_IDPW 44
+#define SIZEOF_TB_DBInfo_1 43
 
 #define MAP_NOTHING 0
 #define MAP_BOX 1
@@ -251,7 +261,33 @@ struct Socket_Info {
 	unsigned char pos_inRoom;
 };
 
+struct TB_DBInfo_1 {
+	unsigned char size; //43
+	unsigned char type; //27
+	unsigned char connect; //2이면 아이디 생성완료, 1이면 아이디 인증 성공, 0면 아이디 인증 실패
+	char id_string[20];
 
+	
+	int win;
+	int lose;
+	int tier;
+	int exp;
+	int exp_max;
+
+};
+struct TB_Connect_Success {
+	unsigned char size; //2
+	unsigned char type; //26
+
+};
+struct TB_IDPW {
+	unsigned char size; //44
+	unsigned char type; //26]
+	unsigned char m_id; //26]
+	unsigned char m_type; //1이면 로그인, 2면 생성
+	char id[20];
+	char pw[20];
+};
 
 struct GameCharInfo {
 	unsigned char speed;
@@ -456,6 +492,7 @@ struct TB_GAMEEND {
 	unsigned char size; //3
 	unsigned char type;//15
 	unsigned char winner_id; //누가 이겼나!
+	unsigned char loser_id;
 };
 
 
@@ -1095,6 +1132,7 @@ public:
 	char m_packet[MAX_PACKET_SIZE];
 	int id;
 	int roomNum;
+	char stringID[20];
 	// set<int> view_list; // 삽입/삭제가 자유로워야 한다. + 시간복잡도 상 가장 효율적인것이 set이다. (list는 삽입/삭제가 빠르지만 검색 성능이 느리다.)
 	// multiset 은 중복가능 이기때문에 사용하지 않아야한다.
 	unordered_set<int> m_view_list; // 정렬이 딱히 필요하지 않기 때문에 비정렬셋으로 성능 향상.

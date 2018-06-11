@@ -1,7 +1,7 @@
 
 
 #include "protocol.h"
-
+#include <mysql.h>
 
 HANDLE gh_iocp;
 
@@ -12,6 +12,10 @@ array <Client, MAX_USER> g_clients;
 map<BYTE, TB_Room> room_Map;
 map<BYTE, InGameCalculator> gameRoom_Manager;
 Map_TB g_TB_Map[3][4];
+MYSQL* conn_ptr=NULL;
+MYSQL_RES* result_sql=NULL;
+MYSQL_ROW row=NULL;
+
 list<TB_Room> room_page;
 void SetMap(BYTE, BYTE, BYTE, TB_Map*);
 void SetMapToValue(int, int);
@@ -77,7 +81,7 @@ void SendPacket(int id, void *ptr)
 	memcpy(s_over->m_iobuf, packet, packet[0]);
 	s_over->m_wsabuf.buf = s_over->m_iobuf;
 	if (s_over->m_iobuf[0] < 0) {
-		if(s_over->m_iobuf[1] ==CASE_MAP)
+		if (s_over->m_iobuf[1] == CASE_MAP)
 			s_over->m_wsabuf.len = 227;
 		else
 			s_over->m_wsabuf.len = 227;
@@ -117,18 +121,19 @@ void SendRemovePacket(int client, int object)
 
 void ProcessPacket(int id, char *packet)
 {
-	
+
 	TB_join * joininfo;
 	unsigned char temproomid;
 	unsigned char tempid;
 	switch (packet[1])
 	{
-	case CASE_POS: 
+	case CASE_POS:
 	{
 		TB_CharPos* pos = reinterpret_cast<TB_CharPos*>(packet);
 		bool tempbool = false;
 		unsigned char tempid = pos->ingame_id;
 		temproomid = pos->room_id;
+		BYTE lastdeadID = 4;
 		gameRoom_Manager[temproomid].ingame_Char_Info[tempid].posx = pos->posx;
 		gameRoom_Manager[temproomid].ingame_Char_Info[tempid].posz = pos->posz;
 		gameRoom_Manager[temproomid].ingame_Char_Info[tempid].rotY = pos->rotY;
@@ -136,6 +141,7 @@ void ProcessPacket(int id, char *packet)
 		gameRoom_Manager[temproomid].ingame_Char_Info[tempid].anistate = pos->anistate;
 		if (!gameRoom_Manager[temproomid].ingame_Char_Info[tempid].is_alive && !gameRoom_Manager[temproomid].IsGameOver()) {
 			gameRoom_Manager[temproomid].PlayerDead(tempid);
+			lastdeadID = tempid;
 			tempbool = true;
 
 		}
@@ -144,24 +150,34 @@ void ProcessPacket(int id, char *packet)
 
 
 		}
+		if (tempbool) {
+			TB_DEAD tempDead = { SIZEOF_TB_DEAD,CASE_DEAD,tempid };
+			auto a = g_clients.begin();
+			for (; a != g_clients.end(); a++) {
+				if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
+					cout << "Send GameOver" << endl;
+					SendPacket(a->id - 1, &tempDead);
+				}
+
+			}
+
+			//retval = send(SocketInfoArray[j].sock, (char*)&tempd, sizeof(TB_DEAD), 0);
+
+		}
 		auto a = g_clients.begin();
 		if (gameRoom_Manager[temproomid].IsGameOver() && gameRoom_Manager[temproomid].deathcount == (room_Map[temproomid].people_count - 1)) {
 			unsigned char winnerid = gameRoom_Manager[temproomid].GetWinnerID();
-			TB_GAMEEND gameover = { SIZEOF_TB_GAMEEND,CASE_GAMESET,winnerid };
+			TB_GAMEEND gameover = { SIZEOF_TB_GAMEEND,CASE_GAMESET,winnerid,lastdeadID };
 			//retval = send(SocketInfoArray[j].sock, (char*)&gameover, sizeof(TB_GAMEEND), 0);
 			for (; a != g_clients.end(); a++) {
 				if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
-					cout << "Send Roominfo" << endl;
+					cout << "Send GameOver" << endl;
 					SendPacket(a->id - 1, &gameover);
 				}
 
 			}
 		}
-		if (tempbool) {
-			TB_DEAD tempDead = { SIZEOF_TB_DEAD,CASE_DEAD,tempid };
-			//retval = send(SocketInfoArray[j].sock, (char*)&tempd, sizeof(TB_DEAD), 0);
-			SendPacket(id, &tempDead);
-		}
+
 		for (; a != g_clients.end(); a++) {
 			if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
 
@@ -174,14 +190,14 @@ void ProcessPacket(int id, char *packet)
 
 
 	}
-		break;
+	break;
 	case CASE_BOMB:
 	{
 		TB_BombExplode* b_pos = reinterpret_cast<TB_BombExplode*>(packet);
 		int tempx = b_pos->posx;
 		int tempz = b_pos->posz;
 		unsigned char roomid = b_pos->room_id;
-		gameRoom_Manager[roomid].map.mapInfo[tempz][tempx]= MAP_BOMB;
+		gameRoom_Manager[roomid].map.mapInfo[tempz][tempx] = MAP_BOMB;
 		unsigned char tempfire = b_pos->firepower;
 		unsigned char tempgameid = b_pos->game_id;
 		//fireMap[roomid - 1][tempz][tempx] = tempfire;
@@ -199,121 +215,121 @@ void ProcessPacket(int id, char *packet)
 		}
 		//retval = send(SocketInfoArray[j].sock, (char*)&tB, sizeof(TB_MapSetRE), 0);
 	}
-		break;
+	break;
 	case CASE_ITEM_GET:
-		{
-			TB_ItemGet* tempitem = reinterpret_cast<TB_ItemGet*>(packet);
-			temproomid = tempitem->room_id;
-			unsigned char tempid = tempitem->ingame_id;
+	{
+		TB_ItemGet* tempitem = reinterpret_cast<TB_ItemGet*>(packet);
+		temproomid = tempitem->room_id;
+		unsigned char tempid = tempitem->ingame_id;
 
-			unsigned char tempi = tempitem->item_type;
-			printf("%d의 item type 획득\n", tempi);
-			int tempx = tempitem->posx;
-			int tempz = tempitem->posz;
-			bool tempbool = gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] != MAP_NOTHING;
-			printf("bool 초기화\n");
-			if (tempbool) {
-				gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] = MAP_NOTHING;
-				TB_GetItem tempIRE = { SIZEOF_TB_GetItem,CASE_ITEM_GET,tempid,tempi };
-				TB_MapSetRE tMap = { SIZEOF_TB_MapSetRE,CASE_MAPSET,MAP_NOTHING,tempx,tempz };
-				//retval = send(ptr->sock, (char*)&tempIRE, sizeof(TB_GetItem), 0);
-				
-				auto a = g_clients.begin();
-				for (; a != g_clients.end(); a++) {
-					if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
-						SendPacket(a->id - 1, &tempIRE);
-						SendPacket(a->id - 1, &tMap);
-					}
-				}			
-			}
+		unsigned char tempi = tempitem->item_type;
+		printf("%d의 item type 획득\n", tempi);
+		int tempx = tempitem->posx;
+		int tempz = tempitem->posz;
+		bool tempbool = gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] != MAP_NOTHING;
+		printf("bool 초기화\n");
+		if (tempbool) {
+			gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] = MAP_NOTHING;
+			TB_GetItem tempIRE = { SIZEOF_TB_GetItem,CASE_ITEM_GET,tempid,tempi };
+			TB_MapSetRE tMap = { SIZEOF_TB_MapSetRE,CASE_MAPSET,MAP_NOTHING,tempx,tempz };
+			//retval = send(ptr->sock, (char*)&tempIRE, sizeof(TB_GetItem), 0);
 
-			
-		}
-		break;
-	case CASE_KICKBOMB:
-		 {
-			TB_KickBomb* tK = reinterpret_cast<TB_KickBomb*>(packet);
-			unsigned char tempdirc = tK->direction;
-			unsigned char temproomid = tK->roomid;
-			unsigned char tempid = tK->ingame_id;
-			int tempx = tK->posx;
-			int tempz = tK->posz;
-			int ax = tempx;
-			int az = tempz;
-			switch (tempdirc) {
-			case 1:
-				ax = tempx + 1;
-				break;
-			case 2:
-				ax = tempx - 1;
-				break;
-			case 3:
-				az = tempz + 1;
-				break;
-			case 4:
-				az = tempz - 1;
-				break;
-			}
-			printf("발로까는캐릭터위치 %d,%d!!!\n", tempx, tempz);
-			if (gameRoom_Manager[temproomid].bomb_Map.size() > 0) {
-				auto bomb_b = gameRoom_Manager[temproomid].bomb_Map.find(pair<int, int>(ax, az));
-				if (bomb_b != gameRoom_Manager[temproomid].bomb_Map.end()) {
-					TB_KickBombRE tempKick = { SIZEOF_TB_ThrowBombRE,CASE_THROWBOMB,tempdirc,tempid,tempx,tempz };
-
-					gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] = MAP_NOTHING;
-					TB_MapSetRE tMap = { SIZEOF_TB_MapSetRE,CASE_MAPSET,MAP_NOTHING,tempx,tempz };
-					Kick_CalculateMap(tempx, tempz, temproomid, &tempKick, tempdirc, &tMap);
-					Bomb_TB tempBomb = Bomb_TB(tempKick.posx_re, tempKick.posz_re, temproomid, bomb_b->second.firepower, tempid);
-					tempBomb.time = bomb_b->second.time;
-					tempBomb.ResetExplodeTime();
-					tempBomb.is_kicked = true;
-
-					gameRoom_Manager[temproomid].bomb_Map.insert(pair<pair<int, int>, Bomb_TB>(make_pair(tempKick.posx_re, tempKick.posz_re), tempBomb));
-					gameRoom_Manager[temproomid].fireMap[tempz][tempx] = 0;
-					gameRoom_Manager[temproomid].bomb_Map.erase(bomb_b);
-					gameRoom_Manager[temproomid].ingame_Char_Info[tempid].anistate = TURTLE_ANI_KICK;//throw ani
-					auto a = g_clients.begin();
-					for (; a != g_clients.end(); a++) {
-						if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
-							if (tempKick.kick == 1) {
-								
-								SendPacket(a->id - 1, &tMap);
-							}
-							
-							SendPacket(a->id - 1, &tempKick);
-						}
-
-					}	
-				}
-			}
-		}
-		break;
-
-	case CASE_KICKCOMPLETE:
-		{
-			TB_KickComplete* tK = reinterpret_cast<TB_KickComplete*>(packet);
-
-			unsigned char temproomid = tK->roomid;
-
-			int tempx = tK->posx;
-			int tempz = tK->posz;
-			TB_BombSetRE tMap = { SIZEOF_TB_MapSetRE,CASE_BOMBSET,MAP_BOMB,tempx,tempz };
-			gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].is_kicked = false;
-			gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].ResetTime();
-			gameRoom_Manager[temproomid].fireMap[tempz][tempx] = gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].firepower;
-			gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] = MAP_BOMB;
 			auto a = g_clients.begin();
 			for (; a != g_clients.end(); a++) {
 				if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
+					SendPacket(a->id - 1, &tempIRE);
 					SendPacket(a->id - 1, &tMap);
+				}
+			}
+		}
+
+
+	}
+	break;
+	case CASE_KICKBOMB:
+	{
+		TB_KickBomb* tK = reinterpret_cast<TB_KickBomb*>(packet);
+		unsigned char tempdirc = tK->direction;
+		unsigned char temproomid = tK->roomid;
+		unsigned char tempid = tK->ingame_id;
+		int tempx = tK->posx;
+		int tempz = tK->posz;
+		int ax = tempx;
+		int az = tempz;
+		switch (tempdirc) {
+		case 1:
+			ax = tempx + 1;
+			break;
+		case 2:
+			ax = tempx - 1;
+			break;
+		case 3:
+			az = tempz + 1;
+			break;
+		case 4:
+			az = tempz - 1;
+			break;
+		}
+		printf("발로까는캐릭터위치 %d,%d!!!\n", tempx, tempz);
+		if (gameRoom_Manager[temproomid].bomb_Map.size() > 0) {
+			auto bomb_b = gameRoom_Manager[temproomid].bomb_Map.find(pair<int, int>(ax, az));
+			if (bomb_b != gameRoom_Manager[temproomid].bomb_Map.end()) {
+				TB_KickBombRE tempKick = { SIZEOF_TB_ThrowBombRE,CASE_THROWBOMB,tempdirc,tempid,tempx,tempz };
+
+				gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] = MAP_NOTHING;
+				TB_MapSetRE tMap = { SIZEOF_TB_MapSetRE,CASE_MAPSET,MAP_NOTHING,tempx,tempz };
+				Kick_CalculateMap(tempx, tempz, temproomid, &tempKick, tempdirc, &tMap);
+				Bomb_TB tempBomb = Bomb_TB(tempKick.posx_re, tempKick.posz_re, temproomid, bomb_b->second.firepower, tempid);
+				tempBomb.time = bomb_b->second.time;
+				tempBomb.ResetExplodeTime();
+				tempBomb.is_kicked = true;
+
+				gameRoom_Manager[temproomid].bomb_Map.insert(pair<pair<int, int>, Bomb_TB>(make_pair(tempKick.posx_re, tempKick.posz_re), tempBomb));
+				gameRoom_Manager[temproomid].fireMap[tempz][tempx] = 0;
+				gameRoom_Manager[temproomid].bomb_Map.erase(bomb_b);
+				gameRoom_Manager[temproomid].ingame_Char_Info[tempid].anistate = TURTLE_ANI_KICK;//throw ani
+				auto a = g_clients.begin();
+				for (; a != g_clients.end(); a++) {
+					if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
+						if (tempKick.kick == 1) {
+
+							SendPacket(a->id - 1, &tMap);
+						}
+
+						SendPacket(a->id - 1, &tempKick);
+					}
 
 				}
+			}
+		}
+	}
+	break;
+
+	case CASE_KICKCOMPLETE:
+	{
+		TB_KickComplete* tK = reinterpret_cast<TB_KickComplete*>(packet);
+
+		unsigned char temproomid = tK->roomid;
+
+		int tempx = tK->posx;
+		int tempz = tK->posz;
+		TB_BombSetRE tMap = { SIZEOF_TB_MapSetRE,CASE_BOMBSET,MAP_BOMB,tempx,tempz };
+		gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].is_kicked = false;
+		gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].ResetTime();
+		gameRoom_Manager[temproomid].fireMap[tempz][tempx] = gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].firepower;
+		gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] = MAP_BOMB;
+		auto a = g_clients.begin();
+		for (; a != g_clients.end(); a++) {
+			if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
+				SendPacket(a->id - 1, &tMap);
 
 			}
 
-					
 		}
-		break;
+
+
+	}
+	break;
 	case CASE_THROWBOMB:
 	{
 		TB_ThrowBomb* tempt = reinterpret_cast<TB_ThrowBomb*>(packet);
@@ -351,90 +367,90 @@ void ProcessPacket(int id, char *packet)
 	break;
 	case CASE_THROWCOMPLETE:
 	{
-			TB_ThrowComplete* tempt = reinterpret_cast<TB_ThrowComplete*>(packet);
-			temproomid = tempt->roomid;
-			int tempx = tempt->posx;
-			int tempz = tempt->posz;
-			gameRoom_Manager[temproomid].map.mapInfo[tempx][tempz] = MAP_BOMB;
-			TB_BombSetRE tB = { SIZEOF_TB_MapSetRE,CASE_BOMBSET,MAP_BOMB,tempx,tempz };
-			gameRoom_Manager[temproomid].fireMap[tempz][tempx] = gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].firepower;
-			gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].is_throw = false;
-			gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].ResetTime();
-			//fireMap[temproomid - 1][tempz][tempx] = bomb_Map[temproomid - 1][pair<int, int>(tempx, tempz)].firepower;
-			auto a = g_clients.begin();
-			for (; a != g_clients.end(); a++) {
-				if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
-					SendPacket(a->id - 1, &tB);
-					
-				}
+		TB_ThrowComplete* tempt = reinterpret_cast<TB_ThrowComplete*>(packet);
+		temproomid = tempt->roomid;
+		int tempx = tempt->posx;
+		int tempz = tempt->posz;
+		gameRoom_Manager[temproomid].map.mapInfo[tempx][tempz] = MAP_BOMB;
+		TB_BombSetRE tB = { SIZEOF_TB_MapSetRE,CASE_BOMBSET,MAP_BOMB,tempx,tempz };
+		gameRoom_Manager[temproomid].fireMap[tempz][tempx] = gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].firepower;
+		gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].is_throw = false;
+		gameRoom_Manager[temproomid].bomb_Map[pair<int, int>(tempx, tempz)].ResetTime();
+		//fireMap[temproomid - 1][tempz][tempx] = bomb_Map[temproomid - 1][pair<int, int>(tempx, tempz)].firepower;
+		auto a = g_clients.begin();
+		for (; a != g_clients.end(); a++) {
+			if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
+				SendPacket(a->id - 1, &tB);
 
 			}
-		
 
-						
-
-				
-
-			
-	}
-		break;
-	case CASE_BOXPUSH:
-		{
-			TB_BoxPush* tB = reinterpret_cast<TB_BoxPush*>(packet);
-
-			unsigned char tempdirc = tB->direction;
-			unsigned char temproomid = tB->roomid;
-			unsigned char tempid = tB->ingame_id;
-			int tempx = tB->posx;
-			int tempz = tB->posz;
-
-
-			TB_MapSetRE tMap = { SIZEOF_TB_MapSetRE,CASE_MAPSET,MAP_NOTHING,tempx,tempz };
-			TB_BoxPushRE tBox = { SIZEOF_TB_BoxPushRE, CASE_BOXPUSH,0,tempid };
-			BoxPush_Calculate_Map(tempx, tempz, temproomid, &tBox, tempdirc, &tMap);
-			printf("box받았다!!!\n");
-			auto a = g_clients.begin();
-			for (; a != g_clients.end(); a++) {
-				if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
-					if (tBox.push == 1)
-						SendPacket(a->id - 1, &tMap);
-					SendPacket(a->id - 1, &tBox);
-					
-				}
-
-			}
-		
-						//printf("보냈다 패킷!!!\n");
-					
-						
-			
 		}
-		break;
+
+
+
+
+
+
+
+	}
+	break;
+	case CASE_BOXPUSH:
+	{
+		TB_BoxPush* tB = reinterpret_cast<TB_BoxPush*>(packet);
+
+		unsigned char tempdirc = tB->direction;
+		unsigned char temproomid = tB->roomid;
+		unsigned char tempid = tB->ingame_id;
+		int tempx = tB->posx;
+		int tempz = tB->posz;
+
+
+		TB_MapSetRE tMap = { SIZEOF_TB_MapSetRE,CASE_MAPSET,MAP_NOTHING,tempx,tempz };
+		TB_BoxPushRE tBox = { SIZEOF_TB_BoxPushRE, CASE_BOXPUSH,0,tempid };
+		BoxPush_Calculate_Map(tempx, tempz, temproomid, &tBox, tempdirc, &tMap);
+		printf("box받았다!!!\n");
+		auto a = g_clients.begin();
+		for (; a != g_clients.end(); a++) {
+			if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
+				if (tBox.push == 1)
+					SendPacket(a->id - 1, &tMap);
+				SendPacket(a->id - 1, &tBox);
+
+			}
+
+		}
+
+		//printf("보냈다 패킷!!!\n");
+
+
+
+	}
+	break;
 	case CASE_BOXPUSHCOMPLETE:
 	{
-			TB_BoxPushComplete* tB = reinterpret_cast<TB_BoxPushComplete*>(packet);
-			printf("boxcom받았다!!!\n");
-			temproomid = tB->roomid;
-			int tempx = tB->posx;
-			int tempz = tB->posz;
-			gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] = MAP_BOX;
-			TB_MapSetRE tBd = { SIZEOF_TB_MapSetRE,CASE_MAPSET,MAP_BOX,tempx,tempz };
-			
-			auto a = g_clients.begin();
-			for (; a != g_clients.end(); a++) {
-				if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
-					SendPacket(a->id - 1, &tBd);
+		TB_BoxPushComplete* tB = reinterpret_cast<TB_BoxPushComplete*>(packet);
+		printf("boxcom받았다!!!\n");
+		temproomid = tB->roomid;
+		int tempx = tB->posx;
+		int tempz = tB->posz;
+		gameRoom_Manager[temproomid].map.mapInfo[tempz][tempx] = MAP_BOX;
+		TB_MapSetRE tBd = { SIZEOF_TB_MapSetRE,CASE_MAPSET,MAP_BOX,tempx,tempz };
 
-				}
+		auto a = g_clients.begin();
+		for (; a != g_clients.end(); a++) {
+			if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
+				SendPacket(a->id - 1, &tBd);
 
 			}
 
-						
+		}
 
 
-			
+
+
+
 	}
-		break;
+	break;
 	case CASE_JOINROOM:
 	{
 
@@ -446,7 +462,7 @@ void ProcessPacket(int id, char *packet)
 			bool tempBool2 = room_Map[temproomid].game_start != 1;
 			bool tempBool3 = room_Map[temproomid].people_count >= 1;
 			if (tempBool1&&tempBool2&&tempBool3) {
-				
+
 				g_clients[id].m_scene = 1;
 				unsigned char tempcount = room_Map[temproomid].people_count;
 
@@ -462,17 +478,21 @@ void ProcessPacket(int id, char *packet)
 						break;
 					}
 				}
-				
-				
+
+
 				g_clients[id].m_mVl.lock();
 				auto a = g_clients.begin();
-				for (; a != g_clients.end();a++) {
+				for (; a != g_clients.end(); a++) {
 					if (a->m_scene == 0 && a->m_isconnected) {
-						cout << "Send Roominfo" << endl;
+						cout << "Send Roominfo-Join" << endl;
+						room_Map[temproomid].size = SIZEOF_TB_Room;
+						room_Map[temproomid].type = CASE_ROOM;
 						SendPacket(a->id - 1, &room_Map[temproomid]);
 					}
-					if (a->m_scene == 1 && a->m_isconnected &&a->roomNum==temproomid) {
-						cout << "Send Roominfo2" << endl;
+					if (a->m_scene == 1 && a->m_isconnected &&a->roomNum == temproomid) {
+						cout << "Send Roominfo2-Join" << endl;
+						room_Map[temproomid].size = SIZEOF_TB_Room;
+						room_Map[temproomid].type = CASE_ROOM;
 						SendPacket(a->id - 1, &room_Map[temproomid]);
 					}
 				}
@@ -486,7 +506,7 @@ void ProcessPacket(int id, char *packet)
 			}
 		}
 	}
-		break;
+	break;
 	case CASE_CREATEROOM:
 	{
 		TB_create* createinfo = reinterpret_cast<TB_create*>(packet);
@@ -504,7 +524,7 @@ void ProcessPacket(int id, char *packet)
 			room_Map[temproomid].people_inroom[0] = createinfo->id;
 			room_Map[temproomid].roomID = temproomid;
 			room_Map[temproomid].people_max = 4;
-			
+
 			//ptr->roomID = room_Map[temproomid - 1].roomID;
 			re_createPacket.can = 1;
 			re_createPacket.roomid = room_Map[temproomid].roomID;
@@ -519,13 +539,13 @@ void ProcessPacket(int id, char *packet)
 			//CopyRoomAtoB(&room_Map[temproomid], &new_room);
 			room_page.emplace_back(room_Map[temproomid]);
 
-			for (; a != g_clients.end();a++) {
+			for (; a != g_clients.end(); a++) {
 				if (a->m_scene == 0 && a->m_isconnected) {
-					cout << "Send Roominfo" << endl;
-					SendPacket(a->id-1, &room_Map[temproomid]);
+					cout << "Send Roominfo-Create" << endl;
+					SendPacket(a->id - 1, &room_Map[temproomid]);
 				}
 			}
-			
+
 			g_clients[id].m_mVl.unlock();
 			cout << (int)(createinfo->id) << "Create " << (int)temproomid << "Room" << endl;
 		}
@@ -535,7 +555,7 @@ void ProcessPacket(int id, char *packet)
 			SendPacket(id, &re_createPacket);
 		}
 	}
-		break;
+	break;
 	case CASE_READY:
 	{
 		TB_Ready* tempready = reinterpret_cast<TB_Ready*>(packet);
@@ -556,129 +576,155 @@ void ProcessPacket(int id, char *packet)
 		for (int i = 0; i < 4; ++i) {
 			if (room_Map[temproomid].people_inroom[i] != 0) {
 				cout << (int)room_Map[temproomid].people_inroom[i] << "에게 보낸다." << endl;
-				SendPacket((int)(room_Map[temproomid].people_inroom[i])-1, &tempRE);
+				SendPacket((int)(room_Map[temproomid].people_inroom[i]) - 1, &tempRE);
 			}
 		}
 	}
 
-		break;
+	break;
 	case CASE_OUTROOM:
 	{
 		TB_RoomOut* tempRO = reinterpret_cast<TB_RoomOut*>(packet);
 		temproomid = tempRO->roomID;
 		unsigned char temproompos = tempRO->my_pos;
-		TB_RoomOutRE outRE = { SIZEOF_TB_RoomOutRE,CASE_OUTROOM,1 };
-		room_Map[temproomid].people_count -= 1;
-		room_Map[temproomid].people_inroom[temproompos - 1] = 0;
-
-		if (room_Map[temproomid].people_count <= 0) {
-			room_Map[temproomid].made = 0;
-			room_Map[temproomid].game_start = 0;
-			auto myroomState = room_Map.find(temproomid);
-			room_Map.erase(myroomState);
-			
-			auto a = room_page.begin();
-			for (; a != room_page.end();) {
-				if (a->roomID==temproomid) {
-					room_page.erase(a++);
-					break;
-				}
-				else {
-					a++;
-				}
-			}
-		}
-		if (g_clients[id].is_guardian == 1) {
-			g_clients[id].is_guardian = 0; //이제 자유의 몸이야!
-			for (int a = 0; a < 4; ++a) {
-				if (room_Map[temproomid].people_inroom[a] != 0 && room_Map[temproomid].people_inroom[a] != g_clients[id].id) {
-					room_Map[temproomid].guardian_pos = a + 1;
-					g_clients[room_Map[temproomid].people_inroom[a]-1].is_guardian = 1;
-					break;
-				}
-			}
-
-		}
-		SendPacket(id, &outRE);
-		
-		g_clients[id].m_mVl.lock();
-		auto a = g_clients.begin();
-		g_clients[id].m_scene = 0;
-		for (; a != g_clients.end(); a++) {
-			if (a->m_scene == 0 && a->m_isconnected) {
-				cout << "Send Roominfo" << endl;
-				SendPacket(a->id - 1, &room_Map[temproomid]);
-			}
-			if (a->m_scene == 1 && a->m_isconnected &&a->roomNum == temproomid) {
-				cout << "Send Roominfo2" << endl;
-				SendPacket(a->id - 1, &room_Map[temproomid]);
-			}
-		}
-
-		g_clients[id].m_mVl.unlock();
-	}
-		break;
-	case CASE_FORCEOUTROOM:
-		{
-			TB_GetOut* tempFO = reinterpret_cast<TB_GetOut*>(packet);
-			temproomid = tempFO->roomID;
-			unsigned char temproompos = tempFO->position;
-			
+		if (temproompos != 0) {
+			TB_RoomOutRE outRE = { SIZEOF_TB_RoomOutRE,CASE_OUTROOM,1 };
 			room_Map[temproomid].people_count -= 1;
-			unsigned char tempid = room_Map[temproomid].people_inroom[temproompos - 1];
 			room_Map[temproomid].people_inroom[temproompos - 1] = 0;
 
-			TB_GetOUTRE tempForceOut = { SIZEOF_TB_GetOutRE,CASE_FORCEOUTROOM };
-			auto a = g_clients.begin();
-			for (; a != g_clients.end(); a++) {
-				if (a->m_scene == 1 && a->m_isconnected&&a->roomNum == temproomid) {
-					
-					if (a->id == tempid) {
-						int tempcount = 0;
-						list<TB_Room>::iterator room_t = room_page.begin();
+			if (room_Map[temproomid].people_count <= 0) {
+				room_Map[temproomid].made = 0;
+				room_Map[temproomid].game_start = 0;
+				auto myroomState = room_Map.find(temproomid);
+				room_Map.erase(myroomState);
 
-						for (; room_t != room_page.end();) {
-							if (tempcount >= 8) {
-								break;
-							}
-							if (room_t->roomID != 0) {
-								cout << "Send RRRoominfo\n" << endl;
-								TB_Room roomList = { SIZEOF_TB_Room,CASE_ROOM,room_t->roomID,room_t->people_count,room_t->game_start,room_t->people_max,room_t->made,
-									room_t->guardian_pos,room_t->people_inroom[0],room_t->people_inroom[1],room_t->people_inroom[2],room_t->people_inroom[3],room_t->roomstate ,room_t->map_thema ,room_t->map_mode,
-									room_t->team_inroom[0],room_t->team_inroom[1],room_t->team_inroom[2],room_t->team_inroom[3],room_t->ready[0],room_t->ready[1],room_t->ready[2],room_t->ready[3] };
-
-
-								SendPacket(id, &roomList);
-								tempcount++;
-								room_t++;
-							}
-							else {
-								break;
-							}
-						}
-						SendPacket(a->id - 1, &tempForceOut);
-
+				auto a = room_page.begin();
+				for (; a != room_page.end();) {
+					if (a->roomID == temproomid) {
+						room_page.erase(a++);
+						break;
 					}
 					else {
-						SendPacket(a->id - 1, &room_Map[temproomid]);
+						a++;
 					}
-
+				}
+			}
+			if (g_clients[id].is_guardian == 1) {
+				g_clients[id].is_guardian = 0; //이제 자유의 몸이야!
+				for (int a = 0; a < 4; ++a) {
+					if (room_Map[temproomid].people_inroom[a] != 0 && room_Map[temproomid].people_inroom[a] != g_clients[id].id) {
+						room_Map[temproomid].guardian_pos = a + 1;
+						g_clients[room_Map[temproomid].people_inroom[a] - 1].is_guardian = 1;
+						break;
+					}
 				}
 
 			}
-				
-					
-					
-					
-					
+			SendPacket(id, &outRE);
+
+			g_clients[id].m_mVl.lock();
+			auto a = g_clients.begin();
+			g_clients[id].m_scene = 0;
+			auto myroomState2 = room_Map.find(temproomid);
+			bool tempbool = myroomState2 != room_Map.end();
+			for (; a != g_clients.end(); a++) {
+				if (a->m_scene == 0 && a->m_isconnected) {
 
 
-				
+					if (tempbool) {
+						cout << "Send Roominfo-Out" << endl;
+						room_Map[temproomid].size = SIZEOF_TB_Room;
+						room_Map[temproomid].type = CASE_ROOM;
 
-			
-			
+						room_Map[temproomid].roomID = temproomid;
+						SendPacket(a->id - 1, &room_Map[temproomid]);
+					}
+					else {
+						cout << "Send Roominfo-Out2" << endl;
+						TB_Room empty_room = { SIZEOF_TB_Room,CASE_ROOM,temproomid,0,0,0,0 };
+						SendPacket(a->id - 1, &empty_room);
+					}
+
+				}
+				if (a->m_scene == 1 && a->m_isconnected &&a->roomNum == temproomid) {
+					cout << "Send Roominfo2=Out" << endl;
+					if (tempbool)
+						SendPacket(a->id - 1, &room_Map[temproomid]);
+					else {
+						TB_Room empty_room = { SIZEOF_TB_Room,CASE_ROOM,temproomid,0,0,0,0 };
+						SendPacket(a->id - 1, &empty_room);
+					}
+				}
+			}
+
+			g_clients[id].m_mVl.unlock();
 		}
-		break;
+		else {
+			g_clients[id].m_scene = 1;
+		}
+	}
+	break;
+	case CASE_FORCEOUTROOM:
+	{
+		TB_GetOut* tempFO = reinterpret_cast<TB_GetOut*>(packet);
+		temproomid = tempFO->roomID;
+		unsigned char temproompos = tempFO->position;
+
+		room_Map[temproomid].people_count -= 1;
+		unsigned char tempid = room_Map[temproomid].people_inroom[temproompos - 1];
+		room_Map[temproomid].people_inroom[temproompos - 1] = 0;
+
+		TB_GetOUTRE tempForceOut = { SIZEOF_TB_GetOutRE,CASE_FORCEOUTROOM };
+		auto a = g_clients.begin();
+		for (; a != g_clients.end(); a++) {
+			if (a->m_scene == 1 && a->m_isconnected&&a->roomNum == temproomid) {
+
+				if (a->id == tempid) {
+					int tempcount = 0;
+					list<TB_Room>::iterator room_t = room_page.begin();
+
+					for (; room_t != room_page.end();) {
+						if (tempcount >= 8) {
+							break;
+						}
+						if (room_t->roomID != 0) {
+							cout << "Send RRRoominfo\n" << endl;
+							TB_Room roomList = { SIZEOF_TB_Room,CASE_ROOM,room_t->roomID,room_t->people_count,room_t->game_start,room_t->people_max,room_t->made,
+								room_t->guardian_pos,room_t->people_inroom[0],room_t->people_inroom[1],room_t->people_inroom[2],room_t->people_inroom[3],room_t->roomstate ,room_t->map_thema ,room_t->map_mode,
+								room_t->team_inroom[0],room_t->team_inroom[1],room_t->team_inroom[2],room_t->team_inroom[3],room_t->ready[0],room_t->ready[1],room_t->ready[2],room_t->ready[3] };
+
+
+							SendPacket(id, &roomList);
+							tempcount++;
+							room_t++;
+						}
+						else {
+							break;
+						}
+					}
+					SendPacket(a->id - 1, &tempForceOut);
+
+				}
+				else {
+					SendPacket(a->id - 1, &room_Map[temproomid]);
+				}
+
+			}
+
+		}
+
+
+
+
+
+
+
+
+
+
+
+	}
+	break;
 	case CASE_ROOMSETTING:
 	{
 		TB_RoomSetting* tempSetting = reinterpret_cast<TB_RoomSetting*>(packet);
@@ -694,11 +740,11 @@ void ProcessPacket(int id, char *packet)
 
 		for (; a != g_clients.end(); a++) {
 			if (a->m_scene == 0 && a->m_isconnected) {
-				cout << "Send Roominfo" << endl;
+				cout << "Send Roominfo-Setting" << endl;
 				SendPacket(a->id - 1, &room_Map[temproomid]);
 			}
 			if (a->m_scene == 1 && a->m_isconnected &&a->roomNum == temproomid) {
-				cout << "Send Roominfo2" << endl;
+				cout << "Send Roominfo2-Setting" << endl;
 				SendPacket(a->id - 1, &room_Map[temproomid]);
 			}
 		}
@@ -706,32 +752,32 @@ void ProcessPacket(int id, char *packet)
 		g_clients[id].m_mVl.unlock();
 
 	}
-		break;
+	break;
 
 	case CASE_TEAMSETTING:
-		{
-			TB_TeamSetting* tempTeamSet = reinterpret_cast<TB_TeamSetting*>(packet);
-			temproomid = tempTeamSet->roomid;
-			unsigned char temppos = tempTeamSet->pos_in_room;
-			unsigned char tempteam = tempTeamSet->team;
-			room_Map[temproomid].team_inroom[temppos] = tempteam;
-			g_clients[id].m_mVl.lock();
-			auto a = g_clients.begin();
+	{
+		TB_TeamSetting* tempTeamSet = reinterpret_cast<TB_TeamSetting*>(packet);
+		temproomid = tempTeamSet->roomid;
+		unsigned char temppos = tempTeamSet->pos_in_room;
+		unsigned char tempteam = tempTeamSet->team;
+		room_Map[temproomid].team_inroom[temppos] = tempteam;
+		g_clients[id].m_mVl.lock();
+		auto a = g_clients.begin();
 
-			for (; a != g_clients.end(); a++) {
-				if (a->m_scene == 0 && a->m_isconnected) {
-					cout << "Send Roominfo" << endl;
-					SendPacket(a->id - 1, &room_Map[temproomid]);
-				}
-				if (a->m_scene == 1 && a->m_isconnected &&a->roomNum == temproomid) {
-					cout << "Send Roominfo2" << endl;
-					SendPacket(a->id - 1, &room_Map[temproomid]);
-				}
+		for (; a != g_clients.end(); a++) {
+			if (a->m_scene == 0 && a->m_isconnected) {
+				cout << "Send Roominfo-Team" << endl;
+				SendPacket(a->id - 1, &room_Map[temproomid]);
 			}
-
-			g_clients[id].m_mVl.unlock();
+			if (a->m_scene == 1 && a->m_isconnected &&a->roomNum == temproomid) {
+				cout << "Send Roominfo2-Team" << endl;
+				SendPacket(a->id - 1, &room_Map[temproomid]);
+			}
 		}
-		break;
+
+		g_clients[id].m_mVl.unlock();
+	}
+	break;
 	case CASE_STARTGAME:
 	{
 		TB_GameStart* startinfo = reinterpret_cast<TB_GameStart*>(packet);
@@ -750,16 +796,16 @@ void ProcessPacket(int id, char *packet)
 				gameRoom_Manager[temproomid].InitClass();
 			}
 			else {
-				gameRoom_Manager.insert(make_pair(temproomid,InGameCalculator()));
+				gameRoom_Manager.insert(make_pair(temproomid, InGameCalculator()));
 			}
-			
+
 			p_startGame.startTB = 1;
-			SetMap(room_Map[temproomid].map_mode, room_Map[temproomid].map_thema, temproomid,&gameRoom_Manager[temproomid].map);
-			TB_Map tempmap = {SIZEOF_TB_MAP,CASE_MAP};
+			SetMap(room_Map[temproomid].map_mode, room_Map[temproomid].map_thema, temproomid, &gameRoom_Manager[temproomid].map);
+			TB_Map tempmap = { SIZEOF_TB_MAP,CASE_MAP };
 			memcpy(&tempmap, &gameRoom_Manager[temproomid].map, sizeof(Map_TB));
 			room_Map[temproomid].game_start = 1;
 			for (int i = 0; i < 4; ++i) {
-				
+
 				if (room_Map[temproomid].people_inroom[i] == 0) {
 					cout << "Player Blank!!!" << endl;
 					gameRoom_Manager[temproomid].PlayerBlank(i);
@@ -774,14 +820,14 @@ void ProcessPacket(int id, char *packet)
 				if (room_Map[temproomid].people_inroom[i] != 0) {
 					cout << "Send Start\n" << endl;
 					SendPacket((int)(room_Map[temproomid].people_inroom[i]) - 1, &gameRoom_Manager[temproomid].map);
-					
-					
+
+
 				}
 			}
 
 			for (int i = 0; i < 4; ++i) {
 				if (room_Map[temproomid].people_inroom[i] != 0) {
-					g_clients[room_Map[temproomid].people_inroom[i]-1].m_scene = 2;
+					g_clients[room_Map[temproomid].people_inroom[i] - 1].m_scene = 2;
 					cout << "Send Map" << endl;
 					SendPacket((int)(room_Map[temproomid].people_inroom[i]) - 1, &p_startGame);
 				}
@@ -792,16 +838,138 @@ void ProcessPacket(int id, char *packet)
 			for (int i = 0; i < 4; ++i) {
 				if (room_Map[temproomid].people_inroom[i] != 0) {
 					//SendPacket((int)(room_Map[temproomid].people_inroom[i]) - 1, &gameRoom_Manager[temproomid].map);
-					SendPacket((int)(room_Map[temproomid].people_inroom[i])-1, &p_startGame);
+					SendPacket((int)(room_Map[temproomid].people_inroom[i]) - 1, &p_startGame);
 				}
 			}
 		}
 
 	}
 
-		break;
+	break;
+	case CASE_CONNECTSUCCESS:
+	{
+		TB_IDPW* idpwinfo = reinterpret_cast<TB_IDPW*>(packet);
+		temproomid = idpwinfo->m_id;
+		unsigned char login_type = idpwinfo->m_type;
+		char tempID[20];
+		char tempPW[20];
+
+		memcpy(tempID, idpwinfo->id, sizeof(tempID));
+
+		memcpy(tempPW, idpwinfo->pw, sizeof(tempPW));
+
+		g_clients[id].m_mVl.lock();
+		char query[255];
+		int query_stat;
+		conn_ptr = mysql_init(NULL);
+		conn_ptr = mysql_real_connect(conn_ptr, DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT, (char*)NULL, 0);
+		if (conn_ptr) {
+			printf("Success\n");
+		}
+		else {
+			printf("Fail To connect DB\n");
+		}
+
+		if (login_type == 1) {
+			
+			sprintf(query, "select * from UserTable where id='%s' and password='%s'", idpwinfo->id, idpwinfo->pw);
+			printf("%s\n", query);
+			if (mysql_query(conn_ptr, query))
+			{
+				printf("Fail To Login DB\n");
+				TB_DBInfo_1 dbresult = { SIZEOF_TB_DBInfo_1,CASE_DB1,0 };
+				SendPacket(id, &dbresult);
+			}
+			else {
+				printf("Success Login\n");
+				result_sql = mysql_store_result(conn_ptr);
+				if (!result_sql) {
+					printf("Fail To Login DB222\n");
+					TB_DBInfo_1 dbresult = { SIZEOF_TB_DBInfo_1,CASE_DB1,0 };
+				}
+				else {
+					TB_DBInfo_1 dbresult = { SIZEOF_TB_DBInfo_1,CASE_DB1,1 };
+					unsigned int	fields = mysql_num_fields(result_sql);
+					unsigned long* lengths = mysql_fetch_lengths(result_sql);
+					MYSQL_ROW row2;
+					printf("%d counts\n", fields);
+					printf("%d lengths\n", lengths);
+
+					while (row2 = mysql_fetch_row(result_sql)) {
+						
+						printf("%s !!\n", row2[0]);
+						
+						memcpy(dbresult.id_string, row2[0], 20);
+						printf("%s and %s\n", dbresult.id_string, tempID);
+						if (!strncmp(dbresult.id_string, tempID, sizeof(row2[0]))) {
+							sscanf(row2[2], "%d", &dbresult.win);
+							sscanf(row2[3], "%d", &dbresult.lose);
+							sscanf(row2[4], "%d", &dbresult.tier);
+							sscanf(row2[5], "%d", &dbresult.exp);
+							sscanf(row2[6], "%d", &dbresult.exp_max);
+							break;
+						}
+						else {
+							dbresult.connect = 0;
+							break;
+						}
+						
+						printf("Success Login1\n");
+					}
+					SendPacket(id, &dbresult);
+					memcpy(g_clients[id].stringID, dbresult.id_string, 20);
+				}
+				printf("Success Login3333\n");
+				mysql_free_result(result_sql);
+			}
+
+		}
+		else if (login_type == 2) {
+
+			printf("ID_Create\n");
+
+			sprintf(query, "select EXISTS (select * from UserTable where id='%s' and password='%s') as success", tempID, tempPW);
+			query_stat = mysql_query(conn_ptr, query);
+			if (query_stat == 0) {
+
+				printf("There is no ID-Create ID: %s\n", tempID);
+				MYSQL_RES *result = mysql_store_result(conn_ptr);
+				sprintf(query, "insert into UserTable values"
+					"('%s', '%s', '0','0','0','0','0')", tempID, tempPW);
+				query_stat = mysql_query(conn_ptr, query);
+				if (query_stat == 0) {
+					TB_DBInfo_1 dbresult = { SIZEOF_TB_DBInfo_1,CASE_DB1,2,*tempID,0,0,0,0,0 };
+					memcpy(&dbresult.id_string, tempID, 20);
+					SendPacket(id, &dbresult);
+					memcpy(&g_clients[id].stringID, &dbresult.id_string, 20);
+				}
+				else {
+					printf("Already Have%d\n", query_stat);
+					TB_DBInfo_1 dbresult = { SIZEOF_TB_DBInfo_1,CASE_DB1,3 };
+
+
+					SendPacket(id, &dbresult);
+				}
+				mysql_free_result(result);
+			}
+			else {
+				printf("Fail%d\n", query_stat);
+				TB_DBInfo_1 dbresult = { SIZEOF_TB_DBInfo_1,CASE_DB1,3 };
+
+
+				SendPacket(id, &dbresult);
+			}
+		}
+		
+		mysql_close(conn_ptr);
+		g_clients[id].m_mVl.unlock();
+
+		//memcpy(
+
 	}
-	
+	break;
+	}
+
 
 
 	sc_packet_pos pos_packet;
@@ -809,15 +977,15 @@ void ProcessPacket(int id, char *packet)
 	pos_packet.id = id;
 	pos_packet.size = sizeof(sc_packet_pos);
 	pos_packet.type = SC_POS;
-	
+
 	/*
 	unordered_set<int> new_vl;
 
 	for (int i = 0; i < MAX_USER; ++i)
 	{
-		if (i == id) continue;
-		if (false == g_clients[i].m_isconnected) continue;
-		if (true == CanSee(id, i)) new_vl.insert(i);
+	if (i == id) continue;
+	if (false == g_clients[i].m_isconnected) continue;
+	if (true == CanSee(id, i)) new_vl.insert(i);
 	}
 	*/
 	//SendPacket(id, &pos_packet);
@@ -825,48 +993,48 @@ void ProcessPacket(int id, char *packet)
 	/*
 	for (auto& ob : new_vl)
 	{
-		g_clients[id].m_mVl.lock();
+	g_clients[id].m_mVl.lock();
 
-		// new_vl에는 있는데, old_vl에는 없는 경우
-		if (0 == g_clients[id].m_view_list.count(ob))
-		{
-			g_clients[id].m_view_list.insert(ob);
-			g_clients[id].m_mVl.unlock();
+	// new_vl에는 있는데, old_vl에는 없는 경우
+	if (0 == g_clients[id].m_view_list.count(ob))
+	{
+	g_clients[id].m_view_list.insert(ob);
+	g_clients[id].m_mVl.unlock();
 
-			SendPutObjectPacket(id, ob);
+	SendPutObjectPacket(id, ob);
 
-			g_clients[ob].m_mVl.lock();
-			if (0 == g_clients[ob].m_view_list.count(id))
-			{
-				g_clients[ob].m_view_list.insert(id);
-				g_clients[ob].m_mVl.unlock();
+	g_clients[ob].m_mVl.lock();
+	if (0 == g_clients[ob].m_view_list.count(id))
+	{
+	g_clients[ob].m_view_list.insert(id);
+	g_clients[ob].m_mVl.unlock();
 
-				SendPutObjectPacket(ob, id);
-			}
-			else
-			{
-				g_clients[ob].m_mVl.unlock();
-				SendPacket(ob, &pos_packet);
-			}
-		}
+	SendPutObjectPacket(ob, id);
+	}
+	else
+	{
+	g_clients[ob].m_mVl.unlock();
+	SendPacket(ob, &pos_packet);
+	}
+	}
 
-		// new_vl에도 있고, old_vl에도 있는 경우
-		else
-		{
-			g_clients[id].m_mVl.unlock();
-			g_clients[ob].m_mVl.lock();
-			if (0 == g_clients[ob].m_view_list.count(id))
-			{
-				g_clients[ob].m_view_list.insert(id);
-				g_clients[ob].m_mVl.unlock();
-				SendPutObjectPacket(ob, id);
-			}
-			else
-			{
-				g_clients[ob].m_mVl.unlock();
-				SendPacket(ob, &pos_packet);
-			}
-		}
+	// new_vl에도 있고, old_vl에도 있는 경우
+	else
+	{
+	g_clients[id].m_mVl.unlock();
+	g_clients[ob].m_mVl.lock();
+	if (0 == g_clients[ob].m_view_list.count(id))
+	{
+	g_clients[ob].m_view_list.insert(id);
+	g_clients[ob].m_mVl.unlock();
+	SendPutObjectPacket(ob, id);
+	}
+	else
+	{
+	g_clients[ob].m_mVl.unlock();
+	SendPacket(ob, &pos_packet);
+	}
+	}
 
 	}
 
@@ -879,31 +1047,31 @@ void ProcessPacket(int id, char *packet)
 
 	for (auto& ob : vl_copy)
 	{
-		if (0 == new_vl.count(ob))
-		{
-			to_remove.push_back(ob);
+	if (0 == new_vl.count(ob))
+	{
+	to_remove.push_back(ob);
 
-			g_clients[ob].m_mVl.lock();
+	g_clients[ob].m_mVl.lock();
 
-			if (0 != g_clients[ob].m_view_list.count(id))
-			{
-				g_clients[ob].m_view_list.erase(id);
-				g_clients[ob].m_mVl.unlock();
-				SendRemovePacket(ob, id); // 상대가 나를 지우도록
-			}
-			else
-			{
-				g_clients[ob].m_mVl.unlock();
-			}
-		}
+	if (0 != g_clients[ob].m_view_list.count(id))
+	{
+	g_clients[ob].m_view_list.erase(id);
+	g_clients[ob].m_mVl.unlock();
+	SendRemovePacket(ob, id); // 상대가 나를 지우도록
+	}
+	else
+	{
+	g_clients[ob].m_mVl.unlock();
+	}
+	}
 	}
 	*/
 	//g_clients[id].m_mVl.lock();
 	//for (auto& ob : to_remove) g_clients[id].m_view_list.erase(ob);
 	//g_clients[id].m_mVl.unlock();
-//
+	//
 	//for (auto& ob : to_remove)
-		//SendRemovePacket(id, ob); // 내가 상대를 지우도록
+	//SendRemovePacket(id, ob); // 내가 상대를 지우도록
 }
 
 void DisconnectPlayer(int id)
@@ -939,6 +1107,7 @@ void DisconnectPlayer(int id)
 	g_clients[id].m_mVl.unlock();
 	g_clients[id].m_isconnected = false;
 }
+
 
 void worker_thread()
 {
@@ -993,7 +1162,7 @@ void worker_thread()
 			StartRecv(key);
 		}
 		else {  // Send 후처리
-			//cout << "WT:A packet was sent to Client[" << key << "]\n";
+				//cout << "WT:A packet was sent to Client[" << key << "]\n";
 			delete p_over;
 		}
 	}
@@ -1047,12 +1216,25 @@ void accept_thread()   //새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 		g_clients[id].m_view_list.clear();
 		g_clients[id].m_x = SHOW_PLAYER_POS_X;
 		g_clients[id].m_y = SHOW_PLAYER_POS_Y;
-		g_clients[id].id = id+1;
+		g_clients[id].id = id + 1;
 		CreateIoCompletionPort(reinterpret_cast<HANDLE>(cs), gh_iocp, id, 0);
 		g_clients[id].m_isconnected = true;
 		StartRecv(id);
+		TB_Connect_Success s_success;
+
+		s_success.size = SIZEOF_TB_Connect_Success;
+		s_success.type = CASE_CONNECTSUCCESS;
+		/*
+		EXOVER *s_over = new EXOVER;
+		unsigned char *packet = reinterpret_cast<unsigned char *>(&s_success);
+		memcpy(s_over->m_iobuf, packet, packet[0]);
+		s_over->m_wsabuf.len = s_over->m_iobuf[0];
+		ZeroMemory(&s_over->m_over, sizeof(WSAOVERLAPPED));
+		*/
+		//int res = WSASend(cs, &s_over->m_wsabuf, 1, NULL, 0,&s_over->m_over, NULL);
+		//SendPacket(id, &s_success);
 		TB_ID s_id;
-		s_id.id = id+1;
+		s_id.id = id + 1;
 		s_id.size = SIZEOF_TB_ID;
 		s_id.type = CASE_ID;
 		sc_packet_put_player p;
@@ -1063,7 +1245,7 @@ void accept_thread()   //새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 		p.y = g_clients[id].m_y;
 
 		SendPacket(id, &s_id);
-
+		SendPacket(id, &s_success);
 		// 나의 접속을 기존 플레이어들에게 알려준다.
 		for (int i = 0; i < MAX_USER; ++i)
 		{
@@ -1097,11 +1279,11 @@ void accept_thread()   //새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 			if (tempcount >= 8) {
 				break;
 			}
-			if (room_t->roomID != 0 ) {
+			if (room_t->roomID != 0) {
 				cout << "Send RRRoominfo\n" << endl;
 				TB_Room roomList = { SIZEOF_TB_Room,CASE_ROOM,room_t->roomID,room_t->people_count,room_t->game_start,room_t->people_max,room_t->made,
-				room_t->guardian_pos,room_t->people_inroom[0],room_t->people_inroom[1],room_t->people_inroom[2],room_t->people_inroom[3],room_t->roomstate ,room_t->map_thema ,room_t->map_mode,
-				room_t->team_inroom[0],room_t->team_inroom[1],room_t->team_inroom[2],room_t->team_inroom[3],room_t->ready[0],room_t->ready[1],room_t->ready[2],room_t->ready[3] };
+					room_t->guardian_pos,room_t->people_inroom[0],room_t->people_inroom[1],room_t->people_inroom[2],room_t->people_inroom[3],room_t->roomstate ,room_t->map_thema ,room_t->map_mode,
+					room_t->team_inroom[0],room_t->team_inroom[1],room_t->team_inroom[2],room_t->team_inroom[3],room_t->ready[0],room_t->ready[1],room_t->ready[2],room_t->ready[3] };
 
 
 				SendPacket(id, &roomList);
@@ -1119,7 +1301,8 @@ void accept_thread()   //새로 접속해 오는 클라이언트를 IOCP로 넘기는 역할
 int main()
 {
 	vector <thread> w_threads;
-	
+	conn_ptr = mysql_init(NULL);
+
 	initialize();
 	for (int i = 0; i < 4; ++i) w_threads.push_back(thread{ worker_thread });
 
@@ -1140,7 +1323,7 @@ void SetMap(unsigned char maptype, unsigned char mapnum, unsigned char room_num,
 
 	for (int i = 0; i < 15; ++i) {
 		for (int j = 0; j < 15; ++j) {
-			cout << map->mapInfo[i][j] <<" ";
+			cout << map->mapInfo[i][j] << " ";
 		}
 		cout << endl;
 	}
@@ -1149,7 +1332,7 @@ void SetMap(unsigned char maptype, unsigned char mapnum, unsigned char room_num,
 
 void SetMapToValue(int maptype, int mapnum) {
 	if (maptype == 0 || maptype == 2) {
-		ifstream in("Map1-1.csv");
+		ifstream in("Map1-1.txt");
 
 
 		vector <string> v({ istream_iterator<string>(in),istream_iterator<string>() });
@@ -1195,7 +1378,7 @@ void SetMapToValue(int maptype, int mapnum) {
 		}
 	}
 	else if (maptype == 1) {
-		ifstream in("Map2-1.csv");
+		ifstream in("Map2-1.txt");
 
 
 		vector <string> v({ istream_iterator<string>(in),istream_iterator<string>() });
@@ -1593,7 +1776,7 @@ void Timer_thread() {
 		DWORD elapsedTime = currTime - g_prevTime2;
 		g_prevTime2 = currTime;
 		auto a = gameRoom_Manager.begin();
-		for (; a != gameRoom_Manager.end();a++)
+		for (; a != gameRoom_Manager.end(); a++)
 		{
 			if (!a->second.IsGameOver())
 			{
@@ -1622,21 +1805,21 @@ void Timer_thread() {
 							unsigned char tempid = b->second.game_id;
 							a->second.CalculateMap(tempx, tempz, tfire, tempid);
 							for (int i = 0; i < 4; ++i) {
-								
+
 
 								if (a->second.idList[i] != 0) {
 									auto c = a->second.explode_List.begin();
-									for (; c != a->second.explode_List.end();c++) {
+									for (; c != a->second.explode_List.end(); c++) {
 										//cout << (int)c->size<<"  "<<(int)c->type << endl;
 										c->size = SIZEOF_TB_BombExplodeRE;
 										c->type = CASE_BOMB_EX;
 										TB_BombExplodeRE bomb = { SIZEOF_TB_BombExplodeRE,CASE_BOMB_EX,c->upfire,c->rightfire,c->downfire,c->leftfire,c->gameID,c->posx,c->posz };
 										SendPacket(a->second.idList[i] - 1, &bomb);
-										
+
 									}
 									//cout << "TimeMap" << endl;
-									SendPacket(a->second.idList[i]-1, &a->second.map);
-									
+									SendPacket(a->second.idList[i] - 1, &a->second.map);
+
 								}
 
 							}
