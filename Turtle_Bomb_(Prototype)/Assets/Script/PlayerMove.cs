@@ -44,9 +44,6 @@ public class PlayerMove : MonoBehaviour {
     // 회전 감도
     float m_RotateSensX = 150.0f;
 
-    // 회전 각
-    float m_RotationX = 0.0f;
-
     // 폭탄 배치를 위한 위치값
     float m_BombLocX = 0.0f;
     float m_BombLocZ = 0.0f;
@@ -57,7 +54,6 @@ public class PlayerMove : MonoBehaviour {
 
     // 플레이어 생존 여부
 	bool m_isAlive = true;
-
 
     // 기본 속도
     float m_BasicSpeed = 3.0f;
@@ -83,37 +79,14 @@ public class PlayerMove : MonoBehaviour {
 
     void Update ()
     {
-        if (m_isAlive && !StageManager.c_Stage_Manager.Get_is_Stage_Clear() && StageManager.c_Stage_Manager.Get_is_Intro_Over() && !StageManager.c_Stage_Manager.Get_is_Pause())
+        if (!StageManager.c_Stage_Manager.Get_is_Pause() && StageManager.c_Stage_Manager.Get_is_Intro_Over())
         {
             GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 0.0f);
 
             if (!m_isPushing)
-            {
                 Move();
-                BodyRotation();
-            }
             else
                 Pushing();
-
-            Crouch();
-            CrouchForPC();
-
-            if (!m_isCrouch)
-            {
-                if (Input.GetKeyDown(KeyCode.Space))
-                    SetBomb();
-
-                if (m_isAbleToPush && !m_isPushing && Input.GetKeyDown(KeyCode.R))
-                {
-                    if (m_Front_Box != null)
-                        BoxPush();
-                    else
-                    {
-                        m_isBoxSelected = false;
-                        m_isAbleToPush = false;
-                    }
-                }
-            }
         }
     }
 
@@ -316,83 +289,80 @@ public class PlayerMove : MonoBehaviour {
 
     void Move() 
     {
-        // 플레이어 이동 관련
+        Body_MoveControl_ForMobile(); // 릴리즈용
+        Body_MoveControl_ForPC(); // 디버그용
+
+        Body_RotateControl_ForPC(); // 디버그용
+        Body_RotateControl_ForMobile(); // 릴리즈용
+
+        OtherControl_ForPC(); // 디버그용
+    }
+
+    void Body_MoveControl_ForPC()
+    {
         if (Input.GetKey(KeyCode.W))
         {
             transform.Translate(new Vector3(0.0f, 0.0f, ((m_BasicSpeed + UI.m_speed_count) * Time.deltaTime)));
-
-            if (m_isCrouch)
-                m_TurtleMan_Animator.SetBool("TurtleMan_isCrouch_Move", true);
-            else 
-                m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
+            m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
         if (Input.GetKey(KeyCode.S))
         {
             transform.Translate(new Vector3(0.0f, 0.0f, -((m_BasicSpeed + UI.m_speed_count) * Time.deltaTime)));
-
-            if (m_isCrouch)
-                m_TurtleMan_Animator.SetBool("TurtleMan_isCrouch_Move", true);
-            else
-                m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
+            m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
         if (Input.GetKey(KeyCode.A))
         {
             transform.Translate(new Vector3(-((m_BasicSpeed + UI.m_speed_count) * Time.deltaTime), 0.0f, 0.0f));
-
-            if (m_isCrouch)
-                m_TurtleMan_Animator.SetBool("TurtleMan_isCrouch_Move", true);
-            else
-                m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
+            m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
         if (Input.GetKey(KeyCode.D))
         {
             transform.Translate(new Vector3(((m_BasicSpeed + UI.m_speed_count) * Time.deltaTime), 0.0f, 0.0f));
-
-            if (m_isCrouch)
-                m_TurtleMan_Animator.SetBool("TurtleMan_isCrouch_Move", true);
-            else
-                m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
+            m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
 
-
+        
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.D))
         {
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", false);
-            m_TurtleMan_Animator.SetBool("TurtleMan_isCrouch_Move", false);
         }
+        
+    }
 
-        // ===================
-
-
-
-
-        // 플레이어 이동 관련 (조이스틱)
+    void Body_MoveControl_ForMobile()
+    {
         if (JoyStickMove.instance.Get_NormalizedVector() != Vector3.zero)
         {
             Vector3 normal = JoyStickMove.instance.Get_NormalizedVector();
             normal.z = normal.y;
             normal.y = 0.0f;
             transform.Translate((m_BasicSpeed + UI.m_speed_count) * normal * Time.deltaTime);
+            m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
-        // ==================
 
-
-
-        /*
-        // 플레이어 회전 관련
         
-        if (Input.GetMouseButton(0) && UI.c_UI.Get_isClicked())
+        else
         {
-            m_RotationX = Input.GetAxis("Mouse X") * m_RotateSensX * Time.deltaTime;
-            transform.Rotate(transform.up, m_RotationX);
+            // 릴리즈 빌드할 때는 적용할 것!
+            m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", false); 
         }
-        // ====================
-        */
+        
     }
 
+    void Body_RotateControl_ForPC()
+    {
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            transform.Rotate(transform.up, -m_RotateSensX * Time.deltaTime);
+        }
 
-    // 회전
-    void BodyRotation()
+        if (Input.GetKey(KeyCode.RightArrow))
+        {
+            transform.Rotate(transform.up, m_RotateSensX * Time.deltaTime);
+        }
+    }
+
+    void Body_RotateControl_ForMobile()
     {
         if (Input.touchCount > 0 && UI.c_UI.Get_isClicked()) // 조이스틱 + 회전 + ...
         {
@@ -416,23 +386,28 @@ public class PlayerMove : MonoBehaviour {
         }
     }
 
-    public void JoyStick_Move(Vector3 normalVector, float dist)
+    void OtherControl_ForPC()
     {
-        m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
-        transform.Translate(normalVector * (m_BasicSpeed + UI.m_speed_count + dist) * Time.deltaTime);
-    }
+        if (Input.GetKeyDown(KeyCode.Space))
+            SetBomb();
 
-    public void JoyStick_Move_End()
-    {
-        m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", false);
+        if (m_isAbleToPush && !m_isPushing && Input.GetKeyDown(KeyCode.R))
+        {
+            if (m_Front_Box != null)
+                BoxPush();
+            else
+            {
+                m_isBoxSelected = false;
+                m_isAbleToPush = false;
+            }
+        }
     }
-
     
 
 
     public void SetBomb() // 폭탄 설치
     {
-        if (UI.m_releasable_bomb_count > 0 && !m_isCrouch && StageManager.c_Stage_Manager.Get_is_Intro_Over())
+        if (UI.m_releasable_bomb_count > 0 && StageManager.c_Stage_Manager.Get_is_Intro_Over())
         {
             m_Bombindex_X = (int)transform.position.x;
             m_Bombindex_Z = (int)transform.position.z;
@@ -491,6 +466,7 @@ public class PlayerMove : MonoBehaviour {
 
                 UI.m_releasable_bomb_count = UI.m_releasable_bomb_count - 1;
                 m_TurtleMan_Animator.SetBool("TurtleMan_isDrop", true);
+                animator_camera.SetBool("Set_Bomb", true);
                 Invoke("SetBomb_Ani_False", 0.3f);
 
                 // 던지기 아이템을 획득한 상태라면
@@ -687,6 +663,7 @@ public class PlayerMove : MonoBehaviour {
     public void SetBomb_Ani_False()
     {
         m_TurtleMan_Animator.SetBool("TurtleMan_isDrop", false);
+        animator_camera.SetBool("Set_Bomb", false);
     }
     
     //다른 스크립트에서 플레이어를 죽게 하는 함수

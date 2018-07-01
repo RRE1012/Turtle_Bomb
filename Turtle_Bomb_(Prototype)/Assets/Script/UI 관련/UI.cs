@@ -469,7 +469,7 @@ public class UI : MonoBehaviour {
             m_is_Init_Star_Count = true;
         }
 
-        if (!StageManager.c_Stage_Manager.Get_is_Stage_Clear() && !StageManager.c_Stage_Manager.Get_is_Pause())
+        if (!StageManager.c_Stage_Manager.Get_is_Pause())
         {
             if (StageManager.c_Stage_Manager.Get_is_Intro_Over())
             {
