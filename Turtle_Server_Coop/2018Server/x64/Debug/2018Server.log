@@ -1,0 +1,25 @@
+﻿  server_main_WT.cpp
+c:\users\who\desktop\게임서버\2018server2\2018server\server_main_wt.cpp(280): warning C4838: 'int'에서 'unsigned char'(으)로의 변환에는 축소 변환이 필요합니다.
+c:\users\who\desktop\게임서버\2018server2\2018server\server_main_wt.cpp(805): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: 'sprintf' 선언을 참조하십시오.
+c:\users\who\desktop\게임서버\2018server2\2018server\server_main_wt.cpp(826): warning C4477: 'printf' : 서식 문자열 '%d'에 'int' 형식의 인수가 필요하지만 variadic 인수 1의 형식이 'unsigned long *'입니다.
+c:\users\who\desktop\게임서버\2018server2\2018server\server_main_wt.cpp(826): warning C4313: 'printf': 서식 문자열의 '%d'이(가) 인수 1('unsigned long *' 형식)과(와) 충돌합니다.
+c:\users\who\desktop\게임서버\2018server2\2018server\server_main_wt.cpp(835): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(2254): note: 'sscanf' 선언을 참조하십시오.
+c:\users\who\desktop\게임서버\2018server2\2018server\server_main_wt.cpp(836): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(2254): note: 'sscanf' 선언을 참조하십시오.
+c:\users\who\desktop\게임서버\2018server2\2018server\server_main_wt.cpp(837): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(2254): note: 'sscanf' 선언을 참조하십시오.
+c:\users\who\desktop\게임서버\2018server2\2018server\server_main_wt.cpp(838): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(2254): note: 'sscanf' 선언을 참조하십시오.
+c:\users\who\desktop\게임서버\2018server2\2018server\server_main_wt.cpp(839): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(2254): note: 'sscanf' 선언을 참조하십시오.
+c:\users\who\desktop\게임서버\2018server2\2018server\server_main_wt.cpp(868): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: 'sprintf' 선언을 참조하십시오.
+c:\users\who\desktop\게임서버\2018server2\2018server\server_main_wt.cpp(874): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: 'sprintf' 선언을 참조하십시오.
+c:\users\who\desktop\게임서버\2018server2\2018server\server_main_wt.cpp(541): warning C4101: 'new_room' :참조되지 않은 지역 변수입니다.
+c:\users\who\desktop\게임서버\2018server2\2018server\server_main_wt.cpp(943): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: 'sprintf' 선언을 참조하십시오.
+c:\users\who\desktop\게임서버\2018server2\2018server\server_main_wt.cpp(933): warning C4101: 'query_stat' :참조되지 않은 지역 변수입니다.
+  2018Server.vcxproj -> C:\Users\WHO\Desktop\게임서버\2018Server2\x64\Debug\2018Server.exe
