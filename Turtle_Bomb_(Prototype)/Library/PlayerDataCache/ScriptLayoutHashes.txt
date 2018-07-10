@@ -1,4 +1,4 @@
-WindowsStandalone
+Android
 7001182191becf932c42c1fc6e8520f0 Assembly-CSharp.dll:.Box
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Rock
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Flame_Remains
@@ -154,7 +154,7 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 b7536247a550bc1596505b7f345c8adf Assembly-CSharp.dll:.GunAim
 a43fb043ad4312f62df6964a881c41a4 Assembly-CSharp.dll:.Info_Trigger
 f3125121287b1b12df80db942b96cf90 Assembly-CSharp.dll:.VariableManager
-9768341164e9986ea72fea9bd2c7c1cd Assembly-CSharp.dll:.UI
+c0048e63e85ea6116330cb62c9f01b13 Assembly-CSharp.dll:.UI
 38f916ae4e2cab0e4291c4e93347fcee Assembly-CSharp.dll:.SceneChange
 6816a2047d390d6af575248f24a827de Assembly-CSharp.dll:.Boss_AI_JetGoblin
 05880a6c31c041e41dc432287e447c0b Assembly-CSharp.dll:.Fire_Effect_Net

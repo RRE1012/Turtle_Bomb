@@ -1811,7 +1811,7 @@ MonoBehaviour:
   m_SuddenDeath_JetGoblin: {fileID: 1421824778066548, guid: 26d73cefaf348a04896cbad9158a94de,
     type: 2}
   m_Boss_HP_Bar: {fileID: 1172502181}
-  m_Stage_ID: 1
+  m_Stage_ID: -1
   m_Stage_Time_Limit: -1
 --- !u!4 &238553181
 Transform:

@@ -201,8 +201,8 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 81899181}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 400, y: 225, z: 0}
-  m_LocalScale: {x: 0.625, y: 0.625, z: 0.625}
+  m_LocalPosition: {x: 383, y: 239.5, z: 0}
+  m_LocalScale: {x: 0.63097316, y: 0.63097316, z: 0.63097316}
   m_Children:
   - {fileID: 1113495804}
   m_Father: {fileID: 0}
@@ -354,6 +354,11 @@ Prefab:
       propertyPath: m_Text
       value: 1-4
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -478,7 +483,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 372903968}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.000061035156, y: -94, z: 0}
+  m_LocalPosition: {x: 0.000061035156, y: -113.57242, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 815360366}
@@ -546,7 +551,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 396007624}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 274, z: 0}
+  m_LocalPosition: {x: 0, y: 293.57242, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1113495804}
@@ -730,6 +735,11 @@ Prefab:
       propertyPath: m_Text
       value: 1-2
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -879,6 +889,11 @@ Prefab:
       propertyPath: m_Text
       value: 1-8
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -994,6 +1009,11 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 1107544231}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -1149,6 +1169,11 @@ Prefab:
       propertyPath: m_Text
       value: 1-Boss
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -1241,7 +1266,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 997080285}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 174, z: 0}
+  m_LocalPosition: {x: 0, y: 193.57242, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1113495804}
@@ -1641,6 +1666,11 @@ Prefab:
       propertyPath: m_Text
       value: 1-6
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -1675,7 +1705,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1159288091}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1799.95, y: 0.8500061, z: 0}
+  m_LocalPosition: {x: -1799.9502, y: 0.8500061, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1113495804}
@@ -1886,6 +1916,11 @@ Prefab:
       propertyPath: m_Text
       value: 1-5
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -2041,6 +2076,11 @@ Prefab:
       propertyPath: m_Text
       value: 1-7
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -2080,7 +2120,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1821081322}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -583.7, y: 307.5, z: 0}
+  m_LocalPosition: {x: -550.69885, y: 327.07242, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1113495804}
@@ -2088,7 +2128,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 63.3, y: -56.5}
+  m_AnchoredPosition: {x: 63.30005, y: -56.5}
   m_SizeDelta: {x: 126.5, y: 116.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1821081324
@@ -2358,6 +2398,11 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: GoTo_Mode_Adventure_Selected_Stage
       objectReference: {fileID: 0}
+    - target: {fileID: 114749603463617302, guid: e8365a7dc51921144a8e6d2620773a9c,
+        type: 2}
+      propertyPath: m_Interactable
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e8365a7dc51921144a8e6d2620773a9c, type: 2}
   m_IsPrefabParent: 0
@@ -2507,6 +2552,11 @@ Prefab:
         type: 2}
       propertyPath: m_Text
       value: 1-3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_Interactable
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}

@@ -148,10 +148,10 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.Turtle_Bomb.Test_TB0514
+    Android: com.Turtle_Bomb.TURTLEBOMB
   buildNumber: {}
   AndroidBundleVersionCode: 1
-  AndroidMinSdkVersion: 23
+  AndroidMinSdkVersion: 24
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
   aotOptions: 
@@ -285,6 +285,7 @@ PlayerSettings:
   openGLRequireES31AEP: 0
   m_TemplateCustomTags: {}
   mobileMTRendering:
+    Android: 1
     iPhone: 1
     tvOS: 1
   wiiUTitleID: 0005000011000000
