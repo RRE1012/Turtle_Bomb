@@ -122,6 +122,19 @@ public class MonsterAI : MonoBehaviour
             if (m_Current_Behavior != m_Behavior_Attack)
                 m_Current_Behavior = m_Behavior_Attack;
             //m_isAttacking = true;
+            if (m_Attack_Detector.Get_Target())
+            {
+                Vector3 dir = m_Attack_Detector.Get_Target().transform.position - transform.position;
+                Vector3 dirXZ = new Vector3(dir.x, 0f, dir.z);
+
+                if (dirXZ != Vector3.zero)
+                {
+                    Quaternion targetRot = Quaternion.LookRotation(dirXZ);
+
+                    transform.rotation = targetRot;
+                    Debug.Log("Rot Changed");
+                }
+            }
         }
 
         // 플레이어가 감지범위 밖에 있고, 공격모션 중이 아니라면

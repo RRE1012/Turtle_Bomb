@@ -37,6 +37,7 @@ public class UI : MonoBehaviour {
     public Texture m_Speed_Icon;
     public Texture m_Kick_Icon;
     public Texture m_Throw_Icon;
+    public Texture m_AirDrop_Icon;
 
     public Animator m_KickIcon_Animator; // 발차기 아이콘 애니메이터
     public Animator m_ThrowIcon_Animator; // 던지기 아이콘 애니메이터
@@ -430,7 +431,7 @@ public class UI : MonoBehaviour {
 
             case 5:
                 m_GetItemText.text = "You've Got AirDrop !!";
-                m_GetItemImage.texture = m_Bomb_Icon;
+                m_GetItemImage.texture = m_AirDrop_Icon;
                 break;
         }
 

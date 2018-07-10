@@ -11,8 +11,8 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: Turtle_Bomb
-  productName: 180701_Build
+  companyName: Turtle Bomb
+  productName: TURTLE BOMB
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -151,7 +151,7 @@ PlayerSettings:
     Android: com.Turtle_Bomb.Test_TB0514
   buildNumber: {}
   AndroidBundleVersionCode: 1
-  AndroidMinSdkVersion: 16
+  AndroidMinSdkVersion: 23
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
   aotOptions: 
@@ -241,14 +241,14 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: 10143208a4a6a6347ae66bf20109705b, type: 3}
+      m_Icon: {fileID: 2800000, guid: 554cd331df1a0b4499eb8d35d2feeb39, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0
   - m_BuildTarget: Android
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: 10143208a4a6a6347ae66bf20109705b, type: 3}
+      m_Icon: {fileID: 2800000, guid: 554cd331df1a0b4499eb8d35d2feeb39, type: 3}
       m_Width: 192
       m_Height: 192
       m_Kind: 0
