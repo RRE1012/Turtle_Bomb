@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Bomb_Item
+  - Fire_Item
+  - Speed_Item
+  - Box
+  - Bomb
+  - Rock
+  - Wall
+  - Flame_Remains
+  - Flame
+  - Goal
+  - Ingame_Play_UI
+  - Stage_Clear_UI
+  - Bush
+  - Fire
+  - Monster
+  - Flame_Bush
+  - TestMonster
+  - GameOver_UI
+  - Throw_Item
+  - Kick_Item
+  - Map_Portal
+  - Map_Portal_Destination
+  - Option_UI
+  - Land
+  - Flame_Bush_Particle
+  - Ingame_Mission_UI
+  - Monster_Attack_Collider
+  - Start_Point
+  - Airdrop_Item
+  - Info_Trigger_Bomb
+  - Info_Trigger_Speed
+  - Info_Trigger_Fire
+  - Info_Trigger_Kick
+  - Info_Trigger_Throw
+  - Camera_Offset
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0

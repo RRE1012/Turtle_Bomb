@@ -1,4 +1,4 @@
-WindowsStandalone
+Android
 7001182191becf932c42c1fc6e8520f0 Assembly-CSharp.dll:.Box
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Rock
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Flame_Remains
@@ -95,7 +95,6 @@ f61c0793411f10cf5fbfa1473fef5ef2 UnityEngine.UI.dll:UnityEngine.UI.ToggleGroup
 1b8c02d0aa82fbf036a2b9b2d713eec3 UnityEngine.UI.dll:UnityEngine.UI.VerticalLayoutGroup
 50bc42aec0324e8da9962d40b2a714a9 Assembly-CSharp.dll:.ParticleMenu
 a91d78fd20a94fba3b46727be8247b5d Assembly-CSharp.dll:.NetTest
-3ecea0c2e43f5d97a17c441bfcf59a7d Assembly-CSharp.dll:UnityEngine.PostProcessing.PostProcessingBehaviour
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Item_Network
 30ad8a09875890b2e10cb41c365871c9 Assembly-CSharp.dll:DigitalRuby.PyroParticles.FireProjectileScript
 2a8533d3425e7e20a563c3056759ef39 Assembly-CSharp.dll:.Box_None_Item
@@ -158,7 +157,6 @@ c0048e63e85ea6116330cb62c9f01b13 Assembly-CSharp.dll:.UI
 38f916ae4e2cab0e4291c4e93347fcee Assembly-CSharp.dll:.SceneChange
 6816a2047d390d6af575248f24a827de Assembly-CSharp.dll:.Boss_AI_JetGoblin
 05880a6c31c041e41dc432287e447c0b Assembly-CSharp.dll:.Fire_Effect_Net
-205965134a5874db410d674ebdf33ba7 Assembly-CSharp.dll:.ExampleWheelController
 eb7ca56a2bb6a82bfc60f1c306aa9086 Assembly-UnityScript.dll:.Lighting
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Box_Particle_Manager
 974606480b88e882199d3014447b4831 Assembly-CSharp.dll:.GameRoom
@@ -207,7 +205,6 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 45f3431f0103c41611e8d4eec3d439df UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingRenderer
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Item
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Flame_Crash
-f671a42aea5f34fec6a4450a3668c615 Assembly-CSharp.dll:UnityEngine.PostProcessing.PostProcessingProfile
 480ccda02233a8ca2dea979f7864aea2 Assembly-CSharp.dll:.Bomb_Network
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.LobbySound
