@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 //define과 같은 개념. 상수 
 static class MAX_VALUE_ITEM
 {
@@ -35,8 +35,10 @@ public class PlayerMove : MonoBehaviour {
     public static bool m_isHideinBush = false;
     public bool m_isAbleToKick = false;
     public static bool m_isAbleToThrow = false;
-    
-    
+
+
+    int m_Touch_Num = 0;
+    bool m_is_Touch_Started = false;
 
     // 이전 터치 지점 (x값)
     float m_Touch_PrevPoint_X;
@@ -68,7 +70,6 @@ public class PlayerMove : MonoBehaviour {
         C_PM = this;
         m_TurtleMan_Animator = GetComponent<Animator>();
         m_Player_Mesh_Renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
-        
     }
 
     public void Player_Set_Start_Point(Vector3 p)
@@ -364,26 +365,31 @@ public class PlayerMove : MonoBehaviour {
 
     void Body_RotateControl_ForMobile()
     {
-        if (Input.touchCount > 0 && UI.c_UI.Get_isClicked()) // 조이스틱 + 회전 + ...
+        if (Input.touchCount > 0) // 터치가 감지됨.
         {
-            int touchNum;
+            if (!m_is_Touch_Started) // 터치가 이제 막 시작됐다! (손을 모두 뗄 때 까지 더이상 수행하지 않음.)
+            {
+                if (JoyStickMove.instance.Get_is_Joystick_First_Touched())
+                    m_Touch_Num = 1; // 조이스틱이 먼저다!
+                else m_Touch_Num = 0; // 회전이 먼저다!
 
-            if (JoyStickMove.instance.Get_is_Joystick_First_Touched()) // 조이스틱이 먼저면
-                touchNum = 1;
-            else touchNum = 0; // 회전이 먼저면
+                m_is_Touch_Started = true; // OK.
+            }
 
-            switch (Input.GetTouch(touchNum).phase) // 회전 처리
+            switch (Input.GetTouch(m_Touch_Num).phase) // 회전 처리
             {
                 case TouchPhase.Began:
-                    m_Touch_PrevPoint_X = Input.GetTouch(touchNum).position.x;
+                    m_Touch_PrevPoint_X = Input.GetTouch(m_Touch_Num).position.x;
                     break;
 
                 case TouchPhase.Moved:
-                    transform.Rotate(0, (Input.GetTouch(touchNum).position.x - m_Touch_PrevPoint_X) * 0.5f, 0);
-                    m_Touch_PrevPoint_X = Input.GetTouch(touchNum).position.x;
+                    transform.Rotate(0, (Input.GetTouch(m_Touch_Num).position.x - m_Touch_PrevPoint_X) * 0.5f, 0);
+                    m_Touch_PrevPoint_X = Input.GetTouch(m_Touch_Num).position.x;
                     break;
             }
         }
+
+        else m_is_Touch_Started = false;
     }
 
     void OtherControl_ForPC()

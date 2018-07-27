@@ -51,22 +51,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Particle\PyroParticles\Prefab\Editor\PyroParticlesEditor.cs" />
      <Compile Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Editor\EffectControllerInspector.cs" />
      <Compile Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Editor\EffectToolBar.cs" />
      <Compile Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Editor\RenderEffectInspector.cs" />
      <Compile Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Editor\ShaderCustomEditor\ShaderMaterialsEditor.cs" />
      <Compile Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Editor\XUIUtils.cs" />
      <None Include="Assets\Particle\EffectExamples\Scenes\Shared\Shaders\SurfaceShader_VC.shader" />
-     <None Include="Assets\2Ginge\GritBuildupShader\Shaders\GritBuildupShader.shader" />
-     <None Include="Assets\Particle\PyroParticles\Prefab\Materials\AdditiveTintable.shader" />
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\effect_distortion_mask.shader" />
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\ParticlePremultiplyBlend.shader" />
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\ParticleAddEffect.shader" />
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\ParticleBlendEffect.shader" />
- <Reference Include="Assembly-UnityScript">
- <HintPath>D:/다운/Turtle_Bomb_(Prototype)/Library/ScriptAssemblies/Assembly-UnityScript.dll</HintPath>
- </Reference>
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
@@ -133,23 +127,26 @@
  <Reference Include="UnityEditor.iOS.Extensions">
  <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll</HintPath>
  </Reference>
+ <Reference Include="UnityEditor.WSA.Extensions">
+ <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/MetroSupport/UnityEditor.WSA.Extensions.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEditor.WindowsStandalone.Extensions">
  <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.Advertisements">
- <HintPath>C:/Users/WHO/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.ads@1.0.7/Editor/UnityEditor.Advertisements.dll</HintPath>
+ <HintPath>C:/Users/RRE/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.ads@1.0.7/Editor/UnityEditor.Advertisements.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Analytics">
- <HintPath>C:/Users/WHO/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.analytics@1.0.1/UnityEngine.Analytics.dll</HintPath>
+ <HintPath>C:/Users/RRE/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.analytics@1.0.1/UnityEngine.Analytics.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.Analytics">
- <HintPath>C:/Users/WHO/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.analytics@1.0.1/Editor/UnityEditor.Analytics.dll</HintPath>
+ <HintPath>C:/Users/RRE/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.analytics@1.0.1/Editor/UnityEditor.Analytics.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Purchasing">
- <HintPath>C:/Users/WHO/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/UnityEngine.Purchasing.dll</HintPath>
+ <HintPath>C:/Users/RRE/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/UnityEngine.Purchasing.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.Purchasing">
- <HintPath>C:/Users/WHO/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/Editor/UnityEditor.Purchasing.dll</HintPath>
+ <HintPath>C:/Users/RRE/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/Editor/UnityEditor.Purchasing.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.iOS.Extensions.Xcode">
  <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll</HintPath>

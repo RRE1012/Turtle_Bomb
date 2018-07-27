@@ -56,16 +56,6 @@
      <Compile Include="Assets\Particle\EffectExamples\Scenes\Shared\Scripts\GunShoot.cs" />
      <Compile Include="Assets\Particle\EffectExamples\Scenes\Shared\Scripts\ParticleExamples.cs" />
      <Compile Include="Assets\Particle\EffectExamples\Scenes\Shared\Scripts\ParticleMenu.cs" />
-     <Compile Include="Assets\Particle\Particle Ribbon\Scripts\ReverseNormals.cs" />
-     <Compile Include="Assets\Particle\particle2017.0401\Script\BillBoard.cs" />
-     <Compile Include="Assets\Particle\PyroParticles\Prefab\Script\FireBaseScript.cs" />
-     <Compile Include="Assets\Particle\PyroParticles\Prefab\Script\FireCollisionForwardScript.cs" />
-     <Compile Include="Assets\Particle\PyroParticles\Prefab\Script\FireConstantBaseScript.cs" />
-     <Compile Include="Assets\Particle\PyroParticles\Prefab\Script\FireLightScript.cs" />
-     <Compile Include="Assets\Particle\PyroParticles\Prefab\Script\FireProjectileScript.cs" />
-     <Compile Include="Assets\Particle\PyroParticles\Prefab\Script\MeteorSwarmScript.cs" />
-     <Compile Include="Assets\Particle\PyroParticles\Prefab\Script\SingleLineAttribute.cs" />
-     <Compile Include="Assets\Particle\Teleportation Pad\CustomTeleporter.cs" />
      <Compile Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Script\CameraTarget.cs" />
      <Compile Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Script\EffectController.cs" />
      <Compile Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Script\EffectDemo.cs" />
@@ -143,8 +133,6 @@
      <Compile Include="Assets\Script\각종 AI\MonsterAI.cs" />
      <Compile Include="Assets\Script\각종 AI\Performance_Camera.cs" />
      <None Include="Assets\Particle\EffectExamples\Scenes\Shared\Shaders\SurfaceShader_VC.shader" />
-     <None Include="Assets\2Ginge\GritBuildupShader\Shaders\GritBuildupShader.shader" />
-     <None Include="Assets\Particle\PyroParticles\Prefab\Materials\AdditiveTintable.shader" />
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\effect_distortion_mask.shader" />
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\ParticlePremultiplyBlend.shader" />
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\ParticleAddEffect.shader" />
@@ -177,10 +165,10 @@
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Analytics">
- <HintPath>C:/Users/WHO/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.analytics@1.0.1/UnityEngine.Analytics.dll</HintPath>
+ <HintPath>C:/Users/RRE/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.analytics@1.0.1/UnityEngine.Analytics.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Purchasing">
- <HintPath>C:/Users/WHO/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/UnityEngine.Purchasing.dll</HintPath>
+ <HintPath>C:/Users/RRE/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/UnityEngine.Purchasing.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
