@@ -43,7 +43,7 @@ public class PlayerPrefs_Manager : MonoBehaviour {
                 // 초기화
                 //PlayerPrefs.SetInt("Have_you_been_Play", 0);
 
-                //Pref_All_Stage_Open(); // 디버깅용
+                Pref_All_Stage_Open(); // 디버깅용
 
                 // 최초 플레이어 정보 초기화
                 if (PlayerPrefs.GetInt("Have_you_been_Play") == 0 || !PlayerPrefs.HasKey("Have_you_been_Play"))

@@ -111,7 +111,7 @@ ModelImporter:
     4300006: "\uD314\uCC0C"
     4300008: "\uBAA8\uC790"
     4300010: "\uBC14\uC9C0"
-    7400000: Take 001
+    7400000: Ork_Boss_Summon
     9500000: //RootNode
     13700000: "\uADC0\uC7A5\uC2DD"
     13700002: "\uBAA8\uC790"
@@ -152,7 +152,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Take 001
+      name: Ork_Boss_Summon
       takeName: Take 001
       firstFrame: 0
       lastFrame: 40

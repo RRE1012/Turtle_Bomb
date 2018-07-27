@@ -25,7 +25,7 @@ static class Boss_Animation_Num
 public class Big_Boss_Behavior : MonoBehaviour
 {
     NavMeshAgent m_NVAgent; // 내비에이전트
-    Animator m_Boss_Animator; // 애니메이터
+    Animator m_Boss_Animator; // 애니메이터s
 
     GameObject m_Target; // 타겟
     GameObject m_NavPlane; // 내비메쉬 플레인
@@ -134,6 +134,8 @@ public class Big_Boss_Behavior : MonoBehaviour
         m_AnimationList.Add("OrkBoss_isHurt");
 
         m_Attack_Motion_Checker = "Base Layer.OrkBoss_Attack";
+
+		m_Boss_Animations = GetComponent<Animation> ();
 
         // 플레이어 감지기 등록
         m_Target_Detector = GetComponentInChildren<Detector_Box>();
