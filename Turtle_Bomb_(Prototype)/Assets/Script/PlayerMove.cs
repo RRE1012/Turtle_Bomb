@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+
 //define과 같은 개념. 상수 
 static class MAX_VALUE_ITEM
 {

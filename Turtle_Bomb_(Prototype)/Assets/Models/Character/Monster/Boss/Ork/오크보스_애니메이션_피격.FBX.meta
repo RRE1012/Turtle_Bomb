@@ -154,7 +154,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Ork_Boss_Hurt
       takeName: Take 001
-      firstFrame: 0
+      firstFrame: 18
       lastFrame: 80
       wrapMode: 0
       orientationOffsetY: 0

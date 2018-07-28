@@ -25,7 +25,9 @@ static class Boss_Animation_Num
 public class Big_Boss_Behavior : MonoBehaviour
 {
     NavMeshAgent m_NVAgent; // 내비에이전트
-    Animator m_Boss_Animator; // 애니메이터s
+    Animator m_Boss_Animator; // 애니메이터
+    SkinnedMeshRenderer[] m_Boss_Skins;
+    Color[] m_Normal_Colors;
 
     GameObject m_Target; // 타겟
     GameObject m_NavPlane; // 내비메쉬 플레인
@@ -124,7 +126,7 @@ public class Big_Boss_Behavior : MonoBehaviour
         m_NavPlane = GameObject.Find("Navigation_Plane");
 
         // 애니메이션 등록
-        m_Boss_Animator = GetComponent<Animator>();
+        m_Boss_Animator = GetComponentInChildren<Animator>();
         m_AnimationList = new List<string>();
         m_AnimationList.Add("OrkBoss_isIdle");
         m_AnimationList.Add("OrkBoss_isWalk");
@@ -135,7 +137,6 @@ public class Big_Boss_Behavior : MonoBehaviour
 
         m_Attack_Motion_Checker = "Base Layer.OrkBoss_Attack";
 
-		m_Boss_Animations = GetComponent<Animation> ();
 
         // 플레이어 감지기 등록
         m_Target_Detector = GetComponentInChildren<Detector_Box>();
@@ -163,8 +164,7 @@ public class Big_Boss_Behavior : MonoBehaviour
         Big_Boss_Data_Allocation(); // 보스 AI 데이터의 리스트들을 할당
         CSV_Manager.GetInstance().Get_Adventure_Big_Boss_AI_Data(ref m_Adv_Big_Boss_Normal_AI, ref m_Adv_Big_Boss_Angry_AI, ref m_Adv_Big_Boss_Groggy_AI); // 보스 AI 테이블을 받아온다.
         // =========================
-
-
+        
 
 
         // 몬스터의 행동 코루틴들을 설정
@@ -179,14 +179,19 @@ public class Big_Boss_Behavior : MonoBehaviour
         m_Null_Behavior = Null_Behavior();
 
 
-        // 처음 실행할 행동 설정
-        m_Current_Behavior = m_Behavior_Return;
-        StartCoroutine(m_Do_Behavior);
-
-
+        
+		m_Current_Behavior = m_Behavior_Return;// 처음 실행할 행동 설정
+        
         ModeChange(Boss_Mode_List.NORMAL_MODE); // 최초 시작시 노말모드로 시작
+
+		Invoke ("Wait_a_Second", 2.0f);
     }
 
+
+	void Wait_a_Second ()
+	{
+		StartCoroutine(m_Do_Behavior);
+	}
 
 
     void OnTriggerEnter(Collider other)
@@ -339,8 +344,6 @@ public class Big_Boss_Behavior : MonoBehaviour
 
                     SetAnimation(Boss_Animation_Num.ATTACK);
 
-                    m_Attack_Range_UI.gameObject.SetActive(true); // 범위 표시기를 꺼낸다.
-
                     m_Target = m_Attack_Detector.GetComponent<Monster_Player_Detector>().Get_Target();
 
                     if (m_Target != null) // 타겟을 향해 방향 전환
@@ -363,6 +366,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                     if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).fullPathHash == Animator.StringToHash(m_Attack_Motion_Checker))
                     {
                         m_NVAgent.isStopped = true;
+                        
                         if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f) // 애니메이션이 끝나면
                         {
                             m_Current_Behavior = m_Behavior_Return;
@@ -377,11 +381,16 @@ public class Big_Boss_Behavior : MonoBehaviour
                             m_Attack_Range_UI.gameObject.SetActive(false); // 범위 표시기도 집어넣는다.
                         }
 
-                        else if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.15f) // 초기 부분
+                        else if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.10f) // 초기 부분
                         {
                             m_Boss_Animator.SetFloat("Attack_Speed", m_Attack_Speed); // 슬로우모션 후 뒷부분은 빠르게하기 위해..
                             m_Attack_Collider.gameObject.SetActive(true); // 공격용 충돌체를 꺼낸다.
 
+                        }
+                        
+                        else
+                        {
+                            m_Attack_Range_UI.gameObject.SetActive(true); // 범위 표시기를 꺼낸다.
                         }
                     }
                 }
@@ -735,10 +744,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
 
 
-
-
-
-
+    
 
 
     // 폭탄 피격
@@ -747,30 +753,7 @@ public class Big_Boss_Behavior : MonoBehaviour
         if (MusicManager.manage_ESound != null)
             MusicManager.manage_ESound.Boss_Goblin_Hurt_Sound();
 
-        if (m_Health - m_Boss_Data.Bomb_Damage >= 0)
-        {
-            m_Health -= m_Boss_Data.Bomb_Damage;
-            UI.c_UI.Set_Boss_HP_Bar(m_Health);
-        }
-
-        m_Current_Behavior = m_Null_Behavior;
-        SetAnimation(Boss_Animation_Num.HURT);
-        m_NVAgent.isStopped = true;
-        Invoke("HurtEnd", 1.0f);
-
-        
-        //if (GameObject.Find("Boss_Health")) // 체력 표시 UI
-        //    GameObject.Find("Boss_Health").GetComponentInChildren<Text>().text = "Boss Health: " + m_Health.ToString();
-
-        // 체력에 따른 모드 전환
-        if (m_Health <= m_Boss_Data.Angry_Condition_Start_HP && m_curr_Mode_Number == Boss_Mode_List.NORMAL_MODE)
-            ModeChange(Boss_Mode_List.ANGRY_MODE);
-        if (m_Health <= m_Boss_Data.Groggy_Condition_Start_HP && m_curr_Mode_Number == Boss_Mode_List.ANGRY_MODE)
-            ModeChange(Boss_Mode_List.GROGGY_MODE);
-
-        m_curr_Hurt_Time = 0.0f;
-
-        if (m_Health <= 0)
+        if (m_Health - m_Boss_Data.Bomb_Damage <= 0)
         {
             if (MusicManager.manage_ESound != null)
                 MusicManager.manage_ESound.Boss_Goblin_Dead_Sound();
@@ -780,6 +763,28 @@ public class Big_Boss_Behavior : MonoBehaviour
             SetAnimation(Boss_Animation_Num.DEAD);
 
             Invoke("Dead", 2.0f);
+        }
+
+        if (m_Health - m_Boss_Data.Bomb_Damage > 0)
+        {
+            m_Health -= m_Boss_Data.Bomb_Damage;
+            UI.c_UI.Set_Boss_HP_Bar(m_Health);
+
+            SetAnimation(Boss_Animation_Num.HURT);
+            m_Current_Behavior = m_Null_Behavior;
+            m_NVAgent.isStopped = true;
+            
+            Invoke("HurtEnd", 1.0f);
+
+            // 체력에 따른 모드 전환
+            if (m_Health <= m_Boss_Data.Angry_Condition_Start_HP && m_curr_Mode_Number == Boss_Mode_List.NORMAL_MODE)
+                ModeChange(Boss_Mode_List.ANGRY_MODE);
+            if (m_Health <= m_Boss_Data.Groggy_Condition_Start_HP && m_curr_Mode_Number == Boss_Mode_List.ANGRY_MODE)
+                ModeChange(Boss_Mode_List.GROGGY_MODE);
+
+            m_curr_Hurt_Time = 0.0f;
+
+            if (m_Prev_Behavior == m_Behavior_Attack) return;
         }
     }
 
@@ -813,7 +818,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                 m_NVAgent.speed = m_Move_Speed; // 추격시 이동속도 설정
                 m_NVAgent.angularSpeed = 360.0f * m_Move_Speed; // 추격시 회전속도 설정
                 m_Attack_Speed_Slow = 0.2f; // 슬로우 모션 공격속도 설정
-                m_Attack_Speed = 1.0f; // 진짜 공격속도 설정
+                m_Attack_Speed = 1.5f; // 진짜 공격속도 설정
 
                 // 1. 버프 스킬 지속시간 설정
                 // 2. 피격 가능 시간 설정
@@ -824,7 +829,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                 m_NVAgent.speed = m_Move_Speed; // 추격시 이동속도 설정
                 m_NVAgent.angularSpeed = 360.0f * m_Move_Speed; // 추격시 회전속도 설정
                 m_Attack_Speed_Slow = 0.4f; // 슬로우 모션 공격속도 설정
-                m_Attack_Speed = 2.0f; // 진짜 공격속도 설정
+                m_Attack_Speed = 2.5f; // 진짜 공격속도 설정
 
                 UI.c_UI.Set_Boss_HP_Character();
                 // 1. 버프스킬 지속시간 증가
