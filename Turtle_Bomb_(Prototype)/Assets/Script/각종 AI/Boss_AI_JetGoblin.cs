@@ -573,7 +573,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
             Instance_Bomb.GetComponent<Bomb>().m_Whose_Bomb_Type = WHOSE_BOMB.JETGOBLIN;
 
             // 방향 설정
-            Instance_Bomb.GetComponent<Bomb>().SetBombDir();
+            Instance_Bomb.GetComponent<Bomb>().SetBombDir(gameObject);
 
             // 쿨타임 리셋
             m_Current_Bomb_Drop_Cooltime = 0.0f;

@@ -132,7 +132,6 @@ public class MonsterAI : MonoBehaviour
                     Quaternion targetRot = Quaternion.LookRotation(dirXZ);
 
                     transform.rotation = targetRot;
-                    Debug.Log("Rot Changed");
                 }
             }
         }

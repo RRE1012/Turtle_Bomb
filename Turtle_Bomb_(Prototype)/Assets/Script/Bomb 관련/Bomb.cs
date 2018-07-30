@@ -525,32 +525,32 @@ public class Bomb : MonoBehaviour
 
 
     // 폭탄의 방향 설정
-    public void SetBombDir()
+    public void SetBombDir(GameObject Kicker)
     {
         float angleY = 0.0f;
 
-        if (m_Whose_Bomb_Type == WHOSE_BOMB.PLAYER)
+        if (m_isKicked)
         {
-            angleY = m_Whose_Bomb.GetComponent<PlayerMove>().transform.localEulerAngles.y;
+            angleY = Kicker.transform.localEulerAngles.y;
         }
-        else if (m_Whose_Bomb_Type == WHOSE_BOMB.JETGOBLIN)
+        else
         {
-            angleY = m_Whose_Bomb.GetComponent<Boss_AI_JetGoblin>().transform.localEulerAngles.y;
+            angleY = m_Whose_Bomb.transform.localEulerAngles.y;
         }
 
-        float bombAngleY = 0.0f;
+
+        Vector3 rot = Vector3.zero;
 
         if (angleY >= 315.0f && angleY < 45.0f)
-            bombAngleY = 0.0f;
+            rot.y = 0.0f;
         else if (angleY >= 45.0f && angleY < 135.0f)
-            bombAngleY = 90.0f;
+            rot.y = 90.0f;
         else if (angleY >= 135.0f && angleY < 225.0f)
-            bombAngleY = 180.0f;
+            rot.y = 180.0f;
         else if (angleY >= 225.0f && angleY < 315.0f)
-            bombAngleY = 270.0f;
+            rot.y = 270.0f;
 
-
-        transform.Rotate(0.0f, bombAngleY, 0.0f);
+        transform.localEulerAngles = rot;
     }
 
 

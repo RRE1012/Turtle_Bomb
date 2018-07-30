@@ -270,8 +270,9 @@ public class PlayerMove : MonoBehaviour {
             // 현재 캐릭터가 발차기가 가능한 상태이면서, 폭탄은 던져진 상태가 아니어야 한다.
             if (m_isAbleToKick && !collision.gameObject.GetComponent<Bomb>().m_isThrown)
             {
-                collision.gameObject.GetComponent<Bomb>().SetBombDir();
                 collision.gameObject.GetComponent<Bomb>().m_isKicked = true;
+                collision.gameObject.GetComponent<Bomb>().SetBombDir(gameObject);
+                
                 m_isAbleToKick = false;
 
                 m_TurtleMan_Animator.SetBool("TurtleMan_isKick", true);

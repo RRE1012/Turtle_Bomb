@@ -26,8 +26,6 @@ public class Big_Boss_Behavior : MonoBehaviour
 {
     NavMeshAgent m_NVAgent; // 내비에이전트
     Animator m_Boss_Animator; // 애니메이터
-    SkinnedMeshRenderer[] m_Boss_Skins;
-    Color[] m_Normal_Colors;
 
     GameObject m_Target; // 타겟
     GameObject m_NavPlane; // 내비메쉬 플레인
@@ -158,8 +156,6 @@ public class Big_Boss_Behavior : MonoBehaviour
 
         // ========스탯설정=========
         m_Health = m_Boss_Data.Boss_HP; // 체력 설정
-        //GameObject.Find("Boss_Health").GetComponentInChildren<Text>().enabled = true; // 체력 표시기 활성화
-        //GameObject.Find("Boss_Health").GetComponentInChildren<Text>().text = "Boss Health: " + m_Health.ToString();
 
         Big_Boss_Data_Allocation(); // 보스 AI 데이터의 리스트들을 할당
         CSV_Manager.GetInstance().Get_Adventure_Big_Boss_AI_Data(ref m_Adv_Big_Boss_Normal_AI, ref m_Adv_Big_Boss_Angry_AI, ref m_Adv_Big_Boss_Groggy_AI); // 보스 AI 테이블을 받아온다.
@@ -238,8 +234,6 @@ public class Big_Boss_Behavior : MonoBehaviour
             if (!StageManager.c_Stage_Manager.Get_is_Pause())
             {
                 Think();
-
-                //Debug.Log(m_Current_Behavior.ToString());
 
                 m_curr_Turn_Duration += Time.deltaTime; // 턴 지속시간을 잰다.
 				m_curr_Hurt_Time += Time.deltaTime;
@@ -393,6 +387,11 @@ public class Big_Boss_Behavior : MonoBehaviour
                             m_Attack_Range_UI.gameObject.SetActive(true); // 범위 표시기를 꺼낸다.
                         }
                     }
+                    else
+                    {
+                        m_Attack_Range_UI.gameObject.SetActive(false); // 범위 표시기를 꺼낸다.
+                        m_Attack_Collider.gameObject.SetActive(false); // 공격용 충돌체를 꺼낸다.
+                    }
                 }
             }
 
@@ -492,7 +491,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                     m_Current_Behavior = m_Behavior_Skill_Normal_Monster_Summon;
                 }
 
-                else if (random <= m_Adv_Big_Boss_Normal_AI.Skill_Percentage[m_curr_Turn_Number - 1][0] + m_Adv_Big_Boss_Normal_AI.Skill_Percentage[m_curr_Turn_Number - 1][1] + m_Adv_Big_Boss_Normal_AI.Skill_Percentage[m_curr_Turn_Number - 1][2])
+                else if (random <= 100)//m_Adv_Big_Boss_Normal_AI.Skill_Percentage[m_curr_Turn_Number - 1][0] + m_Adv_Big_Boss_Normal_AI.Skill_Percentage[m_curr_Turn_Number - 1][1] + m_Adv_Big_Boss_Normal_AI.Skill_Percentage[m_curr_Turn_Number - 1][2])
                 {
                     // m_Behavior_Skill_Glider_Goblin_Summon 초기화 작업
                     m_Skill_Time = m_Adv_Big_Boss_Normal_AI.Skill_Time[2];
