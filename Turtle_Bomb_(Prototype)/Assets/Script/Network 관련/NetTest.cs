@@ -23,8 +23,9 @@ public class NetTest : MonoBehaviour
     bool m_is_move = false;
     float deltaTime = 0.0f;
     public static float time_Second = 30.0f;
-    private string m_address3 = "127.0.0.1";
-    private string m_address = "13.209.49.50";
+    private string m_address4 = "127.0.0.1";
+    private string m_address3 = "13.124.255.57";
+    private string m_address = "13.124.123.131";
     private string m_address2 = "192.168.123.195";
 
     private byte[] R_Map_Info = new byte[225];
@@ -71,6 +72,8 @@ public class NetTest : MonoBehaviour
         client_id.size = 15;
         Connect();
         StartCoroutine("SendTester");
+        //어플리케이션 프레임레이트를 30으로
+        //Application.targetFrameRate = 30;
         //StartCoroutine("DebugTest");
     }
 
@@ -177,6 +180,7 @@ public class NetTest : MonoBehaviour
     {
         string message = (string)IAR.AsyncState;
     }
+
     public void BeginSend(byte[] buffer)
     {
         try
@@ -254,7 +258,7 @@ public class NetTest : MonoBehaviour
         ////Debug.Log("Process P");
         while (remain_size >= 2)
         {
-            ////Debug.Log("This Data : " + copy_data[1] +"\nThis Size:"+ copy_data[0]);
+            Debug.Log("This Data : " + copy_data[1] + "\nThis Size:" + copy_data[0]);
             switch (copy_data[1])
             {
                 case (byte)PacketInfo.ClientID:
@@ -272,11 +276,12 @@ public class NetTest : MonoBehaviour
 
                     byte tempid = copy_data[2];
                     m_chardata[tempid].ani_state = copy_data[3];
+                    m_chardata[tempid].is_alive = copy_data[4];
                     Turtle_Move.instance.Move_Case(tempid);
                     m_chardata[tempid].x = BitConverter.ToSingle(recv_buff, 10);
                     m_chardata[tempid].z = BitConverter.ToSingle(recv_buff, 14);
                     m_chardata[tempid].rotateY = BitConverter.ToSingle(recv_buff, 18);
-
+                    
                     SwapBuffer(copy_data[0]);
                     //////Debug.Log("Remain_Size : " + remain_size);
                     break;
@@ -303,8 +308,13 @@ public class NetTest : MonoBehaviour
                     Turtle_Move.instance.ReloadBomb(reloadid);
                     int tempx = BitConverter.ToInt32(copy_data, 7);
                     int tempz = BitConverter.ToInt32(copy_data, 11);
+
                     byte[] tempfire_array = new byte[4];
                     Buffer.BlockCopy(copy_data, 2, tempfire_array, 0, 4);
+                    Debug.Log("UpFire : " + tempfire_array[0]);
+                    Debug.Log("RightFire : " + tempfire_array[1]);
+                    Debug.Log("DownFire : " + tempfire_array[2]);
+                    Debug.Log("LeftFire : " + tempfire_array[3]);
                     MapManager.instance.Explode_Bomb_v2(tempx, tempz, tempfire_array);
                     SwapBuffer(copy_data[0]);
                     ///////Debug.Log("Explode Bomb : " + remain_size);
@@ -331,7 +341,9 @@ public class NetTest : MonoBehaviour
                 case (byte)PacketInfo.GameOver:
                     //Debug.Log("Game Over!!!");
                     byte winnerid = copy_data[2];
-                    VSModeManager.instance.GameOver_Set(winnerid);
+                    byte loserid = copy_data[3];
+                    VSModeManager.instance.GameOver_Set(winnerid, loserid);
+
                     SwapBuffer(copy_data[0]);
                     break;
                 case (byte)PacketInfo.ReadyData:
@@ -394,6 +406,7 @@ public class NetTest : MonoBehaviour
                         //방으로 들어가는 함수
                         //WaitRoom.instance.SetRoomCreate_Respond(copy_data);
                         m_ingame = true;
+                        GameRoom.instance.load_on = true;
                         SceneChange.instance.GoTo_Game_Scene();
                     }
                     else
@@ -490,7 +503,32 @@ public class NetTest : MonoBehaviour
                     VariableManager.instance.ChangeTime(t_time);
                     SwapBuffer(copy_data[0]);
                     break;
+                case (byte)PacketInfo.ConnectSuccess:
+                    SendMyIDAndPassword();
+                    //Debug.Log("Swag");
+                    SwapBuffer(copy_data[0]);
+                    break;
+                case (byte)PacketInfo.DBInfo1:
+                    {
+                        byte is_connected = copy_data[2];
+                        if (is_connected == 1 || is_connected == 2)
+                        {
+                            VariableManager.instance.SetMyDBInfo(copy_data);
+                            Debug.Log("Get DBDATA!!!");
 
+                        }
+                        else
+                        {
+                            Debug.Log("Rejected By DB");
+                            if (is_connected == 0)
+                                WaitRoom.instance.cannotConnect = 1;
+                            else if (is_connected == 3)
+                                WaitRoom.instance.cannotConnect = 2;
+                            //연결 실패
+                        }
+                        SwapBuffer(copy_data[0]);
+                    }
+                    break;
                 default:
                     //Debug.Log(copy_data[1] + "Unknown PacketType!");
                     if (copy_data[0] == 0)
@@ -636,6 +674,11 @@ public class NetTest : MonoBehaviour
         else
             return 0;
     }
+    public byte GetNetAlive(int i)
+    {
+
+        return m_chardata[i].is_alive;
+    }
     public float GetNetRoty(int i)
     {
         if (i >= 0 && i <= 3)
@@ -649,6 +692,46 @@ public class NetTest : MonoBehaviour
             return m_chardata[i].z;
         else
             return 0;
+    }
+    void SendMyIDAndPassword()
+    {
+        byte[] myInfo = new byte[44];
+        byte t_size = 44;
+        byte[] m_packet_size = BitConverter.GetBytes(t_size);
+
+        byte t_type = 26;
+        byte[] m_packet_type = BitConverter.GetBytes(t_type);
+        // string a = 
+        byte t_id = VariableManager.instance.m_accessid;
+        byte[] m_packet_id = BitConverter.GetBytes(t_id);
+        byte t_login = GetID.instance.login_type;
+        byte[] m_packet_login = BitConverter.GetBytes(t_login);
+        byte[] m_idString = new byte[20];
+        //Debug.Log(t_login);
+        string a = GetID.instance.GetIDD();
+        //Debug.Log(a);
+        for (int i = 0; i < a.Length; ++i)
+        {
+            //Debug.Log(i);
+            m_idString[i] = Convert.ToByte(a[i]);
+        }
+        //Debug.Log(m_idString);
+        //m_idString = BitConverter.GetBytes(a);
+        string b = GetID.instance.GETPW();
+        //Debug.Log(b);
+        byte[] m_pwString = new byte[20];
+        for (int i = 0; i < b.Length; ++i)
+            m_pwString[i] = Convert.ToByte(b[i]);
+
+        Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
+        Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
+        Buffer.BlockCopy(m_packet_id, 0, myInfo, 2, m_packet_id.Length);
+        Buffer.BlockCopy(m_packet_login, 0, myInfo, 3, m_packet_login.Length);
+        Buffer.BlockCopy(m_idString, 0, myInfo, 4, m_idString.Length);
+        Buffer.BlockCopy(m_pwString, 0, myInfo, 24, m_pwString.Length);
+        m_socket.Send(myInfo);
+        //Debug.Log("Send DBPacket");
+
     }
     public void SendRoomStateChangePacket()
     {
@@ -907,8 +990,8 @@ public class NetTest : MonoBehaviour
     }
     public void SendOUTPacket()
     {
-        byte[] myInfo = new byte[4];
-        byte t_size = 4;
+        byte[] myInfo = new byte[5];
+        byte t_size = 5;
         byte t_type = 13;
         byte[] m_packet_size = BitConverter.GetBytes(t_size);
 
@@ -918,12 +1001,110 @@ public class NetTest : MonoBehaviour
         byte my_pos = GameRoom.instance.pos_inRoom;
         byte[] m_packet_my_pos = BitConverter.GetBytes(my_pos);
         myInfo[3] = my_pos;
+        byte imwinner = 0;
+        byte[] m_winner = BitConverter.GetBytes(imwinner);
         ////Debug.Log(myInfo[3]);
         Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
         Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
         Buffer.BlockCopy(m_packet_id, 0, myInfo, 2, m_packet_id.Length);
         Buffer.BlockCopy(m_packet_my_pos, 0, myInfo, 3, 1);
+        Buffer.BlockCopy(m_winner, 0, myInfo, 4, 1);
 
+        m_socket.Send(myInfo);
+    }
+    public void SendOUTPacket_lose()
+    {
+        byte[] myInfo = new byte[5];
+        byte t_size = 5;
+        byte t_type = 13;
+        byte[] m_packet_size = BitConverter.GetBytes(t_size);
+
+        byte[] m_packet_type = BitConverter.GetBytes(t_type);
+        byte t_id = GameRoom.instance.GetRoomID();
+        byte[] m_packet_id = BitConverter.GetBytes(t_id);
+        byte my_pos = GameRoom.instance.pos_inRoom;
+        byte[] m_packet_my_pos = BitConverter.GetBytes(my_pos);
+        myInfo[3] = my_pos;
+        byte imwinner = 2;
+        byte[] m_winner = BitConverter.GetBytes(imwinner);
+        ////Debug.Log(myInfo[3]);
+        Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
+        Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
+        Buffer.BlockCopy(m_packet_id, 0, myInfo, 2, m_packet_id.Length);
+        Buffer.BlockCopy(m_packet_my_pos, 0, myInfo, 3, 1);
+        Buffer.BlockCopy(m_winner, 0, myInfo, 4, 1);
+
+        m_socket.Send(myInfo);
+    }
+    public void SendOUT_WinnerPacket()
+    {
+        byte[] myInfo = new byte[5];
+        byte t_size = 5;
+        byte t_type = 13;
+        byte[] m_packet_size = BitConverter.GetBytes(t_size);
+
+        byte[] m_packet_type = BitConverter.GetBytes(t_type);
+        byte t_id = GameRoom.instance.GetRoomID();
+        byte[] m_packet_id = BitConverter.GetBytes(t_id);
+        byte my_pos = GameRoom.instance.pos_inRoom;
+        byte[] m_packet_my_pos = BitConverter.GetBytes(my_pos);
+        myInfo[3] = my_pos;
+        byte imwinner = 1;
+        byte[] m_winner = BitConverter.GetBytes(imwinner);
+        ////Debug.Log(myInfo[3]);
+        Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
+        Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
+        Buffer.BlockCopy(m_packet_id, 0, myInfo, 2, m_packet_id.Length);
+        Buffer.BlockCopy(m_packet_my_pos, 0, myInfo, 3, 1);
+        Buffer.BlockCopy(m_winner, 0, myInfo, 4, 1);
+
+        m_socket.Send(myInfo);
+    }
+    public void SendOUTPacket2()
+    {
+        byte[] myInfo = new byte[5];
+        byte t_size = 5;
+        byte t_type = 13;
+        byte[] m_packet_size = BitConverter.GetBytes(t_size);
+
+        byte[] m_packet_type = BitConverter.GetBytes(t_type);
+        byte t_id = GameRoom.instance.GetRoomID();
+        byte[] m_packet_id = BitConverter.GetBytes(t_id);
+        byte my_pos = 0;
+        byte[] m_packet_my_pos = BitConverter.GetBytes(my_pos);
+        myInfo[3] = my_pos;
+        byte imwinner = 2;
+        byte[] m_winner = BitConverter.GetBytes(imwinner);
+        ////Debug.Log(myInfo[3]);
+        Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
+        Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
+        Buffer.BlockCopy(m_packet_id, 0, myInfo, 2, m_packet_id.Length);
+        Buffer.BlockCopy(m_packet_my_pos, 0, myInfo, 3, 1);
+        Buffer.BlockCopy(m_winner, 0, myInfo, 4, 1);
+
+        m_socket.Send(myInfo);
+    }
+    public void SendOUTPacket2_Winner()
+    {
+        byte[] myInfo = new byte[5];
+        byte t_size = 5;
+        byte t_type = 13;
+        byte[] m_packet_size = BitConverter.GetBytes(t_size);
+
+        byte[] m_packet_type = BitConverter.GetBytes(t_type);
+        byte t_id = GameRoom.instance.GetRoomID();
+        byte[] m_packet_id = BitConverter.GetBytes(t_id);
+        byte my_pos = 0;
+        byte[] m_packet_my_pos = BitConverter.GetBytes(my_pos);
+        myInfo[3] = my_pos;
+        byte imwinner = 1;
+        byte[] m_winner = BitConverter.GetBytes(imwinner);
+        ////Debug.Log(myInfo[3]);
+        Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
+        Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
+        Buffer.BlockCopy(m_packet_id, 0, myInfo, 2, m_packet_id.Length);
+        Buffer.BlockCopy(m_packet_my_pos, 0, myInfo, 3, 1);
+        Buffer.BlockCopy(m_winner, 0, myInfo, 4, 1);
 
         m_socket.Send(myInfo);
     }
@@ -1161,6 +1342,10 @@ public class NetTest : MonoBehaviour
 
         GUI.Label(rect, text, style);
 
+    }
+    public void GetOutRoom()
+    {
+        SceneChange.instance.GoTo_Select_Scene();
     }
     void Update()
     {

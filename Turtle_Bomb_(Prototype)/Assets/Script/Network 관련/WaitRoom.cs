@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class WaitRoom : MonoBehaviour {
+public class WaitRoom : MonoBehaviour
+{
     int page = 1; //현재 내가 몇페이지에 있는지.
     public static WaitRoom instance;
     byte m_id;
     public GameObject forceouted;
+    public GameObject[] cannotLogin;
     public Texture[] m_texture;
     public byte[] people_inRoom = new byte[4];
     public Text m_text;
@@ -22,14 +24,16 @@ public class WaitRoom : MonoBehaviour {
     public Text[] text_array;
     public Text[] room_enter_array;
     public Button[] room_enter_button;
-
+    public int cannotConnect;
     // Use this for initialization
     private void Awake()
     {
         instance = this;
     }
-    void Start () {
+    void Start()
+    {
         ////Debug.Log("Started");
+        cannotConnect = 0;
         StartCoroutine("RoomCheck");
     }
     public void Out()
@@ -40,12 +44,12 @@ public class WaitRoom : MonoBehaviour {
     }
     public void PopMenu()
     {
-        
+
         pop.transform.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-       
+
         if (pop.activeInHierarchy)
         {
-            
+
         }
 
         pop.SetActive(true);
@@ -56,15 +60,15 @@ public class WaitRoom : MonoBehaviour {
         ////Debug.Log("Clicked");
         pop.SetActive(false);
     }
-    
-   
+
+
     public void ToLeftRoomPage()
     {
         //Debug.Log("Left Page");
         if (page > 1)
         {
             page -= 1;
-            
+
         }
         if (page <= 1)
         {
@@ -83,11 +87,11 @@ public class WaitRoom : MonoBehaviour {
             page = 3;
         }
     }
-    
+
     public void SetRoomNum()
     {
 
-        VariableManager.instance.m_roomid = roomIDarray[0+((page-1)*8)];
+        VariableManager.instance.m_roomid = roomIDarray[0 + ((page - 1) * 8)];
         ////Debug.Log(m_roomid);
     }
     public void SetRoomNum1()
@@ -97,33 +101,33 @@ public class WaitRoom : MonoBehaviour {
     }
     public void SetRoomNum2()
     {
-        VariableManager.instance.m_roomid = roomIDarray[2 + ((page-1) * 8)];
+        VariableManager.instance.m_roomid = roomIDarray[2 + ((page - 1) * 8)];
     }
     public void SetRoomNum3()
     {
-        VariableManager.instance.m_roomid = roomIDarray[3 + ((page-1) * 8)];
+        VariableManager.instance.m_roomid = roomIDarray[3 + ((page - 1) * 8)];
     }
     public void SetRoomNum4()
     {
-        VariableManager.instance.m_roomid = roomIDarray[4 + ((page-1) * 8)];
+        VariableManager.instance.m_roomid = roomIDarray[4 + ((page - 1) * 8)];
     }
     public void SetRoomNum5()
     {
-        VariableManager.instance.m_roomid = roomIDarray[5 + ((page-1) * 8)];
+        VariableManager.instance.m_roomid = roomIDarray[5 + ((page - 1) * 8)];
     }
     public void SetRoomNum6()
     {
-        VariableManager.instance.m_roomid = roomIDarray[6 + ((page-1) * 8)];
+        VariableManager.instance.m_roomid = roomIDarray[6 + ((page - 1) * 8)];
     }
     public void SetRoomNum7()
     {
-        VariableManager.instance.m_roomid = roomIDarray[7 + ((page-1) * 8)];
+        VariableManager.instance.m_roomid = roomIDarray[7 + ((page - 1) * 8)];
     }
-    
+
     public void SendJCRoom(int a)
     {
-        VariableManager.instance.m_roomid = (byte)(a + ((page-1) * 8));
-        if(roominfo[(a + ((page - 1) * 8)) - 1].made == 0)
+        VariableManager.instance.m_roomid = (byte)(a + ((page - 1) * 8));
+        if (roominfo[(a + ((page - 1) * 8)) - 1].made == 0)
         {
             NetTest.instance.SendCreatePacket();
         }
@@ -145,14 +149,23 @@ public class WaitRoom : MonoBehaviour {
 
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
+        if (cannotConnect == 1)
+        {
+            cannotLogin[0].SetActive(true);
+        }
+        if (cannotConnect == 2)
+        {
+            cannotLogin[1].SetActive(true);
+        }
         if (m_text != null)
         {
-            m_text.text = page + " / 3" ;
-
+            //m_text.text = page + " / 3" ;
+            m_text.text = VariableManager.instance.GetStringID();
         }
-        
-        if(page<3)
+
+        if (page < 3)
         {
             for (int i = 3; i < 8; ++i)
             {
@@ -165,14 +178,14 @@ public class WaitRoom : MonoBehaviour {
         {
             Touch touch = Input.GetTouch(i);
             //Debug.Log("Hi3");
-            
-                // Need to put .x
-                //if (touch.position.x > (Screen.width / 2))
-                //{
-                    Vector2 touchDeltaPosition = Input.GetTouch(i).deltaPosition;
-                    pop.transform.position = new Vector2(touchDeltaPosition.x,touchDeltaPosition.y);
-                //}
-            
+
+            // Need to put .x
+            //if (touch.position.x > (Screen.width / 2))
+            //{
+            Vector2 touchDeltaPosition = Input.GetTouch(i).deltaPosition;
+            pop.transform.position = new Vector2(touchDeltaPosition.x, touchDeltaPosition.y);
+            //}
+
             //m_text.text = "Touch Position : " + touch.position;
         }
         if (Input.touchCount > 0)
@@ -181,7 +194,7 @@ public class WaitRoom : MonoBehaviour {
             touch2 = Input.GetTouch(0);
             //m_text.text = "Touch Position : " + touch2.position;
         }
-        Vector3 nv= Input.mousePosition;
+        Vector3 nv = Input.mousePosition;
         if (VariableManager.instance.forceout)
         {
             forceouted.SetActive(true);
@@ -191,17 +204,19 @@ public class WaitRoom : MonoBehaviour {
 
     IEnumerator RoomCheck()
     {
-        for(; ; )
+        for (; ; )
         {
+
+
             //room_List.Clear();
             for (int i = 0; i < 20; ++i)
             {
                 if (i < 8)
                     room_numText[i].text = (i + ((page - 1) * 8) + 1) + "번";
-                
-                 TB_Room temp = VariableManager.instance.roominfo[i];
-                 roominfo[i] = temp;
-                 //room_List.Add(temp);
+
+                TB_Room temp = VariableManager.instance.roominfo[i];
+                roominfo[i] = temp;
+                //room_List.Add(temp);
 
             }
             int current_room = 0;
@@ -217,7 +232,7 @@ public class WaitRoom : MonoBehaviour {
                         {
                             //"Room No." + t.roomID + "\nPlayer : " + + "\nSurvival Mode";
                             text_array[current_room].text = t.people_count + "/" + t.people_max;
-                            uiBox[(current_room%8)].texture = m_texture[1];
+                            uiBox[(current_room % 8)].texture = m_texture[1];
                             room_enter_array[(current_room % 8)].text = "입 장";
                             room_enter_button[(current_room % 8)].interactable = true;
                         }

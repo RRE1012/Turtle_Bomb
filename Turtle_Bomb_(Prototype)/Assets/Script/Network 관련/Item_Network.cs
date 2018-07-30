@@ -50,7 +50,10 @@ public class Item_Network : MonoBehaviour {
                 {
                     item_type = 4;
                 }
-
+                if (gameObject.CompareTag("Glider_Item"))
+                {
+                    item_type = 5;
+                }
                 ////Debug.Log("Send Item Log");
                 NetTest.instance.SendItemPacket(x, z, item_type);
                 gameObject.SetActive(false);

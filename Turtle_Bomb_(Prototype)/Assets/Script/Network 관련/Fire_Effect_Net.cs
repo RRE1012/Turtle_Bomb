@@ -18,7 +18,18 @@ public class Fire_Effect_Net : MonoBehaviour {
                 if (Turtle_Move.instance.alive != 0)
                 {
                     //Debug.Log("TTaGawa");
-                    Turtle_Move.instance.alive = 0;
+                    if (Turtle_Move.instance.glider_on)
+                    {
+                        Turtle_Move.instance.alive = 1;
+                        Turtle_Move.instance.glider_on = false;
+                        Turtle_Move.instance.overpower = true;
+                    }
+                    else
+                    {
+                        if(!Turtle_Move.instance.overpower)
+                            Turtle_Move.instance.alive = 0;
+
+                    }
                     NetTest.instance.SetmoveTrue();
                 }
             }

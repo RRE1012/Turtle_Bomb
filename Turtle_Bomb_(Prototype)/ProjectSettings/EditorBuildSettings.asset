@@ -29,3 +29,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scene/Mode_VS(Play).unity
     guid: 9899fccdf2376b4478112851b2455864
+  - enabled: 1
+    path: Assets/Scene/Mode_VS_Connect.unity
+    guid: a576a234770fa584e9169b3429428215

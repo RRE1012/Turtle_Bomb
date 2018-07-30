@@ -39,6 +39,7 @@ TagManager:
   - Info_Trigger_Kick
   - Info_Trigger_Throw
   - Camera_Offset
+  - Glider_Item
   layers:
   - Default
   - TransparentFX

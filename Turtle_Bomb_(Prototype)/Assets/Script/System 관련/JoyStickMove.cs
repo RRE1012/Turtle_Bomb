@@ -98,8 +98,12 @@ public class JoyStickMove : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
 
     public bool Get_is_Joystick_First_Touched_Net() // 조이스틱이 먼저냐 회전이 먼저냐!
     {
-        if (VSModeManager.instance.Get_isClicked()) // 이미 회전중이면
-            return false; // 회전이 먼저다!
-        else return true; // 조이스틱이 먼저다!
+        if (Input.GetTouch(0).phase == TouchPhase.Began)
+        {
+            // 이미 회전중이면
+            if (VSModeManager.instance.Get_isClicked())
+                return false; // 회전이 먼저다!
+        }
+        return true; // 조이스틱이 먼저다!
     }
 }

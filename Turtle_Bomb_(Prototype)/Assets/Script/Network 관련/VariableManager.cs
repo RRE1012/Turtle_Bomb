@@ -4,10 +4,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class VariableManager : MonoBehaviour {
+public class VariableManager : MonoBehaviour
+{
     public static VariableManager instance;
-    public byte m_accessid=254;
+    public byte m_accessid = 254;
     public byte m_roomid = 0;
+    int win = 0;
+    int lose = 0;
+    string mystringID;
+
+    int tier = 0;
+    int exp = 0;
+    int expmax = 0;
     public byte[] people_inRoom = new byte[4];
     public byte pos_inRoom = 0;
     public byte pos_guardian = 0;
@@ -24,7 +32,7 @@ public class VariableManager : MonoBehaviour {
     public byte[] team_Turtle = new byte[4];
     public byte[] ready_Turtle = new byte[4];
     public bool forceout = false;
-    public float m_time=60.0f;
+    public float m_time = 60.0f;
     public byte myteam;
     private void Awake()
     {
@@ -48,10 +56,32 @@ public class VariableManager : MonoBehaviour {
         myteam = (byte)mode;
     }
 
-    
+
     public void SetID(byte a)
     {
         m_accessid = a;
+    }
+
+    public void SetMyDBInfo(byte[] a)
+    {
+        mystringID = BitConverter.ToString(a, 3, 20);
+
+        mystringID = System.Text.Encoding.UTF8.GetString(a, 3, 20);
+        Debug.Log(mystringID);
+
+
+        win = BitConverter.ToInt32(a, 23);
+        lose = BitConverter.ToInt32(a, 27);
+        tier = BitConverter.ToInt32(a, 31);
+        exp = BitConverter.ToInt32(a, 35);
+        expmax = BitConverter.ToInt32(a, 39);
+
+        //mystringID;
+
+    }
+    public string GetStringID()
+    {
+        return mystringID;
     }
     public void OutRoom()
     {
@@ -66,7 +96,7 @@ public class VariableManager : MonoBehaviour {
             people_inRoom[i] = 0;
             ready_Turtle[i] = 0;
         }
-        
+
         ////Debug.Log(is_guardian);
     }
     public void F_OutRoom()
@@ -88,13 +118,14 @@ public class VariableManager : MonoBehaviour {
     {
         m_time = time;
     }
-    public void GetReadyState(byte roomid,byte pos, byte ready)
+    public void GetReadyState(byte roomid, byte pos, byte ready)
     {
         if (roomid == m_roomid)
         {
-            ready_Turtle[pos-1] = ready;
+            ready_Turtle[pos - 1] = ready;
         }
-        switch (pos) {
+        switch (pos)
+        {
             case 1:
                 roominfo[roomid - 1].ready1 = ready;
                 break;
@@ -120,7 +151,7 @@ public class VariableManager : MonoBehaviour {
         Buffer.BlockCopy(mapinfo, 2, copy_map_info, 0, 225);
 
     }
-    public void Check_BombMap(int x,int z,byte a)
+    public void Check_BombMap(int x, int z, byte a)
     {
         copy_map_info[(z * 15) + x] = a;
     }
@@ -146,7 +177,7 @@ public class VariableManager : MonoBehaviour {
         roominfo[temproomID - 1].people3 = tempArray[10];
         roominfo[temproomID - 1].people4 = tempArray[11];
         byte tempmode = tempArray[5];
-        roominfo[temproomID-1].roomtype = tempArray[12];
+        roominfo[temproomID - 1].roomtype = tempArray[12];
         byte tempmap = tempArray[13];
         byte tempmap_num = tempArray[14];
         roominfo[temproomID - 1].team1 = tempArray[15];
@@ -211,7 +242,8 @@ public class VariableManager : MonoBehaviour {
         m_roomid = b[3];
     }
     // Update is called once per frame
-    void Update () {
-        
-	}
+    void Update()
+    {
+
+    }
 }

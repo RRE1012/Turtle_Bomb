@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scene/Mode_Adventure_Game_Stage.unity
+- path: Assets/Scene/Title_Scene.unity
   isLoaded: 1
   isActive: 1

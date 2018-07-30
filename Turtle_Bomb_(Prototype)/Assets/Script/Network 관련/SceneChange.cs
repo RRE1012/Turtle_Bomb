@@ -12,7 +12,7 @@ public class SceneChange : MonoBehaviour
     public Canvas cv;
     public RawImage FadeSlider;
     static public SceneChange instance;
-    int scene = 4;
+    int scene = 8;
     bool swap_scene = false;
     // Use this for initialization
 
@@ -33,6 +33,30 @@ public class SceneChange : MonoBehaviour
     public int GetSceneState()
     {
         return scene;
+    }
+    public void GoTo_Connect_Scene()
+    {
+        //SceneManager.LoadScene(0);
+        scene = 4;
+        swap_scene = true;
+    }
+    public void GoTo_Connect_Scene_Coop()
+    {
+        //SceneManager.LoadScene(0);
+        scene = 10;
+        swap_scene = true;
+    }
+    public void GoTo_Matching_Scene()
+    {
+        //SceneManager.LoadScene(0);
+        scene = 11;
+        swap_scene = true;
+    }
+    public void GoTo_CoopBoss_Scene()
+    {
+        //SceneManager.LoadScene(0);
+        scene = 12;
+        swap_scene = true;
     }
 
     // "타이틀 화면"으로 이동
@@ -57,6 +81,7 @@ public class SceneChange : MonoBehaviour
     public void GoTo_Game_Scene()
     {
         scene = 7;
+
         swap_scene = true;
 
         //SceneManager.LoadScene(2);

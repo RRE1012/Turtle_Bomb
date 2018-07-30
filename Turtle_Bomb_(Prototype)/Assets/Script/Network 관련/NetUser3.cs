@@ -17,6 +17,9 @@ public class NetUser3 : MonoBehaviour
     bool push_ani = false;
     bool walk_ani = false;
     bool kick_ani = false;
+    bool get_glider = false;
+    bool glider_on = false;
+    public GameObject glider;
     public GameObject parts;
     public Material[] icon_material;
     public GameObject m_plane;
@@ -57,6 +60,10 @@ public class NetUser3 : MonoBehaviour
             parts.SetActive(true);
         }
     }
+    public void GetGlider()
+    {
+        get_glider = true;
+    }
     void SetFalse()
     {
         gameObject.SetActive(false);
@@ -92,10 +99,15 @@ public class NetUser3 : MonoBehaviour
     void Walk_Ani_False()
     {
         m_animator.SetBool("TurtleMan_isWalk", false);
+        m_animator.SetBool("TurtleMan_GliderMove", false);
     }
     void Kick_Ani_False()
     {
         m_animator.SetBool("TurtleMan_isKick", false);
+    }
+    void Glider_False()
+    {
+        m_animator.SetBool("TurtleMan_GetGlider", false);
     }
     void IDCheck()
     {
@@ -162,6 +174,21 @@ public class NetUser3 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (NetTest.instance.GetNetAlive(2) == 2)
+        {
+            glider_on = true;
+            m_animator.SetBool("TurtleMan_GetGlider", true);
+
+        }
+        else if (NetTest.instance.GetNetAlive(2) == 1)
+        {
+            if (glider_on)
+            {
+                m_animator.SetBool("TurtleMan_GetGlider", false);
+                glider_on = false;
+
+            }
+        }
         if (kick_ani)
         {
             m_animator.SetBool("TurtleMan_isKick", true);
@@ -176,7 +203,12 @@ public class NetUser3 : MonoBehaviour
         }
         if (walk_ani)
         {
-            m_animator.SetBool("TurtleMan_isWalk", true);
+            if (get_glider)
+            {
+                m_animator.SetBool("TurtleMan_GliderMove", true);
+            }
+            else
+                m_animator.SetBool("TurtleMan_isWalk", true);
             Invoke("Walk_Ani_False", 1.0f);
             walk_ani = false;
         }
@@ -188,7 +220,7 @@ public class NetUser3 : MonoBehaviour
             m_TM.text = "1P - Dead!!!";
             m_animator.SetBool("TurtleMan_isDead", true);
             Invoke("SetTextOff", 2.0f);
-            Invoke("SetFalse", 1.1f);
+            Invoke("SetFalse", 5.0f);
             dead_ani = false;
         }
         if (throw_ani)
@@ -196,6 +228,18 @@ public class NetUser3 : MonoBehaviour
             m_animator.SetBool("TurtleMan_isThrow", true);
             Invoke("Throw_Ani_False", 1.0f);
             throw_ani = false;
+        }
+        if (get_glider)
+        {
+            m_animator.SetBool("TurtleMan_GetGlider", true);
+
+            get_glider = false;
+            glider_on = true;
+        }
+        if (glider_on)
+        {
+            glider.SetActive(true);
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, 3.0f, gameObject.transform.position.z);
         }
         if (VariableManager.instance.people_inRoom[2] == 0)
             p.SetActive(false);
@@ -234,6 +278,12 @@ public class NetUser3 : MonoBehaviour
                 case 4:
                     m_Rplane.sharedMaterial = icon_material[4];
                     break;
+                case 5:
+                   
+                    get_glider = true;
+                    m_Rplane.sharedMaterial = icon_material[5];
+                    color = 100;
+                    break;
                 default:
                     break;
             }
@@ -247,7 +297,7 @@ public class NetUser3 : MonoBehaviour
     {
         for (; ; )
         {
-
+            
             SetPos(NetTest.instance.GetNetPosx(2), NetTest.instance.GetNetRoty(2), NetTest.instance.GetNetPosz(2));
 
             yield return new WaitForSeconds(0.05f);

@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class VSModeManager : MonoBehaviour {
+public class VSModeManager : MonoBehaviour
+{
     byte win_or_lose = 0; //1이면 win, 2면 lose
     public static VSModeManager instance;
+    byte loser_ID;
     public RawImage winner_image;
     public RawImage loser_image;
     public RawImage draw_image;
@@ -27,8 +29,9 @@ public class VSModeManager : MonoBehaviour {
     {
         instance = this;
     }
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         time = 60.0f;
         win_or_lose = 0;
         game_set = false;
@@ -63,12 +66,14 @@ public class VSModeManager : MonoBehaviour {
     {
         return m_isClicked;
     }
-    public void GameOver_Set(byte id)
+    public void GameOver_Set(byte id, byte loserid)
     {
         if (Turtle_Move.instance.GetId() == id)
         {
+            loser_ID = loserid;
             win_or_lose = 1;
             game_set = true;
+
         }
         else if (id == 4)
         {
@@ -82,25 +87,29 @@ public class VSModeManager : MonoBehaviour {
         }
 
     }
-
+    void WinnerSet()
+    {
+        winner_image.gameObject.SetActive(true);
+    }
     public void ChangeTime(float a)
     {
         time = a;
         //Debug.Log("Time" + (time));
     }
-	// Update is called once per frame
-	void Update () {
+    // Update is called once per frame
+    void Update()
+    {
         time = VariableManager.instance.m_time;
         if (time < 0)
             time = 0;
-        if(time%60>=10)
-            time_Text.text = "0"+(int)time/60+":"+ (int)time%60;
+        if (time % 60 >= 10)
+            time_Text.text = "0" + (int)time / 60 + ":" + (int)time % 60;
         else
             time_Text.text = "0" + (int)time / 60 + ":0" + (int)time % 60;
         if (win_or_lose == 1)
         {
-
-            winner_image.gameObject.SetActive(true);
+            Performance_Network.instance.DeadAnimation(loser_ID);
+            Invoke("WinnerSet", 3.3f);
             win_or_lose = 0;
             //Debug.Log("Win!!!!!!");
             //Time.timeScale = 0;
@@ -108,12 +117,12 @@ public class VSModeManager : MonoBehaviour {
         }
         else if (win_or_lose == 2)
         {
-            
+
             loser_image.gameObject.SetActive(true);
             win_or_lose = 0;
             //Debug.Log("Lose!!!!!!");
             //Time.timeScale = 0;
-            
+
         }
         else if (win_or_lose == 3)
         {

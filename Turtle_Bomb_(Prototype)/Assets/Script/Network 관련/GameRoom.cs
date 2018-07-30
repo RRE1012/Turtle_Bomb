@@ -4,16 +4,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameRoom : MonoBehaviour {
-    
-    
+public class GameRoom : MonoBehaviour
+{
+
+
     public static GameRoom instance;
-    int ready_num=0;
+    int ready_num = 0;
     byte my_room_num = 0;
-    public byte pos_inRoom=0;
-    byte pos_guard=0;
+    public byte pos_inRoom = 0;
+    byte pos_guard = 0;
     byte amIguard = 0;//0일경우는 유저, 1일 경우 방장
     byte myteam = 0;
+    bool pop_loading = false;
+    public RawImage loadingimage;
     int mode = 0;
     int map_mode = 0;
     int map_num = 0;
@@ -22,9 +25,9 @@ public class GameRoom : MonoBehaviour {
     public Text m_text;
     public GameObject[] turtles;
     public byte m_imready;
-    
+    public bool load_on;
 
-   
+
     //public TextMesh[] turtle_text;
     byte m_ready; //0일 경우 ready x, 1일 경우 ready o
     public GameObject[] crown;
@@ -37,17 +40,19 @@ public class GameRoom : MonoBehaviour {
     byte roomtype = 0;
     byte[] team = new byte[4];
     byte clicked_position;
-	// Use this for initialization
+    // Use this for initialization
     void Awake()
     {
         instance = this;
         //Application.LoadLevel(Application.loadedLevel);
         //DontDestroyOnLoad(this);
     }
-	void Start () {
+    void Start()
+    {
         SetRoomState();
         m_imready = 0;
-
+        pop_loading = false;
+        load_on = false;
     }
 
 
@@ -57,7 +62,7 @@ public class GameRoom : MonoBehaviour {
         pos_inRoom = 0;
         pos_guard = 0;
         amIguard = 0;
-        for(int i=0;i<4;++i)
+        for (int i = 0; i < 4; ++i)
             people_inRoom[i] = 0;
 
     }
@@ -66,7 +71,7 @@ public class GameRoom : MonoBehaviour {
 
         return my_room_num;
     }
-    public void GetReadyState(byte pos,byte ready)
+    public void GetReadyState(byte pos, byte ready)
     {
         if (pos_inRoom == pos)
         {
@@ -86,7 +91,7 @@ public class GameRoom : MonoBehaviour {
     public void Ready()
     {
 
-        if(amIguard==0)
+        if (amIguard == 0)
             NetTest.instance.SendReadyPacket_v2();
         else
         {
@@ -132,7 +137,7 @@ public class GameRoom : MonoBehaviour {
         bool tempbool01 = people_inRoom[clicked_position - 1] != 0;
         bool tempbool02 = amIguard == 1;
         bool tempbool03 = clicked_position != pos_guard;
-        if (tempbool01&&tempbool02&&tempbool03)
+        if (tempbool01 && tempbool02 && tempbool03)
         {
             //벤 패킷 전송
             NetTest.instance.SendBanPacket(clicked_position);
@@ -141,10 +146,10 @@ public class GameRoom : MonoBehaviour {
     //방 상태 체크 함수
     void SetRoomState()
     {
-        
+
         byte[] temparray = VariableManager.instance.people_inRoom;
         pos_inRoom = VariableManager.instance.pos_inRoom;
-        
+
         pos_guard = VariableManager.instance.pos_guardian;
 
         for (int t = 0; t < 4; ++t)
@@ -158,10 +163,10 @@ public class GameRoom : MonoBehaviour {
         map_num = VariableManager.instance.map_num;
         for (int t = 0; t < 4; ++t)
             team[t] = VariableManager.instance.team_Turtle[t];
-        if(pos_guard == pos_inRoom)
+        if (pos_guard == pos_inRoom)
         {
             amIguard = 1;
-           
+
 
         }
 
@@ -170,12 +175,12 @@ public class GameRoom : MonoBehaviour {
     //팀변경 함수
     public void TeamChange(int a)
     {
-        
+
         VariableManager.instance.SetTeam((byte)a);
-        
-            
+
+
         NetTest.instance.SendTeamChangePacket();
-     
+
 
     }
     //맵 변경 우측 화살표
@@ -183,12 +188,12 @@ public class GameRoom : MonoBehaviour {
     {
         if (amIguard == 1)
         {
-            int temp = (map_mode + 1) %3;
+            int temp = (map_mode + 1) % 3;
             VariableManager.instance.SetMapMode(temp);
             NetTest.instance.SendRoomStateChangePacket();
-            
+
         }
-        
+
     }
     public void SetMapMinus()
     {
@@ -199,11 +204,11 @@ public class GameRoom : MonoBehaviour {
 
                 VariableManager.instance.SetMapMode(2);
                 NetTest.instance.SendRoomStateChangePacket();
-                
+
             }
             else
             {
-                int temp = map_mode -1;
+                int temp = map_mode - 1;
                 if (temp < 0)
                     temp = 2;
                 VariableManager.instance.SetMapMode(temp);
@@ -232,7 +237,7 @@ public class GameRoom : MonoBehaviour {
     {
         if (amIguard == 1)
         {
-            int temp = (mode+1)%5;
+            int temp = (mode + 1) % 5;
             if (temp < 2)
                 temp = 2;
             VariableManager.instance.SetGameMode(temp);
@@ -241,10 +246,10 @@ public class GameRoom : MonoBehaviour {
         }
         if (mode == 1)
         {
-            
+
         }
     }
-    
+
     //모드 변경 좌측 화살표
     public void SetModeMinus()
     {
@@ -252,10 +257,10 @@ public class GameRoom : MonoBehaviour {
         {
             if (mode <= 2)
             {
-                
+
                 VariableManager.instance.SetGameMode(4);
                 NetTest.instance.SendRoomStateChangePacket();
-                
+
             }
             else
             {
@@ -298,23 +303,36 @@ public class GameRoom : MonoBehaviour {
     //게임모드 변경
     void CheckMode()
     {
-        for(int i=0;i<3;++i)
+        for (int i = 0; i < 3; ++i)
             mapImage[i].gameObject.SetActive(false);
         mapImage[map_mode].gameObject.SetActive(true);
 
-        
-       
-            m_count_text.text = mode+"인 플레이";
-        
-        
+
+
+        m_count_text.text = mode + "인 플레이";
+
+
     }
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         ////Debug.Log(turtles.Length);
         ready_num = 0;
         int people = 0;
+        if (load_on)
+        {
+
+        }
+        if (pop_loading)
+        {
+            loadingimage.gameObject.SetActive(true);
+        }
+        else
+        {
+            loadingimage.gameObject.SetActive(false);
+        }
         turtles[0].SetActive(true);
-        for(int i = 1; i < 13; ++i)
+        for (int i = 1; i < 13; ++i)
         {
             turtles[i].SetActive(false);
         }
@@ -337,13 +355,13 @@ public class GameRoom : MonoBehaviour {
             CheckMode();
             if (mode == 0)
             {
-                
-                m_text.text =  VariableManager.instance.m_roomid + "번 방";
-                
+
+                m_text.text = VariableManager.instance.m_roomid + "번 방";
+
             }
             else
             {
-                
+
                 m_text.text = VariableManager.instance.m_roomid + "번 방";
 
             }
@@ -444,9 +462,9 @@ public class GameRoom : MonoBehaviour {
             }
             else
             {
-                SRButton[0].interactable= false;
+                SRButton[0].interactable = false;
             }
-            if (amIguard==1)
+            if (amIguard == 1)
             {
                 crown[1].gameObject.SetActive(false);
                 crown[2].gameObject.SetActive(false);
@@ -465,18 +483,19 @@ public class GameRoom : MonoBehaviour {
                         if (pos_guard < 2)
                         {
                             crown[1].gameObject.SetActive(true);
-                            
+
                             crown[2].gameObject.SetActive(false);
                             crown[3].gameObject.SetActive(false);
                         }
-                        else {
-                            for(int i = 0; i < 4; ++i)
+                        else
+                        {
+                            for (int i = 0; i < 4; ++i)
                             {
                                 crown[i].gameObject.SetActive(false);
                             }
                             crown[pos_guard - 1].gameObject.SetActive(true);
                         }
-                            
+
                         break;
                     case 3:
                         if (pos_guard > 3)
@@ -506,27 +525,27 @@ public class GameRoom : MonoBehaviour {
                         break;
                 }
             }
-            
-            Map_Num_Text.text = ""+(map_num+1);
+
+            Map_Num_Text.text = "" + (map_num + 1);
             for (byte i = 0; i < 4; ++i)
             {
                 if (pos_inRoom - 1 != i)
                 {
                     people++;
                 }
-                
-                if (VariableManager.instance.people_inRoom[i] != 0 && pos_inRoom-1 !=i)
+
+                if (VariableManager.instance.people_inRoom[i] != 0 && pos_inRoom - 1 != i)
                 {
                     if (people < 4)
                     {
                         byte tempteamcolor = VariableManager.instance.team_Turtle[i];
-                        turtles[people+(tempteamcolor*3)].SetActive(true);
+                        turtles[people + (tempteamcolor * 3)].SetActive(true);
                     }
                     ////Debug.Log(people + "th On!!");
-                   
-                    
+
+
                 }
-                else if(VariableManager.instance.people_inRoom[i] == 0)
+                else if (VariableManager.instance.people_inRoom[i] == 0)
                 {
                     if (people < 4)
                         turtles[people].SetActive(false);
@@ -534,7 +553,7 @@ public class GameRoom : MonoBehaviour {
             }
             turtles[0].transform.localScale = new Vector3(1.1f, 1.1f, 1.1f);
 
-            
+
         }
     }
 }

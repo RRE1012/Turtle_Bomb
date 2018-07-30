@@ -26,10 +26,8 @@ public class Big_Boss_Behavior : MonoBehaviour
 {
     NavMeshAgent m_NVAgent; // 내비에이전트
     Animator m_Boss_Animator; // 애니메이터
-
-    public GameObject m_HP_bar;
-    public GameObject m_HP_bar_Fill;
-    GameObject m_Player_For_Billboard_Setting;
+    SkinnedMeshRenderer[] m_Boss_Skins;
+    Color[] m_Normal_Colors;
 
     GameObject m_Target; // 타겟
     GameObject m_NavPlane; // 내비메쉬 플레인
@@ -165,10 +163,8 @@ public class Big_Boss_Behavior : MonoBehaviour
 
         Big_Boss_Data_Allocation(); // 보스 AI 데이터의 리스트들을 할당
         CSV_Manager.GetInstance().Get_Adventure_Big_Boss_AI_Data(ref m_Adv_Big_Boss_Normal_AI, ref m_Adv_Big_Boss_Angry_AI, ref m_Adv_Big_Boss_Groggy_AI); // 보스 AI 테이블을 받아온다.
-                                                                                                                                                           // =========================
-
-        // HP바 빌보드를 위한 플레이어 객체 지정.
-        m_Player_For_Billboard_Setting = GameObject.Find("Player_Turtle"); // 자신의 유저를 찾는다.
+        // =========================
+        
 
 
         // 몬스터의 행동 코루틴들을 설정
@@ -243,11 +239,10 @@ public class Big_Boss_Behavior : MonoBehaviour
             {
                 Think();
 
+                //Debug.Log(m_Current_Behavior.ToString());
+
                 m_curr_Turn_Duration += Time.deltaTime; // 턴 지속시간을 잰다.
 				m_curr_Hurt_Time += Time.deltaTime;
-
-
-                m_HP_bar.transform.LookAt(m_Player_For_Billboard_Setting.transform, transform.up);
 
                 if (m_curr_Turn_Duration > m_Turn_Duration && m_curr_Skill_Time >= m_Skill_Time)
                     Set_Next_Turn_Skill();
@@ -748,12 +743,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
 
 
-    void Health_Bar_Gauge_Manage()
-    {
-        Vector3 scale = m_HP_bar_Fill.transform.localScale;
-        scale.x = m_Health / StageManager.c_Stage_Manager.Get_Boss_HP();
-        m_HP_bar_Fill.transform.localScale = scale;
-    }
+
     
 
 
@@ -770,8 +760,6 @@ public class Big_Boss_Behavior : MonoBehaviour
 
             StopCoroutine(m_Do_Behavior);
 
-            m_HP_bar.SetActive(false);
-
             SetAnimation(Boss_Animation_Num.DEAD);
 
             Invoke("Dead", 2.0f);
@@ -781,7 +769,7 @@ public class Big_Boss_Behavior : MonoBehaviour
         {
             m_Health -= m_Boss_Data.Bomb_Damage;
             UI.c_UI.Set_Boss_HP_Bar(m_Health);
-            Health_Bar_Gauge_Manage();
+
             SetAnimation(Boss_Animation_Num.HURT);
             m_Current_Behavior = m_Null_Behavior;
             m_NVAgent.isStopped = true;

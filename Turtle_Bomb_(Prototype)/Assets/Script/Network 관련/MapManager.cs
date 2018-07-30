@@ -19,6 +19,7 @@ public class MapManager : MonoBehaviour
     public GameObject m_item_fire;
     public GameObject m_item_kick;
     public GameObject m_item_throw;
+    public GameObject m_item_glider;
     public GameObject m_explode_warn_range;
 
     public GameObject[] m_tile;
@@ -75,7 +76,7 @@ public class MapManager : MonoBehaviour
     GameObject[] item_b_list = new GameObject[50];
     GameObject[] item_t_list = new GameObject[50];
     GameObject[] item_k_list = new GameObject[50];
-
+    GameObject[] item_g_list = new GameObject[32];
     byte[] copy_map_info = new byte[225];
 
     private void Awake()
@@ -124,6 +125,9 @@ public class MapManager : MonoBehaviour
                     push_box_list[i].SetActive(false);
                     dirc_box[i] = 0;
                 }
+                item_g_list[i] = Instantiate(m_item_glider);
+                item_g_list[i].SetActive(false);
+
                 bombT_list[i] = Instantiate(m_Tbomb);
                 bombT_list[i].transform.position = new Vector3(100, 0, 100);
                 bombT_list[i].SetActive(false);
@@ -502,7 +506,10 @@ public class MapManager : MonoBehaviour
                         if (!item_b_list[(z * 15) + (x)].activeInHierarchy)
                             item_b_list[(z * 15) + (x)].SetActive(true);
                         break;
-
+                    case 22://Glider
+                        if (!item_g_list[(z * 15) + (x)].activeInHierarchy)
+                            item_g_list[(z * 15) + (x)].SetActive(true);
+                        break;
                     default:
 
                         break;
@@ -748,6 +755,13 @@ public class MapManager : MonoBehaviour
                         return item_t_list[i];
                 }
                 break;
+            case 6:
+                for(int i = 0; i < 32; ++i)
+                {
+                    if (!item_g_list[i].activeInHierarchy)
+                        return item_g_list[i];
+                }
+                break;
             default:
                 return null;
 
@@ -921,6 +935,20 @@ public class MapManager : MonoBehaviour
                                 item_set[(z * 15) + (x)] = true;
                             }
                             break;
+                        case 22: //Glider
+                            box_list[(z * 15) + (x)].SetActive(false);
+                            if (!item_set[(z * 15) + (x)])
+                            {
+
+                                GameObject tempib = GetItem(6);
+                                tempib.SetActive(true);
+                                tempib.transform.position = new Vector3(x * 2, 0, z * 2);
+
+                                LiveList.Add(tempib);
+
+                                item_set[(z * 15) + (x)] = true;
+                            }
+                                break;
                         case 3:
                             if (!bush_list[(z * 15) + (x)].activeInHierarchy)
                                 bush_list[(z * 15) + (x)].SetActive(true);

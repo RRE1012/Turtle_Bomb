@@ -62,6 +62,10 @@
      <Compile Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Script\EffectShaderPropertyStr.cs" />
      <Compile Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Script\RenderEffect.cs" />
      <Compile Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Script\TransformExtension.cs" />
+     <Compile Include="Assets\SailCharacterPack\Scripts\AnimatedUVs.cs" />
+     <Compile Include="Assets\SailCharacterPack\Scripts\DemoCamera.cs" />
+     <Compile Include="Assets\SailCharacterPack\Scripts\FacialExpressions.cs" />
+     <Compile Include="Assets\SailCharacterPack\Scripts\SmallFishEmitter.cs" />
      <Compile Include="Assets\Script\Bomb 관련\Bomb.cs" />
      <Compile Include="Assets\Script\Bomb 관련\Boom_Effect.cs" />
      <Compile Include="Assets\Script\Bomb 관련\Fire_Effect.cs" />
@@ -70,6 +74,7 @@
      <Compile Include="Assets\Script\Network 관련\Bomb_Network.cs" />
      <Compile Include="Assets\Script\Network 관련\Fire_Effect_Net.cs" />
      <Compile Include="Assets\Script\Network 관련\GameRoom.cs" />
+     <Compile Include="Assets\Script\Network 관련\GetID.cs" />
      <Compile Include="Assets\Script\Network 관련\IconTester.cs" />
      <Compile Include="Assets\Script\Network 관련\Item_Network.cs" />
      <Compile Include="Assets\Script\Network 관련\MapManager.cs" />
@@ -84,6 +89,7 @@
      <Compile Include="Assets\Script\Network 관련\NetUser3.cs" />
      <Compile Include="Assets\Script\Network 관련\NetUser4.cs" />
      <Compile Include="Assets\Script\Network 관련\PacketStd.cs" />
+     <Compile Include="Assets\Script\Network 관련\Performance_Network.cs" />
      <Compile Include="Assets\Script\Network 관련\Queue.cs" />
      <Compile Include="Assets\Script\Network 관련\SceneChange.cs" />
      <Compile Include="Assets\Script\Network 관련\Serial_Script.cs" />
@@ -134,6 +140,7 @@
      <Compile Include="Assets\Script\각종 AI\Performance_Camera.cs" />
      <None Include="Assets\Particle\EffectExamples\Scenes\Shared\Shaders\SurfaceShader_VC.shader" />
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\effect_distortion_mask.shader" />
+     <None Include="Assets\SailCharacterPack\Readme.txt" />
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\ParticlePremultiplyBlend.shader" />
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\ParticleAddEffect.shader" />
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\ParticleBlendEffect.shader" />
@@ -165,10 +172,10 @@
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Analytics">
- <HintPath>C:/Users/RRE/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.analytics@1.0.1/UnityEngine.Analytics.dll</HintPath>
+ <HintPath>C:/Users/WHO/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.analytics@1.0.1/UnityEngine.Analytics.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Purchasing">
- <HintPath>C:/Users/RRE/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/UnityEngine.Purchasing.dll</HintPath>
+ <HintPath>C:/Users/WHO/AppData/LocalLow/Unity/cache/packages/packages.unity.com/com.unity.purchasing@1.0.1/UnityEngine.Purchasing.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

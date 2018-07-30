@@ -15,7 +15,7 @@ public struct CharInfo
     public byte packet_Type;
     public byte id;
     public int ani_state;
-    public float hp;
+    public byte is_alive;
     public float x;
     public float z;
     public float rotateY;
@@ -78,4 +78,6 @@ public enum PacketInfo
     Nothing,
     GetTime,
     SetBomb,
+    ConnectSuccess,
+    DBInfo1
 }

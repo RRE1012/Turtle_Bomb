@@ -15,11 +15,12 @@ public class Turtle_Move : MonoBehaviour
     public GameObject[] m_DropBomb;
     bool m_YouCanSetBomb = false;
     byte id = 0;
+    int touchNum=0;
     public Text[] state_text;
     public Button bombButton;
     public Button throwButton;
     float m_Touch_PrevPoint_X;
-
+    public GameObject glider;
     public float m_PlayerSpeed = 3.0f;
     float m_RotateSensX = 150.0f;
     bool dead_ani = false;
@@ -27,6 +28,7 @@ public class Turtle_Move : MonoBehaviour
     bool walk_ani = false;
     bool push_ani = false;
     bool kick_ani = false;
+    public bool overpower = false;
     byte direction;
     byte fire_power = 1;
     byte bomb_power = 1;
@@ -34,6 +36,8 @@ public class Turtle_Move : MonoBehaviour
     byte speed_power = 1;
     public bool can_kick = false;
     public bool can_throw = false;
+    public bool get_glider = false;
+    public bool glider_on = false;
     Animator m_TurtleMan_Animator;
     Animator m_animator;
     int itemtype=0;
@@ -42,6 +46,7 @@ public class Turtle_Move : MonoBehaviour
     // 회전 각
     public byte alive = 1;
     float m_RotationX = 0.0f;
+    bool m_is_Touch_Started = false;
     public Animator animator_camera;
     void Awake()
     {
@@ -69,6 +74,8 @@ public class Turtle_Move : MonoBehaviour
     void Walk_Ani_False()
     {
         m_animator.SetBool("TurtleMan_isWalk", false);
+        m_animator.SetBool("TurtleMan_GliderMove", false);
+
     }
     void Push_Ani_False()
     {
@@ -96,14 +103,23 @@ public class Turtle_Move : MonoBehaviour
         {
             if (can_throw)
             {
-                bombButton.gameObject.SetActive(false);
-                throwButton.gameObject.SetActive(true);
+                if (!glider_on)
+                {
+                    bombButton.gameObject.SetActive(false);
+                    throwButton.gameObject.SetActive(true);
+                }
+                
             }
 
         }
         if (other.gameObject.CompareTag("Flame_Bush"))
         {
-            alive = 0;
+            if (glider_on) {
+            }
+            else {
+                alive = 0;
+            }
+            
             NetTest.instance.SetmoveTrue();
         }
     }
@@ -330,6 +346,10 @@ public class Turtle_Move : MonoBehaviour
                     can_throw = true;
                     itemtype = 4;
                     break;
+                case 5:
+                    get_glider = true;
+                    
+                    break;
                 default:
                     break;
             }
@@ -389,7 +409,10 @@ public class Turtle_Move : MonoBehaviour
         }
     }
 
-
+    void SetOPOff()
+    {
+        overpower = false;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -397,15 +420,37 @@ public class Turtle_Move : MonoBehaviour
         state_text[0].text = bomb_set + " / " + bomb_power;
         state_text[1].text = "" + fire_power;
         state_text[2].text = "" + speed_power;
-        BodyRotation();
-
+       
+        if (get_glider)
+        {
+            MusicManager.manage_ESound.ItemGetSound();
+            get_glider = false;
+            glider_on = true;
+        }
         if (getItem)
         {
             VSModeManager.instance.GetItemUI_Activate(itemtype);
             MusicManager.manage_ESound.ItemGetSound();
             getItem = false;
         }
+        if (glider_on)
+        {
+            alive = 2;
+            m_animator.SetBool("TurtleMan_GetGlider", true);
+            glider.SetActive(true);
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, 2.5f, gameObject.transform.position.z);
 
+        }
+        else
+        {
+            m_animator.SetBool("TurtleMan_GetGlider", false);
+            glider.SetActive(false);
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, -0.3f, gameObject.transform.position.z);
+        }
+        if (overpower)
+        {
+            Invoke("SetOPOff", 1.5f);
+        }
         if (dead_ani)
         {
             //Debug.Log("Dead!!!");
@@ -422,7 +467,10 @@ public class Turtle_Move : MonoBehaviour
         }
         if (walk_ani)
         {
-            m_animator.SetBool("TurtleMan_isWalk", true);
+            if(glider_on)
+                m_animator.SetBool("TurtleMan_GliderMove", true);
+            else
+                m_animator.SetBool("TurtleMan_isWalk", true);
             Invoke("Walk_Ani_False", 1.0f);
             walk_ani = false;
         }
@@ -447,35 +495,63 @@ public class Turtle_Move : MonoBehaviour
             Vector3 normal = JoyStickMove.instance.Get_NormalizedVector();
             normal.z = normal.y;
             normal.y = 0.0f;
-            transform.Translate((m_PlayerSpeed + speed_power) * normal * Time.deltaTime);
+            if (!glider_on)
+            {
+                transform.Translate((m_PlayerSpeed + speed_power) * normal * Time.deltaTime);
+            }
+            else
+                transform.Translate((m_PlayerSpeed + 4) * normal * Time.deltaTime);
             if (!VSModeManager.instance.game_set)
                 NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
         }
-
+        else
+        {
+            // 릴리즈 빌드할 때는 적용할 것!
+            if (glider_on)
+                m_animator.SetBool("TurtleMan_GliderMove", false);
+            else
+                m_animator.SetBool("TurtleMan_isWalk", false);
+        }
+        BodyRotation();
         // ==================
         if (Input.GetKey(KeyCode.W))
         {
-
-            transform.Translate(new Vector3(0.0f, 0.0f, (m_PlayerSpeed + speed_power) * Time.deltaTime));
+            if (glider_on) {
+                transform.Translate(new Vector3(0.0f, 0.0f, (m_PlayerSpeed + 4) * Time.deltaTime));
+            }
+            else
+                transform.Translate(new Vector3(0.0f, 0.0f, (m_PlayerSpeed + speed_power) * Time.deltaTime));
             if (!VSModeManager.instance.game_set)
                 NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
 
         }
         if (Input.GetKey(KeyCode.S))
         {
-            transform.Translate(new Vector3(0.0f, 0.0f, -(m_PlayerSpeed + speed_power) * Time.deltaTime));
+            if (glider_on) {
+                transform.Translate(new Vector3(0.0f, 0.0f, -(m_PlayerSpeed + 4) * Time.deltaTime));
+            }
+            else
+                transform.Translate(new Vector3(0.0f, 0.0f, -(m_PlayerSpeed + speed_power) * Time.deltaTime));
             if (!VSModeManager.instance.game_set)
                 NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
         }
         if (Input.GetKey(KeyCode.A))
         {
-            transform.Translate(new Vector3(-(m_PlayerSpeed + speed_power) * Time.deltaTime, 0.0f, 0.0f));
+            if (glider_on) {
+                transform.Translate(new Vector3(-(m_PlayerSpeed + 4) * Time.deltaTime, 0.0f, 0.0f));
+            }
+            else
+                transform.Translate(new Vector3(-(m_PlayerSpeed + speed_power) * Time.deltaTime, 0.0f, 0.0f));
             if (!VSModeManager.instance.game_set)
                 NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            transform.Translate(new Vector3((m_PlayerSpeed + speed_power) * Time.deltaTime, 0.0f, 0.0f));
+            if (glider_on) {
+                transform.Translate(new Vector3((m_PlayerSpeed + 4) * Time.deltaTime, 0.0f, 0.0f));
+            }
+            else
+                transform.Translate(new Vector3((m_PlayerSpeed + speed_power) * Time.deltaTime, 0.0f, 0.0f));
             if (!VSModeManager.instance.game_set)
                 NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
         }
@@ -681,14 +757,16 @@ public class Turtle_Move : MonoBehaviour
     void BodyRotation()
     {
 
-        if (Input.touchCount > 0 && VSModeManager.instance.Get_isClicked()) // 조이스틱 + 회전 + ...
+        if (Input.touchCount > 0 ) // 조이스틱 + 회전 + ...
         {
-            int touchNum;
-
-            if (JoyStickMove.instance.Get_is_Joystick_First_Touched_Net()) // 조이스틱이 먼저면
-                touchNum = 1;
-            else touchNum = 0; // 회전이 먼저면
-
+            
+            if (!m_is_Touch_Started)
+            {
+                if (JoyStickMove.instance.Get_is_Joystick_First_Touched_Net()) // 조이스틱이 먼저면
+                    touchNum = 1;
+                else touchNum = 0; // 회전이 먼저면
+                m_is_Touch_Started = true;
+            }
             switch (Input.GetTouch(touchNum).phase) // 회전 처리
             {
                 case TouchPhase.Began:
@@ -703,6 +781,7 @@ public class Turtle_Move : MonoBehaviour
                     break;
             }
         }
+        else m_is_Touch_Started = false;
     }
     public void MakeGameOverAni()
     {
