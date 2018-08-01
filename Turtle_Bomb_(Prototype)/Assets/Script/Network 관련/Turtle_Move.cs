@@ -465,6 +465,12 @@ public class Turtle_Move : MonoBehaviour
             Invoke("Push_Ani_False", 1.0f);
             push_ani = false;
         }
+        if (kick_ani)
+        {
+            m_animator.SetBool("TurtleMan_isKick", true);
+            Invoke("Kick_Ani_False", 1.0f);
+            kick_ani = false;
+        }
         if (walk_ani)
         {
             if(glider_on)

@@ -23,7 +23,7 @@ public class Performance_Network : MonoBehaviour {
             for (int i = 0; i < 4; ++i)
                 m_OtherPlayerView[i].enabled = false;
         }
-        
+        Intro_Performance(Turtle_Move.instance.GetId());
     }
 	public void DeadAnimation(byte id){
 		m_PlayerView.enabled = false;
@@ -47,7 +47,7 @@ public class Performance_Network : MonoBehaviour {
 			break;
 		
 		}
-		Invoke("CameraSwitch", 9.3f);
+		Invoke("CameraSwitch", 4.0f);
 	}
 	void CameraSwitch()
     {

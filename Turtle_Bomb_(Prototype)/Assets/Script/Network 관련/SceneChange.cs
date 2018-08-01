@@ -28,6 +28,7 @@ public class SceneChange : MonoBehaviour
             cv.enabled = true;
         }
         StartCoroutine("SceneSwap");
+        GoTo_Connect_Scene();
     }
 
     public int GetSceneState()

@@ -213,11 +213,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1766418862556068, guid: 12a0e5eb2fe9d9b4b9b2a1e902c5337e, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1757434238970714, guid: 12a0e5eb2fe9d9b4b9b2a1e902c5337e, type: 2}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4677533500983480, guid: 12a0e5eb2fe9d9b4b9b2a1e902c5337e, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114354760941521432, guid: 12a0e5eb2fe9d9b4b9b2a1e902c5337e, type: 2}

@@ -708,7 +708,8 @@ public class NetTest : MonoBehaviour
         byte[] m_packet_login = BitConverter.GetBytes(t_login);
         byte[] m_idString = new byte[20];
         //Debug.Log(t_login);
-        string a = GetID.instance.GetIDD();
+        //string a = GetID.instance.GetIDD();  //release
+        string a = "test"; //Debug
         //Debug.Log(a);
         for (int i = 0; i < a.Length; ++i)
         {
@@ -718,6 +719,7 @@ public class NetTest : MonoBehaviour
         //Debug.Log(m_idString);
         //m_idString = BitConverter.GetBytes(a);
         string b = GetID.instance.GETPW();
+        b = "123";
         //Debug.Log(b);
         byte[] m_pwString = new byte[20];
         for (int i = 0; i < b.Length; ++i)
