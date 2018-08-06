@@ -87,12 +87,13 @@ using namespace std;
 #define CASE_ITEM_GET 6
 #define CASE_DEAD 7
 #define CASE_ROOM 8
-#define CASE_GAMESET 15
+
 #define CASE_JOINROOM 9
 #define CASE_CREATEROOM 10
 #define CASE_READY 11
 #define CASE_STARTGAME 12
 #define CASE_OUTROOM 13
+#define CASE_GAMESET 15
 
 #define CASE_THROWBOMB 17
 #define CASE_KICKBOMB 18
@@ -105,9 +106,16 @@ using namespace std;
 #define CASE_BOMBSET 25
 #define CASE_CONNECTSUCCESS 26
 #define CASE_DB1 27
-#define CASE_MATCH 14
 
+#define CASE_GAMEREADY 28
+#define CASE_MATCH 14
+#define CASE_BOSS 16
+
+
+#define SIZEOF_TB_GameStartRE_Cop 84
 #define SIZEOF_TB_CharPos 22
+#define SIZEOF_TB_BossPos 18
+#define SIZEOF_TB_GAMEReady 5
 #define SIZEOF_TB_BombPos 17
 #define SIZEOF_TB_BombExplode 13
 #define SIZEOF_TB_BombExplodeRE 15
@@ -277,7 +285,13 @@ struct TB_MatchingInfo_RE {
 	unsigned char match;
 };
 
-
+struct TB_GAMEReady {
+	unsigned char size;  //5
+	unsigned char type; //28
+	unsigned char imready; //1이면 레디,0이면 noready
+	unsigned char roomid;
+	unsigned char myid;
+};
 struct TB_DBInfo_1 {
 	unsigned char size; //43
 	unsigned char type; //27
@@ -328,7 +342,19 @@ struct TB_CharPos {//type:1
 	float posz;
 	float rotY;
 };
+struct TB_BossPos {//type:1
+	unsigned char size; //18
+	unsigned char type;//16
 
+	unsigned char anistate;
+	unsigned char is_alive;
+	unsigned char targetid;
+	unsigned char room_id;
+	
+	float posx;
+	float posz;
+	float rotY;
+};
 struct TB_BombPos { //type:2
 	unsigned char size;//17
 	unsigned char type;
@@ -581,9 +607,11 @@ struct TB_GameStartRE {
 	unsigned char startTB;//1이면 시작,0이면 땡
 };
 struct TB_GameStartRE_Cop {
-	unsigned char size;//83
+	unsigned char size;//85
 	unsigned char type;//12
-	unsigned char startTB;
+	unsigned char startTB; //0이면 매칭 실패, 1이면 성공
+	unsigned char howmany;
+	unsigned char roomid;
 	char id1[20];
 	char id2[20];
 	char id3[20];
@@ -764,9 +792,16 @@ class InGameCalculator {
 
 
 public:
+	float start_time;
+	float boss_speed;
 	map<pair<int, int>, Bomb_TB> bomb_Map;
 	vector<TB_BombExplodeRE> explode_List;
-	unsigned char idList[4];
+	bool ready_player[4];
+	bool is_start;
+	TB_BossPos ingame_boss_Info;
+	int boss_timestamp;
+	int idList[4];
+	int howmany;
 	TB_Map map;
 	TB_CharPos ingame_Char_Info[4];
 	unsigned char fireMap[15][15];
@@ -774,18 +809,28 @@ public:
 	InGameCalculator() {
 		explode_List.clear();
 		deathcount = 0;
+		boss_timestamp = 0;
 		id[0] = true;
 		id[1] = true;
 		id[2] = true;
 		id[3] = true;
+		howmany = 2;
 		time = 180.0f;
+		boss_speed = 1.0f;
 		gameover = false;
 		map.size = SIZEOF_TB_MAP;
 		map.type = CASE_MAP;
+		ingame_boss_Info.size = SIZEOF_TB_BossPos;
+		ingame_boss_Info.type = CASE_BOSS;
+		ingame_boss_Info.posx = 14.0f;
+		ingame_boss_Info.posz = 14.0f;
+		ingame_boss_Info.rotY = 0.0f;
+		ingame_boss_Info.is_alive = true;
+		ingame_boss_Info.anistate = 0;
 		for (int i = 0; i < 4; ++i) {
 			ingame_Char_Info[i].size = SIZEOF_TB_CharPos;
 			ingame_Char_Info[i].type = CASE_POS;
-			idList[i] = 0;
+			idList[i] =-1;
 		}
 		for (int i = 0; i < 15; ++i) {
 			for (int j = 0; j < 15; ++j) {
@@ -818,20 +863,38 @@ public:
 	}
 	~InGameCalculator() {}
 	void InitClass() {
+		is_start = false;
+		howmany = 2;
+		boss_timestamp = 0;
 		map.size = SIZEOF_TB_MAP;
 		map.type = CASE_MAP;
 		deathcount = 0;
 		gameover = false;
 		explode_List.clear();
+		ready_player[0] = false;
+		ready_player[1] = false;
+		ready_player[2] = false;
+		ready_player[3] = false;
+
 		id[0] = true;
 		id[1] = true;
 		id[2] = true;
 		id[3] = true;
+		start_time = GetTickCount();
 		time = 180.0f;
+		ingame_boss_Info.size = SIZEOF_TB_BossPos;
+		ingame_boss_Info.type = CASE_BOSS;
+		ingame_boss_Info.posx = 14.0f;
+		ingame_boss_Info.posz = 14.0f;
+		ingame_boss_Info.rotY = 0.0f;
+		ingame_boss_Info.is_alive = true;
+		ingame_boss_Info.targetid = 1;
+
+		ingame_boss_Info.anistate = 0;
 		for (int i = 0; i < 4; ++i) {
 			ingame_Char_Info[i].size = SIZEOF_TB_CharPos;
 			ingame_Char_Info[i].type = CASE_POS;
-			idList[i] = 0;
+			idList[i] = -1;
 		}
 		for (int i = 0; i < 15; ++i) {
 			for (int j = 0; j < 15; ++j) {
@@ -868,9 +931,16 @@ public:
 			deathcount++;
 		}
 	}
+
+	void GameStart() {
+		is_start = true;
+	}
 	void ChangeID(int place, unsigned char id_p) {
 		
 		idList[place] = id_p;
+
+	}
+	void Start_AndSetTime() {
 
 	}
 	void PlayerBlank(int id_p) {
@@ -900,6 +970,64 @@ public:
 		}
 		return 4; //DRAW를 뜻한다.
 	}
+
+	void Boss_Target_Change(int id) {
+		ingame_boss_Info.targetid = id;
+	}
+	void ChaseAI() {
+		ingame_boss_Info.posx = ingame_boss_Info.posx + (boss_speed*cos(ingame_boss_Info.rotY));
+		ingame_boss_Info.posz = ingame_boss_Info.posz + (boss_speed*sin(ingame_boss_Info.rotY));
+
+
+	}
+	int Boss_AI_Search() { //보스 AI_탐색
+		//시선
+		float distance_Char[4] = { 500000,500000,500000,500000 };
+		int ret_val=0;
+		float rotation_angle = 0;
+		for (int i = 0; i < howmany; ++i) {
+			float angle_sight = cos(45.0f * 3.1416 / 180);
+			float innerx = (ingame_Char_Info[i].posx - ingame_boss_Info.posx)* (20 * cos((ingame_boss_Info.rotY )));
+			float innerz = (ingame_Char_Info[i].posz - ingame_boss_Info.posz) *(20 * sin((ingame_boss_Info.rotY)));
+			//* 3.1416 / 180
+			float inner_pro = abs(innerx) + abs(innerz);
+			float innerx2 = (20 * cos(ingame_boss_Info.rotY))*(20 * cos(ingame_boss_Info.rotY));
+			float innerz2 = (20 * sin(ingame_boss_Info.rotY))*(20 * sin(ingame_boss_Info.rotY));
+			
+			float innerx3 = (ingame_Char_Info[i].posx - ingame_boss_Info.posx)*(ingame_Char_Info[i].posx - ingame_boss_Info.posx);
+			float innerz3 = (ingame_Char_Info[i].posz - ingame_boss_Info.posz)*(ingame_Char_Info[i].posz - ingame_boss_Info.posz);
+			float par_getcos = sqrtf(abs(innerx2 + innerz2)) *sqrtf(abs(innerx3 + innerz3));
+			float target_angle = inner_pro / par_getcos;
+			//cout << cos(0.5) << endl;
+			if (angle_sight <= target_angle) {
+				
+				distance_Char[i] = abs(innerx3)+ abs(innerz3);
+				if (distance_Char[ret_val] > distance_Char[i]) {
+					ret_val = i;
+					rotation_angle = acos(target_angle);
+					cout << "Get" <<rotation_angle << endl;
+				}
+
+			}
+			else {
+				//cout << "No Get" << endl;
+			}
+
+		}
+		if (distance_Char[ret_val] >= 500000) {
+			//cout << "nothing better than you" << endl;
+			return 0;
+		}
+		else {
+			
+			//ingame_boss_Info.rotY = rotation_angle;
+			cout << "find you and rotate " << ingame_boss_Info.rotY << endl;
+			return ret_val + 1;
+		}
+
+	}
+	
+
 	void CalculateMap(int x, int z, unsigned char f,unsigned char id_player) {
 		bool l_UpBlock = false;
 		bool l_DownBlock = false;
@@ -1169,7 +1297,8 @@ public:
 	int exp_max;
 	int success_coop;
 	int fail_coop;
-
+	bool playing_game;
+	InGameCalculator* link;
 	// set<int> view_list; // 삽입/삭제가 자유로워야 한다. + 시간복잡도 상 가장 효율적인것이 set이다. (list는 삽입/삭제가 빠르지만 검색 성능이 느리다.)
 	// multiset 은 중복가능 이기때문에 사용하지 않아야한다.
 	unordered_set<int> m_view_list; // 정렬이 딱히 필요하지 않기 때문에 비정렬셋으로 성능 향상.
@@ -1180,13 +1309,23 @@ public:
 		m_isconnected = false;
 		m_x = 4;
 		m_y = 4;
-
+		playing_game = false;
 		ZeroMemory(&m_rxover.m_over, sizeof(WSAOVERLAPPED));
 		m_rxover.m_wsabuf.buf = m_rxover.m_iobuf;
 		m_rxover.m_wsabuf.len = sizeof(m_rxover.m_wsabuf.buf);
 		m_rxover.is_recv = true;
 		m_prev_packet_size = 0;
 	}
+};
+
+struct MatchingSt {
+	unsigned char boss_type;
+	unsigned char map_type;
+
+	unsigned char difficulty;
+	
+	unsigned char prefer_man;
+	int id[4];
 };
 
 class Matching {

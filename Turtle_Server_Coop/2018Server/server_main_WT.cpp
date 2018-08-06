@@ -16,10 +16,14 @@ MYSQL* conn_ptr=NULL;
 MYSQL_RES* result_sql=NULL;
 MYSQL_ROW row=NULL;
 
-list<Matching> matching_list;
-list<Matching> playing_list;
+list<MatchingSt> matching_list_2;
+list<MatchingSt> matching_list_3;
+list<MatchingSt> matching_list_4;
+
+list<MatchingSt> playing_list;
 
 list<TB_Room> room_page;
+
 void SetMap(BYTE, BYTE, BYTE, TB_Map*);
 void SetMapToValue(int, int);
 void Throw_Calculate_Map(int x, int z, BYTE room_num, TB_ThrowBombRE* temppacket, BYTE direction);
@@ -39,7 +43,7 @@ void error_display(const char *msg, int err_no)
 	std::cout << msg;
 	std::wcout << L"  에러" << lpMsgBuf << std::endl;
 	LocalFree(lpMsgBuf);
-	while (true);
+	//while (true);
 }
 
 void ErrorDisplay(const char *location)
@@ -130,6 +134,31 @@ void ProcessPacket(int id, char *packet)
 	unsigned char tempid;
 	switch (packet[1])
 	{
+	case CASE_GAMEREADY:
+	{
+		TB_GAMEReady* tempt = reinterpret_cast<TB_GAMEReady*>(packet);
+		temproomid = tempt->roomid;
+		unsigned char tempid = tempt->myid;
+		gameRoom_Manager[temproomid].ready_player[tempid] = true;
+	}
+		break;
+	case CASE_BOSS:
+	{
+		TB_BossPos* tempb = reinterpret_cast<TB_BossPos*>(packet);
+		temproomid = tempb->room_id;
+
+		//gameRoom_Manager[temproomid].ingame_boss_Info.targetid = tempb->targetid;
+		gameRoom_Manager[temproomid].ingame_boss_Info.anistate = tempb->anistate;
+		gameRoom_Manager[temproomid].ingame_boss_Info.posx = tempb->posx;
+		gameRoom_Manager[temproomid].ingame_boss_Info.posz = tempb->posz;
+		gameRoom_Manager[temproomid].ingame_boss_Info.rotY = tempb->rotY;
+		gameRoom_Manager[temproomid].Boss_Target_Change(tempb->targetid);
+		TB_BossPos boss = { SIZEOF_TB_BossPos,CASE_BOSS,1,gameRoom_Manager[temproomid].ingame_boss_Info.targetid,gameRoom_Manager[temproomid].ingame_boss_Info.posx ,gameRoom_Manager[temproomid].ingame_boss_Info.posz,gameRoom_Manager[temproomid].ingame_boss_Info.rotY };
+		for(int i=0;i<gameRoom_Manager[temproomid].howmany;++i)
+			SendPacket(gameRoom_Manager[temproomid].idList[i], &boss);
+	}
+
+		break;
 	case CASE_POS:
 	{
 		TB_CharPos* pos = reinterpret_cast<TB_CharPos*>(packet);
@@ -142,11 +171,12 @@ void ProcessPacket(int id, char *packet)
 		gameRoom_Manager[temproomid].ingame_Char_Info[tempid].rotY = pos->rotY;
 		gameRoom_Manager[temproomid].ingame_Char_Info[tempid].is_alive = pos->is_alive;
 		gameRoom_Manager[temproomid].ingame_Char_Info[tempid].anistate = pos->anistate;
+		
 		if (!gameRoom_Manager[temproomid].ingame_Char_Info[tempid].is_alive && !gameRoom_Manager[temproomid].IsGameOver()) {
 			gameRoom_Manager[temproomid].PlayerDead(tempid);
 			lastdeadID = tempid;
 			tempbool = true;
-
+			cout << "Dead!!!" << endl;
 		}
 		if (gameRoom_Manager[temproomid].deathcount == (room_Map[temproomid].people_count - 1)) {
 			gameRoom_Manager[temproomid].SetGameOver();
@@ -183,7 +213,7 @@ void ProcessPacket(int id, char *packet)
 		}
 		for (; a != g_clients.end(); a++) {
 			if (a->m_scene == 2 && a->m_isconnected&&a->roomNum == temproomid) {
-
+				//cout << "Send Pos "<< gameRoom_Manager[temproomid].ingame_Char_Info[tempid].posx << "  To " <<a->id << endl;
 				SendPacket(a->id - 1, &gameRoom_Manager[temproomid].ingame_Char_Info[tempid]);
 			}
 
@@ -333,6 +363,8 @@ void ProcessPacket(int id, char *packet)
 
 	}
 	break;
+
+	
 	case CASE_THROWBOMB:
 	{
 		TB_ThrowBomb* tempt = reinterpret_cast<TB_ThrowBomb*>(packet);
@@ -561,28 +593,95 @@ void ProcessPacket(int id, char *packet)
 	break;
 	case CASE_MATCH:
 	{
+		cout << "God Damn" << endl;
 		TB_MatchingInfo* t_match = reinterpret_cast<TB_MatchingInfo*>(packet);
 		unsigned char t_diff = t_match->difficulty;
 		unsigned char t_man = t_match->prefer_man;
-		Matching* tempstruct = new Matching(t_match->boss_type, t_match->map_type, t_diff, t_man);
+		MatchingSt tempstruct = { t_match->boss_type, t_match->map_type, t_diff, t_man };
+		tempstruct.id[0] = id;
+		for (int i = 1; i<4; ++i) {
+			tempstruct.id[i] = -5;
+
+		}
 		bool m_inlist = false;
-		
-		auto a = matching_list.begin();
-		for (; a != matching_list.end(); a++) {
-				if (a->prefer_man == t_man) {
-					if (a->IsAbleToJoin(t_match->m_id)) {
+		if (t_man <= 2) {
+			auto a = matching_list_2.begin();
+			for (; a != matching_list_2.end(); a++) {
+				for (int i = 0; i<2; ++i) {
+					if (a->id[i] < 0) {
+						a->id[i] = id;
+						TB_MatchingInfo_RE temp_Re = { 3,CASE_MATCH,1 };
 						m_inlist = true;
+
+						SendPacket(id, &temp_Re);
 						break;
 					}
 				}
+			}
+			if (!m_inlist) {
+				matching_list_2.emplace_back(tempstruct);
+				TB_MatchingInfo_RE temp_Re = { 3,CASE_MATCH,1 };
+
+
+				SendPacket(id, &temp_Re);
+				break;
+			}
 		}
-		if (!m_inlist) {
-			//matching_list.emplace_back(Matching(id,t_match->boss_type, t_match->map_type, t_diff, t_man));
+		if (t_man == 3) {
+			auto a = matching_list_3.begin();
+			for (; a != matching_list_3.end(); a++) {
+				for(int i=0;i<3;++i) {
+					for (int i = 0; i<3; ++i) {
+						if (a->id[i] < 0) {
+							a->id[i] = id;
+							TB_MatchingInfo_RE temp_Re = { 3,CASE_MATCH,1 };
+							m_inlist = true;
+
+							SendPacket(id, &temp_Re);
+							break;
+						}
+					}
+				}
+			}
+			if (!m_inlist) {
+				matching_list_3.emplace_back(tempstruct);
+				TB_MatchingInfo_RE temp_Re = { 3,CASE_MATCH,1 };
+
+
+				SendPacket(id, &temp_Re);
+				break;
+			}
 		}
-		TB_MatchingInfo_RE temp_Re = { 3,CASE_MATCH,1 };
-		
-		
+		if (t_man == 4) {
+			auto a = matching_list_4.begin();
+			for (; a != matching_list_4.end(); a++) {
+				for (int i = 0; i<4; ++i) {
+					for (int i = 0; i<4; ++i) {
+						if (a->id[i] < 0) {
+							a->id[i] = id;
+							TB_MatchingInfo_RE temp_Re = { 3,CASE_MATCH,1 };
+							m_inlist = true;
+
+							SendPacket(id, &temp_Re);
+							break;
+						}
+					}
+				}
+			}
+			if (!m_inlist) {
+				matching_list_4.emplace_back(tempstruct);
+				TB_MatchingInfo_RE temp_Re = { 3,CASE_MATCH,1 };
+
+
+				SendPacket(id, &temp_Re);
+				break;
+			}
+		}
+		TB_MatchingInfo_RE temp_Re = { 3,CASE_MATCH,0 };
+
+
 		SendPacket(id, &temp_Re);
+		
 	}
 	break;
 	case CASE_READY:
@@ -1658,28 +1757,137 @@ void Timer_thread() {
 		DWORD currTime = GetTickCount();
 		DWORD elapsedTime = currTime - g_prevTime2;
 		g_prevTime2 = currTime;
-		auto b = matching_list.begin();
-		for (; b != matching_list.end(); b++) {
-			if (b->JoinMatch()) {
-				b->mtx.lock();
-				//playing_list.emplace_back(b);
-				char temp_id[4][20];
-				for (int i = 0; i < b->prefer_man; ++i) {
+		auto b = matching_list_2.begin();
+		for (; b != matching_list_2.end();) {
+			//if(b== matching_list_2.begin())
+				//cout << cos(45*3.1416 / 180) << endl;
+				//cout << "Check Matching List\n" << endl;
+			for (int i = 0; i < 2; ++i) {
+				
+				if (b->id[i] < 0) {
+					b++;
+					//cout << "Not Enough people\n" << endl;
+					
+				}
+				else{
+					if (i == 1) {
+						char temp_id[4][20];
+						cout << "Matching Success!!\n" << endl;
+						for (int j = 0; j < b->prefer_man; ++j) {
 
-					memcpy(temp_id[i], &g_clients[i].id, sizeof(g_clients[i].id));
+							memcpy(&temp_id[j], &g_clients[b->id[j]].stringID, sizeof(g_clients[b->id[j]].stringID));
+
+						}
+						TB_GameStartRE_Cop temp_start = { SIZEOF_TB_GameStartRE_Cop,CASE_STARTGAME,1,2 };
+						gameRoom_Manager[b->id[0]].InitClass();
+						gameRoom_Manager[b->id[0]].idList[0] = b->id[0];
+						gameRoom_Manager[b->id[0]].idList[1] = b->id[1];
+						temp_start.roomid = b->id[0];
+
+						memcpy(&temp_start.id1, &temp_id[0], sizeof(temp_id[0]));
+						memcpy(&temp_start.id2, &temp_id[1], sizeof(temp_id[1]));
+						ZeroMemory(&temp_start.id3, sizeof(temp_start.id3));
+						ZeroMemory(&temp_start.id4, sizeof(temp_start.id4));
+						cout << temp_id[0] << endl;
+						for (int a = 0; a < b->prefer_man; ++a) {
+							g_clients[b->id[a]].m_scene = 2;
+							
+							g_clients[b->id[a]].roomNum = b->id[0];
+							SendPacket(b->id[a], &temp_start);
+						}
+						SetMap(room_Map[b->id[0]].map_mode, room_Map[b->id[0]].map_thema, b->id[0], &gameRoom_Manager[b->id[0]].map);
+						TB_Map tempmap = { SIZEOF_TB_MAP,CASE_MAP };
+						memcpy(&tempmap, &gameRoom_Manager[b->id[0]].map, sizeof(Map_TB));
+						playing_list.emplace_back(*b);
+						matching_list_2.erase(b++);
+					
+					}
+					else {
+						
+						continue;
+					}
+					//playing_list.emplace_back(b);
+					
+				}
+			}
+			//SendPacket(b->id[i] - 1, &b);
+			//시작하라고 지시
+		}
+		b = matching_list_3.begin();
+		for (; b != matching_list_3.end(); ) {
+			for (int i = 0; i < 3; ++i) {
+				if (b->id[i] < 0) {
+					b++;
+					//break;
+				}
+				else {
+					if (i == 2) {
+						char temp_id[4][20];
+						for (int j = 0; j <3; ++j) {
+
+							memcpy(temp_id[j], &g_clients[b->id[i]].id, sizeof(g_clients[b->id[i]].id));
+
+						}
+						TB_GameStartRE_Cop temp_start = { SIZEOF_TB_GameStartRE_Cop,CASE_STARTGAME,1,3 };
+						gameRoom_Manager[b->id[0]].InitClass();
+						temp_start.roomid = b->id[0];
+						memcpy(temp_start.id1, &temp_id[0], sizeof(temp_id[0]));
+						memcpy(temp_start.id2, &temp_id[1], sizeof(temp_id[1]));
+						memcpy(temp_start.id3, &temp_id[2], sizeof(temp_id[2]));
+						ZeroMemory(&temp_start.id4, sizeof(temp_start.id4));
+						SetMap(room_Map[b->id[0]].map_mode, room_Map[b->id[0]].map_thema, b->id[0], &gameRoom_Manager[b->id[0]].map);
+						TB_Map tempmap = { SIZEOF_TB_MAP,CASE_MAP };
+						memcpy(&tempmap, &gameRoom_Manager[b->id[0]].map, sizeof(Map_TB));
+						room_Map[b->id[0]].game_start = 1;
+						for (int a = 0; a < b->prefer_man; ++a) {
+							SendPacket(b->id[a], &temp_start);
+						}
+
+						playing_list.emplace_back(*b);
+						matching_list_3.erase(b++);
+					}
+					else
+						continue;
+					//
 
 				}
-				TB_GameStartRE_Cop temp_start = { 83,CASE_STARTGAME,1 };
-				memcpy(temp_start.id1, temp_id[0], sizeof(temp_id[0]));
-				memcpy(temp_start.id2, temp_id[1], sizeof(temp_id[1]));
-				memcpy(temp_start.id3, temp_id[2], sizeof(temp_id[2]));
-				memcpy(temp_start.id4, temp_id[3], sizeof(temp_id[3]));
-
-				for (int i = 0; i < b->prefer_man; ++i) {
-					SendPacket(b->id[i], &temp_start);
+			}
+			//SendPacket(b->id[i] - 1, &b);
+			//시작하라고 지시
+		}
+		b = matching_list_4.begin();
+		for (; b != matching_list_4.end(); b++) {
+			for (int i = 0; i < 4; ++i) {
+				if (b->id[i] < 0) {
+					b++;
 				}
-				b->mtx.unlock();
-				matching_list.erase(b++);
+				else {
+					if (i == 3) {
+						char temp_id[4][20];
+						for (int j = 0; j <4; ++j) {
+
+							memcpy(temp_id[j], &g_clients[b->id[i]].id, sizeof(g_clients[b->id[i]].id));
+
+						}
+						TB_GameStartRE_Cop temp_start = { SIZEOF_TB_GameStartRE_Cop,CASE_STARTGAME,1,4 };
+						gameRoom_Manager[b->id[0]].InitClass();
+						temp_start.roomid = b->id[0];
+						memcpy(temp_start.id1, &temp_id[0], sizeof(temp_id[0]));
+						memcpy(temp_start.id2, &temp_id[1], sizeof(temp_id[1]));
+						memcpy(temp_start.id3, &temp_id[2], sizeof(temp_id[2]));
+						memcpy(temp_start.id4, &temp_id[3], sizeof(temp_id[3]));
+
+						for (int a = 0; a < b->prefer_man; ++a) {
+							SendPacket(b->id[a], &temp_start);
+						}
+						playing_list.emplace_back(*b);
+						matching_list_4.erase(b++);
+					}
+					else
+						continue;
+					//playing_list.emplace_back(b);
+
+				}
 			}
 			//SendPacket(b->id[i] - 1, &b);
 			//시작하라고 지시
@@ -1688,60 +1896,103 @@ void Timer_thread() {
 		
 		for (; a != gameRoom_Manager.end(); a++)
 		{
+			if (!a->second.is_start) {
+				int tempcount = 0;
+				for (int i = 0; i < a->second.howmany; ++i) {
+					if (a->second.ready_player[i])
+						tempcount++;
+				}
+				if (tempcount == a->second.howmany) {
+					cout << "ALL READY!!! START!!!" << endl;
+					a->second.is_start = true;
+				}
+			}
 			if (!a->second.IsGameOver())
 			{
-				a->second.SetTime(elapsedTime);
-				if (a->second.OneSec()) {
-					float tempT = a->second.GetTime();
-					TB_Time temp_t = { SIZEOF_TB_Time,CASE_TIME,tempT };
-					for (int i = 0; i < 4; ++i) {
-						//cout << "TimeSend" << endl;
-						if (a->second.idList[i] != 0) {
-							//cout << i << endl;
-							SendPacket(a->second.idList[i] - 1, &temp_t);
+				
+				
+				
+				if (a->second.is_start) {
+
+					a->second.SetTime(elapsedTime);
+					if (a->second.OneSec()) {
+						float tempT = a->second.GetTime();
+						TB_Time temp_t = { SIZEOF_TB_Time,CASE_TIME,tempT };
+						for (int i = 0; i < 4; ++i) {
+							//cout << "TimeSend" << endl;
+							if (a->second.idList[i] >= 0) {
+								//cout <<"Send Time "<<a->second.idList[i] << endl;
+								SendPacket(a->second.idList[i], &temp_t);
+							}
 						}
 					}
-				}
-				if (a->second.bomb_Map.size() > 0)
-				{
-					auto b = a->second.bomb_Map.begin();
-					for (; b != a->second.bomb_Map.end();)
+					if (a->second.bomb_Map.size() > 0)
 					{
-						if (b->second.GetTime())
+						auto b = a->second.bomb_Map.begin();
+						for (; b != a->second.bomb_Map.end();)
 						{
-							int tempx = b->second.GetXZ().first;
-							int tempz = b->second.GetXZ().second;
-							unsigned char tfire = b->second.firepower;
-							unsigned char tempid = b->second.game_id;
-							a->second.CalculateMap(tempx, tempz, tfire, tempid);
-							for (int i = 0; i < 4; ++i) {
+							if (b->second.GetTime())
+							{
+								int tempx = b->second.GetXZ().first;
+								int tempz = b->second.GetXZ().second;
+								unsigned char tfire = b->second.firepower;
+								unsigned char tempid = b->second.game_id;
+								a->second.CalculateMap(tempx, tempz, tfire, tempid);
+								for (int i = 0; i < 4; ++i) {
 
 
-								if (a->second.idList[i] != 0) {
-									auto c = a->second.explode_List.begin();
-									for (; c != a->second.explode_List.end(); c++) {
-										//cout << (int)c->size<<"  "<<(int)c->type << endl;
-										c->size = SIZEOF_TB_BombExplodeRE;
-										c->type = CASE_BOMB_EX;
-										TB_BombExplodeRE bomb = { SIZEOF_TB_BombExplodeRE,CASE_BOMB_EX,c->upfire,c->rightfire,c->downfire,c->leftfire,c->gameID,c->posx,c->posz };
-										SendPacket(a->second.idList[i] - 1, &bomb);
+									if (a->second.idList[i] != 0) {
+										auto c = a->second.explode_List.begin();
+										for (; c != a->second.explode_List.end(); c++) {
+											//cout << (int)c->size<<"  "<<(int)c->type << endl;
+											c->size = SIZEOF_TB_BombExplodeRE;
+											c->type = CASE_BOMB_EX;
+											TB_BombExplodeRE bomb = { SIZEOF_TB_BombExplodeRE,CASE_BOMB_EX,c->upfire,c->rightfire,c->downfire,c->leftfire,c->gameID,c->posx,c->posz };
+											SendPacket(a->second.idList[i] - 1, &bomb);
+
+										}
+										//cout << "TimeMap" << endl;
+										SendPacket(a->second.idList[i] - 1, &a->second.map);
 
 									}
-									//cout << "TimeMap" << endl;
-									SendPacket(a->second.idList[i] - 1, &a->second.map);
 
 								}
+								a->second.bomb_Map.erase(b++);
+								a->second.explode_List.clear();
+								//CalculateBomb();
 
 							}
-							a->second.bomb_Map.erase(b++);
-							a->second.explode_List.clear();
-							//CalculateBomb();
-
-						}
-						else {
-							b++;
+							else {
+								b++;
+							}
 						}
 					}
+					if (a->second.boss_timestamp % 1500 == 0) {
+						/*
+						if (a->second.Boss_AI_Search()) {
+							unsigned char templookid = a->second.Boss_AI_Search();
+							TB_BossPos boss = { SIZEOF_TB_BossPos,CASE_BOSS,1,1,a->second.Boss_AI_Search(),a->second.ingame_boss_Info.posx ,a->second.ingame_boss_Info.posz,a->second.ingame_boss_Info.rotY };
+							cout << "Target" << a->second.Boss_AI_Search() << endl;
+							for (int i = 0; i < a->second.howmany; ++i)
+								SendPacket(a->second.idList[i], &boss);
+							a->second.boss_timestamp = (a->second.boss_timestamp + 1) % 200000;
+						}
+						*/
+						a->second.boss_timestamp = (a->second.boss_timestamp + 1) % 200000;
+					}
+					else if (a->second.boss_timestamp % 1001 == 0) {
+						a->second.ChaseAI();
+						cout << "Boss Move" << endl;
+						cout << "Target" << a->second.ingame_boss_Info.targetid << endl;
+						TB_BossPos boss = { SIZEOF_TB_BossPos,CASE_BOSS,1,1,a->second.ingame_boss_Info.targetid,a->second.ingame_boss_Info.posx ,a->second.ingame_boss_Info.posz,a->second.ingame_boss_Info.rotY };
+						for (int i = 0; i < a->second.howmany; ++i)
+							SendPacket(a->second.idList[i], &boss);
+						a->second.boss_timestamp = (a->second.boss_timestamp + 1) % 200000;
+					}
+					else {
+						a->second.boss_timestamp = (a->second.boss_timestamp + 1) % 200000;
+					}
+					
 				}
 			}
 
