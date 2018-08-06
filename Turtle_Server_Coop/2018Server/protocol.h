@@ -46,9 +46,7 @@ using namespace std;
 #define BOARD_WIDTH   400
 #define BOARD_HEIGHT  400
 
-#define DB_HOST "turtlebombdb.cpcqdyzbke8r.ap-northeast-2.rds.amazonaws.com"
-#define DB_USER "goal1012"
-#define DB_PASS "ahr618vy"
+
 #define DB_NAME "TurtleBombDB"
 #define DB_PORT 3306
 #define SHOW_PLAYER_POS_X 10
