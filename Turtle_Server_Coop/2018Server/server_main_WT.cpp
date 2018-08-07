@@ -149,11 +149,12 @@ void ProcessPacket(int id, char *packet)
 
 		//gameRoom_Manager[temproomid].ingame_boss_Info.targetid = tempb->targetid;
 		gameRoom_Manager[temproomid].ingame_boss_Info.anistate = tempb->anistate;
-		gameRoom_Manager[temproomid].ingame_boss_Info.posx = tempb->posx;
-		gameRoom_Manager[temproomid].ingame_boss_Info.posz = tempb->posz;
+		//gameRoom_Manager[temproomid].ingame_boss_Info.posx = tempb->posx;
+		//gameRoom_Manager[temproomid].ingame_boss_Info.posz = tempb->posz;
 		gameRoom_Manager[temproomid].ingame_boss_Info.rotY = tempb->rotY;
 		gameRoom_Manager[temproomid].Boss_Target_Change(tempb->targetid);
-		TB_BossPos boss = { SIZEOF_TB_BossPos,CASE_BOSS,1,gameRoom_Manager[temproomid].ingame_boss_Info.targetid,gameRoom_Manager[temproomid].ingame_boss_Info.posx ,gameRoom_Manager[temproomid].ingame_boss_Info.posz,gameRoom_Manager[temproomid].ingame_boss_Info.rotY };
+		cout << "Change Boss Target to" << (int)gameRoom_Manager[temproomid].ingame_boss_Info.targetid << endl;
+		TB_BossPos boss = { SIZEOF_TB_BossPos,CASE_BOSS,gameRoom_Manager[temproomid].ingame_boss_Info.anistate,2,gameRoom_Manager[temproomid].ingame_boss_Info.targetid,gameRoom_Manager[temproomid].ingame_boss_Info.posx ,gameRoom_Manager[temproomid].ingame_boss_Info.posz,gameRoom_Manager[temproomid].ingame_boss_Info.rotY };
 		for(int i=0;i<gameRoom_Manager[temproomid].howmany;++i)
 			SendPacket(gameRoom_Manager[temproomid].idList[i], &boss);
 	}
@@ -1980,11 +1981,18 @@ void Timer_thread() {
 						*/
 						a->second.boss_timestamp = (a->second.boss_timestamp + 1) % 200000;
 					}
-					else if (a->second.boss_timestamp % 1001 == 0) {
-						a->second.ChaseAI();
-						cout << "Boss Move" << endl;
-						cout << "Target" << a->second.ingame_boss_Info.targetid << endl;
-						TB_BossPos boss = { SIZEOF_TB_BossPos,CASE_BOSS,1,1,a->second.ingame_boss_Info.targetid,a->second.ingame_boss_Info.posx ,a->second.ingame_boss_Info.posz,a->second.ingame_boss_Info.rotY };
+					else if (a->second.boss_timestamp % 501 == 0) {
+						if (a->second.Boss_Attack_Search()) {
+							a->second.ingame_boss_Info.anistate = 2;
+						}
+						else {
+							a->second.ChaseAI();
+							a->second.ingame_boss_Info.anistate = 1;
+						}
+						//cout << "Boss Move" << a->second.ingame_boss_Info.posx << ","<< a->second.ingame_boss_Info.posz << endl;
+						
+						//cout << "Target" << (int)a->second.ingame_boss_Info.targetid << endl;
+						TB_BossPos boss = { SIZEOF_TB_BossPos,CASE_BOSS,a->second.ingame_boss_Info.anistate,1,a->second.ingame_boss_Info.targetid,a->second.ingame_boss_Info.room_id,a->second.ingame_boss_Info.posx ,a->second.ingame_boss_Info.posz,a->second.ingame_boss_Info.rotY };
 						for (int i = 0; i < a->second.howmany; ++i)
 							SendPacket(a->second.idList[i], &boss);
 						a->second.boss_timestamp = (a->second.boss_timestamp + 1) % 200000;

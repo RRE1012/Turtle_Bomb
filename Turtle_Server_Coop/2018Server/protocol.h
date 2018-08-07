@@ -46,7 +46,9 @@ using namespace std;
 #define BOARD_WIDTH   400
 #define BOARD_HEIGHT  400
 
-
+#define DB_HOST "turtlebombdb.cpcqdyzbke8r.ap-northeast-2.rds.amazonaws.com"
+#define DB_USER "goal1012"
+#define DB_PASS "ahr618vy"
 #define DB_NAME "TurtleBombDB"
 #define DB_PORT 3306
 #define SHOW_PLAYER_POS_X 10
@@ -970,14 +972,32 @@ public:
 	}
 
 	void Boss_Target_Change(int id) {
-		ingame_boss_Info.targetid = id;
+		cout <<"Distance"<< abs(ingame_Char_Info[ingame_boss_Info.targetid - 1].posx - ingame_boss_Info.posx) << endl;
+		if(abs(ingame_Char_Info[ingame_boss_Info.targetid - 1].posx - ingame_boss_Info.posx)>abs(ingame_Char_Info[id-1].posx - ingame_boss_Info.posx)
+			&& abs(ingame_Char_Info[ingame_boss_Info.targetid - 1].posz - ingame_boss_Info.posz)>abs(ingame_Char_Info[id - 1].posz - ingame_boss_Info.posz))
+			ingame_boss_Info.targetid = id;
 	}
 	void ChaseAI() {
-		ingame_boss_Info.posx = ingame_boss_Info.posx + (boss_speed*cos(ingame_boss_Info.rotY));
-		ingame_boss_Info.posz = ingame_boss_Info.posz + (boss_speed*sin(ingame_boss_Info.rotY));
-
-
+		if(ingame_boss_Info.posx<ingame_Char_Info[ingame_boss_Info.targetid-1].posx)
+			ingame_boss_Info.posx = ingame_boss_Info.posx + abs(boss_speed*sin(ingame_boss_Info.rotY));
+		else
+			ingame_boss_Info.posx = ingame_boss_Info.posx - abs(boss_speed*sin(ingame_boss_Info.rotY));
+		if (ingame_boss_Info.posz<ingame_Char_Info[ingame_boss_Info.targetid - 1].posz)
+			ingame_boss_Info.posz = ingame_boss_Info.posz + abs(boss_speed*cos(ingame_boss_Info.rotY));
+		else
+			ingame_boss_Info.posz = ingame_boss_Info.posz - abs(boss_speed*cos(ingame_boss_Info.rotY));
 	}
+
+	int Boss_Attack_Search() {
+		cout << "Distance" << abs(ingame_Char_Info[ingame_boss_Info.targetid - 1].posx - ingame_boss_Info.posx) <<","<< abs(ingame_Char_Info[ingame_boss_Info.targetid - 1].posz - ingame_boss_Info.posz) << endl;
+		if (abs(ingame_Char_Info[ingame_boss_Info.targetid - 1].posx - ingame_boss_Info.posx) < 4.0f&&abs(ingame_Char_Info[ingame_boss_Info.targetid - 1].posz - ingame_boss_Info.posz) < 4.0f) {
+			cout << "Attack!!!" << endl;
+			return 1;
+		}
+		else
+			return 0;
+	}
+	
 	int Boss_AI_Search() { //보스 AI_탐색
 		//시선
 		float distance_Char[4] = { 500000,500000,500000,500000 };
