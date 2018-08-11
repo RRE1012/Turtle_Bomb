@@ -235,7 +235,8 @@ public class StageManager : MonoBehaviour
 
         if (m_Stage_ID == MAP.NOT_SET) // 설정이 안돼있다면
             m_Stage_ID = PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID"); // 스테이지 ID를 받아온다.
-
+        if (m_Stage_ID > 9) ; // 임시 설정 (스테이지 )
+            
         // 스테이지 데이터 내부 리스트들의 공간 할당
         m_Adventure_Stage_Data.Adventure_Quest_ID_List = new int[3];
         m_Adventure_Stage_Data.Stage_Pattern_ID_List = new int[3];
@@ -261,6 +262,10 @@ public class StageManager : MonoBehaviour
                         m_Boss_ID = 1;
                     else if (m_Stage_ID == 9)
                         m_Boss_ID = 2;
+                    else if (m_Stage_ID == 14)
+                        m_Boss_ID = 3;
+                    else if (m_Stage_ID == 19)
+                        m_Boss_ID = 4;
                 }
             }
         }
@@ -458,7 +463,15 @@ public class StageManager : MonoBehaviour
 
     void Create_Terrain() // 터레인 생성
     {
-        Instantiate(m_Forest_Theme_Terrain);
+        switch(m_Adventure_Stage_Data.Use_Terrain_Number)
+        {
+            case THEME_NUMBER.FOREST:
+                Instantiate(m_Forest_Theme_Terrain);
+                break;
+            case THEME_NUMBER.SNOWLAND:
+                Instantiate(m_SnowLand_Theme_Terrain);
+                break;
+        }
     }
 
     public void Next_Map_Load() // 다음 맵 불러오기

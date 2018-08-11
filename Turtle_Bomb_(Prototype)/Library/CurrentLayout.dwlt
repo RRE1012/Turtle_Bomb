@@ -41,10 +41,10 @@ MonoBehaviour:
     y: 30
     width: 1628
     height: 863
-  m_MinSize: {x: 679, y: 492}
+  m_MinSize: {x: 683, y: 492}
   m_MaxSize: {x: 14004, y: 14042}
   vertical: 1
-  controlID: 27
+  controlID: 75
 --- !u!114 &3
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -63,8 +63,8 @@ MonoBehaviour:
     y: 0
     width: 248
     height: 535
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 204, y: 221}
+  m_MaxSize: {x: 4004, y: 4021}
   m_ActualView: {fileID: 17}
   m_Panes:
   - {fileID: 17}
@@ -90,10 +90,10 @@ MonoBehaviour:
     y: 0
     width: 1628
     height: 863
-  m_MinSize: {x: 679, y: 492}
+  m_MinSize: {x: 683, y: 492}
   m_MaxSize: {x: 14004, y: 14042}
   vertical: 0
-  controlID: 28
+  controlID: 76
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -112,8 +112,8 @@ MonoBehaviour:
     y: 0
     width: 365
     height: 863
-  m_MinSize: {x: 277, y: 71}
-  m_MaxSize: {x: 4002, y: 4021}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 16}
   m_Panes:
   - {fileID: 16}
@@ -146,7 +146,7 @@ MonoBehaviour:
   - {fileID: 14}
   - {fileID: 20}
   m_Selected: 0
-  m_LastSelected: 3
+  m_LastSelected: 1
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -231,10 +231,10 @@ MonoBehaviour:
     y: 0
     width: 1263
     height: 863
-  m_MinSize: {x: 402, y: 492}
+  m_MinSize: {x: 406, y: 492}
   m_MaxSize: {x: 10002, y: 14042}
   vertical: 1
-  controlID: 29
+  controlID: 77
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -255,8 +255,8 @@ MonoBehaviour:
     y: 0
     width: 1263
     height: 535
-  m_MinSize: {x: 402, y: 221}
-  m_MaxSize: {x: 8002, y: 4021}
+  m_MinSize: {x: 406, y: 221}
+  m_MaxSize: {x: 8006, y: 4021}
   vertical: 0
   controlID: 30
 --- !u!114 &12
@@ -419,19 +419,19 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets/Prefabs/Maps/Forest
+    - Assets/Prefabs/Characters
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Prefabs/Maps/Forest
+  - Assets/Prefabs/Characters
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\user\Documents\GitHub\Turtle_Bomb\Turtle_Bomb_(Prototype)
   m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 194}
-    m_SelectedIDs: 922a0000
-    m_LastClickedID: 10898
-    m_ExpandedIDs: 00000000242800006c28000022290000942a00009a2a0000fe2a0000b42c00000a2d0000a02d0000142f00000c30000032310000ee3100009e320000dc320000fa32000018330000b433000004340000b8340000e2340000e8340000ac350000da350000aa570000ac570000ae570000b0570000b2570000b4570000b6570000b8570000ba570000bc570000be570000c0570000c2570000c4570000c6570000c8570000ca570000cc570000ce570000d0570000d2570000d4570000d6570000d8570000da57000000ca9a3bffffff7f
+    scrollPos: {x: 0, y: 238}
+    m_SelectedIDs: 12340000
+    m_LastClickedID: 13330
+    m_ExpandedIDs: 00000000242800006c2800009628000024290000942a00009a2a0000042b0000702c0000b82c00000e2d0000a62d0000222f00001a3000004431000002320000b8320000f83200001633000034330000d233000022340000d63400000035000006350000ca350000f8350000703a0000723a0000743a0000763a0000783a00007a3a00007c3a00007e3a0000803a0000823a0000843a0000863a0000883a00008a3a00008c3a00008e3a0000903a0000923a0000943a0000963a0000983a00009a3a00009c3a00009e3a0000a03a000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -459,7 +459,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000242800006c28000022290000942a00009a2a0000fe2a00006c2c0000b42c00000a2d00004e2d00007e2d0000a02d00000c30000032310000ee3100009e320000dc320000fa320000b433000004340000e2340000e8340000aa350000da350000aa570000ac570000ae570000b0570000b2570000b4570000b6570000b8570000ba570000bc570000be570000c0570000c2570000c4570000c6570000c8570000ca570000cc570000ce570000d0570000d2570000d4570000d6570000d8570000da570000
+    m_ExpandedIDs: 00000000242800006c2800009628000024290000942a00009a2a0000042b0000702c0000b82c00000e2d0000a62d0000222f00001a3000004431000002320000b8320000f83200001633000034330000d233000022340000d63400000035000006350000ca350000f8350000703a0000723a0000743a0000763a0000783a00007a3a00007c3a00007e3a0000803a0000823a0000843a0000863a0000883a00008a3a00008c3a00008e3a0000903a0000923a0000943a0000963a0000983a00009a3a00009c3a00009e3a0000a03a0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -487,7 +487,7 @@ MonoBehaviour:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: 2aefefffea3a0000302b0000da11ebff58370000de2d0000302e00000c2d000024340000b865000016650000106600002e6c00005c6d0000a46f00000a680000922a00003430000078340000b02b000048800000222e0000ca300000262c0000fc290000ce350000842c0000
+    m_ExpandedInstanceIDs: 2aefefffea3a0000302b0000da11ebff58370000de2d0000302e00000c2d000024340000b865000016650000106600002e6c00005c6d0000a46f00000a680000922a000078340000b02b000048800000222e0000ca300000262c0000fc290000ce350000842c0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -577,26 +577,26 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 5234f5ffeeaaf6ffeecaf8ff5058f9ff7c9efeff5227ffff5682fffffc84ffffacdbffffa6fbffff00000000d06c0000d46c0000646d0000d66d0000506e0000546f000090ad000076ae0000d2ae000024b0000062b1000048b20000a4b20000f6b30000
+    m_ExpandedIDs: f691fdff9ccffdff7ad3fdff6ce0fdff5a7bfeff2496feffa6fbffff00000000ae370000e03700001c3800004238000064380000924800003c490000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: 
-      m_OriginalName: 
+      m_Name: Ork_Boss
+      m_OriginalName: Ork_Boss
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 0
+      m_UserData: -159242
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 11
+      m_OriginalEventType: 0
       m_IsRenamingFilename: 0
       m_ClientGUIView: {fileID: 3}
     m_SearchString: 
   m_ExpandedScenes:
-  - Mode_Adventure_Game_Stage
+  - Mode_Adventure_(Stage_Select)
   m_CurrenRootInstanceID: 0
   m_Locked: 0
   m_CurrentSortingName: TransformSorting
@@ -627,14 +627,14 @@ MonoBehaviour:
     width: 1013
     height: 514
   m_SceneLighting: 1
-  lastFramingTime: 504.0881900044592
+  lastFramingTime: 1629.1828419185229
   m_2DMode: 0
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -2.2063208, y: -6.8366737, z: 40.491104}
+    m_Target: {x: 12.802741, y: -3.2698622, z: 50.95883}
     speed: 2
-    m_Value: {x: -2.2063208, y: -6.8366737, z: 40.491104}
+    m_Value: {x: 12.802741, y: -3.2698622, z: 50.95883}
   m_RenderMode: 0
   m_ValidateTrueMetals: 0
   m_SceneViewState:
@@ -657,19 +657,19 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: 0.28958285, y: -0.7098927, z: 0.43749863, w: 0.46988204}
+    m_Target: {x: 0.010014197, y: 0.98453903, z: -0.16425462, w: 0.06002586}
     speed: 2
-    m_Value: {x: 0.28958285, y: -0.7098927, z: 0.43749863, w: 0.46988204}
+    m_Value: {x: 0.010014197, y: 0.98453903, z: -0.16425462, w: 0.06002586}
   m_Size:
-    m_Target: 37.68367
+    m_Target: 13.274864
     speed: 2
-    m_Value: 37.68367
+    m_Value: 13.274864
   m_Ortho:
     m_Target: 0
     speed: 2
     m_Value: 0
   m_ShowGlobalGrid: 1
-  m_LastSceneViewRotation: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
+  m_LastSceneViewRotation: {x: 0.39256123, y: 0.44413063, z: -0.22549748, w: 0.7731719}
   m_LastSceneViewOrtho: 0
   m_ReplacementShader: {fileID: 0}
   m_ReplacementString: 
@@ -704,15 +704,15 @@ MonoBehaviour:
   m_MaximizeOnPlay: 0
   m_Gizmos: 0
   m_Stats: 0
-  m_SelectedSizes: 05000000000000000000000010000000000000000000000000000000000000000000000000000000
+  m_SelectedSizes: 07000000000000000000000010000000000000000000000000000000000000000000000000000000
   m_TargetDisplay: 0
   m_ZoomArea:
     m_HRangeLocked: 0
     m_VRangeLocked: 0
-    m_HBaseRangeMin: -441.77777
-    m_HBaseRangeMax: 441.77777
-    m_VBaseRangeMin: -248.5
-    m_VBaseRangeMax: 248.5
+    m_HBaseRangeMin: -640
+    m_HBaseRangeMax: 640
+    m_VBaseRangeMin: -360
+    m_VBaseRangeMax: 360
     m_HAllowExceedBaseRangeMin: 1
     m_HAllowExceedBaseRangeMax: 1
     m_VAllowExceedBaseRangeMin: 1
@@ -731,20 +731,20 @@ MonoBehaviour:
       y: 17
       width: 1013
       height: 497
-    m_Scale: {x: 1, y: 0.89383894}
-    m_Translation: {x: 506.5, y: 248.49998}
+    m_Scale: {x: 0.69027776, y: 0.69027776}
+    m_Translation: {x: 506.49997, y: 248.49998}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -506.5
-      y: -278.01428
-      width: 1013
-      height: 556.02856
+      x: -733.7626
+      y: -360
+      width: 1467.5251
+      height: 720
     m_MinimalGUI: 1
-  m_defaultScale: 1
+  m_defaultScale: 0.69027776
   m_TargetTexture: {fileID: 0}
   m_CurrentColorSpace: 0
   m_LastWindowPixelSize: {x: 1013, y: 514}

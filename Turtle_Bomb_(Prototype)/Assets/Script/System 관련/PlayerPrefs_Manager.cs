@@ -25,6 +25,8 @@ public class PlayerPrefs_Manager : MonoBehaviour {
     // 빌드 세팅의 씬 넘버와는 다르니 주의!
     public int m_SceneNumber;
 
+    static PlayerPrefs_Manager m_Instance;
+
     public static List<int> m_Stage_Stars_List;
 
     public Texture Activated_Star_Image;
@@ -43,7 +45,7 @@ public class PlayerPrefs_Manager : MonoBehaviour {
                 // 초기화
                 //PlayerPrefs.SetInt("Have_you_been_Play", 0);
 
-                //Pref_All_Stage_Open(); // 디버깅용
+                Pref_All_Stage_Open(); // 디버깅용
 
                 // 최초 플레이어 정보 초기화
                 if (PlayerPrefs.GetInt("Have_you_been_Play") == 0 || !PlayerPrefs.HasKey("Have_you_been_Play"))
@@ -85,18 +87,18 @@ public class PlayerPrefs_Manager : MonoBehaviour {
                 for (int i = 0; i <= playable_max_stage; ++i)
                 {
                     // 버튼을 활성화 시킨다.
-                    Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].interactable = true;
+                    Mode_Adventure_Stage_Select_Scene_Manager.GetInstance().m_Stage_Button_List[i].interactable = true;
 
                     // 버튼 이미지를 변경한다.
-                    if (i == 5 || i == 9) // 보스 스테이지
+                    if (i == 5 || i == 9 || i == 14 || i == 19) // 보스 스테이지
                     {
-                        Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].gameObject.GetComponent<RawImage>().texture = Activated_Boss_Image;
+                        Mode_Adventure_Stage_Select_Scene_Manager.GetInstance().m_Stage_Button_List[i].gameObject.GetComponent<RawImage>().texture = Activated_Boss_Image;
                     }
                     else // 일반 스테이지
                     {
-                        Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].gameObject.GetComponent<RawImage>().texture = Activated_Bomb_Image;
+                        Mode_Adventure_Stage_Select_Scene_Manager.GetInstance().m_Stage_Button_List[i].gameObject.GetComponent<RawImage>().texture = Activated_Bomb_Image;
                         // 텍스트도 활성화 시킨다.
-                        Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].transform.Find("Number").gameObject.SetActive(true);
+                        Mode_Adventure_Stage_Select_Scene_Manager.GetInstance().m_Stage_Button_List[i].transform.Find("Number").gameObject.SetActive(true);
                     }
 
 
@@ -113,7 +115,7 @@ public class PlayerPrefs_Manager : MonoBehaviour {
                     
                     // 받아온 별만큼 활성화 시킨다.
                     for (int j = 0; j < tempStars; ++j)
-                        Mode_Adventure_Stage_Select_Scene_Manager.m_Stage_Buttons[i].gameObject.GetComponentsInChildren<RawImage>()[j + 1].texture = Activated_Star_Image;
+                        Mode_Adventure_Stage_Select_Scene_Manager.GetInstance().m_Stage_Button_List[i].gameObject.GetComponentsInChildren<RawImage>()[j + 1].texture = Activated_Star_Image;
                     
                 }
                 break;
@@ -138,22 +140,33 @@ public class PlayerPrefs_Manager : MonoBehaviour {
         }
     }
 
+
+    public static PlayerPrefs_Manager GetInstance()
+    {
+        return m_Instance;
+    }
+
+
     // PlayerPrefs 초기화 함수
     void Pref_Init()
     {
         PlayerPrefs.SetInt("Have_you_been_Play", 1);
         PlayerPrefs.SetInt("is_Opened_Mode_Competition", 0); // 대전모드 -> 1 : 열기, 0 : 닫기
         PlayerPrefs.SetInt("is_Opened_Mode_Coop", 0);
+
+        int max_Mission_Num = 0;
+        CSV_Manager.GetInstance().Get_Adv_Max_Mission_Num(ref max_Mission_Num);
         string temp;
-        for (int i = 1; i <= 28; ++i)
+        for (int i = 1; i <= max_Mission_Num; ++i)
         {
             temp = "Adventure_Stars_ID_" + i.ToString();
             PlayerPrefs.SetInt(temp, 0);
         }
-        PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", 0);
-        PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", 18);
-        PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", 0);
-        PlayerPrefs.Save();
+
+        PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", 0); // 튜토리얼로 설정 1
+        PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", 18); // 튜토리얼로 설정 2
+        PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", 0); // 튜토리얼로 설정 3
+        PlayerPrefs.Save(); // 저장
     }
 
     void Pref_All_Stage_Open()
@@ -161,16 +174,23 @@ public class PlayerPrefs_Manager : MonoBehaviour {
         PlayerPrefs.SetInt("Have_you_been_Play", 1);
         PlayerPrefs.SetInt("is_Opened_Mode_Competition", 0);
         PlayerPrefs.SetInt("is_Opened_Mode_Coop", 0);
+
+        int max_Mission_Num = 0;
+        CSV_Manager.GetInstance().Get_Adv_Max_Mission_Num(ref max_Mission_Num);
         string temp;
-        for (int i = 1; i <= 27; ++i)
+        for (int i = 1; i <= max_Mission_Num; ++i)
         {
             temp = "Adventure_Stars_ID_" + i.ToString();
             PlayerPrefs.SetInt(temp, 0);
         }
-        PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", 9);
-        PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", 18);
-        PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", 0);
-        PlayerPrefs.Save();
+
+        int max_num = 0, max_num_for_load = 0;
+        CSV_Manager.GetInstance().Get_Adv_Max_Stage_Num(ref max_num, ref max_num_for_load);
+
+        PlayerPrefs.SetInt("Mode_Adventure_Playable_Max_Stage", max_num); // 최대로 설정 1
+        PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", max_num_for_load); // 최대로 설정 2
+        PlayerPrefs.SetInt("Mode_Adventure_Current_Stage_ID", 0); // 초기화
+        PlayerPrefs.Save(); // 저장
     }
 
 }

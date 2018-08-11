@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -191,6 +191,7 @@ GameObject:
   - component: {fileID: 301528117}
   - component: {fileID: 301528115}
   - component: {fileID: 301528116}
+  - component: {fileID: 301528120}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -272,6 +273,31 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &301528120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 301528114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72a49064f38d56446a168ead55bb7976, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Adventure_Quest_csvFile: {fileID: 4900000, guid: 231f0db796b75fb458fa422c750582b4,
+    type: 3}
+  m_Object_Table_csvFile: {fileID: 4900000, guid: 0c47031c1d449034d80a3b0950f4fc2c,
+    type: 3}
+  m_Object_Spawn_Table_csvFile: {fileID: 4900000, guid: 1fd12a00dee119c458678bc042777488,
+    type: 3}
+  m_Stage_Table_csvFile: {fileID: 4900000, guid: f6182e396c0e9e84a9af8695fecb8d31,
+    type: 3}
+  m_Script_Table_csvFile: {fileID: 4900000, guid: cedd89fb51fffb9459a0ff11a57a4bcf,
+    type: 3}
+  m_Adventure_Boss_Table_csvFile: {fileID: 4900000, guid: a30f4bf5aa4ea2b4ca5c5156c24489b5,
+    type: 3}
+  m_Adventure_Boss_AI_csvFile: {fileID: 4900000, guid: f1cbe478752057544afb85612260de36,
+    type: 3}
 --- !u!1 &315788913
 GameObject:
   m_ObjectHideFlags: 0
