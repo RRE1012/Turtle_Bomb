@@ -35,21 +35,25 @@ public class PlayerPrefs_Manager : MonoBehaviour {
 
     void Start()
     {
-        // 타이틀 씬
         switch (m_SceneNumber)
         {
+            
+            case PlayerPrefs_Manager_Constants.Title_Start_Scene: // 타이틀 씬 입장 시
+
+                Pref_Debug_Mode(); // 디버깅용
+                
 
 
 
-            case PlayerPrefs_Manager_Constants.Title_Start_Scene: // 타이틀 씬
-                // 초기화
-                //PlayerPrefs.SetInt("Have_you_been_Play", 0);
+                //PlayerPrefs.SetInt("Have_you_been_Play", 0); // 기기 초기화를 한번 해야겠다 할때 쓰는 코드
 
-                Pref_All_Stage_Open(); // 디버깅용
 
-                // 최초 플레이어 정보 초기화
-                if (PlayerPrefs.GetInt("Have_you_been_Play") == 0 || !PlayerPrefs.HasKey("Have_you_been_Play"))
-                    Pref_Init();
+
+
+                // ★ 이하는 릴리즈 모드에서 반드시 활성화 해야함! ★
+
+                //if (!PlayerPrefs.HasKey("Have_you_been_Play")) // 기기상에서 한번도 실행한적이 없다면
+                //    Pref_Init(); // 플레이 정보 초기화
                 break;
 
 
@@ -57,7 +61,7 @@ public class PlayerPrefs_Manager : MonoBehaviour {
 
 
 
-            case PlayerPrefs_Manager_Constants.Mode_Select_Scene: // 모드 선택 씬
+            case PlayerPrefs_Manager_Constants.Mode_Select_Scene: // 모드 선택 씬 입장 시
 
                 if (PlayerPrefs.GetInt("is_Open_Mode_Competition") == 1)
                 {
@@ -75,7 +79,7 @@ public class PlayerPrefs_Manager : MonoBehaviour {
 
 
 
-            case PlayerPrefs_Manager_Constants.Mode_Adventure: // 모험모드 스테이지 선택 씬
+            case PlayerPrefs_Manager_Constants.Mode_Adventure: // 모험모드 스테이지 선택 씬 입장 시
                 int[] mission_nums = new int[3];
                 string tempString;
                 int tempStars = 0; // 1: 활성화, 0: 비활성화
@@ -151,6 +155,11 @@ public class PlayerPrefs_Manager : MonoBehaviour {
     void Pref_Init()
     {
         PlayerPrefs.SetInt("Have_you_been_Play", 1);
+
+        PlayerPrefs.SetInt("System_Option_BGM_ON", 1); // BGM ON
+        PlayerPrefs.SetInt("System_Option_SE_ON", 1); // Sound Effect ON
+        PlayerPrefs.SetInt("System_Option_Vib_ON", 1); // Vibration ON
+
         PlayerPrefs.SetInt("is_Opened_Mode_Competition", 0); // 대전모드 -> 1 : 열기, 0 : 닫기
         PlayerPrefs.SetInt("is_Opened_Mode_Coop", 0);
 
@@ -169,9 +178,24 @@ public class PlayerPrefs_Manager : MonoBehaviour {
         PlayerPrefs.Save(); // 저장
     }
 
-    void Pref_All_Stage_Open()
+
+
+
+    void Pref_Debug_Mode()
     {
         PlayerPrefs.SetInt("Have_you_been_Play", 1);
+        
+        if (!PlayerPrefs.HasKey("System_Option_BGM_ON"))
+            PlayerPrefs.SetInt("System_Option_BGM_ON", 1); // BGM ON
+        if (PlayerPrefs.GetInt("System_Option_BGM_ON") == 0) LobbySound.instanceLS.SoundStop();
+        else LobbySound.instanceLS.SoundStart();
+        if (!PlayerPrefs.HasKey("System_Option_SE_ON"))
+            PlayerPrefs.SetInt("System_Option_SE_ON", 1); // Sound Effect ON
+        if (!PlayerPrefs.HasKey("System_Option_Vib_ON"))
+            PlayerPrefs.SetInt("System_Option_Vib_ON", 1); // Vibration ON
+        if (!PlayerPrefs.HasKey("System_Option_Auto_Login_ON"))
+            PlayerPrefs.SetInt("System_Option_Auto_Login_ON", 1); // Auto_Login ON
+
         PlayerPrefs.SetInt("is_Opened_Mode_Competition", 0);
         PlayerPrefs.SetInt("is_Opened_Mode_Coop", 0);
 
@@ -215,3 +239,11 @@ public class PlayerPrefs_Manager : MonoBehaviour {
 // Mode_Adventure_Stage_ID_For_MapLoad     :   모험모드 입장시 선택한 스테이지 번호 (맵로드를 위한..)
 
 // Mode_Adventure_Current_Stage_ID      :   모험모드 입장시 선택한 스테이지 번호
+
+// System_Option_BGM_ON :   시스템 옵션의 BGM 기능이 켜졌는가
+
+// System_Option_SE_ON :   시스템 옵션의 효과음 기능이 켜졌는가
+
+// System_Option_Vib_ON :   시스템 옵션의 진동 기능이 켜졌는가
+
+// System_Option_Auto_Login_ON :   시스템 옵션의 자동로그인 기능이 켜졌는가

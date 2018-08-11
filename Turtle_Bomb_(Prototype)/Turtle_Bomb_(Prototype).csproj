@@ -304,6 +304,7 @@
     <Compile Include="Assets\Script\UI 관련\Front_Collider.cs" />
     <Compile Include="Assets\Script\UI 관련\Image_Fade.cs" />
     <Compile Include="Assets\Script\UI 관련\Script_Box.cs" />
+    <Compile Include="Assets\Script\UI 관련\System_Option.cs" />
     <Compile Include="Assets\Script\UI 관련\TitleScript.cs" />
     <Compile Include="Assets\Script\UI 관련\UI.cs" />
     <Compile Include="Assets\Script\각종 AI\Airplane.cs" />

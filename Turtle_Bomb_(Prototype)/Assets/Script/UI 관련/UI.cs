@@ -231,7 +231,7 @@ public class UI : MonoBehaviour {
         StageManager.c_Stage_Manager.Set_is_Pause(true);
         StageManager.c_Stage_Manager.Destroy_Objects();
         GameObject.Find("Navigation_Plane").SetActive(false);
-        if (LobbySound.instanceLS != null)
+        if (LobbySound.instanceLS != null && PlayerPrefs.GetInt("System_Option_BGM_ON") != 0)
             LobbySound.instanceLS.SoundStart();
         SceneManager.LoadScene(2);
     }
