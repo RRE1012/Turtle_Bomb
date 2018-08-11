@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Front_Collider : MonoBehaviour {
+
     PlayerMove m_Player;
+
     void Start()
     {
         m_Player = transform.parent.GetComponent<PlayerMove>();
@@ -15,13 +17,11 @@ public class Front_Collider : MonoBehaviour {
         {
             m_Player.m_isAbleToKick = true;
         }
-
-        
     }
 
     void OnTriggerStay(Collider other)
     {
-        if (!m_Player.m_isBoxSelected && other.gameObject.CompareTag("Box"))
+        if (other.gameObject.CompareTag("Box"))
         {
             Vector3 tmpPosition;
             tmpPosition = other.gameObject.transform.position + transform.forward * 1.2f;
@@ -31,8 +31,16 @@ public class Front_Collider : MonoBehaviour {
                 if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(index) == false)
                 {
                     m_Player.m_Front_Box = other.gameObject;
+                    other.GetComponent<Box>().Save_Player_Front_Collider(gameObject);
                     m_Player.m_isBoxSelected = true;
                     m_Player.m_isAbleToPush = true;
+                }
+                else
+                {
+                    m_Player.m_Front_Box = null;
+                    other.GetComponent<Box>().Clear_Player_Front_Collider();
+                    m_Player.m_isBoxSelected = false;
+                    m_Player.m_isAbleToPush = false;
                 }
             }
         }
@@ -52,5 +60,11 @@ public class Front_Collider : MonoBehaviour {
             m_Player.m_isBoxSelected = false;
             m_Player.m_isAbleToPush = false;
         }
+    }
+
+    public void TriggerExit_Ver2()
+    {
+        m_Player.m_isBoxSelected = false;
+        m_Player.m_isAbleToPush = false;
     }
 }

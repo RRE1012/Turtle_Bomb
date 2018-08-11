@@ -282,6 +282,8 @@
     <Compile Include="Assets\Script\Object 관련\Bush.cs" />
     <Compile Include="Assets\Script\Object 관련\Flame_Crash.cs" />
     <Compile Include="Assets\Script\Object 관련\Flame_Crash_Portal.cs" />
+    <Compile Include="Assets\Script\Object 관련\Icicle.cs" />
+    <Compile Include="Assets\Script\Object 관련\Icicle_Bottom.cs" />
     <Compile Include="Assets\Script\Object 관련\Info_Trigger.cs" />
     <Compile Include="Assets\Script\Object 관련\Item.cs" />
     <Compile Include="Assets\Script\Object 관련\Rock.cs" />

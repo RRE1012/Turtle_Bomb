@@ -40,6 +40,8 @@ TagManager:
   - Info_Trigger_Throw
   - Camera_Offset
   - Glider_Item
+  - icicle_Body
+  - icicle_Bottom
   layers:
   - Default
   - TransparentFX

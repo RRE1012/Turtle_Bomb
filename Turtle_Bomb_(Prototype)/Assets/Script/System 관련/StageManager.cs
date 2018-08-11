@@ -52,6 +52,8 @@ static class OBJECT_TABLE_NUMBER
     public const int INFO_TRIGGER_KICK = 19;
     public const int INFO_TRIGGER_THROW = 20;
     public const int BOX_NONE_ITEM = 21;
+    public const int ICICLE_1 = 26;
+    public const int ICICLE_2 = 27;
 }
 
 public class StageManager : MonoBehaviour
@@ -87,7 +89,7 @@ public class StageManager : MonoBehaviour
     public GameObject m_Prefab_Info_Trigger_Kick;
     public GameObject m_Prefab_Info_Trigger_Throw;
     public GameObject m_Prefab_Box_None_Item;
-
+    public GameObject m_Prefab_Icicle;
 
 
 
@@ -450,12 +452,24 @@ public class StageManager : MonoBehaviour
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Box_None_Item));
                             m_Object_Position.y = m_Prefab_Box_None_Item.transform.position.y;
                             break;
+
+                        case OBJECT_TABLE_NUMBER.ICICLE_1:
+                            m_Current_Map_Objects.Add(Instantiate(m_Prefab_Icicle));
+                            m_Current_Map_Objects[m_Current_Map_Objects_Count].GetComponent<Icicle>().Start_With_Offset_Time(ICICLE_OFFSET_TIME.ICICLE_1);
+                            m_Object_Position.y = m_Prefab_Icicle.transform.position.y;
+                            break;
+
+                        case OBJECT_TABLE_NUMBER.ICICLE_2:
+                            m_Current_Map_Objects.Add(Instantiate(m_Prefab_Icicle));
+                            m_Current_Map_Objects[m_Current_Map_Objects_Count].GetComponent<Icicle>().Start_With_Offset_Time(ICICLE_OFFSET_TIME.ICICLE_2);
+                            m_Object_Position.y = m_Prefab_Icicle.transform.position.y;
+                            break;
                     }
+
                     // 생성한 객체 좌표 이동
                     m_Current_Map_Objects[m_Current_Map_Objects_Count].transform.position = m_Object_Position;
-
-                    // 카운트 증가
-                    ++m_Current_Map_Objects_Count;
+                    
+                    ++m_Current_Map_Objects_Count; // 카운트 증가
                 }
             }
         }

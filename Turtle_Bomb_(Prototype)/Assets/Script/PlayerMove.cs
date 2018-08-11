@@ -183,7 +183,10 @@ public class PlayerMove : MonoBehaviour {
 
             // 사망 판정
             // 스테이지 클리어시, 맵 이동시는 사망하지 않는다.
-            if ((other.gameObject.tag == "Flame" || other.gameObject.tag == "Flame_Bush" || other.gameObject.tag == "Monster_Attack_Collider") && !StageManager.c_Stage_Manager.Get_is_Stage_Clear())
+            if ((other.gameObject.tag == "Flame" ||
+                other.gameObject.tag == "Flame_Bush" ||
+                other.gameObject.tag == "Monster_Attack_Collider" ||
+                other.gameObject.tag == "icicle_Body") && !StageManager.c_Stage_Manager.Get_is_Stage_Clear())
             {
                 Set_Dead();
             }
@@ -402,11 +405,6 @@ public class PlayerMove : MonoBehaviour {
         {
             if (m_Front_Box != null)
                 BoxPush();
-            else
-            {
-                m_isBoxSelected = false;
-                m_isAbleToPush = false;
-            }
         }
     }
     
@@ -535,7 +533,7 @@ public class PlayerMove : MonoBehaviour {
     
     public void BoxPush() // 박스 밀기 시작
     {
-        if (m_isBoxSelected && m_isAbleToPush && StageManager.c_Stage_Manager.Get_is_Intro_Over() && !m_isCrouch)
+        if (m_isBoxSelected && m_isAbleToPush && StageManager.c_Stage_Manager.Get_is_Intro_Over())
         {
             // 플레이어 위치 변환
 

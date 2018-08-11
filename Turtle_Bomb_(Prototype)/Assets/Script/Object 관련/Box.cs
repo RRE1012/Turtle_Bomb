@@ -14,7 +14,8 @@ public class Box : MonoBehaviour {
 
     public GameObject m_Particle;
 
-    
+    GameObject m_PlayerCollider = null; // 플레이어의 밀기용 감지기
+    GameObject m_IcicleCollider = null; // 고드름 바닥 충돌체
 
     public bool m_is_Destroyed = false;
     int index;
@@ -24,6 +25,18 @@ public class Box : MonoBehaviour {
         // 최초 시작 시 박스 자신의 위치의 isBlocked를 true로 갱신
         index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
         StageManager.c_Stage_Manager.Update_MCL_isBlocked(index, true);
+    }
+
+    void OnDestroy()
+    {
+        if (m_PlayerCollider) // 충돌중인 감지기가 있으면
+        {
+            m_PlayerCollider.GetComponent<Front_Collider>().TriggerExit_Ver2(); // 트리거아웃을 직접 수행해준다.
+        }
+        if (m_IcicleCollider) // 충돌중인 고드름바닥이 있으면
+        {
+            m_IcicleCollider.GetComponent<Icicle_Bottom>().TriggerExit_Ver2(); // 트리거아웃을 직접 수행해준다.
+        }
     }
 
 
@@ -79,5 +92,23 @@ public class Box : MonoBehaviour {
                 Instance_Item = Instantiate(m_Object_ThrowItem);
             }
         }
+    }
+
+    public void Save_Player_Front_Collider(GameObject fc)
+    {
+        m_PlayerCollider = fc;
+    }
+    public void Clear_Player_Front_Collider()
+    {
+        m_PlayerCollider = null;
+    }
+
+    public void Save_Icicle_Bottom_Collider(GameObject ic)
+    {
+        m_IcicleCollider = ic;
+    }
+    public void Clear_Icicle_Bottom_Collider()
+    {
+        m_IcicleCollider = null;
     }
 }

@@ -133,7 +133,7 @@ public class Bomb : MonoBehaviour
     // 충돌감지
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Flame_Remains") || other.gameObject.CompareTag("Flame") || other.gameObject.CompareTag("Flame_Bush"))
+        if (other.gameObject.CompareTag("Flame_Remains") || other.gameObject.CompareTag("Flame") || other.gameObject.CompareTag("Flame_Bush") || other.gameObject.CompareTag("icicle_Body"))
         {
             // 폭탄 파괴
             if (m_isKicked || m_is_Thrown_Bomb_Moving)
@@ -172,7 +172,8 @@ public class Bomb : MonoBehaviour
             || collision.gameObject.CompareTag("Box")
             || collision.gameObject.CompareTag("Monster")
             || collision.gameObject.CompareTag("Wall")
-            || collision.gameObject.CompareTag("Bomb"))
+            || collision.gameObject.CompareTag("Bomb")
+            || collision.gameObject.CompareTag("icicle_Body"))
         {
             transform.GetComponentInChildren<Animator>().SetBool("roll", false);
             transform.Find("Bomb_리터칭").transform.localEulerAngles = new Vector3(0.0f, 0.0f, 0.0f);

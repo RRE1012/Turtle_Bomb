@@ -1919,6 +1919,8 @@ MonoBehaviour:
     type: 2}
   m_Prefab_Box_None_Item: {fileID: 1024158620818886, guid: 5ad3e4eece76a4345ba10dbf584bc265,
     type: 2}
+  m_Prefab_Icicle: {fileID: 1270781040646048, guid: a2b86a663e62b514cb8313cb6916b2ce,
+    type: 2}
   m_Boss_ID: -1
   m_SuddenDeath_JetGoblin: {fileID: 1421824778066548, guid: 26d73cefaf348a04896cbad9158a94de,
     type: 2}
