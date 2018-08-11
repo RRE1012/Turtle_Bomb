@@ -93,7 +93,7 @@ public class Airplane : MonoBehaviour
 
     public void Dispatch_Airplane()
     {
-        if (!m_is_Able_to_Appear) UI.c_UI.NoticeUI_Activate(0);
+        if (!m_is_Able_to_Appear) Notice_UI.GetInstance().Notice_Play(NOTICE_NUMBER.AIR_DROP);
         m_is_Able_to_Appear = true;
     }
 

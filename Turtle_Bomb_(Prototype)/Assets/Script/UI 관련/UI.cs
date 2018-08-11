@@ -21,11 +21,9 @@ public class UI : MonoBehaviour {
     public Text m_SpeedCountText; // 플레이어 스피드 텍스트
     public Text m_GetItemText; // 아이템 획득 UI 텍스트
     public Text m_TimeLimitText; // 시간 텍스트
-    public Text m_NoticeText; // 알림 UI 텍스트
 
     public RawImage m_GetItemBackground; // 아이템 획득시 출력 이미지
     public RawImage m_GetItemImage; // 아이템 획득시 출력 이미지
-    public RawImage m_NoticeBackground; // 알림 배경 이미지
 
     public RawImage m_Boss_HP_Bar; // 보스 HP바 이미지
     public Texture m_Boss_HP_Character; // 보스 HP바 캐릭터
@@ -159,7 +157,6 @@ public class UI : MonoBehaviour {
 
         Stat_UI_Management();
         GetItemUI_Deactivate();
-        NoticeUI_Deactivate();
 
 
         m_QuestList = new List<Adventure_Quest_Data>();
@@ -348,52 +345,7 @@ public class UI : MonoBehaviour {
         m_ThrowIcon_Animator.SetBool("is_Icon_Activated", true);
     }
 
-
-
-
-
-    public void NoticeUI_Activate(int Notice_Num)
-    {
-        switch (Notice_Num)
-        {
-            case 0:
-                m_NoticeText.text = "Air Drop Time !";
-                m_NoticeText.color = new Color(1.0f, 1.0f, 1.0f);
-                break;
-
-            case 1:
-                m_NoticeText.text = "Sudden Death Start !";
-                m_NoticeText.color = new Color(1.0f, 0.0f, 0.0f);
-                break;
-
-            case 2:
-                m_NoticeText.text = "Warning !";
-                m_NoticeText.color = new Color(1.0f, 0.0f, 0.0f);
-                break;
-
-            case 3:
-                m_NoticeText.text = "The Boss is Preparing the Skill !";
-                m_NoticeText.color = new Color(1.0f, 0.0f, 0.0f);
-                break;
-
-            case 4:
-                m_NoticeText.text = "The Boss is summoning the Goblin !";
-                m_NoticeText.color = new Color(1.0f, 0.0f, 0.0f);
-                break;
-        }
-
-        m_NoticeBackground.gameObject.SetActive(true);
-        m_NoticeText.gameObject.SetActive(true);
-        m_Notice_Animator.SetBool("is_Notice_Break;", true);
-        Invoke("NoticeUI_Deactivate", 1.4f);
-    }
-
-    void NoticeUI_Deactivate()
-    {
-        m_Notice_Animator.SetBool("is_Notice_Break", false);
-        m_NoticeBackground.gameObject.SetActive(false);
-        m_NoticeText.gameObject.SetActive(false);
-    }
+    
 
 
 

@@ -1,0 +1,48 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+static class NOTICE_NUMBER
+{
+    public const int AIR_DROP = 0;
+    public const int DANGER = 1;
+}
+
+public class Notice_UI : MonoBehaviour
+{
+    static Notice_UI m_Instance;
+
+    Animation m_Animations;
+
+    public RawImage m_Child_Image;
+    public Texture m_AirDrop_Image_Font;
+    public Texture m_Danger_Image_Font;
+
+    void Awake()
+    {
+        m_Instance = this;
+        m_Animations = GetComponent<Animation>();
+    }
+
+    public static Notice_UI GetInstance()
+    {
+        return m_Instance;
+    }
+
+    public void Notice_Play(int num)
+    {
+        switch(num)
+        {
+            case NOTICE_NUMBER.AIR_DROP:
+                m_Child_Image.texture = m_AirDrop_Image_Font;
+                m_Animations.Play(m_Animations.GetClip("Air_Drop").name);
+                break;
+
+            case NOTICE_NUMBER.DANGER:
+                m_Child_Image.texture = m_Danger_Image_Font;
+                m_Animations.Play(m_Animations.GetClip("Danger").name);
+                break;
+        }
+    }
+}

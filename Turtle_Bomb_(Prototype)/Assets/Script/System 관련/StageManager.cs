@@ -807,7 +807,7 @@ public class StageManager : MonoBehaviour
     {
         if (!m_is_SuddenDeath_Summoned && UI.c_UI.Get_Left_Time() <= m_Stage_Time_Limit - m_Adventure_Stage_Data.SuddenDeath_Time)
         {
-            UI.c_UI.NoticeUI_Activate(1);
+            Notice_UI.GetInstance().Notice_Play(NOTICE_NUMBER.DANGER);
             for (int i = 0; i < m_Adventure_Stage_Data.Number_Of_GliderGoblin; ++i)
                 Instantiate(m_SuddenDeath_JetGoblin).GetComponent<Boss_AI_JetGoblin>().Set_Bomb_info(m_Adventure_Stage_Data.GliderGoblin_Bomb, m_Adventure_Stage_Data.GliderGoblin_Fire);
             m_is_SuddenDeath_Summoned = true;
