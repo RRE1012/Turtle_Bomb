@@ -183,7 +183,9 @@ public class StageManager : MonoBehaviour
 
     bool m_is_Stage_Clear = false; // 스테이지를 클리어했는가?
 
-    bool m_Game_Over = false; // 게임이 끝났는가?
+    bool m_is_Game_Over = false; // 게임이 끝났는가?
+
+    bool m_is_Player_Alive = true;
 
     // 맵 사이즈
     int m_Map_Size_X = 17;
@@ -220,7 +222,7 @@ public class StageManager : MonoBehaviour
 
 
 
-
+    IEnumerator m_StageManager;
 
 
 
@@ -231,6 +233,9 @@ public class StageManager : MonoBehaviour
     void Awake() // 생성자
     {
         c_Stage_Manager = this; // 스테이지 매니저 인스턴스 지정
+
+        m_StageManager = StageManagement(); // 스테이지 관리 코루틴
+        StartCoroutine(m_StageManager); // 스테이지 관리 코루틴 시작.
 
         m_Map_Coordinate_List = new List<Map_Coordinate>();
         m_MCL_is_Blocked_List = new List<bool>();
@@ -300,11 +305,15 @@ public class StageManager : MonoBehaviour
             Fade_Slider.c_Fade_Slider.Start_Fade_Slider(2);
     }
 
-    void Update()
-    {
-        Check_GameOver();
 
-        Check_Airplane();
+
+    IEnumerator StageManagement()
+    {
+        while (true)
+        {
+            Check_GameOver();
+            yield return null;
+        }
     }
 
 
@@ -757,25 +766,35 @@ public class StageManager : MonoBehaviour
     }
 
 
-
+    public void Set_is_Player_Alive(bool b)
+    {
+        m_is_Player_Alive = b;
+    }
 
 
     void Check_GameOver() // 게임오버인지 체크하여 설정
     {
-        if (!PlayerMove.C_PM.Get_IsAlive()) // 죽어서 끝났거나,
+        if (!m_is_Player_Alive) // 죽어서 끝났거나,
         {
-            m_Game_Over = true;
+            m_is_Game_Over = true;
+            m_is_Pause = true;
+            MusicManager.manage_ESound.TryMute();
+            UI.c_UI.GameOver_Directing();
+            StopCoroutine(m_StageManager);
         }
 
         else if (m_is_Stage_Clear) // 클리어해서 끝났거나!
         {
-            m_Game_Over = true;
+            m_is_Game_Over = true;
+            m_is_Pause = true;
+            MusicManager.manage_ESound.TryMute();
+            StopCoroutine(m_StageManager);
         }
     }
 
     public bool Get_Game_Over() // 게임오버인가를 반환
     {
-        return m_Game_Over;
+        return m_is_Game_Over;
     }
 
 
@@ -820,15 +839,10 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    void Check_Airplane() // 비행기 체크(소환)
+    public float Get_AirDrop_Time()
     {
-        if (UI.c_UI.Get_Elapsed_Time() >= m_Adventure_Stage_Data.AirDrop_Time)
-        {
-            m_Airplane.GetComponent<Airplane>().Dispatch_Airplane(); // 비행기 출발
-        }
+        return m_Adventure_Stage_Data.AirDrop_Time;
     }
-
-
 
 
     public void Increase_Normal_Monster_Count() // 일반몹 개수 증가시키기

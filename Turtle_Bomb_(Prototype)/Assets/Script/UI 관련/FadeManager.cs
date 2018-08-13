@@ -44,7 +44,7 @@ public class FadeManager : MonoBehaviour {
     // 게임오버 버튼 활성화
     void Activate_GameOver_Buttons()
     {
-        UI.GameOver_Button_Activate();
+        //UI.GameOver_Button_Activate();
     }
     
     void Awake()

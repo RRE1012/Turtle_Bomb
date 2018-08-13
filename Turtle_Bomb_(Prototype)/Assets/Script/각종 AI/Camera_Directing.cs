@@ -81,7 +81,7 @@ public class Camera_Directing : MonoBehaviour {
     void Direction_Over_Process()
     {
         StopCoroutine(m_Dir_Over_Checker);
-
+        
         switch (m_Curr_Direction_Number)
         {
             case DIRECTION_NUMBER.INTRO_NORMAL_1:

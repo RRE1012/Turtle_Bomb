@@ -4,97 +4,100 @@ using UnityEngine;
 
 public class Airplane : MonoBehaviour
 {
-    public static Airplane c_Airplane;
+    static Airplane m_Instance; public static Airplane GetInstance() { return m_Instance; }
     public GameObject Airdrop_Item;
 
-    float m_Next_Drop_Time;
-    float m_Curr_dropTime = 0.0f;
-    float m_Appear_Time = 10.0f;
-    float m_Curr_appearTime = 0.0f;
-    float m_Moving_Speed = 80.0f;
+    Animation m_Animations;
+    float m_Airdrop_Time; // 테이블로 관리됨. StageManager에서 받아온다.
 
     int m_Airdrop_Count = 0;
 
-    bool m_is_Able_to_Appear = false;
+    [HideInInspector]
+    public bool m_is_able_to_Drop = false;
+
+    IEnumerator m_Airdrop;
+    IEnumerator m_Time_Checker;
+    
 
     void Start()
     {
-        c_Airplane = this;
+        m_Instance = this;
+        m_Animations = GetComponent<Animation>();
 
-        // 0. 다음 드랍시간을 결정.
-        m_Next_Drop_Time = 1.0f;
+        m_Airdrop = AirDrop();
+        m_Time_Checker = AirDrop_Time_Check();
+
+        StartCoroutine(Wait_For_Intro());
+
+        m_Airdrop_Time = StageManager.c_Stage_Manager.Get_AirDrop_Time();
     }
 
-    void Update()
+    IEnumerator AirDrop()
     {
-        // 일시정지 상태가 아닌 경우에만 수행
-        if (!StageManager.c_Stage_Manager.Get_is_Pause())
+        while (true)
         {
-            // 1. 등장하라는 명령이 떨어지면
-            if (m_is_Able_to_Appear)
+            if (m_Animations["Air_Drop"].normalizedTime >= 0.8f)
             {
-                // 2. 전진한다.
-                transform.Translate(new Vector3(0.0f, 0.0f, m_Moving_Speed * Time.deltaTime));
-
-                // 4. 떨굴 시간이 되면
-                if (m_Curr_dropTime > m_Next_Drop_Time)
+                for (int i = 0; i < m_Airdrop_Count; ++i)
                 {
-                    // 5. 아이템을 생성한다.
-                    for (int i = 0; i < m_Airdrop_Count; ++i)
+                    int index;
+
+                    while (true) // 루프를 돌면서 지형 탐색
                     {
-                        int index; // 뿌릴 위치 (인덱스)
-
-                        while (true) // 루프를 돌면서 지형 탐색
-                        {
-                            index = Random.Range(17, 271); // 맵 범위
-                            if (!StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(index)) // 막혀있지 않으면
-                                break; // 탈출
-                        }
-
-                        Vector3 pos;
-                        pos.x = 0.0f;
-                        pos.y = 15.0f;
-                        pos.z = 0.0f;
-                        StageManager.c_Stage_Manager.Get_MCL_Coordinate(index, ref pos.x, ref pos.z);
-
-                        Instantiate(Airdrop_Item).transform.position = pos; // 설정한 위치에 아이템 투하
+                        index = Random.Range(17, 271); // 맵 범위
+                        if (!StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(index)) // 막혀있지 않으면
+                            break; // 탈출
                     }
 
-                    // 6. 일단 드랍 시간도 초기화한다.
-                    m_Curr_dropTime = 0.0f;
-                }
-
-                // 3. 떨굴 시간을 잰다.
-                else
-                    m_Curr_dropTime += Time.deltaTime;
-
-
-                // 7. 일정거리 전진하면
-                if (transform.position.z >= 120.0f)
-                {
-                    // 8. 완전 초기화한다.
-                    m_Curr_appearTime = 0.0f;
-                    m_Next_Drop_Time = 1.0f; //Random.Range(1.0f, 2.0f);
-                    m_Curr_dropTime = 0.0f;
-
                     Vector3 pos;
-                    pos.x = 20.0f;
-                    pos.y = 20.0f;
-                    pos.z = -20.0f;
-                    transform.position = pos;
+                    pos.x = 0.0f;
+                    pos.y = 15.0f;
+                    pos.z = 0.0f;
+                    StageManager.c_Stage_Manager.Get_MCL_Coordinate(index, ref pos.x, ref pos.z);
 
-                    UI.c_UI.Set_Elapsed_Time(0.0f); // 경과시간 초기화
-                    m_is_Able_to_Appear = false; // 끝
+                    Instantiate(Airdrop_Item).transform.position = pos; // 설정한 위치에 아이템 투하
                 }
+
+                StopCoroutine(m_Airdrop); // 에어드랍 종료
             }
+            yield return null;
         }
     }
 
 
-    public void Dispatch_Airplane()
+    IEnumerator AirDrop_Time_Check()
     {
-        if (!m_is_Able_to_Appear) Notice_UI.GetInstance().Notice_Play(NOTICE_NUMBER.AIR_DROP);
-        m_is_Able_to_Appear = true;
+        while(true)
+        {
+            if (UI.c_UI.Get_Elapsed_Time() >= m_Airdrop_Time)
+            {
+                Dispatch_Airplane();
+            }
+            yield return null;
+        }
+    }
+
+    IEnumerator Wait_For_Intro()
+    {
+        while(true)
+        {
+            if (StageManager.c_Stage_Manager.Get_is_Intro_Over())
+            {
+                StopAllCoroutines();
+                StartCoroutine(m_Time_Checker);
+            }
+            yield return null;
+        }
+    }
+
+    void Dispatch_Airplane()
+    {
+        Notice_UI.GetInstance().Notice_Play(NOTICE_NUMBER.AIR_DROP);
+
+        StopCoroutine(m_Time_Checker);
+
+        m_Animations.Play(m_Animations.GetClip("Air_Drop").name);
+        StartCoroutine(m_Airdrop);
     }
 
     public void Set_Airdrop_Count(int c)

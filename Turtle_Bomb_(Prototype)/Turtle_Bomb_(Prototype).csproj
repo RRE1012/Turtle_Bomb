@@ -296,7 +296,9 @@
     <Compile Include="Assets\Script\UI 관련\Fade_Slider.cs" />
     <Compile Include="Assets\Script\UI 관련\FadeManager.cs" />
     <Compile Include="Assets\Script\UI 관련\Front_Collider.cs" />
+    <Compile Include="Assets\Script\UI 관련\GameOver_UI.cs" />
     <Compile Include="Assets\Script\UI 관련\Image_Fade.cs" />
+    <Compile Include="Assets\Script\UI 관련\Mission_UI.cs" />
     <Compile Include="Assets\Script\UI 관련\Notice_UI.cs" />
     <Compile Include="Assets\Script\UI 관련\Script_Box.cs" />
     <Compile Include="Assets\Script\UI 관련\System_Option.cs" />

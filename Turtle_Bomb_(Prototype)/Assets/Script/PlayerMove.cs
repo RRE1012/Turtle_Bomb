@@ -70,6 +70,8 @@ public class PlayerMove : MonoBehaviour {
         C_PM = this;
         m_TurtleMan_Animator = GetComponent<Animator>();
         m_Player_Mesh_Renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
+
+        StageManager.c_Stage_Manager.Set_is_Player_Alive(true);
     }
 
     public void Player_Set_Start_Point(Vector3 p)
@@ -673,11 +675,11 @@ public class PlayerMove : MonoBehaviour {
     //다른 스크립트에서 플레이어를 죽게 하는 함수
     public void Set_Dead()
 	{
-        MusicManager.manage_ESound.TryMute();
         m_TurtleMan_Animator.SetBool("TurtleMan_isDead", true);
-        StageManager.c_Stage_Manager.Set_is_Pause(true);
+        animator_camera.SetTrigger("Dead");
         m_isAlive = false;
-	}
+        StageManager.c_Stage_Manager.Set_is_Player_Alive(false);
+    }
 
     //살아있는지에 대한 여부를 다른 스크립트에서 get하는 함수-R
     public bool Get_IsAlive()

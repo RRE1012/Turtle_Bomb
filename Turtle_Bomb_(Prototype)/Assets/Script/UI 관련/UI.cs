@@ -14,7 +14,6 @@ public class UI : MonoBehaviour {
     // ========= 인게임 UI =========
     public static GameObject m_Ingame_Play_UI; // 총괄 UI
     public static GameObject m_Option_UI; // 옵션 버튼
-    //GameObject m_Ingame_Mission_UI; // 미션UI
 
     public Text m_FireCountText; // 플레이어 화력 텍스트
     public Text m_BombCountText; // 플레이어 폭탄 텍스트
@@ -40,7 +39,6 @@ public class UI : MonoBehaviour {
     public Animator m_KickIcon_Animator; // 발차기 아이콘 애니메이터
     public Animator m_ThrowIcon_Animator; // 던지기 아이콘 애니메이터
     public Animator m_GetItem_Animator; // 아이템 획득 UI 애니메이터
-    public Animator m_Notice_Animator; // 알림 UI 애니메이터
 
     public Image m_InBushImage; // 부쉬 입장 효과
 
@@ -98,7 +96,7 @@ public class UI : MonoBehaviour {
     
     // =============================
     // ======== 게임오버 UI ========
-    public static GameObject m_GameOver_UI;
+    GameObject m_GameOver_UI;
 
     // =============================
     // =============================
@@ -134,17 +132,14 @@ public class UI : MonoBehaviour {
         // UIs initializing
         m_Ingame_Play_UI = GameObject.FindGameObjectWithTag("Ingame_Play_UI");
         m_Stage_Clear_UI = GameObject.FindGameObjectWithTag("Stage_Clear_UI");
-        m_GameOver_UI = GameObject.FindGameObjectWithTag("GameOver_UI");
+        m_GameOver_UI = GetComponentInChildren<GameOver_UI>().gameObject;
         m_Option_UI = GameObject.FindGameObjectWithTag("Option_UI");
-        //m_Ingame_Mission_UI = GameObject.FindGameObjectWithTag("Ingame_Mission_UI");
 
         m_is_Init_Star_Count = false;
 
         m_Stage_Clear_UI.SetActive(false);
-        m_GameOver_UI.SetActive(false);
         m_Option_UI.SetActive(false);
-
-        //m_Ingame_Mission_UI.SetActive(false);
+        
         
         m_fire_count = 1;
         m_releasable_bomb_count = 1;
@@ -422,6 +417,7 @@ public class UI : MonoBehaviour {
             m_is_Init_Star_Count = true;
         }
 
+
         if (!StageManager.c_Stage_Manager.Get_is_Pause())
         {
             if (StageManager.c_Stage_Manager.Get_is_Intro_Over())
@@ -436,10 +432,11 @@ public class UI : MonoBehaviour {
             }
 
             // 시간 텍스트 출력
-            if(time_Second%60<10)
+            if(time_Second % 60 < 10)
                 m_TimeLimitText.text = "0" + (int)time_Second / 60 + ":0" + (int)time_Second % 60;
             else
                 m_TimeLimitText.text = "0" + (int)time_Second / 60 + ":" + (int)time_Second % 60;
+
             Mission_UI_Management(); // 미션 UI 출력
             
             Push_Button_Management(); // 밀기버튼
@@ -465,33 +462,12 @@ public class UI : MonoBehaviour {
         }
     }
 
-    /*
-    public void Mission_UI()
-    {
-        if (m_Ingame_Mission_UI.activeSelf)
-            Mission_UI_Deactivate();
-        else Mission_UI_Activate();
-    }
-    
-    // 미션 UI 활성화
-    void Mission_UI_Activate()
-    {
-        m_Ingame_Mission_UI.SetActive(true);
-        //m_Ingame_Mission_UI.GetComponent<RawImage>().texture = 최소화 아이콘;
-    }
-
-    // 미션 UI 비활성화
-    void Mission_UI_Deactivate()
-    {
-        m_Ingame_Mission_UI.SetActive(false);
-        //m_Ingame_Mission_UI.GetComponent<RawImage>().texture = 최대화 아이콘;
-    }
-    */
-    // 게임오버 UI 활성화
-    public static void GameOver_Button_Activate()
+    public void GameOver_Directing()
     {
         m_GameOver_UI.SetActive(true);
+        m_GameOver_UI.GetComponent<GameOver_UI>().GameOver_Direction_Play(); // 게임 오버 연출 발동
     }
+    
     // 인게임 UI 비활성화
     public static void Ingame_Play_UI_Deactivate()
     {
@@ -506,7 +482,7 @@ public class UI : MonoBehaviour {
     // 옵션 버튼 UI 활성화
     public void Option_Button()
     {
-        m_Ingame_Play_UI.SetActive(false);
+        //m_Ingame_Play_UI.SetActive(false);
         m_Option_UI.SetActive(true);
         StageManager.c_Stage_Manager.Set_is_Pause(true);
     }
@@ -515,7 +491,7 @@ public class UI : MonoBehaviour {
     public void Option_Return_Button()
     {
         StageManager.c_Stage_Manager.Set_is_Pause(false);
-        m_Ingame_Play_UI.SetActive(true);
+        //m_Ingame_Play_UI.SetActive(true);
         m_Option_UI.SetActive(false);
     }
 
