@@ -75,7 +75,6 @@ public class PlayerMove : MonoBehaviour {
     public void Player_Set_Start_Point(Vector3 p)
     {
         transform.position = p; // 플레이어 위치를 시작지점으로 옮긴다.
-        GameObject.FindGameObjectWithTag("Camera_Offset").transform.position = transform.position; // 카메라 기본 위치를 플레이어에 맞춘다.
     }
 
     void Update ()

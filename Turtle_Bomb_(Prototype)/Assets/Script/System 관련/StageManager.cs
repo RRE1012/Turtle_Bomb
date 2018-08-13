@@ -56,6 +56,12 @@ static class OBJECT_TABLE_NUMBER
     public const int ICICLE_2 = 27;
 }
 
+
+
+
+
+
+
 public class StageManager : MonoBehaviour
 {
     // ================================
@@ -183,7 +189,7 @@ public class StageManager : MonoBehaviour
     int m_Map_Size_X = 17;
     int m_Map_Size_Z = 17;
 
-    //GameObject m_CameraOffset; // 퍼포먼스 카메라 객체
+    public GameObject m_Direction_Camera; // 연출용 카메라
 
 
 
@@ -230,14 +236,12 @@ public class StageManager : MonoBehaviour
         m_MCL_is_Blocked_List = new List<bool>();
 
         MCL_init(); // MCL 초기화
-
-        //m_CameraOffset = GameObject.Find("Camera_Offset"); // 카메라 객체 지정
+        
 
         m_Object_Table_List = new List<Object_Table_Data>(CSV_Manager.GetInstance().Get_Object_Table_List()); // 오브젝트 테이블 목록 로드
 
         if (m_Stage_ID == MAP.NOT_SET) // 설정이 안돼있다면
             m_Stage_ID = PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID"); // 스테이지 ID를 받아온다.
-        if (m_Stage_ID > 9) ; // 임시 설정 (스테이지 )
             
         // 스테이지 데이터 내부 리스트들의 공간 할당
         m_Adventure_Stage_Data.Adventure_Quest_ID_List = new int[3];
@@ -279,6 +283,8 @@ public class StageManager : MonoBehaviour
         if (m_Stage_Time_Limit == MAP.NOT_SET) // 시간 설정
             m_Stage_Time_Limit = m_Adventure_Stage_Data.Stage_Time;
 
+        if (!m_is_Boss_Stage) m_Direction_Camera.GetComponentInChildren<Camera_Directing>().Direction_Play(DIRECTION_NUMBER.INTRO_NORMAL_1);
+        else m_Direction_Camera.GetComponentInChildren<Camera_Directing>().Direction_Play(DIRECTION_NUMBER.INTRO_NORMAL_1);
 
         // 비행기 미리 소환
         m_Airplane = Instantiate(m_Prefab_Airplane); // 인스턴스 생성
