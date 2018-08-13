@@ -71,7 +71,7 @@ public class PlayerMove : MonoBehaviour {
         m_TurtleMan_Animator = GetComponent<Animator>();
         m_Player_Mesh_Renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
 
-        StageManager.c_Stage_Manager.Set_is_Player_Alive(true);
+        StageManager.GetInstance().Set_is_Player_Alive(true);
     }
 
     public void Player_Set_Start_Point(Vector3 p)
@@ -81,7 +81,7 @@ public class PlayerMove : MonoBehaviour {
 
     void Update ()
     {
-        if (!StageManager.c_Stage_Manager.Get_is_Pause() && StageManager.c_Stage_Manager.Get_is_Intro_Over())
+        if (!StageManager.GetInstance().Get_is_Pause() && StageManager.GetInstance().Get_is_Intro_Over())
         {
             GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 0.0f);
 
@@ -101,32 +101,32 @@ public class PlayerMove : MonoBehaviour {
             if (other.gameObject.CompareTag("Bomb_Item"))
             {
                 Destroy(other.gameObject);
-                if (UI.m_cur_Max_Bomb_Count < MAX_VALUE_ITEM.retval)
+                if (UI.GetInstance().m_cur_Max_Bomb_Count < MAX_VALUE_ITEM.retval)
                 {
                     MusicManager.manage_ESound.ItemGetSound();
-                    UI.m_cur_Max_Bomb_Count += 1;
-                    UI.m_releasable_bomb_count += 1;
-                    UI.c_UI.GetItemUI_Activate(0);
+                    UI.GetInstance().m_cur_Max_Bomb_Count += 1;
+                    UI.GetInstance().m_releasable_bomb_count += 1;
+                    UI.GetInstance().GetItemUI_Activate(0);
                 }
             }
             if (other.gameObject.CompareTag("Fire_Item"))
             {
                 Destroy(other.gameObject);
-                if (UI.m_fire_count < MAX_VALUE_ITEM.retval)
+                if (UI.GetInstance().m_fire_count < MAX_VALUE_ITEM.retval)
                 {
                     MusicManager.manage_ESound.ItemGetSound();
-                    UI.m_fire_count += 1;
-                    UI.c_UI.GetItemUI_Activate(1);
+                    UI.GetInstance().m_fire_count += 1;
+                    UI.GetInstance().GetItemUI_Activate(1);
                 }
             }
             if (other.gameObject.CompareTag("Speed_Item"))
             {
                 Destroy(other.gameObject);
-                if (UI.m_speed_count < MAX_VALUE_ITEM.retval)
+                if (UI.GetInstance().m_speed_count < MAX_VALUE_ITEM.retval)
                 {
                     MusicManager.manage_ESound.ItemGetSound();
-                    UI.m_speed_count += 1;
-                    UI.c_UI.GetItemUI_Activate(2);
+                    UI.GetInstance().m_speed_count += 1;
+                    UI.GetInstance().GetItemUI_Activate(2);
                 }
             }
             if (other.gameObject.CompareTag("Kick_Item"))
@@ -136,8 +136,8 @@ public class PlayerMove : MonoBehaviour {
                 {
                     MusicManager.manage_ESound.ItemGetSound();
                     m_isGot_KickItem = true;
-                    UI.c_UI.Kick_Icon_Activate();
-                    UI.c_UI.GetItemUI_Activate(3);
+                    UI.GetInstance().Kick_Icon_Activate();
+                    UI.GetInstance().GetItemUI_Activate(3);
                 }
             }
             if (other.gameObject.CompareTag("Throw_Item"))
@@ -147,8 +147,8 @@ public class PlayerMove : MonoBehaviour {
                 {
                     MusicManager.manage_ESound.ItemGetSound();
                     m_isGot_ThrowItem = true;
-                    UI.c_UI.Throw_Icon_Activate();
-                    UI.c_UI.GetItemUI_Activate(4);
+                    UI.GetInstance().Throw_Icon_Activate();
+                    UI.GetInstance().GetItemUI_Activate(4);
                 }
             }
 
@@ -159,25 +159,25 @@ public class PlayerMove : MonoBehaviour {
 
                 //int temp = Random.Range(1, 3);
 
-                UI.m_cur_Max_Bomb_Count += 1; //temp;
-                UI.m_releasable_bomb_count += 1; // temp;
-                if (UI.m_cur_Max_Bomb_Count > MAX_VALUE_ITEM.retval)
+                UI.GetInstance().m_cur_Max_Bomb_Count += 1; //temp;
+                UI.GetInstance().m_releasable_bomb_count += 1; // temp;
+                if (UI.GetInstance().m_cur_Max_Bomb_Count > MAX_VALUE_ITEM.retval)
                 {
-                    UI.m_cur_Max_Bomb_Count = MAX_VALUE_ITEM.retval;
-                    UI.m_releasable_bomb_count = MAX_VALUE_ITEM.retval;
+                    UI.GetInstance().m_cur_Max_Bomb_Count = MAX_VALUE_ITEM.retval;
+                    UI.GetInstance().m_releasable_bomb_count = MAX_VALUE_ITEM.retval;
                 }
 
                 //temp = Random.Range(1, 3);
-                UI.m_fire_count += 1; // temp;
-                if (UI.m_fire_count > MAX_VALUE_ITEM.retval)
-                    UI.m_fire_count = MAX_VALUE_ITEM.retval;
+                UI.GetInstance().m_fire_count += 1; // temp;
+                if (UI.GetInstance().m_fire_count > MAX_VALUE_ITEM.retval)
+                    UI.GetInstance().m_fire_count = MAX_VALUE_ITEM.retval;
 
                 //temp = Random.Range(1, 3);
-                UI.m_speed_count += 1; // temp;
-                if (UI.m_speed_count > MAX_VALUE_ITEM.retval)
-                    UI.m_speed_count = MAX_VALUE_ITEM.retval;
+                UI.GetInstance().m_speed_count += 1; // temp;
+                if (UI.GetInstance().m_speed_count > MAX_VALUE_ITEM.retval)
+                    UI.GetInstance().m_speed_count = MAX_VALUE_ITEM.retval;
 
-                UI.c_UI.GetItemUI_Activate(5);
+                UI.GetInstance().GetItemUI_Activate(5);
             }
             // ========================
 
@@ -187,7 +187,7 @@ public class PlayerMove : MonoBehaviour {
             if ((other.gameObject.tag == "Flame" ||
                 other.gameObject.tag == "Flame_Bush" ||
                 other.gameObject.tag == "Monster_Attack_Collider" ||
-                other.gameObject.tag == "icicle_Body") && !StageManager.c_Stage_Manager.Get_is_Stage_Clear())
+                other.gameObject.tag == "icicle_Body") && !StageManager.GetInstance().Get_is_Stage_Clear())
             {
                 Set_Dead();
             }
@@ -206,7 +206,7 @@ public class PlayerMove : MonoBehaviour {
                 //transform.Rotate(new Vector3(0.0f, 0.0f, 0.0f));
 
                 // 다음 맵을 로드한다.
-                StageManager.c_Stage_Manager.Next_Map_Load();
+                StageManager.GetInstance().Next_Map_Load();
 
 
                 // 맵 이동 마무리 연출 수행 (Fade In 먼저 수행)
@@ -221,8 +221,9 @@ public class PlayerMove : MonoBehaviour {
             // 목표 지점 도달 시 스테이지 클리어
             if (other.gameObject.CompareTag("Goal"))
             {
-                StageManager.c_Stage_Manager.SetGoalIn(true);
-                StageManager.c_Stage_Manager.Stage_Clear();
+                UI.GetInstance().Set_is_Goal(true);
+                StageManager.GetInstance().SetGoalIn(true);
+                StageManager.GetInstance().Stage_Clear();
             }
             // ===============================
         }
@@ -308,22 +309,22 @@ public class PlayerMove : MonoBehaviour {
     {
         if (Input.GetKey(KeyCode.W))
         {
-            transform.Translate(new Vector3(0.0f, 0.0f, ((m_BasicSpeed + UI.m_speed_count) * Time.deltaTime)));
+            transform.Translate(new Vector3(0.0f, 0.0f, ((m_BasicSpeed + UI.GetInstance().m_speed_count) * Time.deltaTime)));
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
         if (Input.GetKey(KeyCode.S))
         {
-            transform.Translate(new Vector3(0.0f, 0.0f, -((m_BasicSpeed + UI.m_speed_count) * Time.deltaTime)));
+            transform.Translate(new Vector3(0.0f, 0.0f, -((m_BasicSpeed + UI.GetInstance().m_speed_count) * Time.deltaTime)));
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
         if (Input.GetKey(KeyCode.A))
         {
-            transform.Translate(new Vector3(-((m_BasicSpeed + UI.m_speed_count) * Time.deltaTime), 0.0f, 0.0f));
+            transform.Translate(new Vector3(-((m_BasicSpeed + UI.GetInstance().m_speed_count) * Time.deltaTime), 0.0f, 0.0f));
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            transform.Translate(new Vector3(((m_BasicSpeed + UI.m_speed_count) * Time.deltaTime), 0.0f, 0.0f));
+            transform.Translate(new Vector3(((m_BasicSpeed + UI.GetInstance().m_speed_count) * Time.deltaTime), 0.0f, 0.0f));
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
 
@@ -342,7 +343,7 @@ public class PlayerMove : MonoBehaviour {
             Vector3 normal = JoyStickMove.instance.Get_NormalizedVector();
             normal.z = normal.y;
             normal.y = 0.0f;
-            transform.Translate((m_BasicSpeed + UI.m_speed_count) * normal * Time.deltaTime);
+            transform.Translate((m_BasicSpeed + UI.GetInstance().m_speed_count) * normal * Time.deltaTime);
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
 
@@ -413,7 +414,7 @@ public class PlayerMove : MonoBehaviour {
 
     public void SetBomb() // 폭탄 설치
     {
-        if (UI.m_releasable_bomb_count > 0 && StageManager.c_Stage_Manager.Get_is_Intro_Over())
+        if (UI.GetInstance().m_releasable_bomb_count > 0 && StageManager.GetInstance().Get_is_Intro_Over())
         {
             m_Bombindex_X = (int)transform.position.x;
             m_Bombindex_Z = (int)transform.position.z;
@@ -470,7 +471,7 @@ public class PlayerMove : MonoBehaviour {
                 Instance_Bomb.GetComponent<Bomb>().m_Whose_Bomb = gameObject;
                 Instance_Bomb.GetComponent<Bomb>().m_Whose_Bomb_Type = WHOSE_BOMB.PLAYER;
 
-                UI.m_releasable_bomb_count = UI.m_releasable_bomb_count - 1;
+                UI.GetInstance().m_releasable_bomb_count = UI.GetInstance().m_releasable_bomb_count - 1;
                 m_TurtleMan_Animator.SetBool("TurtleMan_isDrop", true);
                 animator_camera.SetBool("Set_Bomb", true);
                 Invoke("SetBomb_Ani_False", 0.3f);
@@ -511,7 +512,7 @@ public class PlayerMove : MonoBehaviour {
 
     public void Crouch() // 플레이어 숙이기
     {
-        if(StageManager.c_Stage_Manager.Get_is_Intro_Over() && !m_isPress_LShift)
+        if(StageManager.GetInstance().Get_is_Intro_Over() && !m_isPress_LShift)
         {
             if (CrouchButton.m_isClicked)
             {
@@ -534,18 +535,18 @@ public class PlayerMove : MonoBehaviour {
     
     public void BoxPush() // 박스 밀기 시작
     {
-        if (m_isBoxSelected && m_isAbleToPush && StageManager.c_Stage_Manager.Get_is_Intro_Over())
+        if (m_isBoxSelected && m_isAbleToPush && StageManager.GetInstance().Get_is_Intro_Over())
         {
             // 플레이어 위치 변환
 
             // 플레이어의 현재 MCL 인덱스를 찾는다.
-            int index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
+            int index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
 
             // 플레이어의 위치를 MCL 내부 좌표로 이동시킨다.
             Vector3 Loc;
-            Loc.x = StageManager.c_Stage_Manager.m_Map_Coordinate_List[index].x;
+            Loc.x = StageManager.GetInstance().m_Map_Coordinate_List[index].x;
             Loc.y = transform.position.y;
-            Loc.z = StageManager.c_Stage_Manager.m_Map_Coordinate_List[index].z;
+            Loc.z = StageManager.GetInstance().m_Map_Coordinate_List[index].z;
             transform.position = Loc;
             // --------------------------------
 
@@ -578,9 +579,9 @@ public class PlayerMove : MonoBehaviour {
 
 
             // MCL 갱신
-            index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(m_Front_Box.transform.position.x, m_Front_Box.transform.position.z);
+            index = StageManager.GetInstance().Find_Own_MCL_Index(m_Front_Box.transform.position.x, m_Front_Box.transform.position.z);
 
-            StageManager.c_Stage_Manager.Update_MCL_isBlocked(index, false);
+            StageManager.GetInstance().Update_MCL_isBlocked(index, false);
         }
     }
 
@@ -598,15 +599,15 @@ public class PlayerMove : MonoBehaviour {
         // 밀고난 뒤 박스가 정확한 자리로 가도록 조정해준다.
         else
         {
-            int index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(m_Front_Box.transform.position.x, m_Front_Box.transform.position.z);
+            int index = StageManager.GetInstance().Find_Own_MCL_Index(m_Front_Box.transform.position.x, m_Front_Box.transform.position.z);
 
             Vector3 Loc;
-            Loc.x = StageManager.c_Stage_Manager.m_Map_Coordinate_List[index].x;
+            Loc.x = StageManager.GetInstance().m_Map_Coordinate_List[index].x;
             Loc.y = m_Front_Box.transform.position.y;
-            Loc.z = StageManager.c_Stage_Manager.m_Map_Coordinate_List[index].z;
+            Loc.z = StageManager.GetInstance().m_Map_Coordinate_List[index].z;
             m_Front_Box.transform.position = Loc;
 
-            StageManager.c_Stage_Manager.Update_MCL_isBlocked(index, true);
+            StageManager.GetInstance().Update_MCL_isBlocked(index, true);
 
             m_push_Distance = 0.0f;
             m_isPushing = false;
@@ -678,7 +679,7 @@ public class PlayerMove : MonoBehaviour {
         m_TurtleMan_Animator.SetBool("TurtleMan_isDead", true);
         animator_camera.SetTrigger("Dead");
         m_isAlive = false;
-        StageManager.c_Stage_Manager.Set_is_Player_Alive(false);
+        StageManager.GetInstance().Set_is_Player_Alive(false);
     }
 
     //살아있는지에 대한 여부를 다른 스크립트에서 get하는 함수-R
@@ -700,7 +701,7 @@ public class PlayerMove : MonoBehaviour {
     //다른 스크립트에서 폭탄을 장전할 때 쓰는 함수
     public void ReloadUp()
     {
-        if (UI.m_releasable_bomb_count < MAX_VALUE_ITEM.retval)
-            UI.m_releasable_bomb_count += 1;
+        if (UI.GetInstance().m_releasable_bomb_count < MAX_VALUE_ITEM.retval)
+            UI.GetInstance().m_releasable_bomb_count += 1;
     }
 }

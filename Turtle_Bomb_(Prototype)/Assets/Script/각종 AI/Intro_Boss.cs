@@ -111,7 +111,7 @@ public class Intro_Boss : MonoBehaviour {
             }
         }
 
-        if (StageManager.c_Stage_Manager.Get_is_Intro_Over())
+        if (StageManager.GetInstance().Get_is_Intro_Over())
         {
             Destroy(gameObject);
         }

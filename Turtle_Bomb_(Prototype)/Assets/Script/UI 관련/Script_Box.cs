@@ -22,7 +22,7 @@ public class Script_Box : MonoBehaviour
     void Update()
     {
         if (gameObject.activeSelf) // 켜져있으면
-            StageManager.c_Stage_Manager.Set_is_Pause(true); // 일시정지
+            StageManager.GetInstance().Set_is_Pause(true); // 일시정지
     }
 
     public void Set_TextList(List<string> s_list)
@@ -48,7 +48,7 @@ public class Script_Box : MonoBehaviour
         }
         else
         {
-            StageManager.c_Stage_Manager.Set_is_Pause(false);
+            StageManager.GetInstance().Set_is_Pause(false);
             gameObject.SetActive(false); // 끝이므로 닫기
         }
     }

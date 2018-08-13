@@ -160,13 +160,14 @@ public class StageManager : MonoBehaviour
     // ==================================
     // ========== 시스템관련 ============
 
-    public static StageManager c_Stage_Manager; // 스테이지 매니저 객체
+    static StageManager m_Instance; public static StageManager GetInstance() { return m_Instance; }
 
+    [HideInInspector]
     public List<Map_Coordinate> m_Map_Coordinate_List; // MCL
-
-    public static List<bool> m_MCL_is_Blocked_List; // MCL의 is_Blocked를 따로 분리했다..
-
-    public static bool m_is_init_MCL = false; // MCL이 초기화 되었는가?
+    [HideInInspector]
+    public List<bool> m_MCL_is_Blocked_List; // MCL의 is_Blocked를 따로 분리했다..
+    [HideInInspector]
+    public bool m_is_init_MCL = false; // MCL이 초기화 되었는가?
 
     bool m_is_Map_Changing = false; // 맵 이동 시 폭탄을 무효화 하기 위한 변수
 
@@ -232,7 +233,7 @@ public class StageManager : MonoBehaviour
 
     void Awake() // 생성자
     {
-        c_Stage_Manager = this; // 스테이지 매니저 인스턴스 지정
+        m_Instance = this; // 스테이지 매니저 인스턴스 지정
 
         m_StageManager = StageManagement(); // 스테이지 관리 코루틴
         StartCoroutine(m_StageManager); // 스테이지 관리 코루틴 시작.
@@ -678,8 +679,7 @@ public class StageManager : MonoBehaviour
         }
 
         PlayerPrefs.Save();
-
-        UI.Draw_StageClearPage(); // 클리어 화면 출력
+        UI.GetInstance().Stage_Clear_Directing();
     }
 
     void Condition_For_Getting_Stars(ref int[] list) // 별 획득 조건 관리
@@ -693,7 +693,7 @@ public class StageManager : MonoBehaviour
                 {
                     if (QuestData.Quest_ID == 1) // 시간
                     {
-                        if (UI.c_UI.Get_Left_Time() >= QuestData.Quest_Goal)
+                        if (UI.GetInstance().Get_Left_Time() >= QuestData.Quest_Goal)
                         {
                             m_Star_Count += 1;
                             tempString = "Adventure_Stars_ID_" + list[i];
@@ -779,7 +779,7 @@ public class StageManager : MonoBehaviour
             m_is_Game_Over = true;
             m_is_Pause = true;
             MusicManager.manage_ESound.TryMute();
-            UI.c_UI.GameOver_Directing();
+            UI.GetInstance().GameOver_Directing();
             StopCoroutine(m_StageManager);
         }
 
@@ -830,7 +830,7 @@ public class StageManager : MonoBehaviour
 
     public void Summon_SuddenDeath_Glider() // 서든데스 고블린 소환
     {
-        if (!m_is_SuddenDeath_Summoned && UI.c_UI.Get_Left_Time() <= m_Stage_Time_Limit - m_Adventure_Stage_Data.SuddenDeath_Time)
+        if (!m_is_SuddenDeath_Summoned && UI.GetInstance().Get_Left_Time() <= m_Stage_Time_Limit - m_Adventure_Stage_Data.SuddenDeath_Time)
         {
             Notice_UI.GetInstance().Notice_Play(NOTICE_NUMBER.DANGER);
             for (int i = 0; i < m_Adventure_Stage_Data.Number_Of_GliderGoblin; ++i)
@@ -866,7 +866,7 @@ public class StageManager : MonoBehaviour
 
     public void Init_Left_Time() // UI에 제한시간 설정
     {
-        UI.c_UI.Set_Left_Time(m_Stage_Time_Limit);
+        UI.GetInstance().Set_Left_Time(m_Stage_Time_Limit);
     }
 
 

@@ -43,7 +43,7 @@ public class MonsterAI : MonoBehaviour
 
     void Start()
     {
-        StageManager.c_Stage_Manager.Increase_Normal_Monster_Count(); // 몬스터 개수 증가
+        StageManager.GetInstance().Increase_Normal_Monster_Count(); // 몬스터 개수 증가
 
         // 객체 자신이 가지고 있는 애니메이터를 찾아온다.
         m_Goblman_Animator = GetComponent<Animator>();
@@ -104,7 +104,7 @@ public class MonsterAI : MonoBehaviour
             if (MusicManager.manage_ESound != null)
                 MusicManager.manage_ESound.Goblin_Dead_Sound();
 
-            StageManager.c_Stage_Manager.Decrease_Normal_Monster_Count(); // 불에 닿아 죽는것만 카운팅.
+            StageManager.GetInstance().Decrease_Normal_Monster_Count(); // 불에 닿아 죽는것만 카운팅.
             m_Goblman_Animator.SetBool("Goblman_isDead", true);
             m_isDead = true;
             StopCoroutine(MonsterBehavior());
@@ -170,7 +170,7 @@ public class MonsterAI : MonoBehaviour
         while (true)
         {
             Think();
-            if (!StageManager.c_Stage_Manager.Get_is_Pause() && !m_isDead && m_Current_Behavior != null && m_Current_Behavior.MoveNext())
+            if (!StageManager.GetInstance().Get_is_Pause() && !m_isDead && m_Current_Behavior != null && m_Current_Behavior.MoveNext())
             {
                 yield return m_Current_Behavior.Current;
             }
@@ -191,7 +191,7 @@ public class MonsterAI : MonoBehaviour
             
             if (m_WalkTimer < Monster_AI_Constants.Walk_Time)
             {
-                if (StageManager.c_Stage_Manager.Get_is_Intro_Over() && PlayerMove.C_PM.Get_IsAlive() && !StageManager.c_Stage_Manager.Get_is_Stage_Clear())
+                if (StageManager.GetInstance().Get_is_Intro_Over() && PlayerMove.C_PM.Get_IsAlive() && !StageManager.GetInstance().Get_is_Stage_Clear())
                 {
                     transform.Translate(new Vector3(0.0f, 0.0f, (m_Monster_Basic_Speed * Time.deltaTime)));
                     m_Goblman_Animator.SetBool("Goblman_isWalk", true);
@@ -224,7 +224,7 @@ public class MonsterAI : MonoBehaviour
 
             if (m_AttackTimer < Monster_AI_Constants.Attack_Time)
             {
-                if (StageManager.c_Stage_Manager.Get_is_Intro_Over() && !StageManager.c_Stage_Manager.Get_Game_Over() && !m_Goblman_Animator.GetBool("Goblman_isAttack"))
+                if (StageManager.GetInstance().Get_is_Intro_Over() && !StageManager.GetInstance().Get_Game_Over() && !m_Goblman_Animator.GetBool("Goblman_isAttack"))
                 {
                     if (MusicManager.manage_ESound != null)
                         MusicManager.manage_ESound.Goblin_Attack_Sound();
@@ -271,12 +271,12 @@ public class MonsterAI : MonoBehaviour
         m_Left_Object_Index = Find_Objects_Coord(m_V3_To_Find_my_leftObject.x, m_V3_To_Find_my_leftObject.z);
 
         
-        if (m_Left_Object_Index != -1 && StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_Left_Object_Index) == false)
+        if (m_Left_Object_Index != -1 && StageManager.GetInstance().Get_MCL_index_is_Blocked(m_Left_Object_Index) == false)
         {
             transform.Rotate(-transform.up * 90.0f);
         }
 
-        else if (m_Right_Object_Index != -1 && StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_Right_Object_Index) == false)
+        else if (m_Right_Object_Index != -1 && StageManager.GetInstance().Get_MCL_index_is_Blocked(m_Right_Object_Index) == false)
         {
             transform.Rotate(transform.up * 90.0f);
         }
@@ -298,9 +298,9 @@ public class MonsterAI : MonoBehaviour
     // 몬스터 자신의 MCL 인덱스를 받아오는 함수
     void Find_My_Coord()
     {
-        if (StageManager.c_Stage_Manager.Get_is_init_MCL())
+        if (StageManager.GetInstance().Get_is_init_MCL())
         {
-            m_My_MCL_Index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
+            m_My_MCL_Index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
         }
     }
     // =========================================
@@ -309,16 +309,16 @@ public class MonsterAI : MonoBehaviour
     // 몬스터 자신의 MCL 인덱스에 해당하는 위치로 옮겨주는 함수
     void Set_Right_Position()
     {
-        if (StageManager.c_Stage_Manager.Get_is_init_MCL())
+        if (StageManager.GetInstance().Get_is_init_MCL())
         {
-            m_My_MCL_Index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
+            m_My_MCL_Index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
             
             if (m_My_MCL_Index != -1)
             {
                 Vector3 Loc;
-                Loc.x = StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index].x;
+                Loc.x = StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index].x;
                 Loc.y = transform.position.y;
-                Loc.z = StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index].z;
+                Loc.z = StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index].z;
                 transform.position = Loc;
             }
         }
@@ -329,9 +329,9 @@ public class MonsterAI : MonoBehaviour
     // 오브젝트의 좌표를 통하여 해당 MCL 인덱스를 반환한다.
     int Find_Objects_Coord(float x, float z)
     {
-        if (StageManager.c_Stage_Manager.Get_is_init_MCL())
+        if (StageManager.GetInstance().Get_is_init_MCL())
         {
-            return StageManager.c_Stage_Manager.Find_Own_MCL_Index(x, z);
+            return StageManager.GetInstance().Find_Own_MCL_Index(x, z);
         }
         return -1;
     }

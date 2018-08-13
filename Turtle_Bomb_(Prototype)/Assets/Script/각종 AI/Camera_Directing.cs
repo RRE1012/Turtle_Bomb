@@ -122,7 +122,7 @@ public class Camera_Directing : MonoBehaviour {
         switch (m_Curr_Direction_Number)
         {
             case DIRECTION_NUMBER.INTRO_NORMAL_1:
-                StageManager.c_Stage_Manager.Set_is_Intro_Over(true);
+                StageManager.GetInstance().Set_is_Intro_Over(true);
                 Camera_Switching(CAMERA_NUMBER.PLAYER); // 플레이어 카메라로 전환!
                 break;
 

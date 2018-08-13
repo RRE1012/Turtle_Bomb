@@ -16,7 +16,7 @@ public class Fire_Effect : MonoBehaviour
 
     void Update()
     {
-        if (!StageManager.c_Stage_Manager.Get_is_Pause())
+        if (!StageManager.GetInstance().Get_is_Pause())
         {
             if (FlameLifeTime >= 0.0f)
             {

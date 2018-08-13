@@ -41,7 +41,7 @@ public class PlayerPrefs_Manager : MonoBehaviour {
             case PlayerPrefs_Manager_Constants.Title_Start_Scene: // 타이틀 씬 입장 시
 
                 Pref_Debug_Mode(); // 디버깅용
-                
+                //Pref_Init(); // 별, 스테이지 초기화용
 
 
 
@@ -80,6 +80,7 @@ public class PlayerPrefs_Manager : MonoBehaviour {
 
 
             case PlayerPrefs_Manager_Constants.Mode_Adventure: // 모험모드 스테이지 선택 씬 입장 시
+
                 int[] mission_nums = new int[3];
                 string tempString;
                 int tempStars = 0; // 1: 활성화, 0: 비활성화

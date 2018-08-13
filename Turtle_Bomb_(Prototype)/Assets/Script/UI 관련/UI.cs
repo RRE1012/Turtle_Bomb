@@ -7,13 +7,11 @@ using UnityEngine.SceneManagement;
 // 게임 씬 UI 함수
 public class UI : MonoBehaviour {
 
-    public static UI c_UI;
+    static UI m_Instance; public static UI GetInstance() { return m_Instance; }
 
-
-    // =============================
-    // ========= 인게임 UI =========
-    public static GameObject m_Ingame_Play_UI; // 총괄 UI
-    public static GameObject m_Option_UI; // 옵션 버튼
+    
+    // ========= Notice UI =========
+    public GameObject m_Option_UI; // 옵션 버튼
 
     public Text m_FireCountText; // 플레이어 화력 텍스트
     public Text m_BombCountText; // 플레이어 폭탄 텍스트
@@ -51,33 +49,29 @@ public class UI : MonoBehaviour {
     float deltaTime = 0.0f; // 시간 변수
     
     // =============================
-    // =============================
 
 
 
 
 
-
-    // =============================
+        
     // ==== 스테이지 클리어 UI =====
-    public static GameObject m_Stage_Clear_UI;
+    public GameObject m_Stage_Clear_UI;
     
     public Texture m_Activated_Star_Texture; // 활성화된 별 텍스쳐
     public Texture m_Deactivated_Star_Texture; // 비활성화된 별 텍스쳐
-    static bool m_is_Init_Star_Count = false;
+    //static bool m_is_Init_Star_Count = false;
 
     public RawImage m_Star_Image1;
     public RawImage m_Star_Image2;
     public RawImage m_Star_Image3;
     // =============================
-    // =============================
 
 
 
 
 
-
-    // =============================
+        
     // ===========미션 UI===========
     public Text[] m_MissionText;
 
@@ -87,28 +81,26 @@ public class UI : MonoBehaviour {
     
     int m_timeLimit = 0;
     int m_monsterKill = 0;
+    bool m_is_Goal = false;
+    bool m_is_Boss_Kill = false;
 
     List<Adventure_Quest_Data> m_QuestList; // 퀘스트 목록
-    // =============================
     // =============================
 
 
     
-    // =============================
     // ======== 게임오버 UI ========
     GameObject m_GameOver_UI;
-
-    // =============================
     // =============================
 
 
 
 
     // UI에 표시될 변수
-    public static int m_fire_count;
-    public static int m_releasable_bomb_count;
-    public static int m_speed_count;
-    public static int m_cur_Max_Bomb_Count;
+    public int m_fire_count;
+    public int m_releasable_bomb_count;
+    public int m_speed_count;
+    public int m_cur_Max_Bomb_Count;
 
     float time_Second;
 
@@ -121,23 +113,17 @@ public class UI : MonoBehaviour {
 
     void Awake()
     {
-        c_UI = this;
-        StageManager.c_Stage_Manager.Init_Left_Time();
+        m_Instance = this;
+        StageManager.GetInstance().Init_Left_Time();
         Application.targetFrameRate = 30;
     }
     
 
     void Start()
     {
-        // UIs initializing
-        m_Ingame_Play_UI = GameObject.FindGameObjectWithTag("Ingame_Play_UI");
-        m_Stage_Clear_UI = GameObject.FindGameObjectWithTag("Stage_Clear_UI");
         m_GameOver_UI = GetComponentInChildren<GameOver_UI>().gameObject;
         m_Option_UI = GameObject.FindGameObjectWithTag("Option_UI");
-
-        m_is_Init_Star_Count = false;
-
-        m_Stage_Clear_UI.SetActive(false);
+        
         m_Option_UI.SetActive(false);
         
         
@@ -155,7 +141,7 @@ public class UI : MonoBehaviour {
 
 
         m_QuestList = new List<Adventure_Quest_Data>();
-        StageManager.c_Stage_Manager.GetQuestList(ref m_QuestList);
+        StageManager.GetInstance().GetQuestList(ref m_QuestList);
 
 
         for (int i = 0; i < 3; ++i)
@@ -193,35 +179,11 @@ public class UI : MonoBehaviour {
 
     
 
-    // 게임 클리어/오버 화면 출력
-    public static void Draw_StageClearPage()
-    {
-        m_Ingame_Play_UI.SetActive(false);
-        m_Stage_Clear_UI.SetActive(true);
-    }
-
-
-    
-    // 획득 별 갯수 적용
-    void Star_Count_Apply()
-    {
-        for (int s = 1; s <= StageManager.c_Stage_Manager.Get_Star_Count(); ++s)
-        {
-            if (s == 1)
-                m_Star_Image1.texture = m_Activated_Star_Texture;
-            else if (s == 2)
-                m_Star_Image2.texture = m_Activated_Star_Texture;
-            else if (s == 3)
-                m_Star_Image3.texture = m_Activated_Star_Texture;
-        }
-    }
-    
-
     // 나가기 버튼
     public void StageClear_ExitButton()
     {
-        StageManager.c_Stage_Manager.Set_is_Pause(true);
-        StageManager.c_Stage_Manager.Destroy_Objects();
+        StageManager.GetInstance().Set_is_Pause(true);
+        StageManager.GetInstance().Destroy_Objects();
         GameObject.Find("Navigation_Plane").SetActive(false);
         if (LobbySound.instanceLS != null && PlayerPrefs.GetInt("System_Option_BGM_ON") != 0)
             LobbySound.instanceLS.SoundStart();
@@ -231,9 +193,9 @@ public class UI : MonoBehaviour {
     // 재시작 버튼
     public void StageClear_RestartButton()
     {
-        StageManager.c_Stage_Manager.Set_is_Pause(true);
+        StageManager.GetInstance().Set_is_Pause(true);
         GameObject.Find("Navigation_Plane").SetActive(false);
-        StageManager.c_Stage_Manager.Destroy_Objects();
+        StageManager.GetInstance().Destroy_Objects();
         SceneManager.LoadScene(3);
     }
     
@@ -319,16 +281,33 @@ public class UI : MonoBehaviour {
             }
             else if (m_QuestList[i].Quest_ID == 2) // 일반 몬스터 처치
             {
-                m_MissionText[i].text = m_QuestList[i].Quest_Script + " " + StageManager.c_Stage_Manager.Get_Left_Normal_Monster_Count().ToString() + " / " + m_monsterKill.ToString();
-                if (StageManager.c_Stage_Manager.Get_Left_Normal_Monster_Count() >= m_monsterKill)
+                m_MissionText[i].text = m_QuestList[i].Quest_Script + " " + StageManager.GetInstance().Get_Left_Normal_Monster_Count().ToString() + " / " + m_monsterKill.ToString();
+                if (StageManager.GetInstance().Get_Left_Normal_Monster_Count() >= m_monsterKill)
                     m_Mission_Star_Image2.texture = m_Activated_Star_Texture;
             }
             else // 목표도달, 보스 처치, 튜토리얼
+            {
                 m_MissionText[i].text = m_QuestList[i].Quest_Script;
+
+                if (m_is_Goal || m_is_Boss_Kill)
+                {
+                    m_Mission_Star_Image3.texture = m_Activated_Star_Texture;
+                }
+            }
         }
         
     }
 
+    public void Set_is_Goal(bool b)
+    {
+        m_is_Goal = b;
+        Mission_UI_Management();
+    }
+    public void Set_is_Boss_Kill(bool b)
+    {
+        m_is_Boss_Kill = b;
+        Mission_UI_Management();
+    }
 
     public void Kick_Icon_Activate()
     {
@@ -410,17 +389,18 @@ public class UI : MonoBehaviour {
 
     void Update()
     {
+        /*
         // 스테이지 클리어 후 별 갯수 적용
-        if (StageManager.c_Stage_Manager.Get_is_Stage_Clear() && !m_is_Init_Star_Count)
+        if (StageManager.GetInstance().Get_is_Stage_Clear() && !m_is_Init_Star_Count)
         {
             Star_Count_Apply();
             m_is_Init_Star_Count = true;
         }
+        */
 
-
-        if (!StageManager.c_Stage_Manager.Get_is_Pause())
+        if (!StageManager.GetInstance().Get_is_Pause())
         {
-            if (StageManager.c_Stage_Manager.Get_is_Intro_Over())
+            if (StageManager.GetInstance().Get_is_Intro_Over())
             {
                 // 시간 경과
                 if (time_Second > 0)
@@ -445,7 +425,7 @@ public class UI : MonoBehaviour {
             
             Throw_Button_Management(); // 던지기 버튼
 
-            StageManager.c_Stage_Manager.Summon_SuddenDeath_Glider();
+            StageManager.GetInstance().Summon_SuddenDeath_Glider();
 
             // 시간촉박 애니매이션 출력, 초기에는 애니매이션을 꺼놨다가 발동 -R
             if (time_Second < 15.0f)
@@ -462,19 +442,19 @@ public class UI : MonoBehaviour {
         }
     }
 
+    public void Stage_Clear_Directing()
+    {
+        m_Stage_Clear_UI.GetComponent<Stage_Clear>().Stage_Clear_Direction_Play(); // 스테이지 클리어 연출 발동
+    }
+
     public void GameOver_Directing()
     {
         m_GameOver_UI.SetActive(true);
         m_GameOver_UI.GetComponent<GameOver_UI>().GameOver_Direction_Play(); // 게임 오버 연출 발동
     }
     
-    // 인게임 UI 비활성화
-    public static void Ingame_Play_UI_Deactivate()
-    {
-        m_Ingame_Play_UI.SetActive(false);
-    }
     // 옵션 UI 비활성화
-    public static void Option_UI_Deactivate()
+    public void Option_UI_Deactivate()
     {
         m_Option_UI.SetActive(false);
     }
@@ -484,13 +464,13 @@ public class UI : MonoBehaviour {
     {
         //m_Ingame_Play_UI.SetActive(false);
         m_Option_UI.SetActive(true);
-        StageManager.c_Stage_Manager.Set_is_Pause(true);
+        StageManager.GetInstance().Set_is_Pause(true);
     }
 
     // 옵션의 Return 버튼 (게임으로 돌아가기)
     public void Option_Return_Button()
     {
-        StageManager.c_Stage_Manager.Set_is_Pause(false);
+        StageManager.GetInstance().Set_is_Pause(false);
         //m_Ingame_Play_UI.SetActive(true);
         m_Option_UI.SetActive(false);
     }
@@ -532,7 +512,7 @@ public class UI : MonoBehaviour {
 
     public void Set_Boss_HP_Bar(float curr_HP)
     {
-        float Max_HP = StageManager.c_Stage_Manager.Get_Boss_HP();
+        float Max_HP = StageManager.GetInstance().Get_Boss_HP();
         float unit = 100.0f / Max_HP;
         
         Vector3 newScale = new Vector3(1.0f, (curr_HP * unit) / 100.0f, 1.0f);

@@ -114,34 +114,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
 
         StartCoroutine(Do_Behavior());
 
-        // 보스 스테이지인지 판단하여 (StageManager에서 설정)
-        // 처음 실행할 모드 설정 및 그에 따른 스탯 설정
-        /*
-        if (StageManager.c_Stage_Manager.Get_is_Boss_Stage())
-        {
-            m_Current_Behavior = Wait_To_Intro();
-
-            Mode_Change(Boss_Mode.NORMAL_MODE);
-
-            m_BossRenderer = GetComponentsInChildren<SkinnedMeshRenderer>();
-            m_JetRenderer = GetComponentInChildren<MeshRenderer>();
-            //GetComponentInChildren<LineRenderer>().enabled = false; // 실선 표시기 비활성화
-            foreach (SkinnedMeshRenderer s in m_BossRenderer)
-                s.enabled = false;
-            m_JetRenderer.enabled = false;
-
-            StartCoroutine(Do_Behavior());
-        }
-
-        else
-        {
-            m_Current_Behavior = Behavior_Move();
-
-            Mode_Change(Boss_Mode.SUDDENDEATH_MODE);
-
-            StartCoroutine(Do_Behavior());
-        }
-        */
+        
     }
     
 
@@ -189,7 +162,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         {
             Think();
 
-            if (!StageManager.c_Stage_Manager.Get_is_Pause() && m_Current_Behavior != null && m_Current_Behavior.MoveNext())
+            if (!StageManager.GetInstance().Get_is_Pause() && m_Current_Behavior != null && m_Current_Behavior.MoveNext())
             {
                 yield return m_Current_Behavior.Current;
             }
@@ -208,7 +181,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         // 착륙 쿨타임이 다 차기 전까지는 계속 이동한다.
         while (m_Current_Landing_Cooltime < m_Total_Landing_Cooltime)
         {
-            if (StageManager.c_Stage_Manager.Get_is_Intro_Over())
+            if (StageManager.GetInstance().Get_is_Intro_Over())
             {
                 Move();
                 Drop_Bomb(); // 폭탄 투하
@@ -294,7 +267,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     {
         while (true)
         {
-            if (StageManager.c_Stage_Manager.Get_is_Intro_Over())
+            if (StageManager.GetInstance().Get_is_Intro_Over())
             {
                 m_Current_Behavior = m_Behavior_Move;
                 //GetComponentInChildren<LineRenderer>().enabled = true; // 실선 표시기 활성화
@@ -411,25 +384,25 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     // 몬스터 자신의 MCL 인덱스를 받아오는 함수
     void Find_My_Coord()
     {
-        if (StageManager.m_is_init_MCL)
+        if (StageManager.GetInstance().m_is_init_MCL)
         {
-            m_MCL_Index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
+            m_MCL_Index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
         }
     }
 
     // 자신의 MCL인덱스에 따른 올바른 위치로 이동
     void Set_Right_Position()
     {
-        if (StageManager.m_is_init_MCL)
+        if (StageManager.GetInstance().m_is_init_MCL)
         {
-            m_MCL_Index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
+            m_MCL_Index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
 
             if (m_MCL_Index != -1)
             {
                 Vector3 Loc;
-                Loc.x = StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_MCL_Index].x;
+                Loc.x = StageManager.GetInstance().m_Map_Coordinate_List[m_MCL_Index].x;
                 Loc.y = transform.position.y;
-                Loc.z = StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_MCL_Index].z;
+                Loc.z = StageManager.GetInstance().m_Map_Coordinate_List[m_MCL_Index].z;
                 transform.position = Loc;
             }
         }
@@ -523,9 +496,9 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         m_Health -= 20.0f;
         m_Boss_JetGoblin_Animator.SetTrigger("Hurt");
 
-        if (m_Health < 0.0f && StageManager.c_Stage_Manager.GetBossDead() == false)
+        if (m_Health < 0.0f && StageManager.GetInstance().GetBossDead() == false)
         {
-            StageManager.c_Stage_Manager.SetBossDead(true);
+            StageManager.GetInstance().SetBossDead(true);
 
             if (MusicManager.manage_ESound != null)
                 MusicManager.manage_ESound.Boss_Goblin_Dead_Sound();
@@ -539,7 +512,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     void Dead()
     {
         Destroy(gameObject);
-        StageManager.c_Stage_Manager.Stage_Clear(); // 보스를 잡으면 스테이지 클리어
+        StageManager.GetInstance().Stage_Clear(); // 보스를 잡으면 스테이지 클리어
     }
 
     // 폭탄 투하

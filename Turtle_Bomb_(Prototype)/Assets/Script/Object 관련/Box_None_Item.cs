@@ -2,18 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Box_None_Item : MonoBehaviour {
-
-    public bool m_is_Destroyed = false;
-    int index;
-
-    void Start()
-    {
-        // 최초 시작 시 박스 자신의 위치의 isBlocked를 true로 갱신
-        index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
-        StageManager.c_Stage_Manager.Update_MCL_isBlocked(index, true);
-    }
-
+public class Box_None_Item : Box {
 
     void OnTriggerEnter(Collider other)
     {
@@ -22,8 +11,8 @@ public class Box_None_Item : MonoBehaviour {
             m_is_Destroyed = true;
 
             // MCL 갱신
-            index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
-            StageManager.c_Stage_Manager.Update_MCL_isBlocked(index, false);
+            index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
+            StageManager.GetInstance().Update_MCL_isBlocked(index, false);
 
             // 화염 잔해 파괴
             Destroy(other.gameObject);

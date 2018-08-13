@@ -25,8 +25,6 @@ public class Bomb : MonoBehaviour
     List<GameObject> m_Range_W = new List<GameObject>();
     List<GameObject> m_Range_E = new List<GameObject>();
 
-    public static Bomb c_Bomb;
-
     int m_FlameCount;
 
     int m_My_MCL_Index = -1;
@@ -78,13 +76,11 @@ public class Bomb : MonoBehaviour
 
     void Start()
     {
-        m_My_MCL_Index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
-        StageManager.c_Stage_Manager.Update_MCL_isBlocked(m_My_MCL_Index, true);
-
-        c_Bomb = this;
-
+        m_My_MCL_Index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
+        StageManager.GetInstance().Update_MCL_isBlocked(m_My_MCL_Index, true);
+        
         if (m_Whose_Bomb_Type == WHOSE_BOMB.PLAYER)
-            m_FlameCount = UI.m_fire_count;
+            m_FlameCount = UI.GetInstance().m_fire_count;
         else if (m_Whose_Bomb_Type == WHOSE_BOMB.JETGOBLIN)
             m_FlameCount = Boss_AI_JetGoblin.c_JetGoblin.Get_Fire_Count();
 
@@ -104,7 +100,7 @@ public class Bomb : MonoBehaviour
 
     void Update()
     {
-        if (!StageManager.c_Stage_Manager.Get_is_Pause())
+        if (!StageManager.GetInstance().Get_is_Pause())
         {
             if (m_BombCountDown > 0.0f)
             {
@@ -208,10 +204,10 @@ public class Bomb : MonoBehaviour
             }
             else
             {
-                StageManager.c_Stage_Manager.Update_MCL_isBlocked(m_My_MCL_Index, false);
+                StageManager.GetInstance().Update_MCL_isBlocked(m_My_MCL_Index, false);
                 transform.Translate(new Vector3(0.0f, 0.0f, -2.0f));
-                m_My_MCL_Index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
-                StageManager.c_Stage_Manager.Update_MCL_isBlocked(m_My_MCL_Index, true);
+                m_My_MCL_Index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
+                StageManager.GetInstance().Update_MCL_isBlocked(m_My_MCL_Index, true);
 
                 m_Escape_Time = 0.0f;
             }
@@ -247,16 +243,16 @@ public class Bomb : MonoBehaviour
             for (int i = 1; i <= m_FlameCount; ++i)
             {
                 if (m_My_MCL_Index + i <= 288)
-                    m_Range_N[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
+                    m_Range_N[i - 1].transform.position = new Vector3(StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index + i].x, -0.7f, StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index + i].z);
 
                 if (m_My_MCL_Index - i >= 0)
-                    m_Range_S[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
+                    m_Range_S[i - 1].transform.position = new Vector3(StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index - i].x, -0.7f, StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index - i].z);
 
                 if (m_My_MCL_Index - 17 * i >= 0)
-                    m_Range_W[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
+                    m_Range_W[i - 1].transform.position = new Vector3(StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, -0.7f, StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
 
                 if (m_My_MCL_Index + 17 * i <= 288)
-                    m_Range_E[i - 1].transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, -0.7f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
+                    m_Range_E[i - 1].transform.position = new Vector3(StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, -0.7f, StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
             }
         }
     }
@@ -290,7 +286,7 @@ public class Bomb : MonoBehaviour
                 {
                     if (m_My_MCL_Index + i <= 288)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + i) == false)
+                        if (StageManager.GetInstance().Get_MCL_index_is_Blocked(m_My_MCL_Index + i) == false)
                         {
                             m_Range_N[i - 1].SetActive(true);
                         }
@@ -306,7 +302,7 @@ public class Bomb : MonoBehaviour
                 {
                     if (m_My_MCL_Index - i >= 0)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - i) == false)
+                        if (StageManager.GetInstance().Get_MCL_index_is_Blocked(m_My_MCL_Index - i) == false)
                         {
                             m_Range_S[i - 1].SetActive(true);
                         }
@@ -322,7 +318,7 @@ public class Bomb : MonoBehaviour
                 {
                     if (m_My_MCL_Index - 17 * i >= 0)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - 17 * i) == false)
+                        if (StageManager.GetInstance().Get_MCL_index_is_Blocked(m_My_MCL_Index - 17 * i) == false)
                         {
                             m_Range_W[i - 1].SetActive(true);
                         }
@@ -338,7 +334,7 @@ public class Bomb : MonoBehaviour
                 {
                     if (m_My_MCL_Index + 17 * i <= 288)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + 17 * i) == false)
+                        if (StageManager.GetInstance().Get_MCL_index_is_Blocked(m_My_MCL_Index + 17 * i) == false)
                         {
                             m_Range_E[i - 1].SetActive(true);
                         }
@@ -363,9 +359,9 @@ public class Bomb : MonoBehaviour
     // 터졌을 때
     void OnDestroy()
     {
-        if (!StageManager.c_Stage_Manager.Get_Game_Over()) // 게임이 안끝났으면
+        if (!StageManager.GetInstance().Get_Game_Over()) // 게임이 안끝났으면
         {
-            if (!StageManager.c_Stage_Manager.Get_is_Map_Changing() && !m_is_Thrown_Bomb_Moving)
+            if (!StageManager.GetInstance().Get_is_Map_Changing() && !m_is_Thrown_Bomb_Moving)
             {
                 // 폭발 사운드 출력
                 if (MusicManager.manage_ESound != null)
@@ -413,66 +409,66 @@ public class Bomb : MonoBehaviour
 
                     if (!m_Blocked_N)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + i) == false)
+                        if (StageManager.GetInstance().Get_MCL_index_is_Blocked(m_My_MCL_Index + i) == false)
                         {
                             Instance_FlameDir_N = Instantiate(m_Flame);
-                            Instance_FlameDir_N.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
+                            Instance_FlameDir_N.transform.position = new Vector3(StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index + i].x, 0.0f, StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index + i].z);
                         }
                         else
                         {
                             m_Blocked_N = true;
                             GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
-                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + i].z);
+                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index + i].x, 0.0f, StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index + i].z);
                         }
                     }
 
                     if (!m_Blocked_S)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - i) == false)
+                        if (StageManager.GetInstance().Get_MCL_index_is_Blocked(m_My_MCL_Index - i) == false)
                         {
                             Instance_FlameDir_S = Instantiate(m_Flame);
-                            Instance_FlameDir_S.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
+                            Instance_FlameDir_S.transform.position = new Vector3(StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index - i].x, 0.0f, StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index - i].z);
                         }
                         else
                         {
                             m_Blocked_S = true;
                             GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
-                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - i].z);
+                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index - i].x, 0.0f, StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index - i].z);
                         }
                     }
 
                     if (!m_Blocked_W)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index - 17 * i) == false)
+                        if (StageManager.GetInstance().Get_MCL_index_is_Blocked(m_My_MCL_Index - 17 * i) == false)
                         {
                             Instance_FlameDir_W = Instantiate(m_Flame);
-                            Instance_FlameDir_W.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
+                            Instance_FlameDir_W.transform.position = new Vector3(StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, 0.0f, StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
                         }
                         else
                         {
                             m_Blocked_W = true;
                             GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
-                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
+                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].x, 0.0f, StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index - 17 * i].z);
                         }
                     }
                     if (!m_Blocked_E)
                     {
-                        if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(m_My_MCL_Index + 17 * i) == false)
+                        if (StageManager.GetInstance().Get_MCL_index_is_Blocked(m_My_MCL_Index + 17 * i) == false)
                         {
                             Instance_FlameDir_E = Instantiate(m_Flame);
-                            Instance_FlameDir_E.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
+                            Instance_FlameDir_E.transform.position = new Vector3(StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, 0.0f, StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
                         }
                         else
                         {
                             m_Blocked_E = true;
                             GameObject Instance_Flame_Remains = Instantiate(m_Flame_Remains);
-                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, 0.0f, StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
+                            Instance_Flame_Remains.transform.position = new Vector3(StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].x, 0.0f, StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index + 17 * i].z);
                         }
                     }
                 }
 
                 // MCL 갱신
-                StageManager.c_Stage_Manager.Update_MCL_isBlocked(m_My_MCL_Index, false);
+                StageManager.GetInstance().Update_MCL_isBlocked(m_My_MCL_Index, false);
             }
 
 
@@ -622,7 +618,7 @@ public class Bomb : MonoBehaviour
             || transform.position.z < 49.5f || transform.position.z > 78.5f)
         {
             // 맵 범위 밖으로 나가면 제거
-            StageManager.c_Stage_Manager.Update_MCL_isBlocked(m_My_MCL_Index, false);
+            StageManager.GetInstance().Update_MCL_isBlocked(m_My_MCL_Index, false);
             Destroy(gameObject);
         }
     }
@@ -635,19 +631,19 @@ public class Bomb : MonoBehaviour
     // 폭탄의 위치와 MCL, 범위 오브젝트의 위치를 Update
     void Bomb_MCL_And_Position_Update()
     {
-        StageManager.c_Stage_Manager.Update_MCL_isBlocked(m_My_MCL_Index, false);
-        m_My_MCL_Index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
+        StageManager.GetInstance().Update_MCL_isBlocked(m_My_MCL_Index, false);
+        m_My_MCL_Index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
 
         if (m_My_MCL_Index != -1)
         {
             Vector3 Loc;
-            Loc.x = StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index].x;
+            Loc.x = StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index].x;
             Loc.y = transform.position.y;
-            Loc.z = StageManager.c_Stage_Manager.m_Map_Coordinate_List[m_My_MCL_Index].z;
+            Loc.z = StageManager.GetInstance().m_Map_Coordinate_List[m_My_MCL_Index].z;
             transform.position = Loc;
         }
 
-        StageManager.c_Stage_Manager.Update_MCL_isBlocked(m_My_MCL_Index, true);
+        StageManager.GetInstance().Update_MCL_isBlocked(m_My_MCL_Index, true);
 
         if (m_Range_Base)
             Explosion_Range_Pos_Update();

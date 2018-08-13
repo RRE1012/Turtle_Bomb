@@ -11,7 +11,7 @@ public class Airdrop_Item : MonoBehaviour {
 
     void Update()
     {
-        if (!StageManager.c_Stage_Manager.Get_is_Pause())
+        if (!StageManager.GetInstance().Get_is_Pause())
         {
             Rising();
             floating();

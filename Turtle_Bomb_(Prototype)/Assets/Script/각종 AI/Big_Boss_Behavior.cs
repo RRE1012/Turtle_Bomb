@@ -149,7 +149,7 @@ public class Big_Boss_Behavior : MonoBehaviour
         m_Attack_Range_UI = transform.Find("Attack_Range_UI");
         m_Attack_Range_UI.gameObject.SetActive(false);
 
-        m_Boss_Data = StageManager.c_Stage_Manager.Get_Adventure_Boss_Data();
+        m_Boss_Data = StageManager.GetInstance().Get_Adventure_Boss_Data();
 
 
         Base_Position = transform.position;
@@ -231,7 +231,7 @@ public class Big_Boss_Behavior : MonoBehaviour
     {
         while (true)
         {
-            if (!StageManager.c_Stage_Manager.Get_is_Pause())
+            if (!StageManager.GetInstance().Get_is_Pause())
             {
                 Think();
 
@@ -250,7 +250,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
             else
             {
-                if (StageManager.c_Stage_Manager.Get_is_Intro_Over() && m_NavPlane.activeSelf)
+                if (StageManager.GetInstance().Get_is_Intro_Over() && m_NavPlane.activeSelf)
                     m_NVAgent.isStopped = true;
                 yield return null;
             }
@@ -329,7 +329,7 @@ public class Big_Boss_Behavior : MonoBehaviour
     {
         while (true)
         {
-            if (StageManager.c_Stage_Manager.Get_is_Intro_Over() && !StageManager.c_Stage_Manager.Get_Game_Over())
+            if (StageManager.GetInstance().Get_is_Intro_Over() && !StageManager.GetInstance().Get_Game_Over())
             {
                 if (m_Attack_is_Done)
                 {
@@ -595,13 +595,13 @@ public class Big_Boss_Behavior : MonoBehaviour
                         while (true) // 루프를 돌면서 지형 탐색
                         {
                             index = Random.Range(17, 271); // 맵 범위
-                            if (!StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(index)) // 막혀있지 않으면
+                            if (!StageManager.GetInstance().Get_MCL_index_is_Blocked(index)) // 막혀있지 않으면
                                 break; // 탈출
                         }
                         
                         pos.x = 0.0f;
                         pos.z = 0.0f;
-                        StageManager.c_Stage_Manager.Get_MCL_Coordinate(index, ref pos.x, ref pos.z);
+                        StageManager.GetInstance().Get_MCL_Coordinate(index, ref pos.x, ref pos.z);
 
                         GameObject temp = Instantiate(m_Normal_Monster_Portal);
                         temp.transform.position = pos; // 설정한 위치에 포탈 소환
@@ -650,7 +650,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                         
                         pos.x = 0.0f;
                         pos.z = 0.0f;
-                        StageManager.c_Stage_Manager.Get_MCL_Coordinate(index, ref pos.x, ref pos.z);
+                        StageManager.GetInstance().Get_MCL_Coordinate(index, ref pos.x, ref pos.z);
 
                         GameObject temp = Instantiate(m_Glider_Goblin);
                         temp.transform.position = pos; // 설정한 위치에 글라이더 소환
@@ -704,14 +704,14 @@ public class Big_Boss_Behavior : MonoBehaviour
                             range_Z = Random.Range(transform.position.z - m_Flame_Crash_Range, transform.position.z + m_Flame_Crash_Range); // 소환 위치 (Z값)
                             if (range_X < -1.0f || range_X > 29.0f || range_Z < 49.0f || range_Z > 79.0f) // 맵을 벗어나면 다시
                                 continue;
-                            index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(range_X, range_Z);
-                            if (!StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(index)) // 막혀있지 않으면 탈출
+                            index = StageManager.GetInstance().Find_Own_MCL_Index(range_X, range_Z);
+                            if (!StageManager.GetInstance().Get_MCL_index_is_Blocked(index)) // 막혀있지 않으면 탈출
                                 break;
                         }
                         
                         pos.x = 0.0f;
                         pos.z = 0.0f;
-                        StageManager.c_Stage_Manager.Get_MCL_Coordinate(index, ref pos.x, ref pos.z);
+                        StageManager.GetInstance().Get_MCL_Coordinate(index, ref pos.x, ref pos.z);
 
                         Instantiate(m_Flame_Crash_Portal).transform.position = pos; // 설정한 위치에 화염 마법진 소환
                         
@@ -767,7 +767,7 @@ public class Big_Boss_Behavior : MonoBehaviour
         if (m_Health - m_Boss_Data.Bomb_Damage > 0)
         {
             m_Health -= m_Boss_Data.Bomb_Damage;
-            UI.c_UI.Set_Boss_HP_Bar(m_Health);
+            UI.GetInstance().Set_Boss_HP_Bar(m_Health);
 
             SetAnimation(Boss_Animation_Num.HURT);
             m_Current_Behavior = m_Null_Behavior;
@@ -797,9 +797,10 @@ public class Big_Boss_Behavior : MonoBehaviour
     // 죽음
     void Dead()
     {
-        StageManager.c_Stage_Manager.SetBossDead(true);
+        UI.GetInstance().Set_is_Boss_Kill(true);
+        StageManager.GetInstance().SetBossDead(true);
         Destroy(gameObject);
-        StageManager.c_Stage_Manager.Stage_Clear(); // 보스를 잡으면 스테이지 클리어
+        StageManager.GetInstance().Stage_Clear(); // 보스를 잡으면 스테이지 클리어
     }
 
 
@@ -830,7 +831,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                 m_Attack_Speed_Slow = 0.4f; // 슬로우 모션 공격속도 설정
                 m_Attack_Speed = 2.5f; // 진짜 공격속도 설정
 
-                UI.c_UI.Set_Boss_HP_Character();
+                UI.GetInstance().Set_Boss_HP_Character();
                 // 1. 버프스킬 지속시간 증가
                 // 2. 피격 가능 시간 축소
                 break;
@@ -850,8 +851,8 @@ public class Big_Boss_Behavior : MonoBehaviour
 
     bool is_Blocked_Between_Target_And_Me() // 타겟과 나 사이에 장애물이 있는가?
     {
-        return StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked (
-            StageManager.c_Stage_Manager.Find_Own_MCL_Index (
+        return StageManager.GetInstance().Get_MCL_index_is_Blocked (
+            StageManager.GetInstance().Find_Own_MCL_Index (
                 (m_Target.transform.position.x + transform.position.x) / 2.0f, 
                 (m_Target.transform.position.z + transform.position.z) / 2.0f
             ) );

@@ -1,4 +1,4 @@
-ID,Description,Use_Terrain,Use_TileGroup,Stage_Time,AirDrop_Time,Number_Of_DropItem,SuddenDeath_Time,Number_Of_GliderGoblin,GliderGoblin_Bomb,GliderGoblin_Fire,Adventure_Quest_ID_List,Adventure_Quest_ID_List,Adventure_Quest_ID_List,Stage_Pattern_ID_List,Stage_Pattern_ID_List,Stage_Pattern_ID_List
+﻿ID,Description,Use_Terrain,Use_TileGroup,Stage_Time,AirDrop_Time,Number_Of_DropItem,SuddenDeath_Time,Number_Of_GliderGoblin,GliderGoblin_Bomb,GliderGoblin_Fire,Adventure_Quest_ID_List,Adventure_Quest_ID_List,Adventure_Quest_ID_List,Stage_Pattern_ID_List,Stage_Pattern_ID_List,Stage_Pattern_ID_List
 all,design,client,client,client,client,client,client,client,client,client,0,1,2,0,1,2
 int32,string,int32,int32,int32,int32,int32,int32,int32,int32,int32,array<int32>,array<int32>,array<int32>,array<int32>,array<int32>,array<int32>
 0,tutorial,1,1,120,121,0,121,0,0,0,28,28,28,18,0,0

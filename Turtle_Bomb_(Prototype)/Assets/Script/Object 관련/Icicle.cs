@@ -30,7 +30,7 @@ public class Icicle : MonoBehaviour
         m_Up_Checker = Perfectly_Up_Check();
         m_Down_Checker = Perfectly_Down_Check();
 
-        m_MCL_Index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z); // 인덱스 찾기
+        m_MCL_Index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z); // 인덱스 찾기
         
     }
 
@@ -71,7 +71,7 @@ public class Icicle : MonoBehaviour
         {
             if (m_Animations["icicle_Down"].normalizedTime >= 0.9f) // 거의 완전히 내려가면
             {
-                StageManager.c_Stage_Manager.Update_MCL_isBlocked(m_MCL_Index, false); // 열어줌.
+                StageManager.GetInstance().Update_MCL_isBlocked(m_MCL_Index, false); // 열어줌.
                 StopCoroutine(m_Down_Checker); // '완전히 내려갔는지 체크' 일시정지
             }
 
@@ -86,7 +86,7 @@ public class Icicle : MonoBehaviour
     void Icicle_Up()
     {
         m_Animations.Play(m_Animations.GetClip("icicle_Up").name);
-        StageManager.c_Stage_Manager.Update_MCL_isBlocked(m_MCL_Index, true); // 고드름이 올라가기 시작하면 막아줌.
+        StageManager.GetInstance().Update_MCL_isBlocked(m_MCL_Index, true); // 고드름이 올라가기 시작하면 막아줌.
         StartCoroutine(m_Up_Checker); // '올라가는 과정 체크' 시작
     }
     void Icicle_Down()

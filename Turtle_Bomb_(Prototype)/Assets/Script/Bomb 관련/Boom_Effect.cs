@@ -9,7 +9,7 @@ public class Boom_Effect : MonoBehaviour {
     	
 	void Update ()
     {
-        if (!StageManager.c_Stage_Manager.Get_is_Pause())
+        if (!StageManager.GetInstance().Get_is_Pause())
         {
             if (m_TimeCount < m_TotalLifeTime)
             {

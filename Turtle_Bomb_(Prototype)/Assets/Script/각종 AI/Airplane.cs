@@ -29,7 +29,7 @@ public class Airplane : MonoBehaviour
 
         StartCoroutine(Wait_For_Intro());
 
-        m_Airdrop_Time = StageManager.c_Stage_Manager.Get_AirDrop_Time();
+        m_Airdrop_Time = StageManager.GetInstance().Get_AirDrop_Time();
     }
 
     IEnumerator AirDrop()
@@ -45,7 +45,7 @@ public class Airplane : MonoBehaviour
                     while (true) // 루프를 돌면서 지형 탐색
                     {
                         index = Random.Range(17, 271); // 맵 범위
-                        if (!StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(index)) // 막혀있지 않으면
+                        if (!StageManager.GetInstance().Get_MCL_index_is_Blocked(index)) // 막혀있지 않으면
                             break; // 탈출
                     }
 
@@ -53,7 +53,7 @@ public class Airplane : MonoBehaviour
                     pos.x = 0.0f;
                     pos.y = 15.0f;
                     pos.z = 0.0f;
-                    StageManager.c_Stage_Manager.Get_MCL_Coordinate(index, ref pos.x, ref pos.z);
+                    StageManager.GetInstance().Get_MCL_Coordinate(index, ref pos.x, ref pos.z);
 
                     Instantiate(Airdrop_Item).transform.position = pos; // 설정한 위치에 아이템 투하
                 }
@@ -69,7 +69,7 @@ public class Airplane : MonoBehaviour
     {
         while(true)
         {
-            if (UI.c_UI.Get_Elapsed_Time() >= m_Airdrop_Time)
+            if (UI.GetInstance().Get_Elapsed_Time() >= m_Airdrop_Time)
             {
                 Dispatch_Airplane();
             }
@@ -81,7 +81,7 @@ public class Airplane : MonoBehaviour
     {
         while(true)
         {
-            if (StageManager.c_Stage_Manager.Get_is_Intro_Over())
+            if (StageManager.GetInstance().Get_is_Intro_Over())
             {
                 StopAllCoroutines();
                 StartCoroutine(m_Time_Checker);

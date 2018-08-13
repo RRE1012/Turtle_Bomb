@@ -119,21 +119,7 @@ public class CSV_Manager : MonoBehaviour {
         instance = this;
     }
 
-
-    // CSV 파일의 행 개수를 세어주는 함수
-    int Counting_EOF(TextAsset csv)
-    {
-        StringReader m_stringReader = new StringReader(csv.text);
-        string m_string_Line = m_stringReader.ReadLine();
-        int count = 0;
-
-        while (m_string_Line != null)
-        {
-            m_string_Line = m_stringReader.ReadLine();
-            ++count;
-        }
-        return count;
-    }
+    
 
 
 
@@ -145,17 +131,13 @@ public class CSV_Manager : MonoBehaviour {
     public void Get_Adventure_Quest_List(ref List<Adventure_Quest_Data> list, ref int[] mission_list)
     {
         Adventure_Quest_Data data = new Adventure_Quest_Data();
-
-        // csv 파일의 길이를 세어준다.
-        int file_Line_Count = Counting_EOF(m_Adventure_Quest_csvFile);
-
-        m_Read_Text = m_Adventure_Quest_csvFile.text;
-        m_stringList = m_Read_Text.Split('\n');
+        
+        m_stringList = m_Adventure_Quest_csvFile.text.Split('\n');
 
         list.Clear();
 
         // 3 부터 시작
-        for (int i = 3; i < file_Line_Count; ++i)
+        for (int i = 3; i < m_stringList.Length; ++i)
         {
             m_data = m_stringList[i].Split(',');
 
@@ -185,13 +167,10 @@ public class CSV_Manager : MonoBehaviour {
     {
         Object_Table_Data data = new Object_Table_Data();
         List<Object_Table_Data> List = new List<Object_Table_Data>();
-
-        int file_Line_Count = Counting_EOF(m_Object_Table_csvFile);
         
-        m_Read_Text = m_Object_Table_csvFile.text;
-        m_stringList = m_Read_Text.Split('\n');
+        m_stringList = m_Object_Table_csvFile.text.Split('\n');
 
-        for (int i = 3; i < file_Line_Count; ++i)
+        for (int i = 3; i < m_stringList.Length; ++i)
         {
             m_data = m_stringList[i].Split(',');
             data.ID = System.Convert.ToInt32(m_data[0]);
@@ -208,15 +187,12 @@ public class CSV_Manager : MonoBehaviour {
     public void Get_Object_Spawn_Position_List(ref List<Object_Spawn_Position_Data> list, int stage_id)
     {
         Object_Spawn_Position_Data data;
-
-        int file_Line_Count = Counting_EOF(m_Object_Spawn_Table_csvFile);
         
-        m_Read_Text = m_Object_Spawn_Table_csvFile.text;
-        m_stringList = m_Read_Text.Split('\n');
+        m_stringList = m_Object_Spawn_Table_csvFile.text.Split('\n');
 
         list.Clear();
         
-        for (int i = 3; i < file_Line_Count; ++i)
+        for (int i = 3; i < m_stringList.Length; ++i)
         {
             m_data = m_stringList[i].Split(',');
 
@@ -243,14 +219,10 @@ public class CSV_Manager : MonoBehaviour {
         List<string> script_List = new List<string>();
         string temp = "";
         string temp2 = "";
-
-        // csv 파일의 길이를 세어준다.
-        int file_Line_Count = Counting_EOF(m_Script_Table_csvFile);
-
-        m_Read_Text = m_Script_Table_csvFile.text;
-        m_stringList = m_Read_Text.Split('\n');
         
-        for (int i = 3; i < file_Line_Count; ++i)
+        m_stringList = m_Script_Table_csvFile.text.Split('\n');
+        
+        for (int i = 3; i < m_stringList.Length; ++i)
         {
             m_data = m_stringList[i].Split(',');
             if (scriptID == System.Convert.ToInt32(m_data[0]))
@@ -282,12 +254,9 @@ public class CSV_Manager : MonoBehaviour {
     // 보스 테이블
     public void Get_Adventure_Boss_Data(ref Adventure_Boss_Data Boss_Data_Structure, int objectNum)
     {
-        int file_Line_Count = Counting_EOF(m_Stage_Table_csvFile);
+        m_stringList = m_Adventure_Boss_Table_csvFile.text.Split('\n');
 
-        m_Read_Text = m_Adventure_Boss_Table_csvFile.text;
-        m_stringList = m_Read_Text.Split('\n');
-
-        for (int i = 3; i < file_Line_Count; ++i)
+        for (int i = 3; i < m_stringList.Length; ++i)
         {
             m_data = m_stringList[i].Split(','); // 한 줄씩 읽기
             if (objectNum == System.Convert.ToInt32(m_data[0])) // id는 오브젝트 테이블의 번호가 아닌 보스 테이블의 번호임!
@@ -311,10 +280,7 @@ public class CSV_Manager : MonoBehaviour {
     // 스테이지 테이블
     public void Get_Adventure_Stage_Data(ref Adventure_Stage_Data Stage_Data_Structure, int stage_ID)
     {
-        int file_Line_Count = Counting_EOF(m_Stage_Table_csvFile);
-
-        m_Read_Text = m_Stage_Table_csvFile.text;
-        m_stringList = m_Read_Text.Split('\n');
+        m_stringList = m_Stage_Table_csvFile.text.Split('\n');
 
         m_data = m_stringList[3 + stage_ID].Split(',');
 
@@ -342,34 +308,27 @@ public class CSV_Manager : MonoBehaviour {
     // 스테이지별 퀘스트 번호만 받아오기 (PlayerPref용)
     public void Get_Adv_Mission_Num_List(ref int[] list, int stage_ID)
     {
-        int file_Line_Count = Counting_EOF(m_Stage_Table_csvFile);
-
-        m_Read_Text = m_Stage_Table_csvFile.text;
-        m_stringList = m_Read_Text.Split('\n');
-
+        m_stringList = m_Stage_Table_csvFile.text.Split('\n');
+        if (stage_ID >= 10) stage_ID += -9;
         m_data = m_stringList[3 + stage_ID].Split(',');
-
+        
         for (int i = 0; i < 3; ++i)
         {
-            if (m_data[9 + i] != "0") // 빈칸이 아니면
-                list[i] = System.Convert.ToInt32(m_data[9 + i]);
+            if (m_data[11 + i] != "0") // 빈칸이 아니면
+                list[i] = System.Convert.ToInt32(m_data[11 + i]);
         }
     }
 
     // 구현된 퀘스트의 마지막 번호를 받아오기 (PlayerPref용)
     public void Get_Adv_Max_Mission_Num(ref int max_num)
     {
-        int file_Line_Count = Counting_EOF(m_Adventure_Quest_csvFile);
-
-        m_Read_Text = m_Adventure_Quest_csvFile.text;
-        m_stringList = m_Read_Text.Split('\n');
+        m_stringList = m_Adventure_Quest_csvFile.text.Split('\n');
 
         int num = 0;
 
-        for (int i = 3; i < file_Line_Count; ++i)
+        for (int i = 3; i < m_stringList.Length; ++i)
         {
             m_data = m_stringList[i].Split(',');
-
             if (System.Convert.ToInt32(m_data[0]) > num)
                 num = System.Convert.ToInt32(m_data[0]);
         }
@@ -380,15 +339,12 @@ public class CSV_Manager : MonoBehaviour {
     // 구현된 스테이지의 마지막 번호를 받아오기 (PlayerPref용)
     public void Get_Adv_Max_Stage_Num(ref int max_num, ref int max_num_for_Load)
     {
-        int file_Line_Count = Counting_EOF(m_Stage_Table_csvFile);
-
-        m_Read_Text = m_Stage_Table_csvFile.text;
-        m_stringList = m_Read_Text.Split('\n');
+        m_stringList = m_Stage_Table_csvFile.text.Split('\n');
 
         int max = 0;
         int max_for_Load = 0;
 
-        for (int i = 3; i < file_Line_Count; ++i)
+        for (int i = 3; i < m_stringList.Length; ++i)
         {
             m_data = m_stringList[i].Split(',');
 
@@ -417,12 +373,10 @@ public class CSV_Manager : MonoBehaviour {
     // 보스 AI 데이터
     public void Get_Adventure_Big_Boss_AI_Data(ref Adventure_Big_Boss_Normal_Mode_AI_Data normal, ref Adventure_Big_Boss_Angry_Mode_AI_Data angry, ref Adventure_Big_Boss_Groggy_Mode_AI_Data groggy)
     {
-        int file_Line_Count = Counting_EOF(m_Adventure_Boss_AI_csvFile);
         string tmpStr = "";
-        m_Read_Text = m_Adventure_Boss_AI_csvFile.text;
-        m_stringList = m_Read_Text.Split('\n');
+        m_stringList = m_Adventure_Boss_AI_csvFile.text.Split('\n');
 
-        for (int i = 3; i < file_Line_Count; ++i)
+        for (int i = 3; i < m_stringList.Length; ++i)
         {
             m_data = m_stringList[i].Split(','); // 한 줄 읽어서 ','로 분해
 

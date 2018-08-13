@@ -18,13 +18,13 @@ public class Box : MonoBehaviour {
     GameObject m_IcicleCollider = null; // 고드름 바닥 충돌체
 
     public bool m_is_Destroyed = false;
-    int index;
+    protected int index;
 
     void Start()
     {
         // 최초 시작 시 박스 자신의 위치의 isBlocked를 true로 갱신
-        index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
-        StageManager.c_Stage_Manager.Update_MCL_isBlocked(index, true);
+        index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
+        StageManager.GetInstance().Update_MCL_isBlocked(index, true);
     }
 
     void OnDestroy()
@@ -47,8 +47,8 @@ public class Box : MonoBehaviour {
             m_is_Destroyed = true;
 
             // MCL 갱신
-            index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(transform.position.x, transform.position.z);
-            StageManager.c_Stage_Manager.Update_MCL_isBlocked(index, false);
+            index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
+            StageManager.GetInstance().Update_MCL_isBlocked(index, false);
             
             SetItem(); // 아이템 생성
 

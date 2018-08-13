@@ -25,12 +25,14 @@ public class Front_Collider : MonoBehaviour {
         {
             Vector3 tmpPosition;
             tmpPosition = other.gameObject.transform.position + transform.forward * 1.2f;
-            int index = StageManager.c_Stage_Manager.Find_Own_MCL_Index(tmpPosition.x, tmpPosition.z);
+            int index = StageManager.GetInstance().Find_Own_MCL_Index(tmpPosition.x, tmpPosition.z);
             if (index != -1)
             {
-                if (StageManager.c_Stage_Manager.Get_MCL_index_is_Blocked(index) == false)
+                if (StageManager.GetInstance().Get_MCL_index_is_Blocked(index) == false)
                 {
                     m_Player.m_Front_Box = other.gameObject;
+                    if (other.GetComponent<Box>() == null)
+                        other.GetComponent<Box_None_Item>().Save_Player_Front_Collider(gameObject);
                     other.GetComponent<Box>().Save_Player_Front_Collider(gameObject);
                     m_Player.m_isBoxSelected = true;
                     m_Player.m_isAbleToPush = true;

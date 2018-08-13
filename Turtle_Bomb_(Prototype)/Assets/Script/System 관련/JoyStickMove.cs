@@ -89,7 +89,7 @@ public class JoyStickMove : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
     {
         if (Input.GetTouch(0).phase == TouchPhase.Began) // 첫번째 터치가 시작될 때
         {
-            if (UI.c_UI.Get_isClicked()) // 회전이 먼저면
+            if (UI.GetInstance().Get_isClicked()) // 회전이 먼저면
                 return false; // false 리턴
         }
 
