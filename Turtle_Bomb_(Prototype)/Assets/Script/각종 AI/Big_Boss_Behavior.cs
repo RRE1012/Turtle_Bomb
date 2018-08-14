@@ -180,14 +180,21 @@ public class Big_Boss_Behavior : MonoBehaviour
         
         ModeChange(Boss_Mode_List.NORMAL_MODE); // 최초 시작시 노말모드로 시작
 
-		Invoke ("Wait_a_Second", 2.0f);
+        StartCoroutine(Wait_For_Intro());
     }
 
-
-	void Wait_a_Second ()
-	{
-		StartCoroutine(m_Do_Behavior);
-	}
+    IEnumerator Wait_For_Intro()
+    {
+        while(true)
+        {
+            if (StageManager.GetInstance().Get_is_Intro_Over())
+            {
+                StopAllCoroutines();
+                StartCoroutine(m_Do_Behavior);
+            }
+            yield return null;
+        }
+    }
 
 
     void OnTriggerEnter(Collider other)
@@ -250,7 +257,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
             else
             {
-                if (StageManager.GetInstance().Get_is_Intro_Over() && m_NavPlane.activeSelf)
+                if (m_NavPlane.activeSelf)
                     m_NVAgent.isStopped = true;
                 yield return null;
             }
@@ -329,7 +336,7 @@ public class Big_Boss_Behavior : MonoBehaviour
     {
         while (true)
         {
-            if (StageManager.GetInstance().Get_is_Intro_Over() && !StageManager.GetInstance().Get_Game_Over())
+            if (!StageManager.GetInstance().Get_Game_Over())
             {
                 if (m_Attack_is_Done)
                 {

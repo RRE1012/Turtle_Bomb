@@ -72,6 +72,8 @@ public class PlayerMove : MonoBehaviour {
         m_Player_Mesh_Renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
 
         StageManager.GetInstance().Set_is_Player_Alive(true);
+
+        StartCoroutine(Wait_For_Intro());
     }
 
     public void Player_Set_Start_Point(Vector3 p)
@@ -79,16 +81,33 @@ public class PlayerMove : MonoBehaviour {
         transform.position = p; // 플레이어 위치를 시작지점으로 옮긴다.
     }
 
-    void Update ()
+    IEnumerator Wait_For_Intro()
     {
-        if (!StageManager.GetInstance().Get_is_Pause() && StageManager.GetInstance().Get_is_Intro_Over())
+        while(true)
         {
-            GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 0.0f);
+            if (StageManager.GetInstance().Get_is_Intro_Over())
+            {
+                StopAllCoroutines();
+                StartCoroutine(Player_Update());
+            }
+            yield return null;
+        }
+    }
 
-            if (!m_isPushing)
-                Move();
-            else
-                Pushing();
+    IEnumerator Player_Update()
+    {
+        while(true)
+        {
+            if (!StageManager.GetInstance().Get_is_Pause())
+            {
+                GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 0.0f);
+
+                if (!m_isPushing)
+                    Move();
+                else
+                    Pushing();
+            }
+            yield return null;
         }
     }
 
@@ -414,7 +433,7 @@ public class PlayerMove : MonoBehaviour {
 
     public void SetBomb() // 폭탄 설치
     {
-        if (UI.GetInstance().m_releasable_bomb_count > 0 && StageManager.GetInstance().Get_is_Intro_Over())
+        if (UI.GetInstance().m_releasable_bomb_count > 0 && StageManager.GetInstance().Get_is_Intro_Over() && !StageManager.GetInstance().Get_is_Pause())
         {
             m_Bombindex_X = (int)transform.position.x;
             m_Bombindex_Z = (int)transform.position.z;
@@ -512,7 +531,7 @@ public class PlayerMove : MonoBehaviour {
 
     public void Crouch() // 플레이어 숙이기
     {
-        if(StageManager.GetInstance().Get_is_Intro_Over() && !m_isPress_LShift)
+        if(!m_isPress_LShift && StageManager.GetInstance().Get_is_Intro_Over() && StageManager.GetInstance().Get_is_Pause())
         {
             if (CrouchButton.m_isClicked)
             {
@@ -535,7 +554,7 @@ public class PlayerMove : MonoBehaviour {
     
     public void BoxPush() // 박스 밀기 시작
     {
-        if (m_isBoxSelected && m_isAbleToPush && StageManager.GetInstance().Get_is_Intro_Over())
+        if (m_isBoxSelected && m_isAbleToPush && StageManager.GetInstance().Get_is_Intro_Over() && !StageManager.GetInstance().Get_is_Pause())
         {
             // 플레이어 위치 변환
 

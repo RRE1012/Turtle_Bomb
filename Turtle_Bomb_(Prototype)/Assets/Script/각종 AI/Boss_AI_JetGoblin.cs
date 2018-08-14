@@ -111,13 +111,19 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         m_Current_Behavior = Behavior_Move();
 
         Mode_Change(Boss_Mode.SUDDENDEATH_MODE);
-
-        StartCoroutine(Do_Behavior());
-
         
+        StartCoroutine(Wait_For_Intro());
     }
     
-
+    IEnumerator Wait_For_Intro()
+    {
+        while(true)
+        {
+            StopAllCoroutines();
+            StartCoroutine(Do_Behavior());
+            yield return null;
+        }
+    }
 
 
     // ======================================
@@ -181,11 +187,8 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         // 착륙 쿨타임이 다 차기 전까지는 계속 이동한다.
         while (m_Current_Landing_Cooltime < m_Total_Landing_Cooltime)
         {
-            if (StageManager.GetInstance().Get_is_Intro_Over())
-            {
-                Move();
-                Drop_Bomb(); // 폭탄 투하
-            }
+            Move();
+            Drop_Bomb(); // 폭탄 투하
             yield return null;
         }
     }
@@ -262,7 +265,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
         }
     }
 
-
+    /*
     IEnumerator Wait_To_Intro()
     {
         while (true)
@@ -278,6 +281,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
             yield return null;
         }
     }
+    */
 
 
     // 모드 체인지 연출을 위한 행동 추가??

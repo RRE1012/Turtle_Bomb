@@ -70,7 +70,8 @@ public class MonsterAI : MonoBehaviour
 
         // 처음 실행할 행동 설정
         m_Current_Behavior = MonsterMove();
-        StartCoroutine(MonsterBehavior());
+
+        StartCoroutine(Wait_For_Intro());
     }
 
     void OnCollisionEnter(Collision collision)
@@ -165,6 +166,20 @@ public class MonsterAI : MonoBehaviour
         }
     }
 
+
+    IEnumerator Wait_For_Intro()
+    {
+        while(true)
+        {
+            if (StageManager.GetInstance().Get_is_Intro_Over())
+            {
+                StopAllCoroutines();
+                StartCoroutine(MonsterBehavior());
+            }
+            yield return null;
+        }
+    }
+
     IEnumerator MonsterBehavior()
     {
         while (true)
@@ -188,16 +203,13 @@ public class MonsterAI : MonoBehaviour
         while (true)
         {
             m_WalkTimer += Time.deltaTime;
-            
+
             if (m_WalkTimer < Monster_AI_Constants.Walk_Time)
             {
-                if (StageManager.GetInstance().Get_is_Intro_Over() && PlayerMove.C_PM.Get_IsAlive() && !StageManager.GetInstance().Get_is_Stage_Clear())
-                {
-                    transform.Translate(new Vector3(0.0f, 0.0f, (m_Monster_Basic_Speed * Time.deltaTime)));
-                    m_Goblman_Animator.SetBool("Goblman_isWalk", true);
-                    m_Goblman_Animator.SetBool("Goblman_isIdle", false);
-                    Find_My_Coord();
-                }
+                transform.Translate(new Vector3(0.0f, 0.0f, (m_Monster_Basic_Speed * Time.deltaTime)));
+                m_Goblman_Animator.SetBool("Goblman_isWalk", true);
+                m_Goblman_Animator.SetBool("Goblman_isIdle", false);
+                Find_My_Coord();
             }
             else
             {
@@ -224,7 +236,7 @@ public class MonsterAI : MonoBehaviour
 
             if (m_AttackTimer < Monster_AI_Constants.Attack_Time)
             {
-                if (StageManager.GetInstance().Get_is_Intro_Over() && !StageManager.GetInstance().Get_Game_Over() && !m_Goblman_Animator.GetBool("Goblman_isAttack"))
+                if (!m_Goblman_Animator.GetBool("Goblman_isAttack"))
                 {
                     if (MusicManager.manage_ESound != null)
                         MusicManager.manage_ESound.Goblin_Attack_Sound();

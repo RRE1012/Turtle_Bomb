@@ -123,8 +123,8 @@ public class UI : MonoBehaviour {
         m_Option_UI = GameObject.FindGameObjectWithTag("Option_UI");
         
         m_Option_UI.SetActive(false);
-        
-        
+        m_InBushImage.gameObject.SetActive(false);
+
         m_fire_count = 1;
         m_releasable_bomb_count = 1;
         m_speed_count = 1;
@@ -151,8 +151,22 @@ public class UI : MonoBehaviour {
             else if (m_QuestList[i].Quest_ID == 2)
                 m_monsterKill = m_QuestList[i].Quest_Goal;
         }
+
+        StartCoroutine(Wait_For_Intro());
     }
 
+    IEnumerator Wait_For_Intro()
+    {
+        while (true)
+        {
+            if (StageManager.GetInstance().Get_is_Intro_Over())
+            {
+                StopAllCoroutines();
+                StartCoroutine(UI_Update());
+            }
+            yield return null;
+        }
+    }
 
     // FPS 출력
     void OnGUI()
@@ -383,22 +397,11 @@ public class UI : MonoBehaviour {
 
 
 
-
-
-    void Update()
+    IEnumerator UI_Update()
     {
-        /*
-        // 스테이지 클리어 후 별 갯수 적용
-        if (StageManager.GetInstance().Get_is_Stage_Clear() && !m_is_Init_Star_Count)
+        while(true)
         {
-            Star_Count_Apply();
-            m_is_Init_Star_Count = true;
-        }
-        */
-
-        if (!StageManager.GetInstance().Get_is_Pause())
-        {
-            if (StageManager.GetInstance().Get_is_Intro_Over())
+            if (!StageManager.GetInstance().Get_is_Pause())
             {
                 // 시간 경과
                 if (time_Second > 0)
@@ -407,36 +410,37 @@ public class UI : MonoBehaviour {
                     time_Second = time_Second - deltaTime;
                     m_Elapsed_Time += deltaTime;
                 }
+
+                // 시간 텍스트 출력
+                if (time_Second % 60 < 10)
+                    m_TimeLimitText.text = "0" + (int)time_Second / 60 + ":0" + (int)time_Second % 60;
+                else
+                    m_TimeLimitText.text = "0" + (int)time_Second / 60 + ":" + (int)time_Second % 60;
+
+                Mission_UI_Management(); // 미션 UI 출력
+
+                Push_Button_Management(); // 밀기버튼
+
+                HideInBush_Management(); // 부쉬 효과
+
+                Throw_Button_Management(); // 던지기 버튼
+
+                StageManager.GetInstance().Summon_SuddenDeath_Glider();
+
+                // 시간촉박 애니매이션 출력, 초기에는 애니매이션을 꺼놨다가 발동 -R
+                if (time_Second < 15.0f)
+                    ani.enabled = true;
+                else
+                    ani.enabled = false;
+
+                // 시간 초과 시 게임오버 - 캐릭터를 죽게 함으로서 처리 -R
+                if (time_Second <= 0)
+                {
+                    time_Second = 0;
+                    PlayerMove.C_PM.Set_Dead();
+                }
             }
-
-            // 시간 텍스트 출력
-            if(time_Second % 60 < 10)
-                m_TimeLimitText.text = "0" + (int)time_Second / 60 + ":0" + (int)time_Second % 60;
-            else
-                m_TimeLimitText.text = "0" + (int)time_Second / 60 + ":" + (int)time_Second % 60;
-
-            Mission_UI_Management(); // 미션 UI 출력
-            
-            Push_Button_Management(); // 밀기버튼
-            
-            HideInBush_Management(); // 부쉬 효과
-            
-            Throw_Button_Management(); // 던지기 버튼
-
-            StageManager.GetInstance().Summon_SuddenDeath_Glider();
-
-            // 시간촉박 애니매이션 출력, 초기에는 애니매이션을 꺼놨다가 발동 -R
-            if (time_Second < 15.0f)
-                ani.enabled = true;
-            else
-                ani.enabled = false;
-
-            // 시간 초과 시 게임오버 - 캐릭터를 죽게 함으로서 처리 -R
-            if (time_Second <= 0)
-            {
-                time_Second = 0;
-                PlayerMove.C_PM.Set_Dead();
-            }
+            yield return null;
         }
     }
 
@@ -460,7 +464,6 @@ public class UI : MonoBehaviour {
     // 옵션 버튼 UI 활성화
     public void Option_Button()
     {
-        //m_Ingame_Play_UI.SetActive(false);
         m_Option_UI.SetActive(true);
         StageManager.GetInstance().Set_is_Pause(true);
     }
@@ -469,7 +472,6 @@ public class UI : MonoBehaviour {
     public void Option_Return_Button()
     {
         StageManager.GetInstance().Set_is_Pause(false);
-        //m_Ingame_Play_UI.SetActive(true);
         m_Option_UI.SetActive(false);
     }
 
