@@ -7,6 +7,7 @@ static class NOTICE_NUMBER
 {
     public const int AIR_DROP = 0;
     public const int DANGER = 1;
+    public const int BOSS_INTRO_1_DANGER = 2;
 }
 
 public class Notice_UI : MonoBehaviour
@@ -42,6 +43,11 @@ public class Notice_UI : MonoBehaviour
             case NOTICE_NUMBER.DANGER:
                 m_Child_Image.texture = m_Danger_Image_Font;
                 m_Animations.Play(m_Animations.GetClip("Danger").name);
+                break;
+
+            case NOTICE_NUMBER.BOSS_INTRO_1_DANGER:
+                m_Child_Image.texture = m_Danger_Image_Font;
+                m_Animations.Play(m_Animations.GetClip("Boss_Intro_1_Danger").name);
                 break;
         }
     }

@@ -9,8 +9,10 @@ public class UI : MonoBehaviour {
 
     static UI m_Instance; public static UI GetInstance() { return m_Instance; }
 
-    
+
     // ========= Notice UI =========
+    public GameObject m_Intro_Fade;
+    public GameObject m_Direction_Skip_Button;
     public GameObject m_Option_UI; // 옵션 버튼
 
     public Text m_FireCountText; // 플레이어 화력 텍스트
@@ -151,6 +153,8 @@ public class UI : MonoBehaviour {
             else if (m_QuestList[i].Quest_ID == 2)
                 m_monsterKill = m_QuestList[i].Quest_Goal;
         }
+
+        m_Direction_Skip_Button.SetActive(false);
 
         StartCoroutine(Wait_For_Intro());
     }
@@ -455,6 +459,7 @@ public class UI : MonoBehaviour {
         m_GameOver_UI.GetComponent<GameOver_UI>().GameOver_Direction_Play(); // 게임 오버 연출 발동
     }
     
+
     // 옵션 UI 비활성화
     public void Option_UI_Deactivate()
     {

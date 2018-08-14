@@ -5,14 +5,14 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 
 // #define 보스 모드
-static class Boss_Mode_List
+static class BOSS_MODE_LIST
 {
     public const int NORMAL_MODE = 0;
     public const int ANGRY_MODE = 1;
     public const int GROGGY_MODE = 2;
 }
 
-static class Boss_Animation_Num
+static class BOSS_ANIMATION_NUM
 {
     public const int IDLE = 0;
     public const int WALK = 1;
@@ -20,6 +20,7 @@ static class Boss_Animation_Num
     public const int DEAD = 3;
     public const int SUMMON = 4;
     public const int HURT = 5;
+    public const int RAGE = 6;
 }
 
 public class Big_Boss_Behavior : MonoBehaviour
@@ -41,6 +42,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
 
     // 행동들
+    IEnumerator m_Wait_For_Intro;
     IEnumerator m_Do_Behavior;
     IEnumerator m_Current_Behavior;
     IEnumerator m_Behavior_Find;
@@ -53,6 +55,8 @@ public class Big_Boss_Behavior : MonoBehaviour
 
     IEnumerator m_Null_Behavior; // 빈 상태
     IEnumerator m_Prev_Behavior; // 이전 행동 저장
+
+    bool m_is_Called_WakeUp = false;
 
     // 기본 위치
     Vector3 Base_Position;
@@ -132,6 +136,7 @@ public class Big_Boss_Behavior : MonoBehaviour
         m_AnimationList.Add("OrkBoss_isDead");
         m_AnimationList.Add("OrkBoss_isSummon");
         m_AnimationList.Add("OrkBoss_isHurt");
+        m_AnimationList.Add("OrkBoss_isRage");
 
         m_Attack_Motion_Checker = "Base Layer.OrkBoss_Attack";
 
@@ -159,13 +164,14 @@ public class Big_Boss_Behavior : MonoBehaviour
         Boss_HP_Gauge.GetInstance().Set_Max_HP(m_Health); // 게이지 설정
         Big_Boss_Data_Allocation(); // 보스 AI 데이터의 리스트들을 할당
         CSV_Manager.GetInstance().Get_Adventure_Big_Boss_AI_Data(ref m_Adv_Big_Boss_Normal_AI, ref m_Adv_Big_Boss_Angry_AI, ref m_Adv_Big_Boss_Groggy_AI); // 보스 AI 테이블을 받아온다.
-        // =========================
-        
+                                                                                                                                                           // =========================
+
+        Camera_Directing.GetInstance().Set_Boss_Object(gameObject);
 
 
         // 몬스터의 행동 코루틴들을 설정
         m_Do_Behavior = Do_Behavior();
-        m_Behavior_Find = FindPlayer();
+        //m_Behavior_Find = FindPlayer();
         m_Behavior_Chase = Chase();
         m_Behavior_Attack = Attack();
         m_Behavior_Return = Return();
@@ -178,9 +184,10 @@ public class Big_Boss_Behavior : MonoBehaviour
         
 		m_Current_Behavior = m_Behavior_Return;// 처음 실행할 행동 설정
         
-        ModeChange(Boss_Mode_List.NORMAL_MODE); // 최초 시작시 노말모드로 시작
+        ModeChange(BOSS_MODE_LIST.NORMAL_MODE); // 최초 시작시 노말모드로 시작
 
-        StartCoroutine(Wait_For_Intro());
+        m_Wait_For_Intro = Wait_For_Intro();
+        StartCoroutine(m_Wait_For_Intro);
     }
 
     IEnumerator Wait_For_Intro()
@@ -189,13 +196,25 @@ public class Big_Boss_Behavior : MonoBehaviour
         {
             if (StageManager.GetInstance().Get_is_Intro_Over())
             {
-                StopAllCoroutines();
-                StartCoroutine(m_Do_Behavior);
+                SetAnimation(BOSS_ANIMATION_NUM.RAGE);
+                if (!m_is_Called_WakeUp)
+                {
+                    m_is_Called_WakeUp = true;
+                    Invoke("WakeUp", 2.0f);
+                }
             }
             yield return null;
         }
     }
 
+    void WakeUp()
+    {
+        m_is_Called_WakeUp = false;
+        m_Target_Detector.transform.localScale *= 3.0f;
+        Invoke("Reset_Detector_Size", 3.0f);
+        StopCoroutine(m_Wait_For_Intro);
+        StartCoroutine(m_Do_Behavior);
+    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -215,7 +234,7 @@ public class Big_Boss_Behavior : MonoBehaviour
     
     void Think() // 어떤 행동을 할지 생각하는 함수 (추후 가중치를 두어 어떤 행동을 할지 더 상세하게 구분해야함.)
     {
-		if (m_curr_Mode_Number != Boss_Mode_List.GROGGY_MODE && (m_Current_Behavior == m_Behavior_Chase || m_Current_Behavior == m_Behavior_Return)/*(m_Curr_Skill != 0 && (m_curr_Skill_Time >= m_Skill_Time))*/) // 공격중이라면 공격이 끝나야 다른 행동을 할 수 있다. 또는 스킬 사용중이라면..
+		if (m_curr_Mode_Number != BOSS_MODE_LIST.GROGGY_MODE && (m_Current_Behavior == m_Behavior_Chase || m_Current_Behavior == m_Behavior_Return)/*(m_Curr_Skill != 0 && (m_curr_Skill_Time >= m_Skill_Time))*/) // 공격중이라면 공격이 끝나야 다른 행동을 할 수 있다. 또는 스킬 사용중이라면..
         {
             if (m_Target_Detector.m_isInRange) // 감지 범위 안이라면
             {
@@ -241,7 +260,7 @@ public class Big_Boss_Behavior : MonoBehaviour
             if (!StageManager.GetInstance().Get_is_Pause())
             {
                 Think();
-
+                
                 m_curr_Turn_Duration += Time.deltaTime; // 턴 지속시간을 잰다.
 				m_curr_Hurt_Time += Time.deltaTime;
 
@@ -268,7 +287,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
 
 
-    
+    /*
     IEnumerator FindPlayer() // 플레이어 찾기 (일단 뺌)
     {
         while (true)
@@ -276,7 +295,7 @@ public class Big_Boss_Behavior : MonoBehaviour
             if (m_WalkTimer < Monster_AI_Constants.Walk_Time) // 일정 시간동안 걸어다님.
             {
                 transform.Translate(new Vector3(0.0f, 0.0f, (m_Move_Speed * Time.deltaTime)));
-                SetAnimation(Boss_Animation_Num.WALK);
+                SetAnimation(BOSS_ANIMATION_NUM.WALK);
                 m_WalkTimer += Time.deltaTime;
             }
 
@@ -285,7 +304,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                 if (MusicManager.manage_ESound != null)
                     MusicManager.manage_ESound.Goblin_Idle_Sound();
 
-                SetAnimation(Boss_Animation_Num.WALK);
+                SetAnimation(BOSS_ANIMATION_NUM.WALK);
 
                 m_WalkTimer = 0.0f;
                 yield return new WaitForSeconds(3.0f); // 3초간 idle 상태 유지
@@ -298,7 +317,7 @@ public class Big_Boss_Behavior : MonoBehaviour
         }
         
     }
-
+    */
 
     
 
@@ -316,7 +335,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                 if (m_Target != null)
                     m_NVAgent.destination = m_Target.transform.position;
                 m_Loss_Time = 0.0f;
-                SetAnimation(Boss_Animation_Num.WALK);
+                SetAnimation(BOSS_ANIMATION_NUM.WALK);
             }
 
             else // 잊어버렸다면 기본 위치로 돌아간다.
@@ -340,10 +359,10 @@ public class Big_Boss_Behavior : MonoBehaviour
             {
                 if (m_Attack_is_Done)
                 {
-                    if (MusicManager.manage_ESound != null && !m_Boss_Animator.GetBool(m_AnimationList[Boss_Animation_Num.ATTACK])) // 공격할때 1번만 소리냄.
+                    if (MusicManager.manage_ESound != null && !m_Boss_Animator.GetBool(m_AnimationList[BOSS_ANIMATION_NUM.ATTACK])) // 공격할때 1번만 소리냄.
                         MusicManager.manage_ESound.Goblin_Attack_Sound();
 
-                    SetAnimation(Boss_Animation_Num.ATTACK);
+                    SetAnimation(BOSS_ANIMATION_NUM.ATTACK);
 
                     m_Target = m_Attack_Detector.GetComponent<Monster_Player_Detector>().Get_Target();
 
@@ -434,13 +453,13 @@ public class Big_Boss_Behavior : MonoBehaviour
                 }
 
                 m_NVAgent.isStopped = true;
-                SetAnimation(Boss_Animation_Num.IDLE);
+                SetAnimation(BOSS_ANIMATION_NUM.IDLE);
             }
             else
             {
                 m_NVAgent.destination = Base_Position;
                 m_NVAgent.isStopped = false;
-                SetAnimation(Boss_Animation_Num.WALK);
+                SetAnimation(BOSS_ANIMATION_NUM.WALK);
             }
 
             Save_Prev_Behavior(m_Behavior_Return);
@@ -451,7 +470,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
     void Reset_Detector_Size()
     {
-        m_Target_Detector.transform.localScale /= 3.0f;
+        m_Target_Detector.transform.localScale *= 0.34f;
     }
 
     void Set_Next_Turn_Skill() // 다음 턴의 스킬을 설정하는 함수
@@ -472,7 +491,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
         switch (m_curr_Mode_Number)
         {
-            case Boss_Mode_List.NORMAL_MODE:
+            case BOSS_MODE_LIST.NORMAL_MODE:
 
                 if (m_curr_Turn_Number > m_Adv_Big_Boss_Normal_AI.Skill_Percentage.Count)
                     m_curr_Turn_Number = 1;
@@ -483,8 +502,6 @@ public class Big_Boss_Behavior : MonoBehaviour
                 {
                     // m_Behavior_Chase 초기화 작업
                     m_Skill_Time = m_Adv_Big_Boss_Normal_AI.Skill_Time[0];
-                    m_Target_Detector.transform.localScale *= 3.0f;
-                    Invoke("Reset_Detector_Size", 3.0f);
                     m_Current_Behavior = m_Behavior_Chase;
                 }
 
@@ -524,7 +541,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
 
 
-            case Boss_Mode_List.ANGRY_MODE:
+            case BOSS_MODE_LIST.ANGRY_MODE:
 
                 if (m_curr_Turn_Number > m_Adv_Big_Boss_Angry_AI.Skill_Percentage.Count)
                     m_curr_Turn_Number = 1;
@@ -586,7 +603,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
                 m_NVAgent.isStopped = true;
 
-                SetAnimation(Boss_Animation_Num.SUMMON);
+                SetAnimation(BOSS_ANIMATION_NUM.SUMMON);
 
 
                 if (!m_is_Summonning) // 소환중이 아니라면
@@ -640,7 +657,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                 m_curr_Skill_Time += Time.deltaTime;
                 m_NVAgent.isStopped = true;
 
-                SetAnimation(Boss_Animation_Num.SUMMON);
+                SetAnimation(BOSS_ANIMATION_NUM.SUMMON);
 
 
                 if (!m_is_Summonning) // 소환중이 아니라면
@@ -691,7 +708,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                 m_curr_Skill_Time += Time.deltaTime;
                 m_NVAgent.isStopped = true;
 
-                SetAnimation(Boss_Animation_Num.SUMMON);
+                SetAnimation(BOSS_ANIMATION_NUM.SUMMON);
 
                 if (!m_is_Summonning) // 소환중이 아니라면
                 {
@@ -768,7 +785,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
             StopCoroutine(m_Do_Behavior);
 
-            SetAnimation(Boss_Animation_Num.DEAD);
+            SetAnimation(BOSS_ANIMATION_NUM.DEAD);
 
             Boss_HP_Gauge.GetInstance().Dead_Mode_Gague_Play();
 
@@ -779,17 +796,17 @@ public class Big_Boss_Behavior : MonoBehaviour
         {
             m_Health -= m_Boss_Data.Bomb_Damage;
 
-            SetAnimation(Boss_Animation_Num.HURT);
+            SetAnimation(BOSS_ANIMATION_NUM.HURT);
             m_Current_Behavior = m_Null_Behavior;
             m_NVAgent.isStopped = true;
             
             Invoke("HurtEnd", 1.0f);
 
             // 체력에 따른 모드 전환
-            if (m_Health <= m_Boss_Data.Angry_Condition_Start_HP && m_curr_Mode_Number == Boss_Mode_List.NORMAL_MODE)
-                ModeChange(Boss_Mode_List.ANGRY_MODE);
-            if (m_Health <= m_Boss_Data.Groggy_Condition_Start_HP && m_curr_Mode_Number == Boss_Mode_List.ANGRY_MODE)
-                ModeChange(Boss_Mode_List.GROGGY_MODE);
+            if (m_Health <= m_Boss_Data.Angry_Condition_Start_HP && m_curr_Mode_Number == BOSS_MODE_LIST.NORMAL_MODE)
+                ModeChange(BOSS_MODE_LIST.ANGRY_MODE);
+            if (m_Health <= m_Boss_Data.Groggy_Condition_Start_HP && m_curr_Mode_Number == BOSS_MODE_LIST.ANGRY_MODE)
+                ModeChange(BOSS_MODE_LIST.GROGGY_MODE);
 
             m_curr_Hurt_Time = 0.0f;
 
@@ -825,7 +842,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
         switch (m_curr_Mode_Number)
         {
-            case Boss_Mode_List.NORMAL_MODE:
+            case BOSS_MODE_LIST.NORMAL_MODE:
                 m_Move_Speed = (float)m_Adv_Big_Boss_Normal_AI.Boss_Speed_Value; // 이동속도 설정
                 m_NVAgent.speed = m_Move_Speed; // 추격시 이동속도 설정
                 m_NVAgent.angularSpeed = 360.0f * m_Move_Speed; // 추격시 회전속도 설정
@@ -839,7 +856,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                 // 2. 피격 가능 시간 설정
                 break;
                 
-            case Boss_Mode_List.ANGRY_MODE:
+            case BOSS_MODE_LIST.ANGRY_MODE:
                 m_Move_Speed = (float)m_Adv_Big_Boss_Angry_AI.Boss_Speed_Value; // 이동속도 설정
                 m_NVAgent.speed = m_Move_Speed; // 추격시 이동속도 설정
                 m_NVAgent.angularSpeed = 360.0f * m_Move_Speed; // 추격시 회전속도 설정
@@ -853,7 +870,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                 // 2. 피격 가능 시간 축소
                 break;
 
-            case Boss_Mode_List.GROGGY_MODE:
+            case BOSS_MODE_LIST.GROGGY_MODE:
                 // 아무것도 못하는 상태로 만들기
                 m_Move_Speed = (float)m_Adv_Big_Boss_Groggy_AI.Boss_Speed_Value; // 이동속도 설정
                 m_NVAgent.speed = m_Move_Speed; // 추격시 이동속도 설정
@@ -882,9 +899,9 @@ public class Big_Boss_Behavior : MonoBehaviour
     }
 
 
-    void SetAnimation(int Animation_Num)
+    public void SetAnimation(int Animation_Num)
     {
-        for (int i = 0; i < 6; ++i)
+        for (int i = 0; i < 7; ++i)
             m_Boss_Animator.SetBool(m_AnimationList[i], false);
         m_Boss_Animator.SetBool(m_AnimationList[Animation_Num], true);
     }

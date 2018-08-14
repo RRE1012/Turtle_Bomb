@@ -59,6 +59,7 @@ public class Airplane : MonoBehaviour
                 }
 
                 StopCoroutine(m_Airdrop); // 에어드랍 종료
+                StartCoroutine(m_Time_Checker); // 시간 체크 시작
             }
             yield return null;
         }
@@ -72,6 +73,7 @@ public class Airplane : MonoBehaviour
             if (UI.GetInstance().Get_Elapsed_Time() >= m_Airdrop_Time)
             {
                 Dispatch_Airplane();
+                UI.GetInstance().Set_Elapsed_Time(0.0f);
             }
             yield return null;
         }

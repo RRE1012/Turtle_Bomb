@@ -290,7 +290,7 @@ public class StageManager : MonoBehaviour
             m_Stage_Time_Limit = m_Adventure_Stage_Data.Stage_Time;
 
         if (!m_is_Boss_Stage) m_Direction_Camera.GetComponentInChildren<Camera_Directing>().Direction_Play(DIRECTION_NUMBER.INTRO_NORMAL_1);
-        else m_Direction_Camera.GetComponentInChildren<Camera_Directing>().Direction_Play(DIRECTION_NUMBER.DEBUG_MODE);
+        else m_Direction_Camera.GetComponentInChildren<Camera_Directing>().Direction_Play(DIRECTION_NUMBER.INTRO_BOSS_1);
 
         // 비행기 미리 소환
         m_Airplane = Instantiate(m_Prefab_Airplane); // 인스턴스 생성
