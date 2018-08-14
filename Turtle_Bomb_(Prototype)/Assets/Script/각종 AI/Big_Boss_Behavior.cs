@@ -156,7 +156,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
         // ========스탯설정=========
         m_Health = m_Boss_Data.Boss_HP; // 체력 설정
-
+        Boss_HP_Gauge.GetInstance().Set_Max_HP(m_Health); // 게이지 설정
         Big_Boss_Data_Allocation(); // 보스 AI 데이터의 리스트들을 할당
         CSV_Manager.GetInstance().Get_Adventure_Big_Boss_AI_Data(ref m_Adv_Big_Boss_Normal_AI, ref m_Adv_Big_Boss_Angry_AI, ref m_Adv_Big_Boss_Groggy_AI); // 보스 AI 테이블을 받아온다.
         // =========================
@@ -491,7 +491,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                     m_Current_Behavior = m_Behavior_Skill_Normal_Monster_Summon;
                 }
 
-                else if (random <= 100)//m_Adv_Big_Boss_Normal_AI.Skill_Percentage[m_curr_Turn_Number - 1][0] + m_Adv_Big_Boss_Normal_AI.Skill_Percentage[m_curr_Turn_Number - 1][1] + m_Adv_Big_Boss_Normal_AI.Skill_Percentage[m_curr_Turn_Number - 1][2])
+                else if (random <= m_Adv_Big_Boss_Normal_AI.Skill_Percentage[m_curr_Turn_Number - 1][0] + m_Adv_Big_Boss_Normal_AI.Skill_Percentage[m_curr_Turn_Number - 1][1] + m_Adv_Big_Boss_Normal_AI.Skill_Percentage[m_curr_Turn_Number - 1][2])
                 {
                     // m_Behavior_Skill_Glider_Goblin_Summon 초기화 작업
                     m_Skill_Time = m_Adv_Big_Boss_Normal_AI.Skill_Time[2];
@@ -757,9 +757,13 @@ public class Big_Boss_Behavior : MonoBehaviour
             if (MusicManager.manage_ESound != null)
                 MusicManager.manage_ESound.Boss_Goblin_Dead_Sound();
 
+            m_Health = 0;
+
             StopCoroutine(m_Do_Behavior);
 
             SetAnimation(Boss_Animation_Num.DEAD);
+
+            Boss_HP_Gauge.GetInstance().Dead_Mode_Gague_Play();
 
             Invoke("Dead", 2.0f);
         }
@@ -767,7 +771,6 @@ public class Big_Boss_Behavior : MonoBehaviour
         if (m_Health - m_Boss_Data.Bomb_Damage > 0)
         {
             m_Health -= m_Boss_Data.Bomb_Damage;
-            UI.GetInstance().Set_Boss_HP_Bar(m_Health);
 
             SetAnimation(Boss_Animation_Num.HURT);
             m_Current_Behavior = m_Null_Behavior;
@@ -785,6 +788,8 @@ public class Big_Boss_Behavior : MonoBehaviour
 
             if (m_Prev_Behavior == m_Behavior_Attack) return;
         }
+
+        Boss_HP_Gauge.GetInstance().Set_Curr_HP(m_Health); // 게이지에 적용
     }
 
     void HurtEnd()
@@ -820,6 +825,9 @@ public class Big_Boss_Behavior : MonoBehaviour
                 m_Attack_Speed_Slow = 0.2f; // 슬로우 모션 공격속도 설정
                 m_Attack_Speed = 1.5f; // 진짜 공격속도 설정
 
+
+                Boss_HP_Gauge.GetInstance().Stop_Angry_Mode_Gauge();
+
                 // 1. 버프 스킬 지속시간 설정
                 // 2. 피격 가능 시간 설정
                 break;
@@ -831,7 +839,9 @@ public class Big_Boss_Behavior : MonoBehaviour
                 m_Attack_Speed_Slow = 0.4f; // 슬로우 모션 공격속도 설정
                 m_Attack_Speed = 2.5f; // 진짜 공격속도 설정
 
-                UI.GetInstance().Set_Boss_HP_Character();
+
+                Boss_HP_Gauge.GetInstance().Start_Angry_Mode_Gauge();
+
                 // 1. 버프스킬 지속시간 증가
                 // 2. 피격 가능 시간 축소
                 break;

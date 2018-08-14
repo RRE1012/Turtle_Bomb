@@ -12,6 +12,7 @@ static class DIRECTION_NUMBER
 {
     public const int INTRO_NORMAL_1 = 0;
     public const int INTRO_BOSS_1 = 1;
+    public const int DEBUG_MODE = 2;
 }
 
 public class Camera_Directing : MonoBehaviour {
@@ -35,6 +36,7 @@ public class Camera_Directing : MonoBehaviour {
     float m_Going_to_Target_Rotate_Angle = 40.0f;
 
     bool m_is_in_Target = false;
+    bool m_is_Debug_Mode = false;
 
     void Awake ()
     {
@@ -58,13 +60,23 @@ public class Camera_Directing : MonoBehaviour {
                 break;
 
             case DIRECTION_NUMBER.INTRO_BOSS_1:
-
                 m_Curr_Animation_Name = m_Animations.GetClip("Stage_Intro_Boss_1").name;
                 break;
-        }
 
-        m_Animations.Play(m_Curr_Animation_Name); // 연출 시작!
-        StartCoroutine(m_Dir_Over_Checker); // 연출 종료 검사 시작!
+            case DIRECTION_NUMBER.DEBUG_MODE:
+                m_is_Debug_Mode = true;
+                break;
+        }
+        if (!m_is_Debug_Mode)
+        {
+            m_Animations.Play(m_Curr_Animation_Name); // 연출 시작!
+            StartCoroutine(m_Dir_Over_Checker); // 연출 종료 검사 시작!
+        }
+        else
+        {
+            StageManager.GetInstance().Set_is_Intro_Over(true);
+            Camera_Switching(CAMERA_NUMBER.PLAYER);
+        }
     }
 
 
@@ -91,7 +103,6 @@ public class Camera_Directing : MonoBehaviour {
                 break;
 
             case DIRECTION_NUMBER.INTRO_BOSS_1:
-
                 break;
         }
     }

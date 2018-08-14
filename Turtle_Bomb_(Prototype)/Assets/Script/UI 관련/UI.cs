@@ -21,10 +21,8 @@ public class UI : MonoBehaviour {
 
     public RawImage m_GetItemBackground; // 아이템 획득시 출력 이미지
     public RawImage m_GetItemImage; // 아이템 획득시 출력 이미지
+    
 
-    public RawImage m_Boss_HP_Bar; // 보스 HP바 이미지
-    public Texture m_Boss_HP_Character; // 보스 HP바 캐릭터
-    public Animator m_Boss_HP_Character_Animator;
 
 
     public Texture m_Bomb_Icon;
@@ -60,7 +58,6 @@ public class UI : MonoBehaviour {
     
     public Texture m_Activated_Star_Texture; // 활성화된 별 텍스쳐
     public Texture m_Deactivated_Star_Texture; // 비활성화된 별 텍스쳐
-    //static bool m_is_Init_Star_Count = false;
 
     public RawImage m_Star_Image1;
     public RawImage m_Star_Image2;
@@ -110,6 +107,7 @@ public class UI : MonoBehaviour {
 
     // 클릭
     bool m_isClicked = false;
+
 
     void Awake()
     {
@@ -508,37 +506,5 @@ public class UI : MonoBehaviour {
     {
         return m_isClicked;
     }
-
-
-    public void Set_Boss_HP_Bar(float curr_HP)
-    {
-        float Max_HP = StageManager.GetInstance().Get_Boss_HP();
-        float unit = 100.0f / Max_HP;
-        
-        Vector3 newScale = new Vector3(1.0f, (curr_HP * unit) / 100.0f, 1.0f);
-        m_Boss_HP_Bar.rectTransform.localScale = newScale;
-        
-        Vector3 newPos;
-        newPos.x = m_Boss_HP_Bar.rectTransform.position.x + 0.0f;
-        newPos.y = m_Boss_HP_Bar.rectTransform.position.y - 10.0f;
-        newPos.z = 0.0f;
-        m_Boss_HP_Bar.rectTransform.position = newPos;
-        
-    }
-
-    public void Set_Boss_HP_Character()
-    {
-        m_Boss_HP_Bar.texture = m_Boss_HP_Character;
-    }
-
-    public void Shake_Boss_HP_Character()
-    {
-        m_Boss_HP_Character_Animator.SetBool("is_Hurt", true);
-        Invoke("Set_False_Shake", 0.4f);
-    }
-
-    void Set_False_Shake()
-    {
-        m_Boss_HP_Character_Animator.SetBool("is_Hurt", false);
-    }
+    
 }
