@@ -29,6 +29,7 @@ public class Turtle_Move : MonoBehaviour
     bool push_ani = false;
     bool kick_ani = false;
     public bool overpower = false;
+    public GameObject bush_ui;
     byte direction;
     byte fire_power = 1;
     byte bomb_power = 1;
@@ -112,7 +113,11 @@ public class Turtle_Move : MonoBehaviour
             }
 
         }
-        if (other.gameObject.CompareTag("Flame_Bush"))
+        if (other.gameObject.CompareTag("Bush"))
+        {
+            bush_ui.SetActive(true);
+        }
+            if (other.gameObject.CompareTag("Flame_Bush"))
         {
             if (glider_on) {
             }
@@ -135,6 +140,10 @@ public class Turtle_Move : MonoBehaviour
             other.isTrigger = false;
 
 
+        }
+        if (other.gameObject.CompareTag("Bush"))
+        {
+            bush_ui.SetActive(false);
         }
     }
     void SetFalse()
@@ -508,7 +517,7 @@ public class Turtle_Move : MonoBehaviour
             else
                 transform.Translate((m_PlayerSpeed + 4) * normal * Time.deltaTime);
             if (!VSModeManager.instance.game_set)
-                NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
+                NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
         }
         else
         {
@@ -528,8 +537,7 @@ public class Turtle_Move : MonoBehaviour
             else
                 transform.Translate(new Vector3(0.0f, 0.0f, (m_PlayerSpeed + speed_power) * Time.deltaTime));
             if (!VSModeManager.instance.game_set)
-                NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
-
+                NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
         }
         if (Input.GetKey(KeyCode.S))
         {
@@ -539,7 +547,7 @@ public class Turtle_Move : MonoBehaviour
             else
                 transform.Translate(new Vector3(0.0f, 0.0f, -(m_PlayerSpeed + speed_power) * Time.deltaTime));
             if (!VSModeManager.instance.game_set)
-                NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
+                NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
         }
         if (Input.GetKey(KeyCode.A))
         {
@@ -549,7 +557,7 @@ public class Turtle_Move : MonoBehaviour
             else
                 transform.Translate(new Vector3(-(m_PlayerSpeed + speed_power) * Time.deltaTime, 0.0f, 0.0f));
             if (!VSModeManager.instance.game_set)
-                NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
+                NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
         }
         if (Input.GetKey(KeyCode.D))
         {
@@ -559,7 +567,7 @@ public class Turtle_Move : MonoBehaviour
             else
                 transform.Translate(new Vector3((m_PlayerSpeed + speed_power) * Time.deltaTime, 0.0f, 0.0f));
             if (!VSModeManager.instance.game_set)
-                NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
+                NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
         }
 
 
@@ -783,7 +791,7 @@ public class Turtle_Move : MonoBehaviour
                     transform.Rotate(0, (Input.GetTouch(touchNum).position.x - m_Touch_PrevPoint_X) * 0.5f, 0);
                     m_Touch_PrevPoint_X = Input.GetTouch(touchNum).position.x;
                     if (!VSModeManager.instance.game_set)
-                        NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
+                        NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
                     break;
             }
         }

@@ -35,7 +35,8 @@ public class GameRoom : MonoBehaviour
     public Text Map_Num_Text;
     public Text m_count_text;
     public Button[] SRButton;
-    public RawImage[] mapImage;
+    public RawImage mapImage_now;
+    public Texture[] mapImage;
     bool mode_changed = false;
     byte roomtype = 0;
     byte[] team = new byte[4];
@@ -303,12 +304,7 @@ public class GameRoom : MonoBehaviour
     //게임모드 변경
     void CheckMode()
     {
-        for (int i = 0; i < 3; ++i)
-            mapImage[i].gameObject.SetActive(false);
-        mapImage[map_mode].gameObject.SetActive(true);
-
-
-
+        mapImage_now.texture = mapImage[map_mode];
         m_count_text.text = mode + "인 플레이";
 
 

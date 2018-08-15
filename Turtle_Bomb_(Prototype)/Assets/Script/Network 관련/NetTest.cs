@@ -1172,7 +1172,7 @@ public class NetTest : MonoBehaviour
         byte[] m_bombx = BitConverter.GetBytes(x);
         byte[] m_bombz = BitConverter.GetBytes(z);
 
-        //Debug.Log("Direction :" + direction);
+        Debug.Log("Kick Direction :" + direction);
         Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
         Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
         Buffer.BlockCopy(m_room_num, 0, myInfo, 2, m_room_num.Length);

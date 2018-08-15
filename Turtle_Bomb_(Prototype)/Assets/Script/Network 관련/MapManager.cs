@@ -21,7 +21,7 @@ public class MapManager : MonoBehaviour
     public GameObject m_item_throw;
     public GameObject m_item_glider;
     public GameObject m_explode_warn_range;
-
+    public GameObject parent;
     public GameObject[] m_tile;
     public Text g_text;
     public GameObject[] m_turtle = new GameObject[4];
@@ -49,6 +49,8 @@ public class MapManager : MonoBehaviour
     bool[] is_alive_box = new bool[8];
     bool[] set_pos_box = new bool[8];
     bool[] rock_set = new bool[225];
+    bool[] bush_set = new bool[225];
+
     bool[] item_set = new bool[225];
     int[] dx_box = new int[8];
     int[] dz_box = new int[8];
@@ -69,7 +71,7 @@ public class MapManager : MonoBehaviour
     GameObject[] land1 = new GameObject[225];
 
 
-    GameObject[] bush_list = new GameObject[225];
+    GameObject[] bush_list = new GameObject[50];
 
     GameObject[] item_s_list = new GameObject[50];
     GameObject[] item_f_list = new GameObject[50];
@@ -101,19 +103,26 @@ public class MapManager : MonoBehaviour
             rock_list[i] = Instantiate(m_rock);
 
             rock_list[i].SetActive(false);
+            rock_list[i].transform.parent = parent.transform;
             item_s_list[i] = Instantiate(m_item_speed);
-
+            item_s_list[i].transform.parent = parent.transform;
             item_s_list[i].SetActive(false);
             item_f_list[i] = Instantiate(m_item_fire);
-
+            item_f_list[i].transform.parent = parent.transform;
             item_f_list[i].SetActive(false);
             item_b_list[i] = Instantiate(m_item_bomb);
-
+            item_b_list[i].transform.parent = parent.transform;
             item_b_list[i].SetActive(false);
             item_t_list[i] = Instantiate(m_item_throw);
             item_k_list[i] = Instantiate(m_item_kick);
+            item_k_list[i].transform.parent = parent.transform;
+
             item_k_list[i].SetActive(false);
             item_t_list[i].SetActive(false);
+            item_t_list[i].transform.parent = parent.transform;
+            bush_list[i] = Instantiate(m_bush);
+            bush_list[i].transform.parent = parent.transform;
+            bush_list[i].SetActive(false);
             if (i < 32)
             {
                 if (i < 8)
@@ -123,16 +132,16 @@ public class MapManager : MonoBehaviour
                     push_box_list[i] = Instantiate(m_box[VariableManager.instance.map_type]);
                     push_box_list[i].transform.position = new Vector3(100, 0, 100);
                     push_box_list[i].SetActive(false);
+                    push_box_list[i].transform.parent = parent.transform;
                     dirc_box[i] = 0;
                 }
-                item_g_list[i] = Instantiate(m_item_glider);
-                item_g_list[i].SetActive(false);
-
                 bombT_list[i] = Instantiate(m_Tbomb);
                 bombT_list[i].transform.position = new Vector3(100, 0, 100);
                 bombT_list[i].SetActive(false);
+                bombT_list[i].transform.parent = parent.transform;
                 bombK_list[i] = Instantiate(m_Tbomb);
                 bombK_list[i].transform.position = new Vector3(100, 0, 100);
+                bombK_list[i].transform.parent = parent.transform;
                 //bombK_list[i].transform.rotation = new Quaternion(0, 0, 90.0f,0);
                 bombK_list[i].SetActive(false);
                 is_alive[i] = false;
@@ -152,6 +161,7 @@ public class MapManager : MonoBehaviour
             {
                 range_List[(z * 15) + x] = Instantiate(m_explode_warn_range);
                 range_List[(z * 15) + x].transform.position = new Vector3(x * 2, -0.7f, z * 2);
+                range_List[(z * 15) + x].transform.parent = parent.transform;
                 range_List[(z * 15) + x].SetActive(false);
                 item_set[(z * 15) + x] = false;
                 rock_set[(z * 15) + x] = false;
@@ -161,23 +171,24 @@ public class MapManager : MonoBehaviour
                     land1[(z * 15) + x] = Instantiate(m_tile[VariableManager.instance.map_type * 2]);
                     land1[(z * 15) + x].transform.position = new Vector3(x * 2, -0.75f, z * 2);
                     land1[(z * 15) + x].SetActive(true);
+                    land1[(z * 15) + x].transform.parent = parent.transform;
                 }
                 else
                 {
                     land1[(z * 15) + x] = Instantiate(m_tile[(VariableManager.instance.map_type * 2) + 1]);
                     land1[(z * 15) + x].transform.position = new Vector3(x * 2, -0.75f, z * 2);
                     land1[(z * 15) + x].SetActive(true);
+                    land1[(z * 15) + x].transform.parent = parent.transform;
                 }
                 bomb_list[(z * 15) + x] = Instantiate(m_bomb);
                 bomb_list[(z * 15) + x].transform.position = new Vector3(x * 2, 0, z * 2);
                 bomb_list[(z * 15) + x].SetActive(false);
+                bomb_list[(z * 15) + x].transform.parent = parent.transform;
                 box_list[(z * 15) + x] = Instantiate(m_box[VariableManager.instance.map_type]);
                 box_list[(z * 15) + x].transform.position = new Vector3(x * 2, 0, z * 2);
                 box_list[(z * 15) + x].SetActive(false);
 
-                bush_list[(z * 15) + x] = Instantiate(m_bush);
-                bush_list[(z * 15) + x].transform.position = new Vector3(x * 2, -0.75f, z * 2);
-                bush_list[(z * 15) + x].SetActive(false);
+                box_list[(z * 15) + x].transform.parent = parent.transform;
 
                 bombexplode_list[(z * 15) + x] = 0;
                 up_bombexplode_list[(z * 15) + x] = 0;
@@ -715,6 +726,16 @@ public class MapManager : MonoBehaviour
         }
         return null;
     }
+    GameObject GetBush()
+    {
+        for (int i = 0; i < 50; ++i)
+        {
+            if (!bush_list[i].activeInHierarchy)
+                return bush_list[i];
+        }
+        return null;
+    }
+
     GameObject GetItem(int type)
     {
         switch (type)
@@ -782,6 +803,7 @@ public class MapManager : MonoBehaviour
             }
         }
     }
+    
     public void GotoLobby()
     {
         //Time.timeScale = 1;
@@ -906,7 +928,7 @@ public class MapManager : MonoBehaviour
                             item_set[(z * 15) + x] = false;
 
                             DeleteItem(x, z);
-                            bush_list[(z * 15) + (x)].SetActive(false);
+                            //bush_list[(z * 15) + (x)].SetActive(false);
 
                             break;
                         case 1: //Cube(Box)로
@@ -950,8 +972,15 @@ public class MapManager : MonoBehaviour
                             }
                                 break;
                         case 3:
-                            if (!bush_list[(z * 15) + (x)].activeInHierarchy)
-                                bush_list[(z * 15) + (x)].SetActive(true);
+                            if (!bush_set[(z * 15) + (x)])
+                            {
+                                GameObject tempbush = GetBush();
+                                tempbush.SetActive(true);
+                                tempbush.transform.position = new Vector3(x * 2, 0, z * 2);
+                                LiveList.Add(tempbush);
+                                bush_set[(z * 15) + (x)] = true;
+                            }
+                                
                             break;
                         case 13:
                             box_list[(z * 15) + (x)].SetActive(false);
