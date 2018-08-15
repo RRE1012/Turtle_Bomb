@@ -154,17 +154,15 @@ public class NetUser3 : MonoBehaviour
     {
         float tempx = x - transform.position.x;
         float tempz = z - transform.position.z;
-        float tempy = y - transform.rotation.y;
+        float tempy = y - transform.localEulerAngles.y;
 
-        for (int i = 0; i < 4; ++i)
-        {
-            //transform.position = new Vector3(transform.position.x+(tempx/4), transform.position.y, transform.position.z+(tempz/4));
-            transform.position = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x + (tempx / 4), transform.position.y, transform.position.z + (tempz / 4)), 0.5f);
-            transform.rotation = new Quaternion(transform.rotation.x, transform.rotation.y + (tempy / 4), transform.rotation.z, transform.rotation.w);
-            //Thread.Sleep(125);
-            //new WaitForSeconds(0.125f);
-            //yield WaitForSeconds(0.125f);
-        }
+
+        //transform.position = new Vector3(transform.position.x+(tempx/4), transform.position.y, transform.position.z+(tempz/4));
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(x, transform.position.y, z), 0.5f);
+        transform.eulerAngles = new Vector3(0, y, 0);
+        //Thread.Sleep(125);
+        //new WaitForSeconds(0.125f);
+        //yield WaitForSeconds(0.125f);
 
     }
     public void SetIconOff()
@@ -240,6 +238,11 @@ public class NetUser3 : MonoBehaviour
         {
             glider.SetActive(true);
             gameObject.transform.position = new Vector3(gameObject.transform.position.x, 3.0f, gameObject.transform.position.z);
+        }
+        else
+        {
+            glider.SetActive(false);
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, -0.5f, gameObject.transform.position.z);
         }
         if (VariableManager.instance.people_inRoom[2] == 0)
             p.SetActive(false);
