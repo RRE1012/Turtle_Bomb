@@ -40,6 +40,7 @@ GameObject:
   - component: {fileID: 54225303713001960}
   - component: {fileID: 65537709027754228}
   - component: {fileID: 114845038084166182}
+  - component: {fileID: 208925167137558104}
   m_Layer: 0
   m_Name: Bomb_(JetGoblin)
   m_TagString: Bomb
@@ -256,6 +257,8 @@ MonoBehaviour:
     type: 2}
   m_Explosion_Range: {fileID: 1848196084621122, guid: d3b9f33039bf53e4581d800d8270cd86,
     type: 2}
+  m_Explode_Sound_Object: {fileID: 1582156060866840, guid: 87368e55c47f1374e9f731c32e1bfd4d,
+    type: 2}
   m_Whose_Bomb: {fileID: 0}
   m_Whose_Bomb_Type: 0
   m_isKicked: 0
@@ -263,3 +266,18 @@ MonoBehaviour:
   m_is_Thrown_Bomb_Moving: 1
   m_isDestroyed: 0
   m_is_Rising_Start: 0
+--- !u!208 &208925167137558104
+NavMeshObstacle:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1231821742246734}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5

@@ -102,8 +102,7 @@ public class MonsterAI : MonoBehaviour
         // 몬스터가 불에 닿으면 사망 판정
         if (!m_isDead && (other.gameObject.tag == "Flame" || other.gameObject.CompareTag("Flame_Bush")))
         {
-            if (MusicManager.manage_ESound != null)
-                MusicManager.manage_ESound.Goblin_Dead_Sound();
+            GetComponentInChildren<Normal_Goblin_Sound>().Play_DeadSound();
 
             StageManager.GetInstance().Decrease_Normal_Monster_Count(); // 불에 닿아 죽는것만 카운팅.
             m_Goblman_Animator.SetBool("Goblman_isDead", true);
@@ -213,8 +212,7 @@ public class MonsterAI : MonoBehaviour
             }
             else
             {
-                if (MusicManager.manage_ESound != null)
-                    MusicManager.manage_ESound.Goblin_Idle_Sound();
+                GetComponentInChildren<Normal_Goblin_Sound>().Play_IdleSound();
 
                 m_Goblman_Animator.SetBool("Goblman_isWalk", false);
                 m_Goblman_Animator.SetBool("Goblman_isIdle", true);
@@ -238,8 +236,7 @@ public class MonsterAI : MonoBehaviour
             {
                 if (!m_Goblman_Animator.GetBool("Goblman_isAttack"))
                 {
-                    if (MusicManager.manage_ESound != null)
-                        MusicManager.manage_ESound.Goblin_Attack_Sound();
+                    GetComponentInChildren<Normal_Goblin_Sound>().Play_AttackSound();
                     m_Attack_Collider.gameObject.SetActive(true); // 충돌체 활성화
                     m_Goblman_Animator.SetBool("Goblman_isAttack", true);
                     m_Goblman_Animator.SetBool("Goblman_isIdle", false);

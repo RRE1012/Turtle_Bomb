@@ -221,9 +221,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     {
         // 착륙=====================================
         m_Rigidbody.useGravity = true;
-
-        if (MusicManager.manage_ESound != null)
-            MusicManager.manage_ESound.Boss_Goblin_Fall_Sound();
+        
 
         m_Boss_JetGoblin_Animator.SetBool("Idle", false);
         Invoke("Motion_Landing_StandUp", 1.0f);
@@ -494,18 +492,13 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
     // 폭탄 피격
     void Hurt()
     {
-        if (MusicManager.manage_ESound != null)
-            MusicManager.manage_ESound.Boss_Goblin_Hurt_Sound();
-
         m_Health -= 20.0f;
         m_Boss_JetGoblin_Animator.SetTrigger("Hurt");
 
         if (m_Health < 0.0f && StageManager.GetInstance().GetBossDead() == false)
         {
             StageManager.GetInstance().SetBossDead(true);
-
-            if (MusicManager.manage_ESound != null)
-                MusicManager.manage_ESound.Boss_Goblin_Dead_Sound();
+            
             StopCoroutine(Do_Behavior());
             m_Boss_JetGoblin_Animator.SetTrigger("Dead");
             Invoke("Dead", 2.0f);
@@ -529,8 +522,7 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
 
         else if (m_Usable_Bomb_Count > 0)
         {
-            if (MusicManager.manage_ESound != null)
-                MusicManager.manage_ESound.Boss_Goblin_Throw_Sound();
+            GetComponentInChildren<Jet_Goblin_Sound>().Play_Bomb_Throw_Sound();
 
             // 폭탄 생성
             GameObject Instance_Bomb = Instantiate(m_Bomb);
@@ -638,8 +630,6 @@ public class Boss_AI_JetGoblin : MonoBehaviour {
 
             else
             {
-                if (MusicManager.manage_ESound != null)
-                    MusicManager.manage_ESound.Boss_Goblin_Wall_Crush_Sound();
                 m_Current_Behavior = m_Behavior_WallCrash;
             }
         }

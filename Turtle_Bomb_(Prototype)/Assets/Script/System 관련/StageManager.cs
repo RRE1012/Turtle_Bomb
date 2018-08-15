@@ -778,7 +778,7 @@ public class StageManager : MonoBehaviour
         {
             m_is_Game_Over = true;
             m_is_Pause = true;
-            MusicManager.manage_ESound.TryMute();
+            Audio_Manager.GetInstance().Sound_Fadeout_Start();
             UI.GetInstance().GameOver_Directing();
             StopCoroutine(m_StageManager);
         }
@@ -787,7 +787,7 @@ public class StageManager : MonoBehaviour
         {
             m_is_Game_Over = true;
             m_is_Pause = true;
-            MusicManager.manage_ESound.TryMute();
+            Audio_Manager.GetInstance().Sound_Fadeout_Start();
             StopCoroutine(m_StageManager);
         }
     }

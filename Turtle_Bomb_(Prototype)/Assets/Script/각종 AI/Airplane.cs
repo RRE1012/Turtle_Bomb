@@ -61,6 +61,7 @@ public class Airplane : MonoBehaviour
                 StopCoroutine(m_Airdrop); // 에어드랍 종료
                 StartCoroutine(m_Time_Checker); // 시간 체크 시작
             }
+
             yield return null;
         }
     }
@@ -97,6 +98,8 @@ public class Airplane : MonoBehaviour
         Notice_UI.GetInstance().Notice_Play(NOTICE_NUMBER.AIR_DROP);
 
         StopCoroutine(m_Time_Checker);
+        
+        GetComponentInChildren<Airdrop_Sound>().Play_AirplaneSound();
 
         m_Animations.Play(m_Animations.GetClip("Air_Drop").name);
         StartCoroutine(m_Airdrop);

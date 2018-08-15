@@ -16,6 +16,8 @@ public class Notice_UI : MonoBehaviour
 
     Animation m_Animations;
 
+    Notice_Sound m_Notice_Sound;
+
     public RawImage m_Child_Image;
     public Texture m_AirDrop_Image_Font;
     public Texture m_Danger_Image_Font;
@@ -24,6 +26,7 @@ public class Notice_UI : MonoBehaviour
     {
         m_Instance = this;
         m_Animations = GetComponent<Animation>();
+        m_Notice_Sound = GetComponentInChildren<Notice_Sound>();
     }
 
     public static Notice_UI GetInstance()
@@ -48,7 +51,10 @@ public class Notice_UI : MonoBehaviour
             case NOTICE_NUMBER.BOSS_INTRO_1_DANGER:
                 m_Child_Image.texture = m_Danger_Image_Font;
                 m_Animations.Play(m_Animations.GetClip("Boss_Intro_1_Danger").name);
+                Invoke("RedAlert_Sound", 0.9f);
                 break;
         }
     }
+
+    void RedAlert_Sound() { m_Notice_Sound.Play_RedAlertSound(); }
 }

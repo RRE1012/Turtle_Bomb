@@ -193,6 +193,7 @@ public class Camera_Directing : MonoBehaviour {
     {
         UI.GetInstance().m_Intro_Fade.SetActive(true);
         m_Intro_Fade_Animations.Play(m_Intro_Fade_Animations.GetClip(m_Curr_Fade_Animation_Name).name);
+
         StartCoroutine(Fade_Check());
     }
 

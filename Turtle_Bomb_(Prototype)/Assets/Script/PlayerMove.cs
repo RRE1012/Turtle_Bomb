@@ -122,7 +122,7 @@ public class PlayerMove : MonoBehaviour {
                 Destroy(other.gameObject);
                 if (UI.GetInstance().m_cur_Max_Bomb_Count < MAX_VALUE_ITEM.retval)
                 {
-                    MusicManager.manage_ESound.ItemGetSound();
+                    GetComponentInChildren<Player_Sound>().Play_Item_Get_Sound();
                     UI.GetInstance().m_cur_Max_Bomb_Count += 1;
                     UI.GetInstance().m_releasable_bomb_count += 1;
                     UI.GetInstance().GetItemUI_Activate(0);
@@ -133,7 +133,7 @@ public class PlayerMove : MonoBehaviour {
                 Destroy(other.gameObject);
                 if (UI.GetInstance().m_fire_count < MAX_VALUE_ITEM.retval)
                 {
-                    MusicManager.manage_ESound.ItemGetSound();
+                    GetComponentInChildren<Player_Sound>().Play_Item_Get_Sound();
                     UI.GetInstance().m_fire_count += 1;
                     UI.GetInstance().GetItemUI_Activate(1);
                 }
@@ -143,7 +143,7 @@ public class PlayerMove : MonoBehaviour {
                 Destroy(other.gameObject);
                 if (UI.GetInstance().m_speed_count < MAX_VALUE_ITEM.retval)
                 {
-                    MusicManager.manage_ESound.ItemGetSound();
+                    GetComponentInChildren<Player_Sound>().Play_Item_Get_Sound();
                     UI.GetInstance().m_speed_count += 1;
                     UI.GetInstance().GetItemUI_Activate(2);
                 }
@@ -153,7 +153,7 @@ public class PlayerMove : MonoBehaviour {
                 Destroy(other.gameObject);
                 if (!m_isGot_KickItem)
                 {
-                    MusicManager.manage_ESound.ItemGetSound();
+                    GetComponentInChildren<Player_Sound>().Play_Item_Get_Sound();
                     m_isGot_KickItem = true;
                     UI.GetInstance().Kick_Icon_Activate();
                     UI.GetInstance().GetItemUI_Activate(3);
@@ -164,7 +164,7 @@ public class PlayerMove : MonoBehaviour {
                 Destroy(other.gameObject);
                 if (!m_isGot_ThrowItem)
                 {
-                    MusicManager.manage_ESound.ItemGetSound();
+                    GetComponentInChildren<Player_Sound>().Play_Item_Get_Sound();
                     m_isGot_ThrowItem = true;
                     UI.GetInstance().Throw_Icon_Activate();
                     UI.GetInstance().GetItemUI_Activate(4);
@@ -174,7 +174,7 @@ public class PlayerMove : MonoBehaviour {
             if (other.gameObject.CompareTag("Airdrop_Item"))
             {
                 Destroy(other.gameObject);
-                MusicManager.manage_ESound.ItemGetSound();
+                GetComponentInChildren<Player_Sound>().Play_Item_Get_Sound();
 
                 //int temp = Random.Range(1, 3);
 
@@ -480,7 +480,7 @@ public class PlayerMove : MonoBehaviour {
             // 폭탄을 놓을 수 있다면 폭탄 설치
             if (m_YouCanSetBomb)
             {
-                MusicManager.manage_ESound.BombSetSound();
+                GetComponentInChildren<Player_Sound>().Play_Bomb_Set_Sound();
                 GameObject Instance_Bomb = Instantiate(m_Bomb);
 
                 //폭탄 위치 수정 -R
@@ -715,6 +715,12 @@ public class PlayerMove : MonoBehaviour {
     public void AniBomb_Start()
     {
         animator_camera.SetTrigger("Ring");
+        if (!Audio_Manager.GetInstance().Get_is_Vibration_Mute())
+        {
+#if UNITY_ANDROID
+            Handheld.Vibrate(); // 1초간 진동
+#endif
+        }
     }
 
     //다른 스크립트에서 폭탄을 장전할 때 쓰는 함수

@@ -257,6 +257,8 @@ MonoBehaviour:
     type: 2}
   m_Explosion_Range: {fileID: 1848196084621122, guid: d3b9f33039bf53e4581d800d8270cd86,
     type: 2}
+  m_Explode_Sound_Object: {fileID: 1582156060866840, guid: 87368e55c47f1374e9f731c32e1bfd4d,
+    type: 2}
   m_Whose_Bomb: {fileID: 0}
   m_Whose_Bomb_Type: 0
   m_isKicked: 0

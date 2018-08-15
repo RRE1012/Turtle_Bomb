@@ -359,8 +359,8 @@ public class Big_Boss_Behavior : MonoBehaviour
             {
                 if (m_Attack_is_Done)
                 {
-                    if (MusicManager.manage_ESound != null && !m_Boss_Animator.GetBool(m_AnimationList[BOSS_ANIMATION_NUM.ATTACK])) // 공격할때 1번만 소리냄.
-                        MusicManager.manage_ESound.Goblin_Attack_Sound();
+                    if (!m_Boss_Animator.GetBool(m_AnimationList[BOSS_ANIMATION_NUM.ATTACK])) // 공격할때 1번만 소리냄.
+                        GetComponentInChildren<Ork_Boss_Sound>().Play_AttackSound();
 
                     SetAnimation(BOSS_ANIMATION_NUM.ATTACK);
 
@@ -441,16 +441,14 @@ public class Big_Boss_Behavior : MonoBehaviour
             Base_Position.y = transform.position.y;
             if (transform.position == Base_Position)
             {
-                if (MusicManager.manage_ESound != null)
+                if (m_idle_sound_Timer >= m_idle_sound_Cooltime)
                 {
-                    if (m_idle_sound_Timer >= m_idle_sound_Cooltime)
-                    {
-                        MusicManager.manage_ESound.Goblin_Idle_Sound();
-                        m_idle_sound_Timer = 0.0f;
-                    }
-                    else
-                        m_idle_sound_Timer += Time.deltaTime;
+                    GetComponentInChildren<Ork_Boss_Sound>().Play_IdleSound();
+                    m_idle_sound_Timer = 0.0f;
                 }
+                else
+                    m_idle_sound_Timer += Time.deltaTime;
+
 
                 m_NVAgent.isStopped = true;
                 SetAnimation(BOSS_ANIMATION_NUM.IDLE);
@@ -773,13 +771,11 @@ public class Big_Boss_Behavior : MonoBehaviour
     // 폭탄 피격
     void Hurt()
     {
-        if (MusicManager.manage_ESound != null)
-            MusicManager.manage_ESound.Boss_Goblin_Hurt_Sound();
+        GetComponentInChildren<Ork_Boss_Sound>().Play_HurtSound();
 
         if (m_Health - m_Boss_Data.Bomb_Damage <= 0)
         {
-            if (MusicManager.manage_ESound != null)
-                MusicManager.manage_ESound.Boss_Goblin_Dead_Sound();
+            GetComponentInChildren<Ork_Boss_Sound>().Play_DeadSound();
 
             m_Health = 0;
 

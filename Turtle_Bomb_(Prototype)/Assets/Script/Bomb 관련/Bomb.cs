@@ -18,6 +18,7 @@ public class Bomb : MonoBehaviour
     public GameObject m_Flame_Remains;
     public GameObject m_Boom_Effect;
     public GameObject m_Explosion_Range;
+    public GameObject m_Explode_Sound_Object;
 
     GameObject m_Range_Base;
     List<GameObject> m_Range_N = new List<GameObject>();
@@ -363,9 +364,8 @@ public class Bomb : MonoBehaviour
         {
             if (!StageManager.GetInstance().Get_is_Map_Changing() && !m_is_Thrown_Bomb_Moving)
             {
-                // 폭발 사운드 출력
-                if (MusicManager.manage_ESound != null)
-                    MusicManager.manage_ESound.soundE();
+                // 폭발 사운드 오브젝트 생성
+                Instantiate(m_Explode_Sound_Object).transform.position = transform.position;
 
                 // 플레이어가 감지범위 내에 있을 경우
                 // 카메라 흔들림 연출
