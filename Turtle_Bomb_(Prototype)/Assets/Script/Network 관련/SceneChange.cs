@@ -12,7 +12,7 @@ public class SceneChange : MonoBehaviour
     public Canvas cv;
     public RawImage FadeSlider;
     static public SceneChange instance;
-    int scene = 8;
+    int scene=8;
     bool swap_scene = false;
     // Use this for initialization
 
@@ -28,7 +28,11 @@ public class SceneChange : MonoBehaviour
             cv.enabled = true;
         }
         StartCoroutine("SceneSwap");
-        GoTo_Connect_Scene();
+        if (SceneManager.GetActiveScene().buildIndex == 8)
+        {
+            GoTo_Connect_Scene();
+        }
+        //
     }
 
     public int GetSceneState()

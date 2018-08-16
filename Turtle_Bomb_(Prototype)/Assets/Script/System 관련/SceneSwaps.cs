@@ -53,6 +53,11 @@ public class SceneSwaps : MonoBehaviour {
     {
         SceneManager.LoadScene(8);
     }
+    public void GoTo_Mode_CoOp_Wait_Scene()
+    {
+        //FadeSlider.gameObject.SetActive(true);
+        SceneManager.LoadScene(9);
+    }
     // "선택한 해당 스테이지"로 이동
     public void GoTo_Mode_Adventure_Selected_Stage(int stage_ID)
     {

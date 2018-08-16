@@ -153,6 +153,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 627256431062bd44a97fe55f31e72b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Object_FireItem: {fileID: 0}
+  m_Object_BombItem: {fileID: 0}
+  m_Object_SpeedItem: {fileID: 0}
+  m_Object_KickItem: {fileID: 0}
+  m_Object_ThrowItem: {fileID: 0}
+  m_Particle: {fileID: 0}
   m_is_Destroyed: 0
 --- !u!208 &208407725124691338
 NavMeshObstacle:

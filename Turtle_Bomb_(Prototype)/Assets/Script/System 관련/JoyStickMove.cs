@@ -61,8 +61,6 @@ public class JoyStickMove : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
 
             joystick_HandleImage.rectTransform.anchoredPosition = new Vector2(inputVector.x * (joystick_BackGroundImage.rectTransform.sizeDelta.x / joystickHandleDistance),
                          inputVector.y * (joystick_BackGroundImage.rectTransform.sizeDelta.y / joystickHandleDistance));
-
-
         }
     }
 
@@ -101,7 +99,7 @@ public class JoyStickMove : MonoBehaviour, IDragHandler, IPointerUpHandler, IPoi
         if (Input.GetTouch(0).phase == TouchPhase.Began)
         {
             // 이미 회전중이면
-            if (VSModeManager.instance.Get_isClicked())
+            if (VSModeManager.instance.Get_isClicked()||CoOpManager.instance.Get_isClicked())
                 return false; // 회전이 먼저다!
         }
         return true; // 조이스틱이 먼저다!

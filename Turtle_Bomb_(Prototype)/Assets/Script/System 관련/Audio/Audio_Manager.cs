@@ -50,8 +50,6 @@ public class Audio_Manager : MonoBehaviour
             m_BGM_Audio_Source.volume = m_Volume;
             Sound_Effect.GetInstance().SetVolume(m_Volume);
 
-            Debug.Log(m_Volume);
-
             if (m_Volume <= 0.01f) StopCoroutine(m_Fadeout);
 
             yield return null;

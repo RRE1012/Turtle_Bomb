@@ -103,7 +103,7 @@ public class GetID : MonoBehaviour {
     {
         password = m_inputfield[1].text;
         
-        //Debug.Log(password);
+        Debug.Log("MyPW:"+password);
     }
     public void SetPasswordJoin()
     {

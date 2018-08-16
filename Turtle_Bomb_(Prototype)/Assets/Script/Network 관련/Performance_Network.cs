@@ -23,7 +23,7 @@ public class Performance_Network : MonoBehaviour {
             for (int i = 0; i < 4; ++i)
                 m_OtherPlayerView[i].enabled = false;
         }
-        Intro_Performance(Turtle_Move.instance.GetId());
+        //Intro_Performance(Turtle_Move.instance.GetId());
     }
 	public void DeadAnimation(byte id){
 		m_PlayerView.enabled = false;
@@ -49,7 +49,19 @@ public class Performance_Network : MonoBehaviour {
 		}
 		Invoke("CameraSwitch", 4.0f);
 	}
-	void CameraSwitch()
+    void CameraSwitchIntro()
+    {
+        m_PlayerView.enabled = true;
+        m_PerformanceView.enabled = false;
+        if (m_OtherPlayerView.Length > 0)
+        {
+            for (int i = 0; i < 4; ++i)
+                m_OtherPlayerView[i].enabled = false;
+        }
+        ani_is_working = false;
+        NetManager_Coop.instance.SendReadyCoopPacket();
+    }
+    void CameraSwitch()
     {
         m_PlayerView.enabled = true;
         m_PerformanceView.enabled = false;
@@ -88,7 +100,7 @@ public class Performance_Network : MonoBehaviour {
                 break;
 
         }
-        Invoke("CameraSwitch", 5.9f);
+        Invoke("CameraSwitchIntro", 5.9f);
     }
        
 }

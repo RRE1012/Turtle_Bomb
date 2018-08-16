@@ -8,7 +8,7 @@ public class Sound_Effect : MonoBehaviour
 
     protected static bool m_is_SE_Mute; public void Set_SE_Mute(bool b) { m_is_SE_Mute = b; }
 
-    public void SetVolume(float v) { m_AudioSource.volume = v; }
+    public void SetVolume(float v) { if (m_AudioSource != null) m_AudioSource.volume = v; }
 
     protected AudioSource m_AudioSource;
 

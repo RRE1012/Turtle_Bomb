@@ -9,6 +9,7 @@ public class NetUser : MonoBehaviour
     public Text m_TurtleTXT;
     public TextMesh m_TM;
     public GameObject p;
+    float m_GliderfloatSpeed = 1.0f;
     bool textmesh_On = false;
     byte color = 0;
     byte id = 254;
@@ -28,6 +29,7 @@ public class NetUser : MonoBehaviour
     void Awake()
     {
         instance = this;
+        transform.position = new Vector3(0.0f, transform.position.y, 0.0f);
     }
     // Use this for initialization
     void Start()
@@ -124,6 +126,10 @@ public class NetUser : MonoBehaviour
         if (other.CompareTag("Bush"))
         {
             parts.SetActive(true);
+        }
+        if (other.CompareTag("Bomb"))
+        {
+            other.isTrigger = false;
         }
     }
     public void SetText(byte itemtype)
@@ -229,8 +235,15 @@ public class NetUser : MonoBehaviour
         }
         if (glider_on)
         {
+            
+            m_animator.SetBool("TurtleMan_GetGlider", true);
             glider.SetActive(true);
-            gameObject.transform.position = new Vector3(gameObject.transform.position.x, 3.0f, gameObject.transform.position.z);
+            if (gameObject.transform.position.y >= 3.0f)
+                m_GliderfloatSpeed = -0.01f;
+            else if (gameObject.transform.position.y <= 2.0f)
+                m_GliderfloatSpeed = 0.01f;
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + (m_GliderfloatSpeed), gameObject.transform.position.z);
+
         }
         else
         {

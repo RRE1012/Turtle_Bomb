@@ -12,6 +12,7 @@ public class Turtle_Move : MonoBehaviour
     // 폭탄 배치를 위한 위치값
     float m_BombLocX = 0.0f;
     float m_BombLocZ = 0.0f;
+    float m_GliderfloatSpeed = 1.0f;
     public GameObject[] m_DropBomb;
     bool m_YouCanSetBomb = false;
     byte id = 0;
@@ -148,7 +149,8 @@ public class Turtle_Move : MonoBehaviour
     }
     void SetFalse()
     {
-        gameObject.SetActive(false);
+
+        //gameObject.SetActive(false);
     }
     public byte GetFirePower()
     {
@@ -447,7 +449,12 @@ public class Turtle_Move : MonoBehaviour
             alive = 2;
             m_animator.SetBool("TurtleMan_GetGlider", true);
             glider.SetActive(true);
-            gameObject.transform.position = new Vector3(gameObject.transform.position.x, 2.5f, gameObject.transform.position.z);
+            if (gameObject.transform.position.y >= 3.0f)
+                m_GliderfloatSpeed = -0.01f;
+            else if (gameObject.transform.position.y <= 2.0f)
+                m_GliderfloatSpeed = 0.01f;
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + (m_GliderfloatSpeed), gameObject.transform.position.z);
+
 
         }
         else
@@ -504,79 +511,84 @@ public class Turtle_Move : MonoBehaviour
                 NetTest.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
 
         }*/
-
-        if (JoyStickMove.instance.Get_NormalizedVector() != Vector3.zero)
+        if (!Camera_Directing_Net.GetInstance().ani_is_working)
         {
-            Vector3 normal = JoyStickMove.instance.Get_NormalizedVector();
-            normal.z = normal.y;
-            normal.y = 0.0f;
-            if (!glider_on)
+            if (JoyStickMove.instance.Get_NormalizedVector() != Vector3.zero)
             {
-                transform.Translate((m_PlayerSpeed + speed_power) * normal * Time.deltaTime);
+                Vector3 normal = JoyStickMove.instance.Get_NormalizedVector();
+                normal.z = normal.y;
+                normal.y = 0.0f;
+                if (!glider_on)
+                {
+                    transform.Translate((m_PlayerSpeed + speed_power) * normal * Time.deltaTime);
+                }
+                else
+                    transform.Translate((m_PlayerSpeed + 4) * normal * Time.deltaTime);
+                if (!VSModeManager.instance.game_set)
+                    NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
             }
             else
-                transform.Translate((m_PlayerSpeed + 4) * normal * Time.deltaTime);
-            if (!VSModeManager.instance.game_set)
-                NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
-        }
-        else
-        {
-            // 릴리즈 빌드할 때는 적용할 것!
-            if (glider_on)
-                m_animator.SetBool("TurtleMan_GliderMove", false);
-            else
-                m_animator.SetBool("TurtleMan_isWalk", false);
-        }
-        BodyRotation();
-        // ==================
-        if (Input.GetKey(KeyCode.W))
-        {
-            if (glider_on) {
-                transform.Translate(new Vector3(0.0f, 0.0f, (m_PlayerSpeed + 4) * Time.deltaTime));
+            {
+                // 릴리즈 빌드할 때는 적용할 것!
+                if (glider_on)
+                    m_animator.SetBool("TurtleMan_GliderMove", false);
+                else
+                    m_animator.SetBool("TurtleMan_isWalk", false);
             }
-            else
-                transform.Translate(new Vector3(0.0f, 0.0f, (m_PlayerSpeed + speed_power) * Time.deltaTime));
-            if (!VSModeManager.instance.game_set)
-                NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            if (glider_on) {
-                transform.Translate(new Vector3(0.0f, 0.0f, -(m_PlayerSpeed + 4) * Time.deltaTime));
+            BodyRotation();
+            // ==================
+            if (Input.GetKey(KeyCode.W))
+            {
+                if (glider_on)
+                {
+                    transform.Translate(new Vector3(0.0f, 0.0f, (m_PlayerSpeed + 4) * Time.deltaTime));
+                }
+                else
+                    transform.Translate(new Vector3(0.0f, 0.0f, (m_PlayerSpeed + speed_power) * Time.deltaTime));
+                if (!VSModeManager.instance.game_set)
+                    NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
             }
-            else
-                transform.Translate(new Vector3(0.0f, 0.0f, -(m_PlayerSpeed + speed_power) * Time.deltaTime));
-            if (!VSModeManager.instance.game_set)
-                NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            if (glider_on) {
-                transform.Translate(new Vector3(-(m_PlayerSpeed + 4) * Time.deltaTime, 0.0f, 0.0f));
+            if (Input.GetKey(KeyCode.S))
+            {
+                if (glider_on)
+                {
+                    transform.Translate(new Vector3(0.0f, 0.0f, -(m_PlayerSpeed + 4) * Time.deltaTime));
+                }
+                else
+                    transform.Translate(new Vector3(0.0f, 0.0f, -(m_PlayerSpeed + speed_power) * Time.deltaTime));
+                if (!VSModeManager.instance.game_set)
+                    NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
             }
-            else
-                transform.Translate(new Vector3(-(m_PlayerSpeed + speed_power) * Time.deltaTime, 0.0f, 0.0f));
-            if (!VSModeManager.instance.game_set)
-                NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            if (glider_on) {
-                transform.Translate(new Vector3((m_PlayerSpeed + 4) * Time.deltaTime, 0.0f, 0.0f));
+            if (Input.GetKey(KeyCode.A))
+            {
+                if (glider_on)
+                {
+                    transform.Translate(new Vector3(-(m_PlayerSpeed + 4) * Time.deltaTime, 0.0f, 0.0f));
+                }
+                else
+                    transform.Translate(new Vector3(-(m_PlayerSpeed + speed_power) * Time.deltaTime, 0.0f, 0.0f));
+                if (!VSModeManager.instance.game_set)
+                    NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
             }
-            else
-                transform.Translate(new Vector3((m_PlayerSpeed + speed_power) * Time.deltaTime, 0.0f, 0.0f));
-            if (!VSModeManager.instance.game_set)
-                NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
-        }
+            if (Input.GetKey(KeyCode.D))
+            {
+                if (glider_on)
+                {
+                    transform.Translate(new Vector3((m_PlayerSpeed + 4) * Time.deltaTime, 0.0f, 0.0f));
+                }
+                else
+                    transform.Translate(new Vector3((m_PlayerSpeed + speed_power) * Time.deltaTime, 0.0f, 0.0f));
+                if (!VSModeManager.instance.game_set)
+                    NetTest.instance.SetMyPos(transform.position.x, transform.localEulerAngles.y, transform.position.z);
+            }
 
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (!VSModeManager.instance.game_set)
-                SetBomb();
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (!VSModeManager.instance.game_set)
+                    SetBomb();
+            }
         }
-
     }
     public void ReloadBomb(byte tID)
     {
@@ -771,7 +783,7 @@ public class Turtle_Move : MonoBehaviour
     void BodyRotation()
     {
 
-        if (Input.touchCount > 0 ) // 조이스틱 + 회전 + ...
+        if (VSModeManager.instance.Get_isClicked()) // 조이스틱 + 회전 + ...
         {
             
             if (!m_is_Touch_Started)

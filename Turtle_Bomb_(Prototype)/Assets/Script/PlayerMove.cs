@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 //define과 같은 개념. 상수 
 static class MAX_VALUE_ITEM
@@ -44,7 +45,7 @@ public class PlayerMove : MonoBehaviour {
     float m_Touch_PrevPoint_X;
 
     // 회전 감도
-    float m_RotateSensX = 150.0f;
+    float m_RotateSensX = 120.0f;
 
     // 폭탄 배치를 위한 위치값
     float m_BombLocX = 0.0f;
@@ -62,7 +63,8 @@ public class PlayerMove : MonoBehaviour {
 
     // 박스 밀기 거리
     float m_push_Distance = 0.0f;
-
+    
+    IEnumerator m_Wait_For_Intro;
 
     // ======== Functions ========
     void Awake()
@@ -72,8 +74,9 @@ public class PlayerMove : MonoBehaviour {
         m_Player_Mesh_Renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
 
         StageManager.GetInstance().Set_is_Player_Alive(true);
-
-        StartCoroutine(Wait_For_Intro());
+        
+        m_Wait_For_Intro = Wait_For_Intro();
+        StartCoroutine(m_Wait_For_Intro);
     }
 
     public void Player_Set_Start_Point(Vector3 p)
@@ -86,28 +89,21 @@ public class PlayerMove : MonoBehaviour {
         while(true)
         {
             if (StageManager.GetInstance().Get_is_Intro_Over())
-            {
-                StopAllCoroutines();
-                StartCoroutine(Player_Update());
-            }
+                StopCoroutine(m_Wait_For_Intro);
             yield return null;
         }
     }
 
-    IEnumerator Player_Update()
+    void Update()
     {
-        while(true)
+        if (StageManager.GetInstance().Get_is_Intro_Over() && !StageManager.GetInstance().Get_is_Pause())
         {
-            if (!StageManager.GetInstance().Get_is_Pause())
-            {
-                GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 0.0f);
+            GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 0.0f);
 
-                if (!m_isPushing)
-                    Move();
-                else
-                    Pushing();
-            }
-            yield return null;
+            if (!m_isPushing)
+                Move();
+            else
+                Pushing();
         }
     }
 
@@ -370,7 +366,7 @@ public class PlayerMove : MonoBehaviour {
         else
         {
             // 릴리즈 빌드할 때는 적용할 것!
-            m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", false); 
+            m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", false);
         }
         
     }
@@ -390,7 +386,7 @@ public class PlayerMove : MonoBehaviour {
 
     void Body_RotateControl_ForMobile()
     {
-        if (Input.touchCount > 0) // 터치가 감지됨.
+        if (UI.GetInstance().Get_isClicked()) // 회전 터치가 감지됨.
         {
             if (!m_is_Touch_Started) // 터치가 이제 막 시작됐다! (손을 모두 뗄 때 까지 더이상 수행하지 않음.)
             {

@@ -54,6 +54,10 @@ static class OBJECT_TABLE_NUMBER
     public const int BOX_NONE_ITEM = 21;
     public const int ICICLE_1 = 26;
     public const int ICICLE_2 = 27;
+    public const int ICE_BOX_1 = 28;
+    public const int ICE_BOX_2 = 29;
+    public const int ICE_BOX_3 = 30;
+    public const int ICE_ROCK = 31;
 }
 
 
@@ -96,7 +100,10 @@ public class StageManager : MonoBehaviour
     public GameObject m_Prefab_Info_Trigger_Throw;
     public GameObject m_Prefab_Box_None_Item;
     public GameObject m_Prefab_Icicle;
-
+    public GameObject m_Prefab_Ice_Box_1;
+    public GameObject m_Prefab_Ice_Box_2;
+    public GameObject m_Prefab_Ice_Box_3;
+    public GameObject m_Prefab_Ice_Rock;
 
 
 
@@ -282,6 +289,8 @@ public class StageManager : MonoBehaviour
             }
         }
 
+
+        Create_Terrain(); // 터레인 생성
         Create_Map(m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count]); // 설정된 번호를 받아서 맵 생성!
 
         
@@ -330,9 +339,6 @@ public class StageManager : MonoBehaviour
 
     void Create_Map(int stage_id) // 맵 생성 및 설정
     {
-        // 터레인 생성
-        Create_Terrain();
-
         // 오브젝트 스폰 위치 목록을 받아온다.
         CSV_Manager.GetInstance().Get_Object_Spawn_Position_List(ref m_Object_Spawn_Position_List, stage_id);
 
@@ -480,6 +486,29 @@ public class StageManager : MonoBehaviour
                             m_Current_Map_Objects[m_Current_Map_Objects_Count].GetComponent<Icicle>().Start_With_Offset_Time(ICICLE_OFFSET_TIME.ICICLE_2);
                             m_Object_Position.y = m_Prefab_Icicle.transform.position.y;
                             break;
+
+                        case OBJECT_TABLE_NUMBER.ICE_BOX_1:
+                            m_Current_Map_Objects.Add(Instantiate(m_Prefab_Ice_Box_1));
+                            m_Current_Map_Objects[m_Current_Map_Objects_Count].GetComponent<Ice_Box>().Set_Crash_Count(1);
+                            m_Object_Position.y = m_Prefab_Icicle.transform.position.y;
+                            break;
+
+                        case OBJECT_TABLE_NUMBER.ICE_BOX_2:
+                            m_Current_Map_Objects.Add(Instantiate(m_Prefab_Ice_Box_2));
+                            m_Current_Map_Objects[m_Current_Map_Objects_Count].GetComponent<Ice_Box>().Set_Crash_Count(2);
+                            m_Object_Position.y = m_Prefab_Icicle.transform.position.y;
+                            break;
+
+                        case OBJECT_TABLE_NUMBER.ICE_BOX_3:
+                            m_Current_Map_Objects.Add(Instantiate(m_Prefab_Ice_Box_3));
+                            m_Current_Map_Objects[m_Current_Map_Objects_Count].GetComponent<Ice_Box>().Set_Crash_Count(3);
+                            m_Object_Position.y = m_Prefab_Icicle.transform.position.y;
+                            break;
+
+                        case OBJECT_TABLE_NUMBER.ICE_ROCK:
+                            m_Current_Map_Objects.Add(Instantiate(m_Prefab_Ice_Rock));
+                            m_Object_Position.y = m_Prefab_Icicle.transform.position.y;
+                            break;
                     }
 
                     // 생성한 객체 좌표 이동
@@ -510,15 +539,15 @@ public class StageManager : MonoBehaviour
 
         if (m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count] != 0) // 리스트에 맵 번호가 있으면 시작
         {
-            m_is_Map_Changing = true; // 맵 변경 중이라고 알림
+            //m_is_Map_Changing = true; // 맵 변경 중이라고 알림
 
             MCL_init(); // MCL을 재설정한다.
 
             Destroy_Objects(); // 남아있는 오브젝트들을 제거한다.
-
+            
             Create_Map(m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count]); // 새 맵을 생성!
 
-            Invoke("Map_Changing_Over", 1.0f); // 1초 뒤 맵 변경 완료 알림
+            //Invoke("Map_Changing_Over", 1.0f); // 1초 뒤 맵 변경 완료 알림
         }
     }
 
@@ -546,6 +575,7 @@ public class StageManager : MonoBehaviour
     void MCL_init() // MCL 좌표 및 is_Blocked 초기화
     {
         m_Map_Coordinate_List.Clear();
+        m_MCL_is_Blocked_List.Clear();
 
         Map_Coordinate m_tmpCoordinate;
 

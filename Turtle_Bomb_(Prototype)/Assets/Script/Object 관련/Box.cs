@@ -4,14 +4,12 @@ using UnityEngine;
 
 public class Box : MonoBehaviour {
     
-    // Use this for initialization
     public GameObject m_Object_FireItem;
     public GameObject m_Object_BombItem;
     public GameObject m_Object_SpeedItem;
     public GameObject m_Object_KickItem;
     public GameObject m_Object_ThrowItem;
-
-
+    
     public GameObject m_Particle;
 
     GameObject m_PlayerCollider = null; // 플레이어의 밀기용 감지기
@@ -49,18 +47,18 @@ public class Box : MonoBehaviour {
             // MCL 갱신
             index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
             StageManager.GetInstance().Update_MCL_isBlocked(index, false);
-            
+
             SetItem(); // 아이템 생성
 
             Instantiate(m_Particle).transform.position = transform.position; // 파티클 발생
 
-            Destroy(other.gameObject); // 화염 잔해 파괴
-            
             Destroy(gameObject); // 박스 파괴
+
+            Destroy(other.gameObject); // 화염 잔해 파괴
         }
     }
 
-    void SetItem()
+    protected void SetItem()
     {
         if (Random.Range(0, 100) > 51)
         {

@@ -17,10 +17,14 @@ public class Boss_HP_Gauge : MonoBehaviour
     bool m_is_Angry_Mode_On = false;
     IEnumerator m_Decrease_HP;
     IEnumerator m_Angry_Mode;
-
-	void Start ()
+    void Awake()
     {
         m_Instance = this;
+
+    }
+	void Start ()
+    {
+        
         m_HP_Gauge = GetComponent<Scrollbar>();
         m_Animations = GetComponent<Animation>();
         m_Child_Animations = GetComponentsInChildren<Animation>()[1];

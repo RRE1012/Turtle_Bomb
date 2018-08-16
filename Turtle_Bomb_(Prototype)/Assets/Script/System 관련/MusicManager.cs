@@ -75,6 +75,16 @@ public class MusicManager : MonoBehaviour {
 #endif
         }
     }
+    public void soundE2()
+    {
+        if (!is_SE_Mute) bgmSource.PlayOneShot(explodeSound, 1.0f);
+        if (!is_Vib_Mute)
+        {
+#if UNITY_ANDROID
+            Handheld.Vibrate(); // 1초간 진동
+#endif
+        } 
+    }
 
     public void TryMute()
     {
@@ -87,13 +97,21 @@ public class MusicManager : MonoBehaviour {
         if (!is_SE_Mute) source.PlayOneShot(itemGetSound,1.0f);
         //AudioSource.PlayClipAtPoint(itemGetSound, transform.position, 1.0f);
     }
+    public void ItemGetSound2()
+    {
+        bgmSource.PlayOneShot(itemGetSound, 1.0f);
+        //AudioSource.PlayClipAtPoint(itemGetSound, transform.position, 1.0f);
+    }
     //폭탄 설치 사운드
     public void BombSetSound()
     {
         if (!is_SE_Mute) source.PlayOneShot(bombSetSound);
     }
 
-
+    public void BombSetSound2()
+    {
+        bgmSource.PlayOneShot(bombSetSound);
+    }
     // 고블린 기본
     public void Goblin_Idle_Sound()
     {

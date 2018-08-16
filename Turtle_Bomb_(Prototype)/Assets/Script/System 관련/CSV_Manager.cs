@@ -309,7 +309,7 @@ public class CSV_Manager : MonoBehaviour {
     public void Get_Adv_Mission_Num_List(ref int[] list, int stage_ID)
     {
         m_stringList = m_Stage_Table_csvFile.text.Split('\n');
-        if (stage_ID >= 10) stage_ID += -9;
+        
         m_data = m_stringList[3 + stage_ID].Split(',');
         
         for (int i = 0; i < 3; ++i)

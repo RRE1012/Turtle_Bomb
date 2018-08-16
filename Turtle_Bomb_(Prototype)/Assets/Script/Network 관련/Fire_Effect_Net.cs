@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Fire_Effect_Net : MonoBehaviour {
 
@@ -14,23 +15,30 @@ public class Fire_Effect_Net : MonoBehaviour {
         {
             if (other.gameObject.CompareTag("Player"))
             {
-                
-                if (Turtle_Move.instance.alive != 0)
+                if (SceneManager.GetActiveScene().buildIndex == 7)
                 {
-                    //Debug.Log("TTaGawa");
-                    if (Turtle_Move.instance.glider_on)
+                    if (Turtle_Move.instance.alive != 0)
                     {
-                        Turtle_Move.instance.alive = 1;
-                        Turtle_Move.instance.glider_on = false;
-                        Turtle_Move.instance.overpower = true;
-                    }
-                    else
-                    {
-                        if(!Turtle_Move.instance.overpower)
-                            Turtle_Move.instance.alive = 0;
+                        //Debug.Log("TTaGawa");
+                        if (Turtle_Move.instance.glider_on)
+                        {
+                            Turtle_Move.instance.alive = 1;
+                            Turtle_Move.instance.glider_on = false;
+                            Turtle_Move.instance.overpower = true;
+                        }
+                        else
+                        {
+                            if (!Turtle_Move.instance.overpower)
+                                Turtle_Move.instance.alive = 0;
 
+                        }
+                        NetTest.instance.SetmoveTrue();
                     }
-                    NetTest.instance.SetmoveTrue();
+                }
+                else
+                {
+                    Turtle_Move_Coop.instance.alive = 0;
+                    NetManager_Coop.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
                 }
             }
         }

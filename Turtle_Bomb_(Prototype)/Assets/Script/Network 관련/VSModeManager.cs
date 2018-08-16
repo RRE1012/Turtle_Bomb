@@ -12,6 +12,7 @@ public class VSModeManager : MonoBehaviour
     public RawImage loser_image;
     public RawImage draw_image;
     public GameObject m_Option_UI;
+    public GameObject m_Direction_Camera;
     bool m_isClicked = false;
     public bool game_set;
     public Text time_Text;
@@ -32,6 +33,7 @@ public class VSModeManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        m_Direction_Camera.GetComponentInChildren<Camera_Directing_Net>().Direction_Play(DIRECTION_NUMBER.INTRO_NORMAL_1);
         time = 60.0f;
         win_or_lose = 0;
         game_set = false;
@@ -108,7 +110,7 @@ public class VSModeManager : MonoBehaviour
             time_Text.text = "0" + (int)time / 60 + ":0" + (int)time % 60;
         if (win_or_lose == 1)
         {
-            Performance_Network.instance.DeadAnimation(loser_ID);
+            //Performance_Network.instance.DeadAnimation(loser_ID);
             Invoke("WinnerSet", 3.3f);
             win_or_lose = 0;
             //Debug.Log("Win!!!!!!");

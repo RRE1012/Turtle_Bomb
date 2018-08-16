@@ -14,4 +14,9 @@ public class Rock : MonoBehaviour {
         StageManager.GetInstance().Update_MCL_isBlocked(index, true);
     }
 	
+    void OnDestroy()
+    {
+        // MCL 갱신
+        StageManager.GetInstance().Update_MCL_isBlocked(index, false);
+    }
 }

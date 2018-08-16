@@ -32,3 +32,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scene/Mode_VS_Connect.unity
     guid: a576a234770fa584e9169b3429428215
+  - enabled: 1
+    path: Assets/Scene/Mode_CoOp(Login).unity
+    guid: a4556838dbba19248a78fa2145c1001c
+  - enabled: 1
+    path: Assets/Scene/Mode_CoOp(ConnectToServer).unity
+    guid: a65b920d554991f48b4781b64be7da1e
+  - enabled: 1
+    path: Assets/Scene/Mode_CoOp(Connect).unity
+    guid: 7a155e66d0c38ea4b87e1ca6640a3821
+  - enabled: 1
+    path: Assets/Scene/Mode_CoOp_Play.unity
+    guid: 24815bb6406fe82488fde7d4009c5b3e
