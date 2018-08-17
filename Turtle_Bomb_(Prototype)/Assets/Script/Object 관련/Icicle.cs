@@ -22,7 +22,7 @@ public class Icicle : MonoBehaviour
 
     int m_MCL_Index;
 
-	void Start ()
+	void Awake ()
     {
         m_Animations = GetComponent<Animation>();
 

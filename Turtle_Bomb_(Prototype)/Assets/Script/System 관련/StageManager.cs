@@ -232,7 +232,7 @@ public class StageManager : MonoBehaviour
 
     IEnumerator m_StageManager;
 
-
+    bool m_is_Block_Object = false;
 
     // ================================
     // =========== Methods ============
@@ -344,7 +344,7 @@ public class StageManager : MonoBehaviour
 
         m_Current_Map_Objects_Count = 0;
 
-
+        int index = 0;
 
         // 위치에 맞게 오브젝트를 생성한다.
         for (int z = 0; z < 15; ++z)
@@ -362,11 +362,13 @@ public class StageManager : MonoBehaviour
                         case OBJECT_TABLE_NUMBER.BOX: // 박스
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Box));
                             m_Object_Position.y = m_Prefab_Box.transform.position.y;
+                            m_is_Block_Object = true;
                             break;
 
                         case OBJECT_TABLE_NUMBER.ROCK: // 바위
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Rock));
                             m_Object_Position.y = m_Prefab_Rock.transform.position.y;
+                            m_is_Block_Object = true;
                             break;
 
                         case OBJECT_TABLE_NUMBER.GRASS: // 부쉬
@@ -398,11 +400,13 @@ public class StageManager : MonoBehaviour
                         case OBJECT_TABLE_NUMBER.NEXT_POINT:
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Next_Portal));
                             m_Object_Position.y = m_Prefab_Next_Portal.transform.position.y;
+                            m_is_Block_Object = true;
                             break;
 
                         case OBJECT_TABLE_NUMBER.END_POINT:
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_End_Portal));
                             m_Object_Position.y = m_Prefab_End_Portal.transform.position.y;
+                            m_is_Block_Object = true;
                             break;
 
                         case OBJECT_TABLE_NUMBER.CHARACTER_SPAWN:
@@ -491,34 +495,45 @@ public class StageManager : MonoBehaviour
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Ice_Box_1));
                             m_Current_Map_Objects[m_Current_Map_Objects_Count].GetComponent<Ice_Box>().Set_Crash_Count(1);
                             m_Object_Position.y = m_Prefab_Icicle.transform.position.y;
+                            m_is_Block_Object = true;
                             break;
 
                         case OBJECT_TABLE_NUMBER.ICE_BOX_2:
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Ice_Box_2));
                             m_Current_Map_Objects[m_Current_Map_Objects_Count].GetComponent<Ice_Box>().Set_Crash_Count(2);
                             m_Object_Position.y = m_Prefab_Icicle.transform.position.y;
+                            m_is_Block_Object = true;
                             break;
 
                         case OBJECT_TABLE_NUMBER.ICE_BOX_3:
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Ice_Box_3));
                             m_Current_Map_Objects[m_Current_Map_Objects_Count].GetComponent<Ice_Box>().Set_Crash_Count(3);
                             m_Object_Position.y = m_Prefab_Icicle.transform.position.y;
+                            m_is_Block_Object = true;
                             break;
 
                         case OBJECT_TABLE_NUMBER.ICE_ROCK:
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Ice_Rock));
                             m_Object_Position.y = m_Prefab_Icicle.transform.position.y;
+                            m_is_Block_Object = true;
                             break;
                     }
 
                     // 생성한 객체 좌표 이동
                     m_Current_Map_Objects[m_Current_Map_Objects_Count].transform.position = m_Object_Position;
-                    
+
+                    if (m_is_Block_Object)
+                    {
+                        index = Find_Own_MCL_Index(m_Current_Map_Objects[m_Current_Map_Objects_Count].transform.position.x, m_Current_Map_Objects[m_Current_Map_Objects_Count].transform.position.z);
+                        Update_MCL_isBlocked(index, true);
+                        m_is_Block_Object = false;
+                    }
                     ++m_Current_Map_Objects_Count; // 카운트 증가
                 }
             }
         }
     }
+
 
     void Create_Terrain() // 터레인 생성
     {
@@ -540,11 +555,11 @@ public class StageManager : MonoBehaviour
         if (m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count] != 0) // 리스트에 맵 번호가 있으면 시작
         {
             //m_is_Map_Changing = true; // 맵 변경 중이라고 알림
+            
+            Destroy_Objects(); // 남아있는 오브젝트들을 제거한다.
 
             MCL_init(); // MCL을 재설정한다.
 
-            Destroy_Objects(); // 남아있는 오브젝트들을 제거한다.
-            
             Create_Map(m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count]); // 새 맵을 생성!
 
             //Invoke("Map_Changing_Over", 1.0f); // 1초 뒤 맵 변경 완료 알림

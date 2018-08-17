@@ -15,16 +15,22 @@ public class Box : MonoBehaviour {
     GameObject m_PlayerCollider = null; // 플레이어의 밀기용 감지기
     GameObject m_IcicleCollider = null; // 고드름 바닥 충돌체
 
-    public bool m_is_Destroyed = false;
+    protected bool m_is_Destroyed = false;
     protected int index;
 
+    /*
     void Start()
     {
         // 최초 시작 시 박스 자신의 위치의 isBlocked를 true로 갱신
-        index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
-        StageManager.GetInstance().Update_MCL_isBlocked(index, true);
+        MCL_Block();
     }
 
+    public void MCL_Block()
+    {
+        //index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
+        //StageManager.GetInstance().Update_MCL_isBlocked(index, true);
+    }
+    */
     void OnDestroy()
     {
         if (m_PlayerCollider) // 충돌중인 감지기가 있으면

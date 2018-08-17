@@ -421,6 +421,8 @@ public class UI : MonoBehaviour {
                 else
                     m_TimeLimitText.text = "0" + (int)time_Second / 60 + ":" + (int)time_Second % 60;
 
+                Stat_UI_Management(); // 스탯 UI 관리
+
                 Mission_UI_Management(); // 미션 UI 출력
 
                 Push_Button_Management(); // 밀기버튼

@@ -10,9 +10,8 @@ public class Ice_Box : Box
     void Start()
     {
         GetComponentInChildren<MeshRenderer>().material = m_Materials[m_Crash_Count - 1];
-
-        index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
-        StageManager.GetInstance().Update_MCL_isBlocked(index, true);
+        //index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
+        //StageManager.GetInstance().Update_MCL_isBlocked(index, true);
     }
 
 
