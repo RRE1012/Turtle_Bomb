@@ -15,19 +15,14 @@ public struct Map_Coordinate
     }
 }
 
+static class MAP_SIZE
+{
+    public const float UNIT = 2.0f;
+}
+
+
 
 // ========================
-
-
-// #define 맵 생성 관련
-static class MAP
-{
-    public const int NOT_SET = -1; // 설정이 안됐음
-
-    public const int THEME_FOREST = 1;
-    public const int THEME_OCEAN = 2;
-    public const int THEME_SNOWLAND = 3;
-}
 
 static class OBJECT_TABLE_NUMBER
 {
@@ -73,8 +68,7 @@ public class StageManager : MonoBehaviour
 
     public GameObject m_Forest_Theme_Terrain;
     public GameObject m_SnowLand_Theme_Terrain;
-
-    //public GameObject m_Prefab_Intro_Boss; // 인트로용 객체
+    
 
     // 오브젝트 프리팹들
     public GameObject m_Prefab_Box;
@@ -233,6 +227,7 @@ public class StageManager : MonoBehaviour
     IEnumerator m_StageManager;
 
     bool m_is_Block_Object = false;
+    
 
     // ================================
     // =========== Methods ============
@@ -253,7 +248,7 @@ public class StageManager : MonoBehaviour
 
         m_Object_Table_List = new List<Object_Table_Data>(CSV_Manager.GetInstance().Get_Object_Table_List()); // 오브젝트 테이블 목록 로드
 
-        if (m_Stage_ID == MAP.NOT_SET) // 설정이 안돼있다면
+        if (m_Stage_ID == -1) // 설정이 안돼있다면
             m_Stage_ID = PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID"); // 스테이지 ID를 받아온다.
             
         // 스테이지 데이터 내부 리스트들의 공간 할당
@@ -266,7 +261,7 @@ public class StageManager : MonoBehaviour
 
         m_Boss_HP_Bar.SetActive(false);
 
-        if (m_Boss_ID == MAP.NOT_SET) // 설정이 안돼있다면
+        if (m_Boss_ID == -1) // 설정이 안돼있다면
         {
             foreach (Adventure_Quest_Data questdata in m_QuestList) // 현재 스테이지의 퀘스트를 뒤져본다
             {
@@ -295,7 +290,7 @@ public class StageManager : MonoBehaviour
 
         
 
-        if (m_Stage_Time_Limit == MAP.NOT_SET) // 시간 설정
+        if (m_Stage_Time_Limit == -1) // 시간 설정
             m_Stage_Time_Limit = m_Adventure_Stage_Data.Stage_Time;
 
         if (!m_is_Boss_Stage) m_Direction_Camera.GetComponentInChildren<Camera_Directing>().Direction_Play(DIRECTION_NUMBER.INTRO_NORMAL_1);
@@ -303,9 +298,10 @@ public class StageManager : MonoBehaviour
 
         // 비행기 미리 소환
         m_Airplane = Instantiate(m_Prefab_Airplane); // 인스턴스 생성
-        m_Current_Map_Objects.Add(m_Airplane);
         m_Airplane.GetComponent<Airplane>().Set_Airdrop_Count(m_Adventure_Stage_Data.Number_Of_DropItem); // 드랍 개수 설정
-        ++m_Current_Map_Objects_Count; // 카운트 증가
+
+
+        
     }
 
     void Start()
@@ -692,7 +688,11 @@ public class StageManager : MonoBehaviour
     }
 
 
-
+    public bool Get_MCL_is_Blocked_With_Coord(float x, float z)
+    {
+        if (Find_Own_MCL_Index(x, z) == -1) return true; // 없는 범위는 막힌것으로 간주한다.
+        return Get_MCL_index_is_Blocked(Find_Own_MCL_Index(x, z)); // 있는 범위는 정상적으로 판단한다.
+    }
 
 
 
@@ -724,7 +724,6 @@ public class StageManager : MonoBehaviour
         }
 
         PlayerPrefs.Save();
-        UI.GetInstance().Stage_Clear_Directing();
     }
 
     void Condition_For_Getting_Stars(ref int[] list) // 별 획득 조건 관리
@@ -821,21 +820,18 @@ public class StageManager : MonoBehaviour
     {
         if (!m_is_Player_Alive) // 죽어서 끝났거나,
         {
-            m_is_Game_Over = true;
-            m_is_Pause = true;
-            Audio_Manager.GetInstance().Sound_Fadeout_Start();
             UI.GetInstance().GameOver_Directing();
-            StopCoroutine(m_StageManager);
+            Set_Game_Over();
         }
 
         else if (m_is_Stage_Clear) // 클리어해서 끝났거나!
         {
-            m_is_Game_Over = true;
-            m_is_Pause = true;
-            Audio_Manager.GetInstance().Sound_Fadeout_Start();
-            StopCoroutine(m_StageManager);
+            UI.GetInstance().Stage_Clear_Directing();
+            Set_Game_Over();
         }
     }
+
+    public void Set_Game_Over() { m_is_Game_Over = true; m_is_Pause = true; Audio_Manager.GetInstance().Sound_Fadeout_Start(); StopCoroutine(m_StageManager); }
 
     public bool Get_Game_Over() // 게임오버인가를 반환
     {
@@ -879,7 +875,7 @@ public class StageManager : MonoBehaviour
         {
             Notice_UI.GetInstance().Notice_Play(NOTICE_NUMBER.DANGER);
             for (int i = 0; i < m_Adventure_Stage_Data.Number_Of_GliderGoblin; ++i)
-                Instantiate(m_SuddenDeath_JetGoblin).GetComponent<Boss_AI_JetGoblin>().Set_Bomb_info(m_Adventure_Stage_Data.GliderGoblin_Bomb, m_Adventure_Stage_Data.GliderGoblin_Fire);
+                Instantiate(m_SuddenDeath_JetGoblin).GetComponent<Jet_Goblin>().Set_Bomb_info(m_Adventure_Stage_Data.GliderGoblin_Bomb, m_Adventure_Stage_Data.GliderGoblin_Fire, 12.0f);
             m_is_SuddenDeath_Summoned = true;
         }
     }
@@ -939,7 +935,7 @@ public class StageManager : MonoBehaviour
         // 동적생성 폭탄들 제거
         GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
         foreach (GameObject b in bombs)
-            Destroy(b);
+            b.GetComponent<Bomb_Remaster>().Return_To_Pool();
 
         // 동적생성 화염들 제거
         GameObject[] flame = GameObject.FindGameObjectsWithTag("Flame");

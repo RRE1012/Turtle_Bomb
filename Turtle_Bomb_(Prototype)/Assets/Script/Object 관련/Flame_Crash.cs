@@ -34,8 +34,7 @@ public class Flame_Crash : MonoBehaviour {
         {
             if (SceneManager.GetActiveScene().buildIndex == 3)
             {
-
-                PlayerMove.C_PM.Set_Dead();
+                other.gameObject.GetComponent<Player>().Set_Dead();
             }
             if (SceneManager.GetActiveScene().buildIndex == 12)
             {

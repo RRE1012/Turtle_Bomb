@@ -13,9 +13,7 @@ public class Box_None_Item : Box {
             // MCL 갱신
             index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
             StageManager.GetInstance().Update_MCL_isBlocked(index, false);
-
-            // 화염 잔해 파괴
-            Destroy(other.gameObject);
+            
             // 박스 파괴
             Destroy(gameObject);
         }

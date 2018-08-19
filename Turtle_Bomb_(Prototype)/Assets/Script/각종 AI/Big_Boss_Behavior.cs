@@ -676,8 +676,7 @@ public class Big_Boss_Behavior : MonoBehaviour
 
                         GameObject temp = Instantiate(m_Glider_Goblin);
                         temp.transform.position = pos; // 설정한 위치에 글라이더 소환
-                        temp.GetComponent<Boss_AI_JetGoblin>().Set_Bomb_info(m_Glider_Goblin_Bomb_Value, m_Glider_Goblin_Fire_Value);
-                        temp.GetComponent<Boss_AI_JetGoblin>().Set_Glider_Speed(m_Glider_Monster_Speed_Value);
+                        temp.GetComponent<Jet_Goblin>().Set_Bomb_info(m_Glider_Goblin_Bomb_Value, m_Glider_Goblin_Fire_Value, m_Glider_Monster_Speed_Value);
                     }
                 }
             }

@@ -39,8 +39,6 @@ public class Ice_Box : Box
 
                 Destroy(gameObject); // 박스 파괴
             }
-
-            Destroy(other.gameObject); // 화염 잔해 파괴
         }
     }
 }

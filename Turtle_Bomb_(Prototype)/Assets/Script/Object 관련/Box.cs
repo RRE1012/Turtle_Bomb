@@ -17,20 +17,7 @@ public class Box : MonoBehaviour {
 
     protected bool m_is_Destroyed = false;
     protected int index;
-
-    /*
-    void Start()
-    {
-        // 최초 시작 시 박스 자신의 위치의 isBlocked를 true로 갱신
-        MCL_Block();
-    }
-
-    public void MCL_Block()
-    {
-        //index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
-        //StageManager.GetInstance().Update_MCL_isBlocked(index, true);
-    }
-    */
+    
     void OnDestroy()
     {
         if (m_PlayerCollider) // 충돌중인 감지기가 있으면
@@ -46,7 +33,7 @@ public class Box : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (!m_is_Destroyed && other.gameObject.CompareTag("Flame_Remains"))
+        if (!m_is_Destroyed && (other.gameObject.CompareTag("Flame_Remains") || other.gameObject.CompareTag("Flame")))
         {
             m_is_Destroyed = true;
 
@@ -59,8 +46,6 @@ public class Box : MonoBehaviour {
             Instantiate(m_Particle).transform.position = transform.position; // 파티클 발생
 
             Destroy(gameObject); // 박스 파괴
-
-            Destroy(other.gameObject); // 화염 잔해 파괴
         }
     }
 

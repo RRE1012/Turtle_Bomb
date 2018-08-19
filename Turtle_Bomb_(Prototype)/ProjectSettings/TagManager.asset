@@ -38,6 +38,7 @@ TagManager:
   - Glider_Item
   - icicle_Body
   - icicle_Bottom
+  - Boss_Monster
   layers:
   - Default
   - TransparentFX

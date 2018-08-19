@@ -96,10 +96,6 @@ public class UI : MonoBehaviour {
 
 
     // UI에 표시될 변수
-    public int m_fire_count;
-    public int m_releasable_bomb_count;
-    public int m_speed_count;
-    public int m_cur_Max_Bomb_Count;
 
     float time_Second;
 
@@ -127,16 +123,12 @@ public class UI : MonoBehaviour {
         m_Option_UI.SetActive(false);
         m_InBushImage.gameObject.SetActive(false);
 
-        m_fire_count = 1;
-        m_releasable_bomb_count = 1;
-        m_speed_count = 1;
-        m_cur_Max_Bomb_Count = 1;
+        Push_Button_Management(false); // 밀기버튼 비활성
 
         // 폭탄 설치/던지기 활성/비활성
         m_Set_Bomb_Button.gameObject.SetActive(true);
         m_Throw_Bomb_Button.gameObject.SetActive(false);
-
-        Stat_UI_Management();
+        
         GetItemUI_Deactivate();
 
 
@@ -199,7 +191,6 @@ public class UI : MonoBehaviour {
     public void StageClear_ExitButton()
     {
         StageManager.GetInstance().Set_is_Pause(true);
-        StageManager.GetInstance().Destroy_Objects();
         GameObject.Find("Navigation_Plane").SetActive(false);
         if (LobbySound.instanceLS != null && PlayerPrefs.GetInt("System_Option_BGM_ON") != 0)
             LobbySound.instanceLS.SoundStart();
@@ -211,31 +202,30 @@ public class UI : MonoBehaviour {
     {
         StageManager.GetInstance().Set_is_Pause(true);
         GameObject.Find("Navigation_Plane").SetActive(false);
-        StageManager.GetInstance().Destroy_Objects();
         SceneManager.LoadScene(3);
     }
     
 
     // 아이템 스탯 UI 관리
-    public void Stat_UI_Management()
+    public void Stat_UI_Management(int cbc, int mbc, int fc, int sc)
     {
         // 화력, 폭탄 설치 갯수, 스피드 정보 출력
-        m_FireCountText.text = m_fire_count.ToString();
-        if (m_cur_Max_Bomb_Count >= MAX_VALUE_ITEM.retval)
-            m_BombCountText.text = m_releasable_bomb_count.ToString() + " / max";
+        m_FireCountText.text = fc.ToString();
+        if (cbc >= MAX_STATUS.BOMB)
+            m_BombCountText.text = cbc.ToString() + " / max";
         else
-            m_BombCountText.text = m_releasable_bomb_count.ToString() + " / " + m_cur_Max_Bomb_Count.ToString();
-        m_SpeedCountText.text = m_speed_count.ToString();
+            m_BombCountText.text = cbc.ToString() + " / " + mbc.ToString();
+        m_SpeedCountText.text = sc.ToString();
     }
 
 
     // 박스밀기 버튼 관리
-    void Push_Button_Management()
+    public void Push_Button_Management(bool is_On)
     {
         ColorBlock cb = m_PushButton.colors;
         Color c;
 
-        if (!PlayerMove.C_PM.m_isAbleToPush)
+        if (!is_On)
         {
             c = Color.gray;
             m_PushButton.interactable = false;
@@ -253,24 +243,14 @@ public class UI : MonoBehaviour {
 
 
     // 부쉬 입장시 색 변화 효과
-    void HideInBush_Management()
-    {
-        if (!PlayerMove.m_isHideinBush)
-        {
-            m_InBushImage.gameObject.SetActive(false);
-        }
-        else
-        {
-            m_InBushImage.gameObject.SetActive(true);
-        }
-    }
+    public void HideInBush_Management(bool is_On) {m_InBushImage.gameObject.SetActive(is_On);}
 
 
     // 던지기 버튼 관리
-    void Throw_Button_Management()
+    public void Throw_Button_Management(bool is_On)
     {
         // 던지기 버튼 활성화
-        if (PlayerMove.m_isAbleToThrow)
+        if (is_On)
         {
             m_Set_Bomb_Button.gameObject.SetActive(false);
             m_Throw_Bomb_Button.gameObject.SetActive(true);
@@ -376,9 +356,6 @@ public class UI : MonoBehaviour {
                 m_GetItemImage.texture = m_AirDrop_Icon;
                 break;
         }
-
-        Stat_UI_Management(); // 스탯 갱신
-        
         
         m_GetItemBackground.gameObject.SetActive(true);
         m_GetItemText.gameObject.SetActive(true);
@@ -420,16 +397,8 @@ public class UI : MonoBehaviour {
                     m_TimeLimitText.text = "0" + (int)time_Second / 60 + ":0" + (int)time_Second % 60;
                 else
                     m_TimeLimitText.text = "0" + (int)time_Second / 60 + ":" + (int)time_Second % 60;
-
-                Stat_UI_Management(); // 스탯 UI 관리
-
+                
                 Mission_UI_Management(); // 미션 UI 출력
-
-                Push_Button_Management(); // 밀기버튼
-
-                HideInBush_Management(); // 부쉬 효과
-
-                Throw_Button_Management(); // 던지기 버튼
 
                 StageManager.GetInstance().Summon_SuddenDeath_Glider();
 
@@ -438,12 +407,12 @@ public class UI : MonoBehaviour {
                     ani.enabled = true;
                 else
                     ani.enabled = false;
-
-                // 시간 초과 시 게임오버 - 캐릭터를 죽게 함으로서 처리 -R
+                
                 if (time_Second <= 0)
                 {
                     time_Second = 0;
-                    PlayerMove.C_PM.Set_Dead();
+                    GameOver_Directing();
+                    StageManager.GetInstance().Set_Game_Over();
                 }
             }
             yield return null;

@@ -253,7 +253,7 @@ GameObject:
   - component: {fileID: 195792324622928184}
   m_Layer: 0
   m_Name: Ork_Boss
-  m_TagString: Untagged
+  m_TagString: Boss_Monster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

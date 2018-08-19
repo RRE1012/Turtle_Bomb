@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Start_Point : MonoBehaviour {
-
-	// Use this for initialization
+    
 	void Start ()
     {
-        PlayerMove.C_PM.Player_Set_Start_Point(transform.position);
+        GameObject.FindGameObjectWithTag("Player").GetComponent<Player>().Player_Set_Start_Point(transform.position);
         Destroy(gameObject);
     }
 }

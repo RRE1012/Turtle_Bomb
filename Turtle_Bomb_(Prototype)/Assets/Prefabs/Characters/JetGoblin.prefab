@@ -281,7 +281,7 @@ GameObject:
   - component: {fileID: 54852185803591274}
   - component: {fileID: 65499931650323844}
   - component: {fileID: 95032509599174324}
-  - component: {fileID: 114243188006133560}
+  - component: {fileID: 114832958055764970}
   m_Layer: 0
   m_Name: JetGoblin
   m_TagString: Untagged
@@ -1536,7 +1536,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AudioClips: {fileID: 8300000, guid: b71b51b9e028a3e4499dd8743925936e, type: 3}
---- !u!114 &114243188006133560
+--- !u!114 &114832958055764970
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1544,10 +1544,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1421824778066548}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9d6ccb179c070f947907d7dc1f2d779e, type: 3}
+  m_Script: {fileID: 11500000, guid: 61fc44c73afa75748a9f511488c1c045, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Bomb: {fileID: 1231821742246734, guid: f092f28722f3f8448a730f20b17c5932, type: 2}
+  m_Bomb: {fileID: 1656242785428834, guid: be7483f21ee3d8d4e81b44e88eb3b3eb, type: 2}
 --- !u!137 &137185389117367926
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

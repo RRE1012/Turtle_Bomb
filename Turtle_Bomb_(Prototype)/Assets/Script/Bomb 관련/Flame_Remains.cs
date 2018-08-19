@@ -5,23 +5,34 @@ using UnityEngine;
 public class Flame_Remains : MonoBehaviour {
     
     float Flame_Remains_LifeTime;
-    bool isFlameOnBush;
 
-    void Start()
+    IEnumerator m_Cycle_Checker;
+
+    void Awake()
     {
-        Flame_Remains_LifeTime = 1.0f;
-        isFlameOnBush = false;
+        m_Cycle_Checker = Cycle_Check();
     }
 
-	void Update()
+    public void Cycle_Start()
     {
-        if (!StageManager.GetInstance().Get_is_Pause())
+        Flame_Remains_LifeTime = 1.2f;
+        StartCoroutine(m_Cycle_Checker);
+    }
+
+	IEnumerator Cycle_Check()
+    {
+        while (true)
         {
-            if (!isFlameOnBush && Flame_Remains_LifeTime <= 0.0f)
+            if (!StageManager.GetInstance().Get_is_Pause())
             {
-                Destroy(gameObject);
+                if (Flame_Remains_LifeTime <= 0.0f)
+                {
+                    StopCoroutine(m_Cycle_Checker);
+                    gameObject.SetActive(false);
+                }
+                else Flame_Remains_LifeTime -= Time.deltaTime;
             }
-            else Flame_Remains_LifeTime -= Time.deltaTime;
+            yield return null;
         }
     }
 }
