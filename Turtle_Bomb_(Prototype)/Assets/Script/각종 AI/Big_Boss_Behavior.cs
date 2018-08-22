@@ -29,7 +29,7 @@ public class Big_Boss_Behavior : MonoBehaviour
     Animator m_Boss_Animator; // 애니메이터
 
     GameObject m_Target; // 타겟
-    GameObject m_NavPlane; // 내비메쉬 플레인
+    //GameObject m_NavPlane; // 내비메쉬 플레인
 
     Monster_Player_Detector m_Attack_Detector; // 공격 감지기
     Transform m_Attack_Collider; // 공격 충돌체
@@ -125,7 +125,7 @@ public class Big_Boss_Behavior : MonoBehaviour
     {
         // 내비게이터 등록
         m_NVAgent = gameObject.GetComponent<NavMeshAgent>();
-        m_NavPlane = GameObject.Find("Navigation_Plane");
+        //m_NavPlane = GameObject.Find("Navigation_Plane");
 
         // 애니메이션 등록
         m_Boss_Animator = GetComponentInChildren<Animator>();
@@ -270,16 +270,9 @@ public class Big_Boss_Behavior : MonoBehaviour
                 if (m_Current_Behavior != null && m_Current_Behavior.MoveNext())
                     yield return m_Current_Behavior.Current;
 
-                else
-                    yield return null;
+                else yield return null;
             }
-
-            else
-            {
-                if (m_NavPlane.activeSelf)
-                    m_NVAgent.isStopped = true;
-                yield return null;
-            }
+            else yield return null;
         }
     }
 

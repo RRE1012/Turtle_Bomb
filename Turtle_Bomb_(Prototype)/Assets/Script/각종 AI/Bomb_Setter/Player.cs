@@ -13,8 +13,8 @@ static class DEFAULT_STATUS
 
 static class MAX_STATUS
 {
-    public const int BOMB = 8;
-    public const int FIRE = 8;
+    public const int BOMB = 5;
+    public const int FIRE = 5;
     public const int SPEED = 8;
 }
 

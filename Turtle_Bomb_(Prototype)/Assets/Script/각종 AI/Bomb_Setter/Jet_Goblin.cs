@@ -261,8 +261,6 @@ public class Jet_Goblin : Bomb_Setter
     // 폭탄 투하
     void Drop_Bomb()
     {
-        Debug.Log("Drop_Check_Start");
-        Debug.Log(m_Current_Bomb_Drop_Cooltime + " / " + m_Total_Bomb_Drop_Cooltime);
         if (m_Current_Bomb_Drop_Cooltime < m_Total_Bomb_Drop_Cooltime)
             m_Current_Bomb_Drop_Cooltime += Time.deltaTime;
 
@@ -271,8 +269,6 @@ public class Jet_Goblin : Bomb_Setter
             GetComponentInChildren<Jet_Goblin_Sound>().Play_Bomb_Throw_Sound();
 
             Bomb_Set(CALL_BOMB_STATE.DROP);
-
-            Debug.Log("Bomb_Drop");
 
             m_Current_Bomb_Drop_Cooltime = 0.0f; // 쿨타임 리셋
         }

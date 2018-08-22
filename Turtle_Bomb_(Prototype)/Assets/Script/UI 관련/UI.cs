@@ -191,7 +191,6 @@ public class UI : MonoBehaviour {
     public void StageClear_ExitButton()
     {
         StageManager.GetInstance().Set_is_Pause(true);
-        GameObject.Find("Navigation_Plane").SetActive(false);
         if (LobbySound.instanceLS != null && PlayerPrefs.GetInt("System_Option_BGM_ON") != 0)
             LobbySound.instanceLS.SoundStart();
         SceneManager.LoadScene(2);
@@ -201,7 +200,6 @@ public class UI : MonoBehaviour {
     public void StageClear_RestartButton()
     {
         StageManager.GetInstance().Set_is_Pause(true);
-        GameObject.Find("Navigation_Plane").SetActive(false);
         SceneManager.LoadScene(3);
     }
     
