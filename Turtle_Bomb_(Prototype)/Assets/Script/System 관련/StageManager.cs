@@ -308,30 +308,13 @@ public class StageManager : MonoBehaviour
         if (Fade_Slider.c_Fade_Slider != null)
             Fade_Slider.c_Fade_Slider.Start_Fade_Slider(2);
     }
-
-    //float x=0, z=0, debugTime = 0.0f;
+    
 
     IEnumerator StageManagement()
     {
         while (true)
         {
             Check_GameOver();
-
-            /*
-            if (debugTime >= 2.0f)
-            {
-                for (int i = 0; i < m_MCL_is_Blocked_List.Count; ++i)
-                {
-                    if (m_MCL_is_Blocked_List[i] == true)
-                    {
-                        Get_MCL_Coordinate(i, ref x, ref z);
-                        Debug.Log("Blocked -> (" + x.ToString() + ", " + z.ToString() + ")");
-                    }
-                }
-                debugTime = 0.0f;
-            }
-            else debugTime += Time.deltaTime;
-            */
             yield return null;
         }
     }

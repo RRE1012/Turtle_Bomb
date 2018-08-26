@@ -394,7 +394,7 @@ public class Big_Boss_Behavior : MonoBehaviour
                             m_Attack_Range_UI.gameObject.SetActive(false); // 범위 표시기도 집어넣는다.
                         }
 
-                        else if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.10f) // 초기 부분
+                        else if (m_Boss_Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.15f) // 초기 부분
                         {
                             m_Boss_Animator.SetFloat("Attack_Speed", m_Attack_Speed); // 슬로우모션 후 뒷부분은 빠르게하기 위해..
                             m_Attack_Collider.gameObject.SetActive(true); // 공격용 충돌체를 꺼낸다.
@@ -408,8 +408,8 @@ public class Big_Boss_Behavior : MonoBehaviour
                     }
                     else
                     {
-                        m_Attack_Range_UI.gameObject.SetActive(false); // 범위 표시기를 꺼낸다.
-                        m_Attack_Collider.gameObject.SetActive(false); // 공격용 충돌체를 꺼낸다.
+                        m_Attack_Range_UI.gameObject.SetActive(false); // 범위 표시기를 끈다.
+                        m_Attack_Collider.gameObject.SetActive(false); // 공격용 충돌체를 끈다.
                     }
                 }
             }
@@ -889,6 +889,12 @@ public class Big_Boss_Behavior : MonoBehaviour
 
     public void SetAnimation(int Animation_Num)
     {
+        if (m_Prev_Behavior == m_Behavior_Attack)
+        {
+            m_Attack_Range_UI.gameObject.SetActive(false); // 범위 표시기를 끈다.
+            m_Attack_Collider.gameObject.SetActive(false); // 공격용 충돌체를 끈다.
+        }
+
         for (int i = 0; i < 7; ++i)
             m_Boss_Animator.SetBool(m_AnimationList[i], false);
         m_Boss_Animator.SetBool(m_AnimationList[Animation_Num], true);

@@ -60,10 +60,6 @@ public class UI : MonoBehaviour {
     
     public Texture m_Activated_Star_Texture; // 활성화된 별 텍스쳐
     public Texture m_Deactivated_Star_Texture; // 비활성화된 별 텍스쳐
-
-    public RawImage m_Star_Image1;
-    public RawImage m_Star_Image2;
-    public RawImage m_Star_Image3;
     // =============================
 
 
@@ -74,9 +70,7 @@ public class UI : MonoBehaviour {
     // ===========미션 UI===========
     public Text[] m_MissionText;
 
-    public RawImage m_Mission_Star_Image1;
-    public RawImage m_Mission_Star_Image2;
-    public RawImage m_Mission_Star_Image3;
+    public RawImage[] m_Mission_Star_Images;
     
     int m_timeLimit = 0;
     int m_monsterKill = 0;
@@ -270,14 +264,14 @@ public class UI : MonoBehaviour {
             {
                 m_MissionText[i].text = m_QuestList[i].Quest_Script + " " + ((int)time_Second).ToString() + " / " + m_timeLimit.ToString();
                 if (time_Second > m_timeLimit)
-                    m_Mission_Star_Image1.texture = m_Activated_Star_Texture;
-                else m_Mission_Star_Image1.texture = m_Deactivated_Star_Texture;
+                    m_Mission_Star_Images[i].texture = m_Activated_Star_Texture;
+                else m_Mission_Star_Images[i].texture = m_Deactivated_Star_Texture;
             }
             else if (m_QuestList[i].Quest_ID == 2) // 일반 몬스터 처치
             {
                 m_MissionText[i].text = m_QuestList[i].Quest_Script + " " + StageManager.GetInstance().Get_Left_Normal_Monster_Count().ToString() + " / " + m_monsterKill.ToString();
                 if (StageManager.GetInstance().Get_Left_Normal_Monster_Count() >= m_monsterKill)
-                    m_Mission_Star_Image2.texture = m_Activated_Star_Texture;
+                    m_Mission_Star_Images[i].texture = m_Activated_Star_Texture;
             }
             else // 목표도달, 보스 처치, 튜토리얼
             {
@@ -285,7 +279,7 @@ public class UI : MonoBehaviour {
 
                 if (m_is_Goal || m_is_Boss_Kill)
                 {
-                    m_Mission_Star_Image3.texture = m_Activated_Star_Texture;
+                    m_Mission_Star_Images[i].texture = m_Activated_Star_Texture;
                 }
             }
         }

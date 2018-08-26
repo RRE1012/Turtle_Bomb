@@ -20,7 +20,7 @@ static class MAX_STATUS
 
 static class STATUS_CORRECTION
 {
-    public const float SPEED = 1.6f;
+    public const float SPEED = 1.1f;
 }
 
 
