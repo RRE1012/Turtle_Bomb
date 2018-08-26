@@ -170,8 +170,6 @@ public class StageManager : MonoBehaviour
     [HideInInspector]
     public bool m_is_init_MCL = false; // MCL이 초기화 되었는가?
 
-    bool m_is_Map_Changing = false; // 맵 이동 시 폭탄을 무효화 하기 위한 변수
-
     public int m_Stage_ID; // 현재 스테이지 번호 (*** 디버깅용 public ***)
 
     public float m_Stage_Time_Limit; // 현재 스테이지의 제한시간
@@ -311,13 +309,29 @@ public class StageManager : MonoBehaviour
             Fade_Slider.c_Fade_Slider.Start_Fade_Slider(2);
     }
 
-
+    //float x=0, z=0, debugTime = 0.0f;
 
     IEnumerator StageManagement()
     {
         while (true)
         {
             Check_GameOver();
+
+            /*
+            if (debugTime >= 2.0f)
+            {
+                for (int i = 0; i < m_MCL_is_Blocked_List.Count; ++i)
+                {
+                    if (m_MCL_is_Blocked_List[i] == true)
+                    {
+                        Get_MCL_Coordinate(i, ref x, ref z);
+                        Debug.Log("Blocked -> (" + x.ToString() + ", " + z.ToString() + ")");
+                    }
+                }
+                debugTime = 0.0f;
+            }
+            else debugTime += Time.deltaTime;
+            */
             yield return null;
         }
     }
@@ -378,14 +392,6 @@ public class StageManager : MonoBehaviour
                             break;
 
                         case OBJECT_TABLE_NUMBER.BOSS_GOBLIN: // 보스 고블린
-                            //Instantiate(m_Prefab_Intro_Boss);
-
-                            // 보스 데이터 읽어오기
-                            CSV_Manager.GetInstance().Get_Adventure_Boss_Data(ref m_Adventure_Boss_Data, m_Boss_ID);
-
-                            // 생성
-                            m_Current_Map_Objects.Add(Instantiate(m_Prefab_Goblin_Boss));
-                            m_Object_Position.y = m_Prefab_Goblin_Boss.transform.position.y;
                             break;
 
                         case OBJECT_TABLE_NUMBER.START_POINT:
@@ -473,6 +479,7 @@ public class StageManager : MonoBehaviour
                         case OBJECT_TABLE_NUMBER.BOX_NONE_ITEM:
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Box_None_Item));
                             m_Object_Position.y = m_Prefab_Box_None_Item.transform.position.y;
+                            m_is_Block_Object = true;
                             break;
 
                         case OBJECT_TABLE_NUMBER.ICICLE_1:
@@ -550,26 +557,12 @@ public class StageManager : MonoBehaviour
 
         if (m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count] != 0) // 리스트에 맵 번호가 있으면 시작
         {
-            //m_is_Map_Changing = true; // 맵 변경 중이라고 알림
-            
             Destroy_Objects(); // 남아있는 오브젝트들을 제거한다.
 
             MCL_init(); // MCL을 재설정한다.
 
             Create_Map(m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count]); // 새 맵을 생성!
-
-            //Invoke("Map_Changing_Over", 1.0f); // 1초 뒤 맵 변경 완료 알림
         }
-    }
-
-    void Map_Changing_Over() // 맵 전환이 끝났음을 알린다.
-    {
-        m_is_Map_Changing = false;
-    }
-
-    public bool Get_is_Map_Changing()
-    {
-        return m_is_Map_Changing;
     }
 
 

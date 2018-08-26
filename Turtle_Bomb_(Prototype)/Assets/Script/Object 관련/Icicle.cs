@@ -22,7 +22,7 @@ public class Icicle : MonoBehaviour
 
     int m_MCL_Index;
 
-	void Awake ()
+	void Start ()
     {
         m_Animations = GetComponent<Animation>();
 
@@ -31,7 +31,6 @@ public class Icicle : MonoBehaviour
         m_Down_Checker = Perfectly_Down_Check();
 
         m_MCL_Index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z); // 인덱스 찾기
-        
     }
 
     void OnDestroy()

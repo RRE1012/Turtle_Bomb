@@ -13,7 +13,9 @@ public class Box_None_Item : Box {
             // MCL 갱신
             index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
             StageManager.GetInstance().Update_MCL_isBlocked(index, false);
-            
+
+            Instantiate(m_Particle).transform.position = transform.position; // 파티클 발생
+
             // 박스 파괴
             Destroy(gameObject);
         }

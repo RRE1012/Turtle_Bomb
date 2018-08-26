@@ -15,7 +15,12 @@ static class MAX_STATUS
 {
     public const int BOMB = 5;
     public const int FIRE = 5;
-    public const int SPEED = 8;
+    public const int SPEED = 5;
+}
+
+static class STATUS_CORRECTION
+{
+    public const float SPEED = 1.6f;
 }
 
 
@@ -73,6 +78,9 @@ public class Player : Bomb_Setter
     // 아이템 속도
     int m_Speed_Count;
 
+    // 현재 속도
+    float m_Curr_Speed = 0.0f;
+
     // 박스 밀기 거리
     float m_push_Distance = 0.0f;
 
@@ -92,7 +100,7 @@ public class Player : Bomb_Setter
         m_Curr_Bomb_Count = m_Max_Bomb_Count;
         m_Fire_Count = DEFAULT_STATUS.FIRE;
         m_Speed_Count = DEFAULT_STATUS.SPEED;
-        
+        Curr_Move_Speed_Update();
 
         m_Wait_For_Intro = Wait_For_Intro();
         StartCoroutine(m_Wait_For_Intro);
@@ -162,6 +170,7 @@ public class Player : Bomb_Setter
                 {
                     GetComponentInChildren<Player_Sound>().Play_Item_Get_Sound();
                     m_Speed_Count += 1;
+                    Curr_Move_Speed_Update();
                     UI.GetInstance().Stat_UI_Management(m_Curr_Bomb_Count, m_Max_Bomb_Count, m_Fire_Count, m_Speed_Count);
                     UI.GetInstance().GetItemUI_Activate(2);
                 }
@@ -212,6 +221,8 @@ public class Player : Bomb_Setter
                 //temp = Random.Range(1, 3);
                 m_Speed_Count += 1; // temp;
                 if (m_Speed_Count > MAX_STATUS.SPEED) m_Speed_Count = MAX_STATUS.SPEED;
+
+                Curr_Move_Speed_Update();
 
                 UI.GetInstance().Stat_UI_Management(m_Curr_Bomb_Count, m_Max_Bomb_Count, m_Fire_Count, m_Speed_Count);
                 UI.GetInstance().GetItemUI_Activate(5);
@@ -337,11 +348,11 @@ public class Player : Bomb_Setter
 
     void Move()
     {
-        //Body_MoveControl_ForMobile(); // 릴리즈용
+        Body_MoveControl_ForMobile(); // 릴리즈용
         Body_MoveControl_ForPC(); // 디버그용
 
         Body_RotateControl_ForPC(); // 디버그용
-        //Body_RotateControl_ForMobile(); // 릴리즈용
+        Body_RotateControl_ForMobile(); // 릴리즈용
 
         OtherControl_ForPC(); // 디버그용
     }
@@ -350,22 +361,22 @@ public class Player : Bomb_Setter
     {
         if (Input.GetKey(KeyCode.W))
         {
-            transform.Translate(new Vector3(0.0f, 0.0f, ((m_BasicSpeed + m_Speed_Count) * Time.deltaTime)));
+            transform.Translate(new Vector3(0.0f, 0.0f, (m_Curr_Speed * Time.deltaTime)));
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
         if (Input.GetKey(KeyCode.S))
         {
-            transform.Translate(new Vector3(0.0f, 0.0f, -((m_BasicSpeed + m_Speed_Count) * Time.deltaTime)));
+            transform.Translate(new Vector3(0.0f, 0.0f, -(m_Curr_Speed * Time.deltaTime)));
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
         if (Input.GetKey(KeyCode.A))
         {
-            transform.Translate(new Vector3(-((m_BasicSpeed + m_Speed_Count) * Time.deltaTime), 0.0f, 0.0f));
+            transform.Translate(new Vector3(-(m_Curr_Speed * Time.deltaTime), 0.0f, 0.0f));
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            transform.Translate(new Vector3(((m_BasicSpeed + m_Speed_Count) * Time.deltaTime), 0.0f, 0.0f));
+            transform.Translate(new Vector3((m_Curr_Speed * Time.deltaTime), 0.0f, 0.0f));
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
 
@@ -384,14 +395,13 @@ public class Player : Bomb_Setter
             Vector3 normal = JoyStickMove.instance.Get_NormalizedVector();
             normal.z = normal.y;
             normal.y = 0.0f;
-            transform.Translate((m_BasicSpeed + m_Speed_Count) * normal * Time.deltaTime);
+            transform.Translate(m_Curr_Speed * normal * Time.deltaTime);
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
         }
 
 
         else
         {
-            // 릴리즈 빌드할 때는 적용할 것!
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", false);
         }
 
@@ -412,7 +422,7 @@ public class Player : Bomb_Setter
 
     void Body_RotateControl_ForMobile()
     {
-        if (UI.GetInstance().Get_isClicked()) // 회전 터치가 감지됨.
+        if (Input.touchCount > 0 && UI.GetInstance().Get_isClicked()) // 회전 터치가 감지됨.
         {
             if (!m_is_Touch_Started) // 터치가 이제 막 시작됐다! (손을 모두 뗄 때 까지 더이상 수행하지 않음.)
             {
@@ -450,8 +460,11 @@ public class Player : Bomb_Setter
                 BoxPush();
         }
     }
-
-
+    
+    void Curr_Move_Speed_Update()
+    {
+        m_Curr_Speed = m_BasicSpeed + (m_Speed_Count * STATUS_CORRECTION.SPEED);
+    }
 
     public void SetBomb() // 폭탄 설치
     {
