@@ -30,7 +30,7 @@ public class NetUser2 : MonoBehaviour
     {
         instance = this;
         transform.position = new Vector3(28.0f, transform.position.y, 0.0f);
-        Debug.Log("Set Position");
+       // Debug.Log("Set Position2");
     }
     // Use this for initialization
     void Start()
@@ -41,7 +41,7 @@ public class NetUser2 : MonoBehaviour
         //p = GetComponent<GameObject>();
         //Invoke("IDCheck", 2.0f);
         m_animator = GetComponent<Animator>();
-
+        //Debug.Log("Start Position2");
         throw_ani = false;
         walk_ani = false;
         push_ani = false;

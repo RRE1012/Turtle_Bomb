@@ -254,22 +254,22 @@ public class Matching_Room : MonoBehaviour {
 
         if (String.Compare(id_no1, VariableManager_Coop.instance.mystringID) == 0)
         {
-            Debug.Log("1");
+           // Debug.Log("1");
             VariableManager_Coop.instance.SetMyPos(1);
         }
         if (String.Compare(id_no2, VariableManager_Coop.instance.mystringID) == 0)
         {
-            Debug.Log("2");
+           // Debug.Log("2");
             VariableManager_Coop.instance.SetMyPos(2);
         }
         if (String.Compare(id_no3, VariableManager_Coop.instance.mystringID) == 0)
         {
-            Debug.Log("3");
+          //  Debug.Log("3");
             VariableManager_Coop.instance.SetMyPos(3);
         }
         if (String.Compare(id_no4, VariableManager_Coop.instance.mystringID) == 0)
         {
-            Debug.Log("4");
+          //  Debug.Log("4");
             VariableManager_Coop.instance.SetMyPos(4);
         }
         partnerIDtext[0].text = id_no1;

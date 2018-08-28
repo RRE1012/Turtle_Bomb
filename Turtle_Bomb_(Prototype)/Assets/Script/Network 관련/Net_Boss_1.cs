@@ -21,7 +21,7 @@ public class Net_Boss_1 : MonoBehaviour {
                 {
                     if(!cooltime)
                         sensored = true;
-                    Debug.Log("Sensored");
+                    //Debug.Log("Sensored");
                 }
             }
         }

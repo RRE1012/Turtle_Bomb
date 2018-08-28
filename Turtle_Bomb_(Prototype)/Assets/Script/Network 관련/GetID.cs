@@ -87,7 +87,7 @@ public class GetID : MonoBehaviour {
         
         myID = m_inputfield[0].text;
         login_type = 1;
-        Debug.Log("MyID:" +myID);
+        //Debug.Log("MyID:" +myID);
     }
     public void SetId_Create()
     {
@@ -110,7 +110,7 @@ public class GetID : MonoBehaviour {
     {
         password = m_inputfield[1].text;
         
-        Debug.Log("MyPW:"+password);
+        //Debug.Log("MyPW:"+password);
     }
     public void SetPasswordJoin()
     {

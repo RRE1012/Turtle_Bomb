@@ -55,7 +55,7 @@ public class NetManager_Coop : MonoBehaviour {
     void Start()
     {
         //m_address = Client_IP();
-        Debug.Log("This is CoopMode");
+        //Debug.Log("This is CoopMode");
         InitializePos();
         client_id.size = 15;
         Connect();
@@ -242,7 +242,7 @@ public class NetManager_Coop : MonoBehaviour {
         ////Debug.Log("Process P");
         while (remain_size >= 2)
         {
-            Debug.Log("This Data : " + copy_data[1] + "\nThis Size:" + copy_data[0]);
+            //Debug.Log("This Data : " + copy_data[1] + "\nThis Size:" + copy_data[0]);
             switch (copy_data[1])
             {
                 case (byte)PacketInfo.ClientID:
@@ -290,10 +290,10 @@ public class NetManager_Coop : MonoBehaviour {
 
                         byte[] tempfire_array = new byte[4];
                         Buffer.BlockCopy(copy_data, 2, tempfire_array, 0, 4);
-                        Debug.Log("UpFire : " + tempfire_array[0]);
-                        Debug.Log("RightFire : " + tempfire_array[1]);
-                        Debug.Log("DownFire : " + tempfire_array[2]);
-                        Debug.Log("LeftFire : " + tempfire_array[3]);
+                        //Debug.Log("UpFire : " + tempfire_array[0]);
+                       // Debug.Log("RightFire : " + tempfire_array[1]);
+                        //Debug.Log("DownFire : " + tempfire_array[2]);
+                        //Debug.Log("LeftFire : " + tempfire_array[3]);
                         MapManager_COop.instance.Explode_Bomb_v2(tempx, tempz, tempfire_array);
                         SwapBuffer(copy_data[0]);
                     }

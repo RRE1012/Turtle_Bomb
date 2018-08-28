@@ -68,7 +68,7 @@ public class VariableManager : MonoBehaviour
         mystringID = BitConverter.ToString(a, 3, 20);
 
         mystringID = System.Text.Encoding.UTF8.GetString(a, 3, 20);
-        Debug.Log(mystringID);
+        //Debug.Log(mystringID);
 
 
         win = BitConverter.ToInt32(a, 23);

@@ -12,6 +12,7 @@ public class VSModeManager : MonoBehaviour
     public RawImage loser_image;
     public RawImage draw_image;
     public GameObject m_Option_UI;
+    public GameObject[] m_turtle = new GameObject[4];
     public GameObject m_Direction_Camera;
     public GameObject kick_notice;
     bool m_isClicked = false;
@@ -39,6 +40,20 @@ public class VSModeManager : MonoBehaviour
         win_or_lose = 0;
         game_set = false;
         GetItemUI_Deactivate();
+        
+        for (byte i = 0; i < 4; ++i)
+        {
+
+            if (i == VariableManager.instance.pos_inRoom - 1)
+            {
+                m_turtle[i].SetActive(true);
+
+            }
+        }
+        m_turtle[0].transform.position = new Vector3(0.0f, -0.35f, 0.0f);
+        m_turtle[1].transform.position = new Vector3(28.0f, -0.35f, 0.0f);
+        m_turtle[2].transform.position = new Vector3(0.0f, -0.35f, 28.0f);
+        m_turtle[3].transform.position = new Vector3(28.0f, -0.35f, 28.0f);
     }
     public void Kick_By_Server()
     {

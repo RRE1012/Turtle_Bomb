@@ -260,7 +260,7 @@ public class NetTest : MonoBehaviour
         ////Debug.Log("Process P");
         while (remain_size >= 2)
         {
-            Debug.Log("This Data : " + copy_data[1] + "\nThis Size:" + copy_data[0]);
+            //Debug.Log("This Data : " + copy_data[1] + "\nThis Size:" + copy_data[0]);
             switch (copy_data[1])
             {
 
@@ -288,7 +288,8 @@ public class NetTest : MonoBehaviour
                     byte tempid = copy_data[2];
                     m_chardata[tempid].ani_state = copy_data[3];
                     m_chardata[tempid].is_alive = copy_data[4];
-                    Turtle_Move.instance.Move_Case(tempid);
+                    if(SceneChange.instance.GetSceneState() == 7)
+                        Turtle_Move.instance.Move_Case(tempid);
                     m_chardata[tempid].x = BitConverter.ToSingle(recv_buff, 10);
                     m_chardata[tempid].z = BitConverter.ToSingle(recv_buff, 14);
                     m_chardata[tempid].rotateY = BitConverter.ToSingle(recv_buff, 18);
@@ -322,10 +323,10 @@ public class NetTest : MonoBehaviour
 
                     byte[] tempfire_array = new byte[4];
                     Buffer.BlockCopy(copy_data, 2, tempfire_array, 0, 4);
-                    Debug.Log("UpFire : " + tempfire_array[0]);
-                    Debug.Log("RightFire : " + tempfire_array[1]);
-                    Debug.Log("DownFire : " + tempfire_array[2]);
-                    Debug.Log("LeftFire : " + tempfire_array[3]);
+                    //Debug.Log("UpFire : " + tempfire_array[0]);
+                    //Debug.Log("RightFire : " + tempfire_array[1]);
+                    //Debug.Log("DownFire : " + tempfire_array[2]);
+                    //Debug.Log("LeftFire : " + tempfire_array[3]);
                     MapManager.instance.Explode_Bomb_v2(tempx, tempz, tempfire_array);
                     SwapBuffer(copy_data[0]);
                     ///////Debug.Log("Explode Bomb : " + remain_size);
@@ -528,12 +529,12 @@ public class NetTest : MonoBehaviour
                         if (is_connected == 1 || is_connected == 2)
                         {
                             VariableManager.instance.SetMyDBInfo(copy_data);
-                            Debug.Log("Get DBDATA!!!");
+                            //Debug.Log("Get DBDATA!!!");
 
                         }
                         else
                         {
-                            Debug.Log("Rejected By DB");
+                            //Debug.Log("Rejected By DB");
                             if (is_connected == 0)
                                 WaitRoom.instance.cannotConnect = 1;
                             else if (is_connected == 3)
@@ -746,7 +747,7 @@ public class NetTest : MonoBehaviour
         Buffer.BlockCopy(m_idString, 0, myInfo, 4, m_idString.Length);
         Buffer.BlockCopy(m_pwString, 0, myInfo, 24, m_pwString.Length);
         m_socket.Send(myInfo);
-        Debug.Log("Send DBPacket");
+        //Debug.Log("Send DBPacket");
 
     }
     public void SendRoomStateChangePacket()
@@ -1186,7 +1187,7 @@ public class NetTest : MonoBehaviour
         byte[] m_bombx = BitConverter.GetBytes(x);
         byte[] m_bombz = BitConverter.GetBytes(z);
 
-        Debug.Log("Kick Direction :" + direction);
+        //Debug.Log("Kick Direction :" + direction);
         Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
         Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
         Buffer.BlockCopy(m_room_num, 0, myInfo, 2, m_room_num.Length);

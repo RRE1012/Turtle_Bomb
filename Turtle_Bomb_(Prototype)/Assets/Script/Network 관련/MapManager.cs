@@ -25,7 +25,7 @@ public class MapManager : MonoBehaviour
     public GameObject parent;
     public GameObject[] m_tile;
     public Text g_text;
-    public GameObject[] m_turtle = new GameObject[4];
+    
     byte[] bombexplode_list = new byte[225];
     byte[] up_bombexplode_list = new byte[225];
     byte[] right_bombexplode_list = new byte[225];
@@ -97,12 +97,9 @@ public class MapManager : MonoBehaviour
         terrain.SetActive(true);
         //terrain.transform.position == new Vector3(100, 0, 100);
         LobbySound.instanceLS.SoundStop();
-        for (byte i = 0; i < 4; ++i)
-        {
-
-            if (i == VariableManager.instance.pos_inRoom - 1)
-                m_turtle[i].SetActive(true);
-        }
+      
+        
+        
         for (int i = 0; i < 50; ++i)
         {
             rock_list[i] = Instantiate(m_rock[VariableManager.instance.map_type]);
