@@ -11,7 +11,7 @@ public class NetTeam4 : MonoBehaviour {
     void Start()
     {
         rend = GetComponent<Renderer>();
-        rend.sharedMaterial = team_material[VariableManager.instance.team_Turtle[3]];
+        rend.sharedMaterial = team_material[VariableManager.instance.roominfo[VariableManager.instance.m_roomid - 1].team4];
 
     }
 

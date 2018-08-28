@@ -30,14 +30,24 @@ public class NetUser2 : MonoBehaviour
     {
         instance = this;
         transform.position = new Vector3(28.0f, transform.position.y, 0.0f);
+        Debug.Log("Set Position");
     }
     // Use this for initialization
     void Start()
     {
+        transform.position = new Vector3(28.0f, transform.position.y, 0.0f);
+
         dead_ani = false;
         //p = GetComponent<GameObject>();
         //Invoke("IDCheck", 2.0f);
         m_animator = GetComponent<Animator>();
+
+        throw_ani = false;
+        walk_ani = false;
+        push_ani = false;
+        kick_ani = false;
+        get_glider = false;
+        glider_on = false;
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -238,7 +248,7 @@ public class NetUser2 : MonoBehaviour
         if (get_glider)
         {
             m_animator.SetBool("TurtleMan_GetGlider", true);
-           
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, 2.0f, gameObject.transform.position.z);
             get_glider = false;
             glider_on = true;
         }

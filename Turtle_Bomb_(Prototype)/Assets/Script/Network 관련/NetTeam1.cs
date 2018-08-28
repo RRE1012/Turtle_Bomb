@@ -12,7 +12,8 @@ public class NetTeam1 : MonoBehaviour {
     {
         rend = GetComponent<Renderer>();
 
-        rend.sharedMaterial = team_material[VariableManager.instance.team_Turtle[0]];
+        rend.sharedMaterial = team_material[VariableManager.instance.roominfo[VariableManager.instance.m_roomid - 1].team1];
+        Debug.Log("My Team : "+ (int)VariableManager.instance.roominfo[VariableManager.instance.m_roomid - 1].team1);
     }
 
     

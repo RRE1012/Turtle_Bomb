@@ -336,17 +336,25 @@ public class Turtle_Move : MonoBehaviour
                 case 0:
                     bomb_power++;
                     bomb_set++;
+                    if (bomb_power >= 5)
+                        bomb_power = 5;
+                    if (bomb_set >= 5)
+                        bomb_set = 5;
                     itemtype = 0;
                     //Debug.Log("Bomb Up~");
                     break;
                 case 1:
                     fire_power++;
+                    if (fire_power >= 5)
+                        fire_power = 5;
                     itemtype = 1;
                     //Debug.Log("Fire Up~");
                     break;
                 case 2:
                     speed_power++;
                     itemtype = 2;
+                    if (speed_power >= 5)
+                        speed_power = 5;
                     //Debug.Log("Speed Up~");
                     break;
                 case 3:
@@ -435,8 +443,10 @@ public class Turtle_Move : MonoBehaviour
         if (get_glider)
         {
             MusicManager.manage_ESound.ItemGetSound();
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, 2.0f, gameObject.transform.position.z);
             get_glider = false;
             glider_on = true;
+            
         }
         if (getItem)
         {
@@ -604,56 +614,58 @@ public class Turtle_Move : MonoBehaviour
     }
     public void SetBomb() // 폭탄 설치
     {
-        m_YouCanSetBomb = true;
-
-        // 폭탄 위치 설정
-
-        m_Bombindex_X = (int)transform.position.x;
-        m_Bombindex_Z = (int)transform.position.z;
-
-        if (m_Bombindex_X % 2 == 1)
+        if (!Camera_Directing_Net.GetInstance().ani_is_working)
         {
-            m_BombLocX = m_Bombindex_X + 1.0f;
+            m_YouCanSetBomb = true;
+
+            // 폭탄 위치 설정
+
+            m_Bombindex_X = (int)transform.position.x;
+            m_Bombindex_Z = (int)transform.position.z;
+
+            if (m_Bombindex_X % 2 == 1)
+            {
+                m_BombLocX = m_Bombindex_X + 1.0f;
+            }
+            else if (m_Bombindex_X % 2 == -1)
+            {
+                m_BombLocX = m_Bombindex_X - 1.0f;
+            }
+            else
+                m_BombLocX = m_Bombindex_X;
+
+
+            if (m_Bombindex_Z % 2 == 1)
+            {
+                m_BombLocZ = m_Bombindex_Z + 1.0f;
+            }
+            else if (m_Bombindex_Z % 2 == -1)
+            {
+                m_BombLocZ = m_Bombindex_Z - 1.0f;
+            }
+            else
+                m_BombLocZ = m_Bombindex_Z;
+
+            if (MapManager.instance.Check_BombSet((int)(m_BombLocX / 2), (int)(m_BombLocZ / 2)))
+            {
+                //Debug.Log("You can't set bomb");
+                m_YouCanSetBomb = false;
+
+            }
+            // 이미 놓인 폭탄 검사
+
+            // 폭탄 생성
+            if (m_YouCanSetBomb && bomb_set > 0)
+            {
+
+                bomb_set--;
+                NetTest.instance.SetBombPos((int)m_BombLocX, (int)m_BombLocZ, fire_power);
+                NetTest.instance.SendBombPacket();
+                //UI.m_bomb_count = UI.m_bomb_count - 1;
+            }
+
+
         }
-        else if (m_Bombindex_X % 2 == -1)
-        {
-            m_BombLocX = m_Bombindex_X - 1.0f;
-        }
-        else
-            m_BombLocX = m_Bombindex_X;
-
-
-        if (m_Bombindex_Z % 2 == 1)
-        {
-            m_BombLocZ = m_Bombindex_Z + 1.0f;
-        }
-        else if (m_Bombindex_Z % 2 == -1)
-        {
-            m_BombLocZ = m_Bombindex_Z - 1.0f;
-        }
-        else
-            m_BombLocZ = m_Bombindex_Z;
-
-        if (MapManager.instance.Check_BombSet((int)(m_BombLocX / 2), (int)(m_BombLocZ / 2)))
-        {
-            //Debug.Log("You can't set bomb");
-            m_YouCanSetBomb = false;
-
-        }
-        // 이미 놓인 폭탄 검사
-
-        // 폭탄 생성
-        if (m_YouCanSetBomb && bomb_set > 0)
-        {
-
-            bomb_set--;
-            NetTest.instance.SetBombPos((int)m_BombLocX, (int)m_BombLocZ, fire_power);
-            NetTest.instance.SendBombPacket();
-            //UI.m_bomb_count = UI.m_bomb_count - 1;
-        }
-
-
-
     }
 
     public void Box_Push()

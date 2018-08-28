@@ -11,15 +11,19 @@ public class SceneChange : MonoBehaviour
 
     public Canvas cv;
     public RawImage FadeSlider;
+    public RawImage option_image;
     static public SceneChange instance;
     int scene=8;
+    int last_scene;
     bool swap_scene = false;
+    public bool is_discon_byServer; //서버에게 강퇴당했나
     // Use this for initialization
 
     void Awake()
     {
         instance = this;
         DontDestroyOnLoad(this);
+        
     }
     void Start()
     {
@@ -27,11 +31,17 @@ public class SceneChange : MonoBehaviour
         {
             cv.enabled = true;
         }
+        is_discon_byServer = false;
         StartCoroutine("SceneSwap");
         if (SceneManager.GetActiveScene().buildIndex == 8)
         {
             GoTo_Connect_Scene();
         }
+       
+        last_scene = 8;
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+            option_image = GameObject.Find("Notice").GetComponent<RawImage>();
+
         //
     }
 
@@ -41,24 +51,28 @@ public class SceneChange : MonoBehaviour
     }
     public void GoTo_Connect_Scene()
     {
+        last_scene = scene;
         //SceneManager.LoadScene(0);
         scene = 4;
         swap_scene = true;
     }
     public void GoTo_Connect_Scene_Coop()
     {
+        last_scene = scene;
         //SceneManager.LoadScene(0);
         scene = 10;
         swap_scene = true;
     }
     public void GoTo_Matching_Scene()
     {
+        last_scene = scene;
         //SceneManager.LoadScene(0);
         scene = 11;
         swap_scene = true;
     }
     public void GoTo_CoopBoss_Scene()
     {
+        last_scene = scene;
         //SceneManager.LoadScene(0);
         scene = 12;
         swap_scene = true;
@@ -67,6 +81,7 @@ public class SceneChange : MonoBehaviour
     // "타이틀 화면"으로 이동
     public void GoTo_Wait_Scene()
     {
+        last_scene = scene;
         //SceneManager.LoadScene(0);
         scene = 5;
         swap_scene = true;
@@ -75,6 +90,7 @@ public class SceneChange : MonoBehaviour
     // "모드 선택 화면"으로 이동
     public void GoTo_ModeSelect_Scene()
     {
+        last_scene = scene;
         ////Debug.Log("Clicked");
         scene = 6;
         swap_scene = true;
@@ -85,6 +101,7 @@ public class SceneChange : MonoBehaviour
     // "모험모드 스테이지 선택 화면"으로 이동
     public void GoTo_Game_Scene()
     {
+        last_scene = scene;
         scene = 7;
 
         swap_scene = true;
@@ -93,6 +110,15 @@ public class SceneChange : MonoBehaviour
     }
     public void GoTo_Select_Scene()
     {
+        last_scene = scene;
+        scene = 1;
+        swap_scene = true;
+    }
+    public void GoTo_Select_Scene_ByServer()
+    {
+        is_discon_byServer = true;
+
+        last_scene = scene;
         scene = 1;
         swap_scene = true;
     }
@@ -118,6 +144,16 @@ public class SceneChange : MonoBehaviour
     {
         for (; ; )
         {
+            if (SceneManager.GetActiveScene().buildIndex == 1)
+            {
+                if (last_scene >= 5 && is_discon_byServer)
+                {
+                   // Network_Alarm.instance.m_awake = true;
+                    
+                    //option_image.gameObject.SetActive(true);
+                }
+                Destroy(this.gameObject);
+            }
             if (swap_scene)
             {
                 SceneManager.LoadScene(scene);

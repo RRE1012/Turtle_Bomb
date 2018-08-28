@@ -729,6 +729,8 @@ public class MapManager : MonoBehaviour
         //Time.timeScale = 1;
         //Debug.Log("Go to Room");
         LobbySound.instanceLS.SoundStart();
+        for (int i = 0; i < 4; ++i)
+            VariableManager.instance.ready_Turtle[i] = 0;
         SceneChange.instance.GoTo_ModeSelect_Scene();
     }
     GameObject GetRock()
@@ -825,6 +827,8 @@ public class MapManager : MonoBehaviour
         NetTest.instance.SendOUTPacket();
         //난 살아있다를 증명하자
         LobbySound.instanceLS.SoundStart();
+        for (int i = 0; i < 4; ++i)
+            VariableManager.instance.ready_Turtle[i] = 0;
         SceneChange.instance.GoTo_Wait_Scene();
     }
     IEnumerator CheckFire()

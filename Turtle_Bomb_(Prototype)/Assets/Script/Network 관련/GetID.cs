@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 public class GetID : MonoBehaviour {
     public static GetID instance = null;
     public InputField[] m_inputfield;
@@ -20,6 +21,7 @@ public class GetID : MonoBehaviour {
         myID = "test";
         password = "123";
         DontDestroyOnLoad(this);
+        login_type = 1;
     }
     public string GetIDD()
     {
@@ -36,6 +38,11 @@ public class GetID : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            Destroy(this.gameObject);
+        }
         if (m_loginButton[0] != null)
         {
             if (login_type == 0)

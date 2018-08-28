@@ -22,9 +22,12 @@ public class WaitRoom : MonoBehaviour
     public Text[] room_numText;
     List<TB_Room> room_List = new List<TB_Room>();
     public Text[] text_array;
+
     public Text[] room_enter_array;
     public Button[] room_enter_button;
+    public GameObject ban_notice;
     public int cannotConnect;
+    public bool ban_by_server;
     // Use this for initialization
     private void Awake()
     {
@@ -32,6 +35,7 @@ public class WaitRoom : MonoBehaviour
     }
     void Start()
     {
+        ban_by_server = false;
         ////Debug.Log("Started");
         cannotConnect = 0;
         StartCoroutine("RoomCheck");
@@ -42,6 +46,13 @@ public class WaitRoom : MonoBehaviour
         NetTest.instance.Disconnect();
         SceneChange.instance.DisConnect();
     }
+    public void Out_By_Server()
+    {
+        //Debug.Log("Disconnect");
+       
+        SceneChange.instance.DisConnect();
+    }
+
     public void PopMenu()
     {
 
@@ -126,7 +137,7 @@ public class WaitRoom : MonoBehaviour
 
     public void SendJCRoom(int a)
     {
-        VariableManager.instance.m_roomid = (byte)(a + ((page - 1) * 8));
+        VariableManager.instance.m_roomid = (byte)((a) + ((page - 1) * 8));
         if (roominfo[(a + ((page - 1) * 8)) - 1].made == 0)
         {
             NetTest.instance.SendCreatePacket();
@@ -151,6 +162,8 @@ public class WaitRoom : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (ban_by_server)
+            ban_notice.SetActive(true);
         if (cannotConnect == 1)
         {
             cannotLogin[0].SetActive(true);

@@ -226,6 +226,7 @@ public class Camera_Directing_Net : MonoBehaviour
                 //StageManager.GetInstance().Set_is_Intro_Over(true);
                 ani_is_working = false;
                 Camera_Switching(CAMERA_NUMBER.PLAYER); // 플레이어 카메라로 전환!
+
                 break;
         }
     }
@@ -240,6 +241,7 @@ public class Camera_Directing_Net : MonoBehaviour
                 m_Player_Camera.GetComponent<AudioListener>().enabled = true;
                 gameObject.GetComponentInChildren<Camera>().enabled = false;
                 gameObject.GetComponentInChildren<AudioListener>().enabled = false;
+                NetTest.instance.SendReadyCoopPacket();
                 break;
 
             case CAMERA_NUMBER.DIRECTION:

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class VariableManager : MonoBehaviour
 {
@@ -85,11 +86,16 @@ public class VariableManager : MonoBehaviour
     }
     public void OutRoom()
     {
+        roominfo[m_roomid - 1].team1 = 0;
+        roominfo[m_roomid - 1].team2 = 0;
+        roominfo[m_roomid - 1].team3 = 0;
+        roominfo[m_roomid - 1].team4 = 0;
         m_roomid = 0;
         pos_inRoom = 0;
         pos_guardian = 0;
         is_guardian = 0;
         m_time = 60.0f;
+        
         for (int i = 0; i < 4; ++i)
         {
             team_Turtle[i] = 0;
@@ -101,6 +107,10 @@ public class VariableManager : MonoBehaviour
     }
     public void F_OutRoom()
     {
+        roominfo[m_roomid - 1].team1 = 0;
+        roominfo[m_roomid - 1].team2 = 0;
+        roominfo[m_roomid - 1].team3 = 0;
+        roominfo[m_roomid - 1].team4 = 0;
         forceout = true;
         m_roomid = 0;
         pos_inRoom = 0;
@@ -158,6 +168,16 @@ public class VariableManager : MonoBehaviour
     public void Check_FireMap(int x, int z, byte f)
     {
         firepower_list[(z * 15) + x] = f;
+    }
+    public void SetTeamState(byte[] b)
+    {
+        byte[] tempArray = new byte[6];
+        Buffer.BlockCopy(b, 0, tempArray, 0, 6);
+        
+        roominfo[m_roomid-1].team1 = tempArray[2];
+        roominfo[m_roomid - 1].team2 = tempArray[3];
+        roominfo[m_roomid - 1].team3 = tempArray[4];
+        roominfo[m_roomid - 1].team4 = tempArray[5];
     }
     public void SetRoomState(byte[] b)
     {
@@ -220,7 +240,7 @@ public class VariableManager : MonoBehaviour
     }
     public void SetRoomState_Respond(byte[] b)
     {
-        byte[] tempArray = new byte[10];
+        byte[] tempArray = new byte[14];
 
         Buffer.BlockCopy(b, 0, tempArray, 0, 10);
         m_roomid = tempArray[3];
@@ -230,6 +250,10 @@ public class VariableManager : MonoBehaviour
         for (byte i = 0; i < 4; ++i)
         {
             people_inRoom[i] = tempArray[6 + i];
+        }
+        for(byte i = 0; i < 4; ++i)
+        {
+            team_Turtle[i] = tempArray[10 + i];
         }
     }
     public void SetRoomCreate_Respond(byte[] b)
@@ -244,6 +268,9 @@ public class VariableManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

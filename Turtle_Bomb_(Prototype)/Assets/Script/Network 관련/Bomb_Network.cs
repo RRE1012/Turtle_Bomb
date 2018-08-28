@@ -6,16 +6,25 @@ public class Bomb_Network : MonoBehaviour {
 
     public GameObject m_flame_effect;
     byte firepower;
+    Animation m_Animations;
+    
     //방에서 포인트 설정 
+    void Awake()
+    {
+        m_Animations = GetComponent<Animation>();
+
+    }
 	// Use this for initialization
 	void Start () {
-		
-	}
+       
+        m_Animations.Play("Bomb_Pumpin");
+       
+    }
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        m_Animations.PlayQueued("Bomb_Pumpin");
+    }
 
     void ReLoad()
     {

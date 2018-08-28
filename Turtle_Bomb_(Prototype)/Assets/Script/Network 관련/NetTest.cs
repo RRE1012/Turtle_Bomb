@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading;
 using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class NetTest : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class NetTest : MonoBehaviour
     private string m_address3 = "13.124.255.57";
     private string m_address = "13.124.123.131";
     private string m_address2 = "192.168.123.195";
-
+    bool out_by_server;
     private byte[] R_Map_Info = new byte[225];
     private byte[] Receiveid = new byte[4];
 
@@ -66,6 +67,7 @@ public class NetTest : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        out_by_server = false;
         //m_address = Client_IP();
         //////Debug.Log(m_address);
         InitializePos();
@@ -261,6 +263,15 @@ public class NetTest : MonoBehaviour
             Debug.Log("This Data : " + copy_data[1] + "\nThis Size:" + copy_data[0]);
             switch (copy_data[1])
             {
+
+                case (byte)PacketInfo.Disconnect:
+                    out_by_server = true;
+                    
+                    //SceneChange.instance.GoTo_Select_Scene_ByServer();
+                    SwapBuffer(copy_data[0]);
+                    //Disconnect();
+                    
+                    break;
                 case (byte)PacketInfo.ClientID:
                     access_id = copy_data[2];
                     VariableManager.instance.SetID(copy_data[2]);
@@ -354,7 +365,8 @@ public class NetTest : MonoBehaviour
                     break;
 
                 case (byte)PacketInfo.EnemyData:
-
+                    VariableManager.instance.SetTeamState(copy_data);
+                    SwapBuffer(copy_data[0]);
                     break;
                 case (byte)PacketInfo.RoomData:
                     ////Debug.Log("Get Room data");
@@ -441,6 +453,8 @@ public class NetTest : MonoBehaviour
                     SceneChange.instance.GoTo_Wait_Scene();
                     SwapBuffer(copy_data[0]);
                     break;
+
+                
                 case (byte)PacketInfo.ThrowBomb:
 
                     // MapManager.instance.Throw_BombSet();
@@ -732,7 +746,7 @@ public class NetTest : MonoBehaviour
         Buffer.BlockCopy(m_idString, 0, myInfo, 4, m_idString.Length);
         Buffer.BlockCopy(m_pwString, 0, myInfo, 24, m_pwString.Length);
         m_socket.Send(myInfo);
-        //Debug.Log("Send DBPacket");
+        Debug.Log("Send DBPacket");
 
     }
     public void SendRoomStateChangePacket()
@@ -1275,6 +1289,28 @@ public class NetTest : MonoBehaviour
         m_socket.Send(myInfo);
 
     }
+    public void SendReadyCoopPacket()
+    {
+        byte[] myInfo = new byte[5];
+        byte t_size = 5;
+        byte[] m_packet_size = BitConverter.GetBytes(t_size);
+
+        byte t_type = 28;
+        byte[] m_packet_type = BitConverter.GetBytes(t_type);
+        byte t_ready = 1;
+        byte[] m_packet_ready = BitConverter.GetBytes(t_ready);
+        byte t_roomid = VariableManager.instance.m_roomid;
+        byte t_ingameid = Turtle_Move.instance.GetId();
+        byte[] m_packet_roomid = BitConverter.GetBytes(t_roomid);
+        byte[] m_packet_ingameid = BitConverter.GetBytes(t_ingameid);
+        Buffer.BlockCopy(m_packet_size, 0, myInfo, 0, m_packet_size.Length);
+        Buffer.BlockCopy(m_packet_type, 0, myInfo, 1, m_packet_type.Length);
+        Buffer.BlockCopy(m_packet_ready, 0, myInfo, 2, m_packet_ready.Length);
+        Buffer.BlockCopy(m_packet_roomid, 0, myInfo, 3, m_packet_roomid.Length);
+        Buffer.BlockCopy(m_packet_ingameid, 0, myInfo, 4, 1);
+        m_socket.Send(myInfo);
+
+    }
     public void SendBombPacket()
     {
         bool tempbool = m_set_bomb;
@@ -1354,7 +1390,29 @@ public class NetTest : MonoBehaviour
         // 스테이지 클리어 후 별 갯수 적용
 
         // 시간 경과
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            Destroy(this.gameObject);
+        }
+        if (out_by_server)
+        {
+            if (SceneManager.GetActiveScene().buildIndex == 5)
+            {
+                WaitRoom.instance.ban_by_server = true;
+                out_by_server = false;
+            }
+            if (SceneManager.GetActiveScene().buildIndex == 6)
+            {
+                GameRoom.instance.Kick_By_Server();
+                out_by_server = false;
+            }
+            if (SceneManager.GetActiveScene().buildIndex == 7)
+            {
+                VSModeManager.instance.Kick_By_Server();
+                out_by_server = false;
+            }
 
+        }
         deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
         //time_Second = time_Second - deltaTime;
 

@@ -34,9 +34,17 @@ public class NetUser : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        transform.position = new Vector3(0.0f, transform.position.y, 0.0f);
         dead_ani = false;
         //Invoke("IDCheck", 2.0f);
         m_animator = GetComponent<Animator>();
+
+        throw_ani = false;
+        walk_ani = false;
+        push_ani = false;
+        kick_ani = false;
+        get_glider = false;
+        glider_on = false;
     }
     public void SetMoveMotion()
     {
@@ -229,7 +237,7 @@ public class NetUser : MonoBehaviour
         if (get_glider)
         {
             m_animator.SetBool("TurtleMan_GetGlider", true);
-
+            gameObject.transform.position = new Vector3(gameObject.transform.position.x, 2.0f, gameObject.transform.position.z);
             get_glider = false;
             glider_on = true;
         }

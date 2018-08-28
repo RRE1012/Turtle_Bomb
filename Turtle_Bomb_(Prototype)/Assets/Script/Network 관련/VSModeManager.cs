@@ -13,6 +13,7 @@ public class VSModeManager : MonoBehaviour
     public RawImage draw_image;
     public GameObject m_Option_UI;
     public GameObject m_Direction_Camera;
+    public GameObject kick_notice;
     bool m_isClicked = false;
     public bool game_set;
     public Text time_Text;
@@ -38,6 +39,14 @@ public class VSModeManager : MonoBehaviour
         win_or_lose = 0;
         game_set = false;
         GetItemUI_Deactivate();
+    }
+    public void Kick_By_Server()
+    {
+        kick_notice.SetActive(true);
+    }
+    public void OutByServer()
+    {
+        SceneChange.instance.DisConnect();
     }
     void GetItemUI_Deactivate()
     {

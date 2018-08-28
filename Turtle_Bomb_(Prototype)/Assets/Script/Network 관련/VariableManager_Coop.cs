@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 public class VariableManager_Coop : MonoBehaviour {
 
     public static VariableManager_Coop instance;
@@ -249,6 +251,9 @@ public class VariableManager_Coop : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

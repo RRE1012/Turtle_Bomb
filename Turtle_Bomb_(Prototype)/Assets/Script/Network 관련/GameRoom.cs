@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 public class GameRoom : MonoBehaviour
 {
 
@@ -22,6 +22,7 @@ public class GameRoom : MonoBehaviour
     int map_num = 0;
     byte[] people_inRoom = new byte[4];
     public GameObject popup;
+    public GameObject kick_notice; //서버에서 차였을 때
     public Text m_text;
     public GameObject[] turtles;
     public byte m_imready;
@@ -50,6 +51,7 @@ public class GameRoom : MonoBehaviour
     }
     void Start()
     {
+       
         SetRoomState();
         m_imready = 0;
         pop_loading = false;
@@ -106,7 +108,10 @@ public class GameRoom : MonoBehaviour
         NetTest.instance.SendOUTPacket();
 
     }
-
+    public void Kick_By_Server()
+    {
+        kick_notice.SetActive(true);
+    }
     public void Popup()
     {
         popup.transform.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
@@ -144,10 +149,16 @@ public class GameRoom : MonoBehaviour
             NetTest.instance.SendBanPacket(clicked_position);
         }
     }
+    public void Out_By_Server()
+    {
+        //Debug.Log("Disconnect");
+
+        SceneChange.instance.DisConnect();
+    }
     //방 상태 체크 함수
     void SetRoomState()
     {
-
+        my_room_num = VariableManager.instance.m_roomid;
         byte[] temparray = VariableManager.instance.people_inRoom;
         pos_inRoom = VariableManager.instance.pos_inRoom;
 
@@ -158,12 +169,20 @@ public class GameRoom : MonoBehaviour
         //Buffer.BlockCopy(temparray, 0, people_inRoom, 0, 4);
         ////Debug.Log(people_inRoom);
         amIguard = VariableManager.instance.is_guardian;
-        my_room_num = VariableManager.instance.m_roomid;
+        
         mode = VariableManager.instance.game_mode;
         map_mode = VariableManager.instance.map_type;
         map_num = VariableManager.instance.map_num;
-        for (int t = 0; t < 4; ++t)
-            team[t] = VariableManager.instance.team_Turtle[t];
+        //for (int t = 0; t < 4; ++t)
+        //{
+        //    team[t] = VariableManager.instance.team_Turtle[t];
+        //}
+
+        team[0] = VariableManager.instance.roominfo[my_room_num-1].team1;
+        team[1] = VariableManager.instance.roominfo[my_room_num - 1].team2;
+        team[2] = VariableManager.instance.roominfo[my_room_num - 1].team3;
+        team[3] = VariableManager.instance.roominfo[my_room_num - 1].team4;
+
         if (pos_guard == pos_inRoom)
         {
             amIguard = 1;
@@ -525,7 +544,7 @@ public class GameRoom : MonoBehaviour
             Map_Num_Text.text = "" + (map_num + 1);
             for (byte i = 0; i < 4; ++i)
             {
-                if (pos_inRoom - 1 != i)
+                if (pos_inRoom - 1 != i) //내가 아닌 유저 찾기
                 {
                     people++;
                 }
@@ -534,7 +553,8 @@ public class GameRoom : MonoBehaviour
                 {
                     if (people < 4)
                     {
-                        byte tempteamcolor = VariableManager.instance.team_Turtle[i];
+                        int tempteamcolor = team[i];
+                        //Debug.Log(i+"th Color:"+tempteamcolor);
                         turtles[people + (tempteamcolor * 3)].SetActive(true);
                     }
                     ////Debug.Log(people + "th On!!");
@@ -544,7 +564,13 @@ public class GameRoom : MonoBehaviour
                 else if (VariableManager.instance.people_inRoom[i] == 0)
                 {
                     if (people < 4)
+                    {
                         turtles[people].SetActive(false);
+                        turtles[people+3].SetActive(false);
+                        turtles[people+6].SetActive(false);
+                        turtles[people+9].SetActive(false);
+
+                    }
                 }
             }
             turtles[0].transform.localScale = new Vector3(1.1f, 1.1f, 1.1f);

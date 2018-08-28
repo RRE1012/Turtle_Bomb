@@ -79,5 +79,7 @@ public enum PacketInfo
     GetTime,
     SetBomb,
     ConnectSuccess,
-    DBInfo1
+    DBInfo1,
+    GameReady,
+    Disconnect
 }
