@@ -5,12 +5,19 @@ using UnityEngine.SceneManagement;
 
 public class Flame_Crash : MonoBehaviour {
 	
-	float m_FlameLifeTime = 1.4f;
+	float m_FlameLifeTime = 1.2f;
 	float m_curr_time = 0.0f;
     bool m_is_adventure;
 
-   
-	void Update () 
+    // ParticleSystem m_ParticleSystem;
+    /*
+    void Start()
+    {
+        m_ParticleSystem = GetComponentInChildren<ParticleSystem>();
+    }
+    */
+
+    void Update () 
 	{
         if (m_curr_time < m_FlameLifeTime)
             m_curr_time += Time.deltaTime;
@@ -38,8 +45,6 @@ public class Flame_Crash : MonoBehaviour {
             }
             if (SceneManager.GetActiveScene().buildIndex == 12)
             {
-
-                //Debug.Log("Ouch");
                 Turtle_Move_Coop.instance.alive = 0;
                 NetManager_Coop.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
 

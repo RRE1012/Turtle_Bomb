@@ -31,7 +31,9 @@ public class Player : Bomb_Setter
     GameObject m_Front_Box; public void Set_Front_Box(GameObject g) { m_Front_Box = g; }
     GameObject m_Temp_Bomb;
     GameObject m_Selected_Bomb_For_Throwing;
-    
+
+    Player_Sound m_Player_Sound;
+
     SkinnedMeshRenderer[] m_Player_Mesh_Renderers;
 
     // 캐릭터 상태
@@ -102,6 +104,8 @@ public class Player : Bomb_Setter
         m_Speed_Count = DEFAULT_STATUS.SPEED;
         Curr_Move_Speed_Update();
 
+        m_Player_Sound = GetComponentInChildren<Player_Sound>();
+
         m_Wait_For_Intro = Wait_For_Intro();
         StartCoroutine(m_Wait_For_Intro);
     }
@@ -145,7 +149,7 @@ public class Player : Bomb_Setter
                 Destroy(other.gameObject);
                 if (Get_Curr_Bomb_Count() < MAX_STATUS.BOMB)
                 {
-                    GetComponentInChildren<Player_Sound>().Play_Item_Get_Sound();
+                    m_Player_Sound.Play_Item_Get_Sound();
                     m_Max_Bomb_Count += 1;
                     m_Curr_Bomb_Count += 1;
                     UI.GetInstance().Stat_UI_Management(m_Curr_Bomb_Count, m_Max_Bomb_Count, m_Fire_Count, m_Speed_Count);
@@ -157,7 +161,7 @@ public class Player : Bomb_Setter
                 Destroy(other.gameObject);
                 if (Get_Fire_Count() < MAX_STATUS.FIRE)
                 {
-                    GetComponentInChildren<Player_Sound>().Play_Item_Get_Sound();
+                    m_Player_Sound.Play_Item_Get_Sound();
                     m_Fire_Count += 1;
                     UI.GetInstance().Stat_UI_Management(m_Curr_Bomb_Count, m_Max_Bomb_Count, m_Fire_Count, m_Speed_Count);
                     UI.GetInstance().GetItemUI_Activate(1);
@@ -168,7 +172,7 @@ public class Player : Bomb_Setter
                 Destroy(other.gameObject);
                 if (m_Speed_Count < MAX_STATUS.SPEED)
                 {
-                    GetComponentInChildren<Player_Sound>().Play_Item_Get_Sound();
+                    m_Player_Sound.Play_Item_Get_Sound();
                     m_Speed_Count += 1;
                     Curr_Move_Speed_Update();
                     UI.GetInstance().Stat_UI_Management(m_Curr_Bomb_Count, m_Max_Bomb_Count, m_Fire_Count, m_Speed_Count);
@@ -180,7 +184,7 @@ public class Player : Bomb_Setter
                 Destroy(other.gameObject);
                 if (!m_isGot_KickItem)
                 {
-                    GetComponentInChildren<Player_Sound>().Play_Item_Get_Sound();
+                    m_Player_Sound.Play_Item_Get_Sound();
                     m_isGot_KickItem = true;
                     UI.GetInstance().Kick_Icon_Activate();
                     UI.GetInstance().GetItemUI_Activate(3);
@@ -191,7 +195,7 @@ public class Player : Bomb_Setter
                 Destroy(other.gameObject);
                 if (!m_isGot_ThrowItem)
                 {
-                    GetComponentInChildren<Player_Sound>().Play_Item_Get_Sound();
+                    m_Player_Sound.Play_Item_Get_Sound();
                     m_isGot_ThrowItem = true;
                     UI.GetInstance().Throw_Icon_Activate();
                     UI.GetInstance().GetItemUI_Activate(4);
@@ -201,7 +205,7 @@ public class Player : Bomb_Setter
             if (other.gameObject.CompareTag("Airdrop_Item"))
             {
                 Destroy(other.gameObject);
-                GetComponentInChildren<Player_Sound>().Play_Item_Get_Sound();
+                m_Player_Sound.Play_Item_Get_Sound();
 
                 //int temp = Random.Range(1, 3);
 
@@ -363,21 +367,25 @@ public class Player : Bomb_Setter
         {
             transform.Translate(new Vector3(0.0f, 0.0f, (m_Curr_Speed * Time.deltaTime)));
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
+            //m_Player_Sound.Play_Move_Sound();
         }
         if (Input.GetKey(KeyCode.S))
         {
             transform.Translate(new Vector3(0.0f, 0.0f, -(m_Curr_Speed * Time.deltaTime)));
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
+            //m_Player_Sound.Play_Move_Sound();
         }
         if (Input.GetKey(KeyCode.A))
         {
             transform.Translate(new Vector3(-(m_Curr_Speed * Time.deltaTime), 0.0f, 0.0f));
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
+            //m_Player_Sound.Play_Move_Sound();
         }
         if (Input.GetKey(KeyCode.D))
         {
             transform.Translate(new Vector3((m_Curr_Speed * Time.deltaTime), 0.0f, 0.0f));
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
+            //m_Player_Sound.Play_Move_Sound();
         }
 
 
@@ -397,6 +405,7 @@ public class Player : Bomb_Setter
             normal.y = 0.0f;
             transform.Translate(m_Curr_Speed * normal * Time.deltaTime);
             m_TurtleMan_Animator.SetBool("TurtleMan_isWalk", true);
+            //m_Player_Sound.Play_Move_Sound();
         }
 
 
@@ -472,7 +481,7 @@ public class Player : Bomb_Setter
         {
             if (m_Curr_Bomb_Count > 0 && !StageManager.GetInstance().Get_MCL_is_Blocked_With_Coord(transform.position.x, transform.position.z))
             {
-                GetComponentInChildren<Player_Sound>().Play_Bomb_Set_Sound();
+                m_Player_Sound.Play_Bomb_Set_Sound();
                 m_Temp_Bomb = Bomb_Set(CALL_BOMB_STATE.NORMAL);
                 m_TurtleMan_Animator.SetBool("TurtleMan_isDrop", true);
                 m_Camera_Animator.SetBool("Set_Bomb", true);

@@ -1903,7 +1903,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2de3713aea9d37149bce696bc4f1e833, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Normal_Monster_Portal: {fileID: 1483120067040278, guid: de622846cc6fdc645b91889ffa3f953b,
+  m_Normal_Monster_Portal: {fileID: 1921144861423452, guid: 0f2b6589447a5274f9006b6d711f3484,
     type: 2}
   m_Glider_Goblin: {fileID: 1421824778066548, guid: 26d73cefaf348a04896cbad9158a94de,
     type: 2}

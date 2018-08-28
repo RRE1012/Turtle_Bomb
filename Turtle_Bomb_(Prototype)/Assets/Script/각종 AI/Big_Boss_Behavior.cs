@@ -29,7 +29,6 @@ public class Big_Boss_Behavior : MonoBehaviour
     Animator m_Boss_Animator; // 애니메이터
 
     GameObject m_Target; // 타겟
-    //GameObject m_NavPlane; // 내비메쉬 플레인
 
     Monster_Player_Detector m_Attack_Detector; // 공격 감지기
     Transform m_Attack_Collider; // 공격 충돌체
@@ -761,6 +760,8 @@ public class Big_Boss_Behavior : MonoBehaviour
     {
         GetComponentInChildren<Ork_Boss_Sound>().Play_HurtSound();
 
+        m_NVAgent.isStopped = true;
+
         if (m_Health - m_Boss_Data.Bomb_Damage <= 0)
         {
             GetComponentInChildren<Ork_Boss_Sound>().Play_DeadSound();
@@ -782,7 +783,6 @@ public class Big_Boss_Behavior : MonoBehaviour
 
             SetAnimation(BOSS_ANIMATION_NUM.HURT);
             m_Current_Behavior = m_Null_Behavior;
-            m_NVAgent.isStopped = true;
             
             Invoke("HurtEnd", 1.0f);
 

@@ -6,7 +6,7 @@ public class Box_None_Item : Box {
 
     void OnTriggerEnter(Collider other)
     {
-        if (!m_is_Destroyed && other.gameObject.CompareTag("Flame_Remains") || other.gameObject.CompareTag("Flame"))
+        if (!m_is_Destroyed && (other.gameObject.CompareTag("Flame_Remains") || other.gameObject.CompareTag("Flame_Crash")))
         {
             m_is_Destroyed = true;
 

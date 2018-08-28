@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 114739271854930370}
   m_Layer: 0
   m_Name: Flame_Crash
-  m_TagString: Untagged
+  m_TagString: Flame_Crash
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -248,7 +248,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: -809482649
+  randomSeed: 420355387
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -596,7 +596,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 1000
+    maxNumParticles: 100
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -3538,7 +3538,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 0
+  randomSeed: 1391360026
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6834,7 +6834,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: -32285947
+  randomSeed: -2063721444
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7182,7 +7182,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 1000
+    maxNumParticles: 100
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -10130,7 +10130,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 2
-  randomSeed: 1936949366
+  randomSeed: -1192675252
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -10478,7 +10478,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 1000
+    maxNumParticles: 200
     size3D: 0
     rotation3D: 0
     gravityModifier:

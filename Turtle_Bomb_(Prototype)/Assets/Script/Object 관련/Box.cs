@@ -45,7 +45,7 @@ public class Box : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (!m_is_Destroyed && (other.gameObject.CompareTag("Flame_Remains") || other.gameObject.CompareTag("Flame")))
+        if (!m_is_Destroyed && (other.gameObject.CompareTag("Flame_Remains") || other.gameObject.CompareTag("Flame_Crash") || other.gameObject.CompareTag("Flame")))
         {
             m_is_Destroyed = true;
 

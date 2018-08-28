@@ -128,7 +128,8 @@ public class Bomb_Remaster : MonoBehaviour
     {
         if (other.CompareTag("Flame") || 
             other.CompareTag("Flame_Remains") || 
-            other.CompareTag("Flame_Bush") || 
+            other.CompareTag("Flame_Bush") ||
+            other.CompareTag("Flame_Crash") ||
             other.CompareTag("icicle_Body"))
         {
             if (m_is_Kicked || m_is_Thrown) Set_Bomb();
