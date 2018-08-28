@@ -214,23 +214,26 @@ public class UI : MonoBehaviour {
     // 박스밀기 버튼 관리
     public void Push_Button_Management(bool is_On)
     {
-        ColorBlock cb = m_PushButton.colors;
-        Color c;
-
-        if (!is_On)
+        if (!StageManager.GetInstance().Get_is_Pause())
         {
-            c = Color.gray;
-            m_PushButton.interactable = false;
-        }
+            ColorBlock cb = m_PushButton.colors;
+            Color c;
 
-        else
-        {
-            c = Color.white;
-            m_PushButton.interactable = true;
-        }
+            if (!is_On)
+            {
+                c = Color.gray;
+                m_PushButton.interactable = false;
+            }
 
-        cb.normalColor = c;
-        m_PushButton.colors = cb;
+            else
+            {
+                c = Color.white;
+                m_PushButton.interactable = true;
+            }
+
+            cb.normalColor = c;
+            m_PushButton.colors = cb;
+        }
     }
 
 

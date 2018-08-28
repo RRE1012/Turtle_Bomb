@@ -68,7 +68,7 @@ public class StageManager : MonoBehaviour
 
     public GameObject m_Forest_Theme_Terrain;
     public GameObject m_SnowLand_Theme_Terrain;
-    
+
 
     // 오브젝트 프리팹들
     public GameObject m_Prefab_Box;
@@ -113,8 +113,6 @@ public class StageManager : MonoBehaviour
     int m_Current_Stage_index_Count = 0; // 현재 스테이지의 맵 인덱스 카운트
 
     Vector3 m_Object_Position; // 오브젝트 생성시 위치 변경에 이용할 벡터
-
-    GameObject m_Airplane; // 비행기 객체
 
 
 
@@ -211,7 +209,7 @@ public class StageManager : MonoBehaviour
 
     // 현재 스테이지의 오브젝트 배치 목록
     List<Object_Spawn_Position_Data> m_Object_Spawn_Position_List = new List<Object_Spawn_Position_Data>();
-    
+
     // 보스 스테이터스 데이터
     Adventure_Boss_Data m_Adventure_Boss_Data = new Adventure_Boss_Data();
 
@@ -225,7 +223,7 @@ public class StageManager : MonoBehaviour
     IEnumerator m_StageManager;
 
     bool m_is_Block_Object = false;
-    
+
 
     // ================================
     // =========== Methods ============
@@ -242,22 +240,53 @@ public class StageManager : MonoBehaviour
         m_MCL_is_Blocked_List = new List<bool>();
 
         MCL_init(); // MCL 초기화
-        
 
         m_Object_Table_List = new List<Object_Table_Data>(CSV_Manager.GetInstance().Get_Object_Table_List()); // 오브젝트 테이블 목록 로드
 
-        if (m_Stage_ID == -1) // 설정이 안돼있다면
-            m_Stage_ID = PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID"); // 스테이지 ID를 받아온다.
-            
-        // 스테이지 데이터 내부 리스트들의 공간 할당
+        if (m_Stage_ID == -1) m_Stage_ID = PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID"); // 스테이지 ID를 받아온다.
+        
         m_Adventure_Stage_Data.Adventure_Quest_ID_List = new int[3];
         m_Adventure_Stage_Data.Stage_Pattern_ID_List = new int[3];
-
         CSV_Manager.GetInstance().Get_Adventure_Stage_Data(ref m_Adventure_Stage_Data, m_Stage_ID); // 스테이지 테이블 데이터 로드
-
         CSV_Manager.GetInstance().Get_Adventure_Quest_List(ref m_QuestList, ref m_Adventure_Stage_Data.Adventure_Quest_ID_List); // 퀘스트 데이터 로딩
 
+        Boss_Stage_Setting(); // 보스 스테이지인지 검사 후 설정. (브금 까지)
+        
+        Create_Map(m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count]); // 설정된 번호를 받아서 맵 생성!
+        
+        if (m_Stage_Time_Limit == -1) m_Stage_Time_Limit = m_Adventure_Stage_Data.Stage_Time; // 시간 설정
+
+        Intro_Direction_Play(); // 인트로 연출 시작
+    }
+
+    void Start()
+    {
+        // 페이드 인
+        if (Fade_Slider.c_Fade_Slider != null) Fade_Slider.c_Fade_Slider.Start_Fade_Slider(2);
+    }
+
+
+    IEnumerator StageManagement()
+    {
+        while (true)
+        {
+            Check_GameOver();
+            yield return null;
+        }
+    }
+
+
+    void Intro_Direction_Play()
+    {
+        if (!m_is_Boss_Stage) m_Direction_Camera.GetComponentInChildren<Camera_Directing>().Direction_Play(DIRECTION_NUMBER.INTRO_NORMAL_1);
+        else m_Direction_Camera.GetComponentInChildren<Camera_Directing>().Direction_Play(DIRECTION_NUMBER.INTRO_BOSS_1);
+    }
+
+    void Boss_Stage_Setting()
+    {
         m_Boss_HP_Bar.SetActive(false);
+
+        Audio_Manager.GetInstance().BGM_Play(BGM_NUMBER.NORMAL); // 일반 스테이지 BGM 재생.
 
         if (m_Boss_ID == -1) // 설정이 안돼있다면
         {
@@ -268,6 +297,8 @@ public class StageManager : MonoBehaviour
                     m_is_Boss_Stage = true; // 해당 스테이지는 보스 스테이지라는 뜻!
 
                     m_Boss_HP_Bar.SetActive(true);
+
+                    Audio_Manager.GetInstance().BGM_Play(BGM_NUMBER.BOSS); // 보스 스테이지 BGM 재생.
 
                     // 보스 테이블의 번호를 설정
                     if (m_Stage_ID == 5)
@@ -281,50 +312,7 @@ public class StageManager : MonoBehaviour
                 }
             }
         }
-
-
-        Create_Terrain(); // 터레인 생성
-        Create_Map(m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count]); // 설정된 번호를 받아서 맵 생성!
-
-        
-
-        if (m_Stage_Time_Limit == -1) // 시간 설정
-            m_Stage_Time_Limit = m_Adventure_Stage_Data.Stage_Time;
-
-        if (!m_is_Boss_Stage) m_Direction_Camera.GetComponentInChildren<Camera_Directing>().Direction_Play(DIRECTION_NUMBER.INTRO_NORMAL_1);
-        else m_Direction_Camera.GetComponentInChildren<Camera_Directing>().Direction_Play(DIRECTION_NUMBER.INTRO_BOSS_1);
-
-        // 비행기 미리 소환
-        m_Airplane = Instantiate(m_Prefab_Airplane); // 인스턴스 생성
-        m_Airplane.GetComponent<Airplane>().Set_Airdrop_Count(m_Adventure_Stage_Data.Number_Of_DropItem); // 드랍 개수 설정
-
-
-        
     }
-
-    void Start()
-    {
-        // 페이드 인
-        if (Fade_Slider.c_Fade_Slider != null)
-            Fade_Slider.c_Fade_Slider.Start_Fade_Slider(2);
-    }
-    
-
-    IEnumerator StageManagement()
-    {
-        while (true)
-        {
-            Check_GameOver();
-            yield return null;
-        }
-    }
-
-
-
-
-
-
-
 
 
     // =====================================================
@@ -332,6 +320,8 @@ public class StageManager : MonoBehaviour
 
     void Create_Map(int stage_id) // 맵 생성 및 설정
     {
+        Create_Terrain(); // 터레인 생성
+
         // 오브젝트 스폰 위치 목록을 받아온다.
         CSV_Manager.GetInstance().Get_Object_Spawn_Position_List(ref m_Object_Spawn_Position_List, stage_id);
 
@@ -518,7 +508,12 @@ public class StageManager : MonoBehaviour
                 }
             }
         }
+
+
+        Airplane_Object_Spawn(); // 에어드랍 비행기 객체 소환
     }
+    
+
 
 
     void Create_Terrain() // 터레인 생성
@@ -534,6 +529,10 @@ public class StageManager : MonoBehaviour
         }
     }
 
+
+
+
+
     public void Next_Map_Load() // 다음 맵 불러오기
     {
         ++m_Current_Stage_index_Count; // 다음 맵 번호를 지정하고
@@ -548,7 +547,11 @@ public class StageManager : MonoBehaviour
         }
     }
 
-
+    void Airplane_Object_Spawn()
+    {
+        GameObject airplane = Instantiate(m_Prefab_Airplane); // 인스턴스 생성
+        airplane.GetComponent<Airplane>().Set_Airdrop_Count(m_Adventure_Stage_Data.Number_Of_DropItem); // 드랍 개수 설정
+    }
 
 
 

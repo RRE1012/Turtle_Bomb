@@ -6,13 +6,12 @@ public class Box_None_Item : Box {
 
     void OnTriggerEnter(Collider other)
     {
-        if (!m_is_Destroyed && other.gameObject.CompareTag("Flame_Remains"))
+        if (!m_is_Destroyed && other.gameObject.CompareTag("Flame_Remains") || other.gameObject.CompareTag("Flame"))
         {
             m_is_Destroyed = true;
 
             // MCL 갱신
-            index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
-            StageManager.GetInstance().Update_MCL_isBlocked(index, false);
+            StageManager.GetInstance().Update_MCL_isBlocked(m_MCL_index, false);
 
             Instantiate(m_Particle).transform.position = transform.position; // 파티클 발생
 

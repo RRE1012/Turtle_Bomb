@@ -538,36 +538,46 @@ public class Player : Bomb_Setter
 
 
             // MCL 갱신
-            index = StageManager.GetInstance().Find_Own_MCL_Index(m_Front_Box.transform.position.x, m_Front_Box.transform.position.z);
-
-            StageManager.GetInstance().Update_MCL_isBlocked(index, false);
+            Vector3 pos = m_Front_Box.transform.position + transform.forward * 2.0f;
+            index = StageManager.GetInstance().Find_Own_MCL_Index(pos.x, pos.z);
+            m_Front_Box.GetComponent<Box>().Reset_MCL_index(index);
         }
     }
 
 
     void Pushing() // 박스를 미는 과정과 마무리
     {
-        m_push_Distance += m_BasicSpeed * Time.deltaTime;
-
-        if (m_push_Distance <= 2.0f)
+        if (m_Front_Box != null)
         {
-            m_Front_Box.transform.position += transform.forward * m_BasicSpeed * Time.deltaTime;
-            transform.position += transform.forward * m_BasicSpeed * Time.deltaTime;
+            m_push_Distance += m_BasicSpeed * Time.deltaTime;
+
+            if (m_push_Distance <= 2.0f)
+            {
+                m_Front_Box.transform.position += transform.forward * m_BasicSpeed * Time.deltaTime;
+                transform.position += transform.forward * m_BasicSpeed * Time.deltaTime;
+            }
+
+            // 밀고난 뒤 박스가 정확한 자리로 가도록 조정해준다.
+            else
+            {
+                int index = StageManager.GetInstance().Find_Own_MCL_Index(m_Front_Box.transform.position.x, m_Front_Box.transform.position.z);
+
+                Vector3 Loc;
+                Loc.x = StageManager.GetInstance().m_Map_Coordinate_List[index].x;
+                Loc.y = m_Front_Box.transform.position.y;
+                Loc.z = StageManager.GetInstance().m_Map_Coordinate_List[index].z;
+                m_Front_Box.transform.position = Loc;
+
+                StageManager.GetInstance().Update_MCL_isBlocked(index, true);
+
+                m_push_Distance = 0.0f;
+                m_isPushing = false;
+                Push_Ani_False();
+            }
         }
 
-        // 밀고난 뒤 박스가 정확한 자리로 가도록 조정해준다.
         else
         {
-            int index = StageManager.GetInstance().Find_Own_MCL_Index(m_Front_Box.transform.position.x, m_Front_Box.transform.position.z);
-
-            Vector3 Loc;
-            Loc.x = StageManager.GetInstance().m_Map_Coordinate_List[index].x;
-            Loc.y = m_Front_Box.transform.position.y;
-            Loc.z = StageManager.GetInstance().m_Map_Coordinate_List[index].z;
-            m_Front_Box.transform.position = Loc;
-
-            StageManager.GetInstance().Update_MCL_isBlocked(index, true);
-
             m_push_Distance = 0.0f;
             m_isPushing = false;
             Push_Ani_False();

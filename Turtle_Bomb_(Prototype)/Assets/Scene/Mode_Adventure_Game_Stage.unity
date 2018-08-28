@@ -1291,7 +1291,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 4cab2d3314c81f74b8839834052d8829, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -1386,6 +1386,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a5e56af18e59354e81d573c40c89b4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_BGM_List:
+  - {fileID: 8300000, guid: 18032699514930f41984bfd85f19adfa, type: 3}
+  - {fileID: 8300000, guid: caabee0029a3bf44b9b4a05bf993218b, type: 3}
 --- !u!1 &642911461 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1757038544713918, guid: 2f1300084c20abf41a91e5fcc58459a4,
@@ -3289,9 +3292,6 @@ MonoBehaviour:
     type: 3}
   m_Deactivated_Star_Texture: {fileID: 2800000, guid: ae9e20c99a983504c9df169303cdcd1a,
     type: 3}
-  m_Star_Image1: {fileID: 893437344}
-  m_Star_Image2: {fileID: 477515382}
-  m_Star_Image3: {fileID: 1681547114}
   m_MissionText:
   - {fileID: 12881175}
   - {fileID: 1116417273}

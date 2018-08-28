@@ -298,7 +298,6 @@
     <Compile Include="Assets\Script\Object 관련\Item.cs" />
     <Compile Include="Assets\Script\Object 관련\Rock.cs" />
     <Compile Include="Assets\Script\Object 관련\Start_Point.cs" />
-    <Compile Include="Assets\Script\PlayerMove.cs" />
     <Compile Include="Assets\Script\System 관련\Audio\Airdrop_Sound.cs" />
     <Compile Include="Assets\Script\System 관련\Audio\Audio_Manager.cs" />
     <Compile Include="Assets\Script\System 관련\Audio\Bomb_Sound.cs" />
@@ -318,7 +317,6 @@
     <Compile Include="Assets\Script\System 관련\SceneSwaps.cs" />
     <Compile Include="Assets\Script\System 관련\StageManager.cs" />
     <Compile Include="Assets\Script\UI 관련\Boss_HP_Gauge.cs" />
-    <Compile Include="Assets\Script\UI 관련\CrouchButton.cs" />
     <Compile Include="Assets\Script\UI 관련\Fade_Slider.cs" />
     <Compile Include="Assets\Script\UI 관련\GameOver_UI.cs" />
     <Compile Include="Assets\Script\UI 관련\Image_Fade.cs" />
@@ -336,7 +334,6 @@
     <Compile Include="Assets\Script\각종 AI\Camera_Directing.cs" />
     <Compile Include="Assets\Script\각종 AI\Detector_Box.cs" />
     <Compile Include="Assets\Script\각종 AI\Front_Collider.cs" />
-    <Compile Include="Assets\Script\각종 AI\Intro_Boss.cs" />
     <Compile Include="Assets\Script\각종 AI\Monster_Player_Detector.cs" />
     <Compile Include="Assets\Script\각종 AI\Monster_Portal.cs" />
     <Compile Include="Assets\Script\각종 AI\MonsterAI.cs" />

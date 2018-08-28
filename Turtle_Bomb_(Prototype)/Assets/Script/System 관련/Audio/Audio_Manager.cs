@@ -2,14 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+static class BGM_NUMBER
+{
+    public const int NORMAL = 0;
+    public const int BOSS = 1;
+}
+
 public class Audio_Manager : MonoBehaviour
 {
-
     static Audio_Manager m_Instance; public static Audio_Manager GetInstance() { return m_Instance; }
 
     static bool m_is_Vib_Mute; public bool Get_is_Vibration_Mute() { return m_is_Vib_Mute; }
 
     AudioSource m_BGM_Audio_Source;
+
+    public AudioClip[] m_BGM_List;
 
     IEnumerator m_Fadeout;
     IEnumerator m_Fadein;
@@ -21,9 +28,6 @@ public class Audio_Manager : MonoBehaviour
     {
         m_Instance = this;
         m_BGM_Audio_Source = GetComponent<AudioSource>();
-
-        if (PlayerPrefs.GetInt("System_Option_BGM_ON") == 0) m_BGM_Audio_Source.Stop();
-        else m_BGM_Audio_Source.Play();
 
         if (PlayerPrefs.GetInt("System_Option_Vib_ON") == 0) m_is_Vib_Mute = true;
         else m_is_Vib_Mute = false;
@@ -68,5 +72,12 @@ public class Audio_Manager : MonoBehaviour
 
             yield return null;
         }
+    }
+
+    public void BGM_Play(int bgm_number)
+    {
+        m_BGM_Audio_Source.Stop();
+        m_BGM_Audio_Source.clip = m_BGM_List[bgm_number];
+        if (PlayerPrefs.GetInt("System_Option_BGM_ON") != 0) m_BGM_Audio_Source.Play();
     }
 }

@@ -16,8 +16,20 @@ public class Box : MonoBehaviour {
     GameObject m_IcicleCollider = null; // 고드름 바닥 충돌체
 
     protected bool m_is_Destroyed = false;
-    protected int index;
-    
+    protected int m_MCL_index; public int Get_MCL_index() { return m_MCL_index; }
+
+    void Start()
+    {
+        m_MCL_index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
+    }
+
+    public void Reset_MCL_index(int index)
+    {
+        StageManager.GetInstance().Update_MCL_isBlocked(m_MCL_index, false);
+        m_MCL_index = index;
+        StageManager.GetInstance().Update_MCL_isBlocked(m_MCL_index, true);
+    }
+
     void OnDestroy()
     {
         if (m_PlayerCollider) // 충돌중인 감지기가 있으면
@@ -38,8 +50,7 @@ public class Box : MonoBehaviour {
             m_is_Destroyed = true;
 
             // MCL 갱신
-            index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
-            StageManager.GetInstance().Update_MCL_isBlocked(index, false);
+            StageManager.GetInstance().Update_MCL_isBlocked(m_MCL_index, false);
 
             SetItem(); // 아이템 생성
 
