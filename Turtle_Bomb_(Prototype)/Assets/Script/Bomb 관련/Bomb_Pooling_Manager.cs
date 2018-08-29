@@ -33,6 +33,7 @@ public class Bomb_Pooling_Manager : MonoBehaviour
         {
             temp = Instantiate(m_Bomb_Object);
             temp.transform.parent = transform;
+            temp.tag = "Untagged";
             m_Bomb_Pool.Enqueue(temp);
         }
     }
@@ -43,7 +44,7 @@ public class Bomb_Pooling_Manager : MonoBehaviour
         if (who.GetComponent<Bomb_Setter>().Get_Curr_Bomb_Count() > 0)
         {
             m_Temp_Bomb = m_Bomb_Pool.Dequeue();
-            m_Temp_Bomb.SetActive(true);
+            m_Temp_Bomb.tag = "Bomb";
             m_Temp_Bomb.GetComponent<Bomb_Remaster>().Get_Out_Of_Pool(who, state);
             who.GetComponent<Bomb_Setter>().Decrease_Bomb_Count();
         }
@@ -51,5 +52,5 @@ public class Bomb_Pooling_Manager : MonoBehaviour
         return m_Temp_Bomb;
     }
 
-    public void Enqueue_Bomb(GameObject bomb) { m_Bomb_Pool.Enqueue(bomb); } // 넣기
+    public void Enqueue_Bomb(GameObject bomb) { bomb.tag = "Untagged"; m_Bomb_Pool.Enqueue(bomb); } // 넣기
 }

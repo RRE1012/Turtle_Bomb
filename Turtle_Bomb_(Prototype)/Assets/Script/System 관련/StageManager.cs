@@ -174,15 +174,10 @@ public class StageManager : MonoBehaviour
                                      // 디버깅용 변수이며, -1로 설정할 경우 기획 설정(테이블)에 따른다
 
     bool m_is_Intro_Over = false; // 인트로가 끝났는가?
-
     bool m_is_Pause = false; // 게임이 일시정지 되었는가?
-
     bool m_is_Goal_In = false; // 목표 지점에 들어갔는가?
-
     bool m_is_Stage_Clear = false; // 스테이지를 클리어했는가?
-
     bool m_is_Game_Over = false; // 게임이 끝났는가?
-
     bool m_is_Player_Alive = true;
 
     // 맵 사이즈
@@ -190,9 +185,6 @@ public class StageManager : MonoBehaviour
     int m_Map_Size_Z = 17;
 
     public GameObject m_Direction_Camera; // 연출용 카메라
-
-
-
 
 
 
@@ -375,13 +367,11 @@ public class StageManager : MonoBehaviour
                         case OBJECT_TABLE_NUMBER.NEXT_POINT:
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_Next_Portal));
                             m_Object_Position.y = m_Prefab_Next_Portal.transform.position.y;
-                            m_is_Block_Object = true;
                             break;
 
                         case OBJECT_TABLE_NUMBER.END_POINT:
                             m_Current_Map_Objects.Add(Instantiate(m_Prefab_End_Portal));
                             m_Object_Position.y = m_Prefab_End_Portal.transform.position.y;
-                            m_is_Block_Object = true;
                             break;
 
                         case OBJECT_TABLE_NUMBER.CHARACTER_SPAWN:
@@ -911,20 +901,10 @@ public class StageManager : MonoBehaviour
 
         m_Current_Map_Objects.Clear();
 
-        // 동적생성 폭탄들 제거
+        // 폭탄들 풀로 복귀
         GameObject[] bombs = GameObject.FindGameObjectsWithTag("Bomb");
         foreach (GameObject b in bombs)
             b.GetComponent<Bomb_Remaster>().Return_To_Pool();
-
-        // 동적생성 화염들 제거
-        GameObject[] flame = GameObject.FindGameObjectsWithTag("Flame");
-        foreach (GameObject f in flame)
-            Destroy(f);
-
-        // 동적생성 화염잔해들 제거
-        GameObject[] flame_remains = GameObject.FindGameObjectsWithTag("Flame_Remains");
-        foreach (GameObject fr in flame_remains)
-            Destroy(fr);
 
         // 불 붙은 부쉬의 파티클도 제거
         GameObject[] fBushs = GameObject.FindGameObjectsWithTag("Flame_Bush_Particle");
