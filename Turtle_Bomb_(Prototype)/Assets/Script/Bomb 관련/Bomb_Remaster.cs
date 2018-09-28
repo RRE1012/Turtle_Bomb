@@ -385,6 +385,7 @@ public class Bomb_Remaster : MonoBehaviour
 
     public void Return_To_Pool() // 풀로 복귀시키기 전의 작업들
     {
+        Fire_OFF();
         m_Shake_Checker.gameObject.SetActive(false);
         m_Whose_Bomb.GetComponent<Bomb_Setter>().Bomb_Reload(); // 주인의 폭탄 개수를 다시 채워준다.
         if (m_Whose_Bomb.GetComponent<Player>() != null) m_Whose_Bomb.GetComponent<Player>().UI_Status_Update();
@@ -669,10 +670,8 @@ public class Bomb_Remaster : MonoBehaviour
     {
         while (true)
         {
-            if (m_Center_Particle.time >= m_Center_Particle.main.duration - 0.1f) // 불꽃 연출이 끝났다면
+            if (m_Center_Particle.time >= m_Center_Particle.main.duration) // 불꽃 연출이 끝났다면
             {
-                Fire_OFF(); // 불꽃을 모두 끈다.
-
                 Return_To_Pool(); // 폭탄을 풀로 돌려보낸다.
             }
             yield return null;

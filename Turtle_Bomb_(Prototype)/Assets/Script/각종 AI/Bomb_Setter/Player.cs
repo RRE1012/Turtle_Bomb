@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 static class DEFAULT_STATUS
 {
-    public const int BOMB = 1;
-    public const int FIRE = 1;
-    public const int SPEED = 1;
+    public const int BOMB = 5;
+    public const int FIRE = 5;
+    public const int SPEED = 5;
 }
 
 static class MAX_STATUS

@@ -252,7 +252,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1556281821
+  randomSeed: -829778275
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6820,7 +6820,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -2020373824
+  randomSeed: -775228507
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -9347,7 +9347,7 @@ ParticleSystem:
       type: 0
       properties: 0
   LightsModule:
-    enabled: 1
+    enabled: 0
     ratio: 1
     light: {fileID: 108826953050367820, guid: 94acd97194cf5aa46a4118a12f7de4ab, type: 2}
     randomDistribution: 1
@@ -13395,7 +13395,7 @@ ParticleSystemRenderer:
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
+  m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
   - {fileID: 2100000, guid: 348c216069fad3f4e8b9a2e16c43817e, type: 2}
@@ -13418,7 +13418,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 12000
   m_RenderMode: 0
   m_SortMode: 1
   m_MinParticleSize: 0
@@ -13449,7 +13449,7 @@ ParticleSystemRenderer:
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
+  m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
   - {fileID: 2100000, guid: 776677ab3818fb249adaca05f4e04545, type: 2}
@@ -13472,7 +13472,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 11000
   m_RenderMode: 1
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -13503,7 +13503,7 @@ ParticleSystemRenderer:
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
+  m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
   - {fileID: 2100000, guid: 6b0dc2a493f8bb1409454486570f3118, type: 2}
@@ -13526,7 +13526,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 10000
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -13557,7 +13557,7 @@ ParticleSystemRenderer:
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 1
+  m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
   - {fileID: 2100000, guid: 7affdcc8e00d6e144b1948fec5aed25b, type: 2}
@@ -13580,7 +13580,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 13000
   m_RenderMode: 0
   m_SortMode: 1
   m_MinParticleSize: 0
