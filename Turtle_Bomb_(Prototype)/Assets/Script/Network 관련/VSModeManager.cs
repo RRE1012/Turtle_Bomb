@@ -27,6 +27,8 @@ public class VSModeManager : MonoBehaviour
     public Texture m_Speed_Icon;
     public Texture m_Kick_Icon;
     public Texture m_Throw_Icon;
+    public Texture m_Glider_Icon;
+    public Texture m_Airdrop_icon;
     float time;
     void Awake()
     {
@@ -187,8 +189,12 @@ public class VSModeManager : MonoBehaviour
                 break;
 
             case 5:
+                m_GetItemText.text = "Get Glider !!";
+                m_GetItemImage.texture = m_Glider_Icon;
+                break;
+            case 6:
                 m_GetItemText.text = "You've Got AirDrop !!";
-                m_GetItemImage.texture = m_Bomb_Icon;
+                m_GetItemImage.texture = m_Airdrop_icon;
                 break;
         }
 

@@ -1498,11 +1498,14 @@ MonoBehaviour:
     type: 2}
   m_item_glider: {fileID: 1924344449084546, guid: fe3dc4f4dcb0e6941ac36b3ababa9b5d,
     type: 2}
+  m_item_airdrop: {fileID: 1206075124350990, guid: 422bb4a9af8c61044bcd25a9ac75271b,
+    type: 2}
   m_explode_warn_range: {fileID: 1848196084621122, guid: d3b9f33039bf53e4581d800d8270cd86,
     type: 2}
   m_explode_effect: {fileID: 1135612651888148, guid: 6ee0ab3649cb9e342b130ae2cd05342b,
     type: 2}
   parent: {fileID: 308518270}
+  m_airplane: {fileID: 1054627747773574, guid: 17c6f68ecf111284caa9281ad0b1eeb9, type: 2}
   m_tile:
   - {fileID: 1597121521016918, guid: 09ea4848109adf84b83ed846ca9eee1d, type: 2}
   - {fileID: 1299918945928758, guid: 589d9dcdf3a9c3c4e86157e0735dec3c, type: 2}
@@ -6582,7 +6585,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 7352fab495ecb2841b3c774b00fb1e61, type: 2}
   - {fileID: 2100000, guid: 04296c22c68ca0247b572011e5eadab1, type: 2}
   - {fileID: 2100000, guid: bd30369c02b70a746978fe7381521b04, type: 2}
-  - {fileID: 2100000, guid: bd30369c02b70a746978fe7381521b04, type: 2}
+  - {fileID: 2100000, guid: 16dff4d882fc55c4cae09e4bd6d36b9b, type: 2}
   m_plane: {fileID: 1398684890}
   m_Rplane: {fileID: 1398684893}
 --- !u!95 &1005484215
@@ -7505,7 +7508,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 7352fab495ecb2841b3c774b00fb1e61, type: 2}
   - {fileID: 2100000, guid: 04296c22c68ca0247b572011e5eadab1, type: 2}
   - {fileID: 2100000, guid: bd30369c02b70a746978fe7381521b04, type: 2}
-  - {fileID: 2100000, guid: bd30369c02b70a746978fe7381521b04, type: 2}
+  - {fileID: 2100000, guid: 16dff4d882fc55c4cae09e4bd6d36b9b, type: 2}
   m_plane: {fileID: 2114844690}
   m_Rplane: {fileID: 2114844691}
 --- !u!65 &1086203437
@@ -8333,7 +8336,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 7352fab495ecb2841b3c774b00fb1e61, type: 2}
   - {fileID: 2100000, guid: 04296c22c68ca0247b572011e5eadab1, type: 2}
   - {fileID: 2100000, guid: bd30369c02b70a746978fe7381521b04, type: 2}
-  - {fileID: 2100000, guid: bd30369c02b70a746978fe7381521b04, type: 2}
+  - {fileID: 2100000, guid: 16dff4d882fc55c4cae09e4bd6d36b9b, type: 2}
   m_plane: {fileID: 1468776431}
   m_Rplane: {fileID: 1468776434}
 --- !u!54 &1220673156
@@ -13910,6 +13913,8 @@ MonoBehaviour:
   m_Speed_Icon: {fileID: 2800000, guid: e0646a75a61cbcd4cb9a534d745beb0b, type: 3}
   m_Kick_Icon: {fileID: 2800000, guid: d6ff21ee9ca1b384b9f3b4591161d4b4, type: 3}
   m_Throw_Icon: {fileID: 2800000, guid: a13dc5b5671a6184e9eeb922c105f23c, type: 3}
+  m_Glider_Icon: {fileID: 2800000, guid: a87ef074c36778f4ea443daccc15e128, type: 3}
+  m_Airdrop_icon: {fileID: 2800000, guid: ec57fceeb3461b74cbac0a28d8639a31, type: 3}
 --- !u!114 &2001424688
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14181,7 +14186,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 7352fab495ecb2841b3c774b00fb1e61, type: 2}
   - {fileID: 2100000, guid: 04296c22c68ca0247b572011e5eadab1, type: 2}
   - {fileID: 2100000, guid: bd30369c02b70a746978fe7381521b04, type: 2}
-  - {fileID: 2100000, guid: bd30369c02b70a746978fe7381521b04, type: 2}
+  - {fileID: 2100000, guid: 16dff4d882fc55c4cae09e4bd6d36b9b, type: 2}
   m_plane: {fileID: 714308405}
   m_Rplane: {fileID: 714308408}
 --- !u!95 &2060741962

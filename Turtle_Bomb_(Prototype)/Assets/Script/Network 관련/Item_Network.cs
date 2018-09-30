@@ -62,9 +62,9 @@ public class Item_Network : MonoBehaviour {
         }
     }
 
-    void floating()
+    public void floating()
     {
-        if (this.transform.position.y > 1.0f || this.transform.position.y < 0.6f)
+        if ((this.transform.position.y > 1.0f || this.transform.position.y < 0.6f) &&gameObject.activeInHierarchy)
             m_Move_Speed *= -1;
         this.transform.Translate(new Vector3(0.0f, m_Move_Speed * Time.deltaTime, 0.0f));
         transform.Rotate(Vector3.up * m_Rotate_Speed * Time.deltaTime);

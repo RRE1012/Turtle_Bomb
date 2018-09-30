@@ -20,12 +20,14 @@ public class MapManager : MonoBehaviour
     public GameObject m_item_kick;
     public GameObject m_item_throw;
     public GameObject m_item_glider;
+    public GameObject m_item_airdrop;
     public GameObject m_explode_warn_range;
     public GameObject m_explode_effect;
     public GameObject parent;
+    public GameObject m_airplane;
     public GameObject[] m_tile;
     public Text g_text;
-    
+
     byte[] bombexplode_list = new byte[225];
     byte[] up_bombexplode_list = new byte[225];
     byte[] right_bombexplode_list = new byte[225];
@@ -73,15 +75,16 @@ public class MapManager : MonoBehaviour
 
     GameObject terrain;
     GameObject[] bush_list = new GameObject[50];
-
+    GameObject plane;
     GameObject[] item_s_list = new GameObject[50];
     GameObject[] item_f_list = new GameObject[50];
     GameObject[] item_b_list = new GameObject[50];
     GameObject[] item_t_list = new GameObject[50];
     GameObject[] item_k_list = new GameObject[50];
     GameObject[] item_g_list = new GameObject[32];
+    GameObject[] item_air_list = new GameObject[32];
     byte[] copy_map_info = new byte[225];
-
+    bool is_airdrop = false;
     private void Awake()
     {
         instance = this;
@@ -92,13 +95,17 @@ public class MapManager : MonoBehaviour
     {
         //NetTest.instance.Receive();
         terrain = Instantiate(m_terrain[VariableManager.instance.map_type]);
-        terrain.transform.position = new Vector3(0.0f,0.0f,-50.0f);
+        terrain.transform.position = new Vector3(0.0f, 0.0f, -50.0f);
         terrain.transform.parent = parent.transform;
         terrain.SetActive(true);
         //terrain.transform.position == new Vector3(100, 0, 100);
         LobbySound.instanceLS.SoundStop();
-      
-        
+
+        is_airdrop = false;
+        plane = Instantiate(m_airplane);
+        //plane.transform.parent = parent.transform;
+        plane.SetActive(false);
+       
         
         for (int i = 0; i < 50; ++i)
         {
@@ -129,6 +136,7 @@ public class MapManager : MonoBehaviour
             {
                 if (i < 8)
                 {
+                    
                     is_alive_box[i] = false;
                     set_pos_box[i] = false;
                     push_box_list[i] = Instantiate(m_box[VariableManager.instance.map_type]);
@@ -139,6 +147,10 @@ public class MapManager : MonoBehaviour
                 }
                 item_g_list[i] = Instantiate(m_item_glider);
                 item_g_list[i].transform.parent = parent.transform;
+                item_air_list[i] = Instantiate(m_item_airdrop);
+                item_air_list[i].transform.position = new Vector3(100, 20, 100);
+                item_air_list[i].SetActive(false);
+                item_air_list[i].transform.parent = parent.transform;
                 item_g_list[i].transform.position = new Vector3(100, 0, 100);
                 item_g_list[i].SetActive(false);
                 bombT_list[i] = Instantiate(m_Tbomb);
@@ -208,6 +220,16 @@ public class MapManager : MonoBehaviour
         }
         StartCoroutine("CheckMap_v2");
         StartCoroutine("CheckFire");
+    }
+
+    public void AirdropStart()
+    {
+        is_airdrop = true;
+
+    }
+    void AirplaneOff()
+    {
+        plane.SetActive(false);
     }
     public void Push_Box_Move(int g, int x, int z, int x_dest, int z_dest, byte direction)
     {
@@ -796,6 +818,13 @@ public class MapManager : MonoBehaviour
                         return item_g_list[i];
                 }
                 break;
+            case 7:
+                for(int i = 0; i <32; ++i)
+                {
+                     if (!item_air_list[i].activeInHierarchy)
+                        return item_air_list[i];
+                }
+                break;
             default:
                 return null;
 
@@ -891,6 +920,16 @@ public class MapManager : MonoBehaviour
 
         for (; ; )
         {
+            if (is_airdrop)
+            {
+                plane.transform.position = new Vector3(24, 20, 24);
+                plane.SetActive(true);
+                plane.GetComponent<Animation>().Play(plane.GetComponent<Animation>().GetClip("Air_Drop").name);
+                plane.GetComponentInChildren<Airdrop_Sound>().Play_AirplaneSound();
+                Debug.Log("AirPlane Active");
+                Invoke("AirplaneOff", 5.0f);
+                is_airdrop = false;
+            }
             for (int z = 0; z < 15; ++z)
             {
                 for (int x = 0; x < 15; ++x)
@@ -981,6 +1020,19 @@ public class MapManager : MonoBehaviour
                                 tempib.SetActive(true);
                                 tempib.transform.position = new Vector3(x * 2, 0, z * 2);
 
+                                LiveList.Add(tempib);
+
+                                item_set[(z * 15) + (x)] = true;
+                            }
+                            break;
+                        case 23://AirDrop
+                            if (!item_set[(z * 15) + (x)])
+                            {
+
+                                GameObject tempib = GetItem(7);
+                                tempib.SetActive(true);
+                                tempib.transform.position = new Vector3(x * 2, 20, z * 2);
+                                tempib.GetComponent<Item_Network_Airdrop>().IsGen();
                                 LiveList.Add(tempib);
 
                                 item_set[(z * 15) + (x)] = true;

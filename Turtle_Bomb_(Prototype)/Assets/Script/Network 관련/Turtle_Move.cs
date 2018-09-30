@@ -367,6 +367,22 @@ public class Turtle_Move : MonoBehaviour
                     break;
                 case 5:
                     get_glider = true;
+                    itemtype = 5;
+                    break;
+                case 6:
+                    bomb_power++;
+                    bomb_set++;
+                    if (bomb_power >= 5)
+                        bomb_power = 5;
+                    if (bomb_set >= 5)
+                        bomb_set = 5;
+                    fire_power++;
+                    if (fire_power >= 5)
+                        fire_power = 5;
+                    speed_power++;
+                    if (speed_power >= 5)
+                        speed_power = 5;
+                    itemtype = 6;
                     
                     break;
                 default:
