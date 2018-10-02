@@ -19,9 +19,17 @@ public class Monster_Player_Detector : MonoBehaviour {
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            m_isInRange = true;
+            if (!other.gameObject.GetComponent<Player>().Get_is_Hiden())
+            {
+                m_isInRange = true;
 
-            m_Target = other.gameObject;
+                m_Target = other.gameObject;
+            }
+            else
+            {
+                m_isInRange = false;
+                m_Target = null;
+            }
         }
     }
 
@@ -30,7 +38,6 @@ public class Monster_Player_Detector : MonoBehaviour {
         if (other.gameObject.CompareTag("Player"))
         {
             m_isInRange = false;
-            
         }
     }
 

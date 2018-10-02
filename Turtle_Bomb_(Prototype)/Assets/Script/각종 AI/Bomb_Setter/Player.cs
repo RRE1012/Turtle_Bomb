@@ -40,14 +40,13 @@ public class Player : Bomb_Setter
     bool m_isBoxSelected = false; public void Set_is_Box_Selected(bool b) { m_isBoxSelected = b; }
     public bool Get_is_Box_Selected() { return m_isBoxSelected; }
     bool m_isPushing = false;
+    bool m_is_Hiden = false; public bool Get_is_Hiden() { return m_is_Hiden; }
 
     bool m_isGot_KickItem = false;
     bool m_isGot_ThrowItem = false;
 
     bool m_isAbleToPush = false; public void Set_is_Able_to_Push(bool b) { m_isAbleToPush = b; }
     public bool Get_is_Able_to_Push() { return m_isAbleToPush; }
-    bool m_isHideinBush = false; public void Set_is_Hide_in_Bush(bool b) { m_isHideinBush = b; }
-    public bool Get_is_Hide_in_Bush() { return m_isHideinBush; }
     bool m_isAbleToKick = false; public void Set_is_Able_to_Kick(bool b) { m_isAbleToKick = b; }
     public bool Get_is_Able_to_Kick() { return m_isAbleToKick; }
     bool m_isAbleToThrow = false; public void Set_is_Able_to_Throw(bool b) { m_isAbleToThrow = b; }
@@ -249,20 +248,8 @@ public class Player : Bomb_Setter
             // 맵 전환 포탈
             if (other.gameObject.CompareTag("Map_Portal"))
             {
-                // 맵 이동 시작 연출 수행. (Fade out 까지 수행)
-                // Do();
-
-                // 캐릭터를 특정 위치로 이동시킨다.
-                // 현재는 초기 위치로 설정.
-                //transform.position = new Vector3(0.0f, transform.position.y, 50.0f);
-                //transform.Rotate(new Vector3(0.0f, 0.0f, 0.0f));
-
                 // 다음 맵을 로드한다.
                 StageManager.GetInstance().Next_Map_Load();
-
-
-                // 맵 이동 마무리 연출 수행 (Fade In 먼저 수행)
-                // Do();
             }
             // ===============================
 
@@ -278,14 +265,17 @@ public class Player : Bomb_Setter
                 StageManager.GetInstance().Stage_Clear();
             }
             // ===============================
+        }
+    }
 
-            if (other.gameObject.tag == "Bush")
-            {
-                foreach (SkinnedMeshRenderer pmr in m_Player_Mesh_Renderers)
-                    pmr.enabled = false;
-                m_isHideinBush = true;
-                UI.GetInstance().HideInBush_Management(true);
-            }
+    void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Bush")
+        {
+            foreach (SkinnedMeshRenderer pmr in m_Player_Mesh_Renderers)
+                pmr.enabled = false;
+            m_is_Hiden = true;
+            UI.GetInstance().HideInBush_Management(true);
         }
     }
 
@@ -312,7 +302,7 @@ public class Player : Bomb_Setter
         {
             foreach (SkinnedMeshRenderer pmr in m_Player_Mesh_Renderers)
                 pmr.enabled = true;
-            m_isHideinBush = false;
+            m_is_Hiden = false;
             UI.GetInstance().HideInBush_Management(false);
         }
         // =======================

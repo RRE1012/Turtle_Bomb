@@ -221,6 +221,7 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 480ccda02233a8ca2dea979f7864aea2 Assembly-CSharp.dll:.Bomb_Network
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 a9c6d5befca6efeb6edf159c31618e8a Assembly-CSharp.dll:.Turtle_Move_Coop
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Item_Network_Airdrop
 9d53592a8c67da4b8757fac8422b93d3 Assembly-CSharp.dll:.Notice_UI
 2b8bbf72c3967dcb289fff37229fe89c Assembly-CSharp.dll:.Player_Sound
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Net_Boss_1
@@ -240,4 +241,3 @@ c4bd3fba4a17f2addf054f1443c88cf2 Assembly-CSharp.dll:.Turtle_Move
 0f4a716f3475e1944287e8d10113881c Assembly-CSharp.dll:.Audio_Manager
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Net_Item
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Stage_Clear
-05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Item_Network_Airdrop
