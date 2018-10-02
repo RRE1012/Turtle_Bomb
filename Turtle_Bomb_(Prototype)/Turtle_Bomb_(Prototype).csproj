@@ -255,6 +255,7 @@
     <Compile Include="Assets\Script\Network 관련\GetID.cs" />
     <Compile Include="Assets\Script\Network 관련\IconTester.cs" />
     <Compile Include="Assets\Script\Network 관련\Item_Network.cs" />
+    <Compile Include="Assets\Script\Network 관련\Item_Network_Airdrop.cs" />
     <Compile Include="Assets\Script\Network 관련\MapManager.cs" />
     <Compile Include="Assets\Script\Network 관련\MapManager_COop.cs" />
     <Compile Include="Assets\Script\Network 관련\Matching_Room.cs" />

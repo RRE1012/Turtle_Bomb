@@ -223,6 +223,8 @@ public class StageManager : MonoBehaviour
 
     void Awake() // 생성자
     {
+        Screen.SetResolution(1280, 720, false);
+
         m_Instance = this; // 스테이지 매니저 인스턴스 지정
 
         m_StageManager = StageManagement(); // 스테이지 관리 코루틴

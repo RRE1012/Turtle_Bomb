@@ -173,7 +173,7 @@ a4f24f5cb65e499081ec0d2ba7682d42 Assembly-CSharp.dll:.NetUser4
 5fe2123461d89b59900b7d67d38d9370 Assembly-CSharp.dll:.CoOpManager
 c393c1a7071b350370238daac28d5e8c Assembly-CSharp.dll:.AnimatedUVs
 83773f851cf44b361cb1c6c24545d64c Assembly-CSharp.dll:.IconTester
-f0341737ce9d52f3e1f8ab9d865c639e Assembly-CSharp.dll:.VSModeManager
+e8600c7998dc2f2df3a591c3d322e52d Assembly-CSharp.dll:.VSModeManager
 2b8bbf72c3967dcb289fff37229fe89c Assembly-CSharp.dll:.Ork_Boss_Sound
 2470ff29bb6966b6f9cb989fc54cfd2e Assembly-CSharp.dll:.NetTeam1
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.MonsterAI
@@ -208,7 +208,7 @@ e0f7ffd5d5c2abe4b2e16569a21163da UnityEngine.GoogleAudioSpatializer.dll:UnityEng
 e0f7ffd5d5c2abe4b2e16569a21163da UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioRoom
 7f13ada6e10b1acb845d1ca0374652d7 Assembly-CSharp.dll:.Mode_Adventure_Stage_Select_Scene_Manager
 62a08811156868fe872193af273a5cb7 Assembly-CSharp.dll:.MapManager_COop
-b731fb8b42e6ca53d780dbe0ecb63135 Assembly-CSharp.dll:.MapManager
+7437a0b29429253702486c7ff89fed40 Assembly-CSharp.dll:.MapManager
 15701d406fc6d17d8a00ead481fa36ae Assembly-CSharp.dll:.Matching_Room
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Front_Collider
 bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.AudioSpatializerMicrosoft
@@ -240,3 +240,4 @@ c4bd3fba4a17f2addf054f1443c88cf2 Assembly-CSharp.dll:.Turtle_Move
 0f4a716f3475e1944287e8d10113881c Assembly-CSharp.dll:.Audio_Manager
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Net_Item
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Stage_Clear
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Item_Network_Airdrop
