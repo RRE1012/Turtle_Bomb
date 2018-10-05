@@ -692,7 +692,7 @@ public class NetManager_Coop : MonoBehaviour {
     }
     IEnumerator SendTester()
     {
-
+        WaitForSeconds delay = new WaitForSeconds(0.1f);
         for (; ; )
         {
             if (m_ingame)
@@ -700,7 +700,7 @@ public class NetManager_Coop : MonoBehaviour {
                 SendTurtlePacket();
                 //SendBombPacket();
             }
-            yield return new WaitForSeconds(0.1f);
+            yield return delay;
         }
     }
     // FPS 출력

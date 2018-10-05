@@ -51,7 +51,8 @@ public class GameRoom : MonoBehaviour
     }
     void Start()
     {
-       
+        Screen.SetResolution(1280, 720, true);
+
         SetRoomState();
         m_imready = 0;
         pop_loading = false;

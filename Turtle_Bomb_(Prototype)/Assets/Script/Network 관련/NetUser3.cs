@@ -317,12 +317,13 @@ public class NetUser3 : MonoBehaviour
     }
     IEnumerator NetworkCheck()
     {
+        WaitForSeconds delay = new WaitForSeconds(0.05f);
         for (; ; )
         {
             
             SetPos(NetTest.instance.GetNetPosx(2), NetTest.instance.GetNetRoty(2), NetTest.instance.GetNetPosz(2));
 
-            yield return new WaitForSeconds(0.05f);
+            yield return delay;
         }
     }
 }

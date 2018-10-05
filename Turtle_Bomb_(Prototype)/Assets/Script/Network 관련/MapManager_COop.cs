@@ -821,6 +821,7 @@ public class MapManager_COop : MonoBehaviour {
 
     IEnumerator CheckFire()
     {
+        WaitForSeconds delay = new WaitForSeconds(0.1f);
         for (; ; )
         {
 
@@ -875,12 +876,12 @@ public class MapManager_COop : MonoBehaviour {
 
                 }
             }
-            yield return new WaitForSeconds(0.1f);
+            yield return delay;
         }
     }
     IEnumerator CheckMap_v2()
     {
-
+        WaitForSeconds delay = new WaitForSeconds(0.1f);
         for (; ; )
         {
             for (int z = 0; z < 15; ++z)
@@ -1029,7 +1030,7 @@ public class MapManager_COop : MonoBehaviour {
                 }
             }
 
-            yield return new WaitForSeconds(0.1f);
+            yield return delay;
         }
     }
 

@@ -81,5 +81,6 @@ public enum PacketInfo
     ConnectSuccess,
     DBInfo1,
     GameReady,
-    Disconnect
+    Disconnect,
+    AirDrop
 }

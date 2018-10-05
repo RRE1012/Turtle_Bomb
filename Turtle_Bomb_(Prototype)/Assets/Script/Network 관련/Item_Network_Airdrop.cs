@@ -13,7 +13,7 @@ public class Item_Network_Airdrop : Item_Network{
         {
             transform.Translate(new Vector3(0.0f, -m_Droping_Speed * Time.deltaTime, 0.0f));
 
-            if (transform.position.y < 1.0f)
+            if (transform.position.y < 0.4f)
             {
                 //transform.Translate(new Vector3(0.0f, m_Droping_Speed * Time.deltaTime, 0.0f));
                 m_Droping = false;

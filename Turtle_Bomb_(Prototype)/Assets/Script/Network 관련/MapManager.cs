@@ -859,6 +859,7 @@ public class MapManager : MonoBehaviour
     }
     IEnumerator CheckFire()
     {
+        WaitForSeconds delay = new WaitForSeconds(0.1f);
         for (; ; )
         {
 
@@ -912,12 +913,12 @@ public class MapManager : MonoBehaviour
 
                 }
             }
-            yield return new WaitForSeconds(0.1f);
+            yield return delay;
         }
     }
     IEnumerator CheckMap_v2()
     {
-
+        WaitForSeconds delay = new WaitForSeconds(0.1f);
         for (; ; )
         {
             if (is_airdrop)
@@ -1103,7 +1104,7 @@ public class MapManager : MonoBehaviour
                 }
             }
 
-            yield return new WaitForSeconds(0.1f);
+            yield return delay;
         }
     }
 

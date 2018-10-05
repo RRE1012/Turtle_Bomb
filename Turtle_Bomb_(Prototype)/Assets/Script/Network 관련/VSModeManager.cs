@@ -33,16 +33,18 @@ public class VSModeManager : MonoBehaviour
     void Awake()
     {
         instance = this;
+
     }
     // Use this for initialization
     void Start()
     {
+        Screen.SetResolution(1280, 720, true);
+
         m_Direction_Camera.GetComponentInChildren<Camera_Directing_Net>().Direction_Play(DIRECTION_NUMBER.INTRO_NORMAL_1);
         time = 60.0f;
         win_or_lose = 0;
         game_set = false;
         GetItemUI_Deactivate();
-        
         for (byte i = 0; i < 4; ++i)
         {
 

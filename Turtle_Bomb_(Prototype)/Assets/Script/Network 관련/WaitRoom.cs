@@ -35,6 +35,8 @@ public class WaitRoom : MonoBehaviour
     }
     void Start()
     {
+        Screen.SetResolution(1280, 720, true);
+
         ban_by_server = false;
         ////Debug.Log("Started");
         cannotConnect = 0;
@@ -217,6 +219,7 @@ public class WaitRoom : MonoBehaviour
 
     IEnumerator RoomCheck()
     {
+        WaitForSeconds delay = new WaitForSeconds(0.2f);
         for (; ; )
         {
 
@@ -359,7 +362,7 @@ public class WaitRoom : MonoBehaviour
             //    roomIDarray[current_room] = 0;
             //}
 
-            yield return new WaitForSeconds(0.2f);
+            yield return delay;
         }
 
 

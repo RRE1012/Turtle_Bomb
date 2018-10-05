@@ -142,6 +142,7 @@ public class SceneChange : MonoBehaviour
     }
     IEnumerator SceneSwap()
     {
+        WaitForSeconds delay = new WaitForSeconds(0.1f);
         for (; ; )
         {
             if (SceneManager.GetActiveScene().buildIndex == 1)
@@ -160,7 +161,7 @@ public class SceneChange : MonoBehaviour
                 swap_scene = false;
                 ////Debug.Log("Go!!");
             }
-            yield return new WaitForSeconds(0.1f);
+            yield return delay;
         }
     }
     public void DisConnect()

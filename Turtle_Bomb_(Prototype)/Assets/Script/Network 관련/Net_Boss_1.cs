@@ -55,7 +55,7 @@ public class Net_Boss_1 : MonoBehaviour {
     // Update is called once per frame
     IEnumerator SendTester()
     {
-
+        WaitForSeconds delay = new WaitForSeconds(0.1f);
         for (; ; )
         {
             if (sensored)
@@ -66,7 +66,7 @@ public class Net_Boss_1 : MonoBehaviour {
                 //Debug.Log("Send BossPacket");
                 Invoke("CoolTimeOff", 2.0f);
             }
-            yield return new WaitForSeconds(0.1f);
+            yield return delay;
         }
     }
 

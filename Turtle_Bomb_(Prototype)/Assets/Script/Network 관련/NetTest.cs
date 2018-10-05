@@ -31,7 +31,7 @@ public class NetTest : MonoBehaviour
     bool out_by_server;
     private byte[] R_Map_Info = new byte[225];
     private byte[] Receiveid = new byte[4];
-
+    WaitForSeconds delay = new WaitForSeconds(0.1f);
     byte access_id = 254;
     byte game_id = 254;
     private const int m_port = 9000;
@@ -61,6 +61,7 @@ public class NetTest : MonoBehaviour
     private void Awake()
     {
         instance = this;
+       
         DontDestroyOnLoad(this);
     }
 
@@ -518,6 +519,12 @@ public class NetTest : MonoBehaviour
                     VariableManager.instance.ChangeTime(t_time);
                     SwapBuffer(copy_data[0]);
                     break;
+                case (byte)PacketInfo.AirDrop:
+                    Debug.Log("AirDrop!!!");
+                    MapManager.instance.AirdropStart();
+
+                    SwapBuffer(copy_data[0]);
+                    break;
                 case (byte)PacketInfo.ConnectSuccess:
                     SendMyIDAndPassword();
                     //Debug.Log("Swag");
@@ -838,6 +845,7 @@ public class NetTest : MonoBehaviour
         bool tempbool = m_is_move;
         if (tempbool)
         {
+            
             byte[] ReceivebTurtles_Pos = new byte[22];
             byte t_size = 22;
             byte[] m_packet_size = BitConverter.GetBytes(t_size);
@@ -873,8 +881,8 @@ public class NetTest : MonoBehaviour
             //////Debug.Log(n);
             m_socket.Send(ReceivebTurtles_Pos);
             //////Debug.Log("Send");
-
             m_is_move = false;
+
         }
     }
 
@@ -1350,15 +1358,16 @@ public class NetTest : MonoBehaviour
     }
     IEnumerator SendTester()
     {
-
+        
         for (; ; )
         {
             if (m_ingame)
             {
                 SendTurtlePacket();
                 //SendBombPacket();
+                m_is_move = false;
             }
-            yield return new WaitForSeconds(0.05f);
+            yield return delay;
         }
     }
     // FPS 출력
