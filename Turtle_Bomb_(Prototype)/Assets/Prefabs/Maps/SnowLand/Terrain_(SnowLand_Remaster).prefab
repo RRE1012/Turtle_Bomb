@@ -327,13 +327,12 @@ GameObject:
   m_Component:
   - component: {fileID: 4321917821223700}
   - component: {fileID: 218026010623846162}
-  - component: {fileID: 154184500233478682}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 4294967295
+  m_StaticEditorFlags: 4294967294
   m_IsActive: 1
 --- !u!1 &1491208609319168
 GameObject:
@@ -605,7 +604,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1797623702108634
 GameObject:
   m_ObjectHideFlags: 1
@@ -2876,16 +2875,6 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
---- !u!154 &154184500233478682
-TerrainCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1475117900296328}
-  m_Material: {fileID: 0}
-  m_Enabled: 1
-  m_TerrainData: {fileID: 15600000, guid: 3cea257d894905149b769d61a2e81d65, type: 2}
-  m_EnableTreeColliders: 1
 --- !u!208 &208244308942708358
 NavMeshObstacle:
   m_ObjectHideFlags: 1

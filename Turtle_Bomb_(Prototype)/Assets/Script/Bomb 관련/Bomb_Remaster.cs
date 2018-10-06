@@ -174,7 +174,7 @@ public class Bomb_Remaster : MonoBehaviour
                 else
                 {
                     m_Curr_Bomb_Timer += Time.deltaTime;
-                    //m_Animations.Play("Bomb_Pumpin");
+                    m_Animations.Play("Bomb_Pumpin");
                     Range_Reset();
                 }
             }
