@@ -889,7 +889,7 @@ public class MapManager_COop : MonoBehaviour {
                 for (int x = 0; x < 15; ++x)
                 {
                     byte Tile_Info2 = VariableManager_Coop.instance.copy_map_info[(z * 15) + (x)];
-                    bool tempbool = (down_bombexplode_list[(z * 15) + (x)] != 0) || (up_bombexplode_list[(z * 15) + (x)] != 0) || (left_bombexplode_list[(z * 15) + (x)] != 0) || (right_bombexplode_list[(z * 15) + (x)] != 0);
+                    bool tempbooleen = (down_bombexplode_list[(z * 15) + (x)] != 0) || (up_bombexplode_list[(z * 15) + (x)] != 0) || (left_bombexplode_list[(z * 15) + (x)] != 0) || (right_bombexplode_list[(z * 15) + (x)] != 0);
                     switch (Tile_Info2)
                     {
                         case 5: //Bomb
@@ -906,7 +906,7 @@ public class MapManager_COop : MonoBehaviour {
                                 bombexplode_list[(z * 15) + (x)] = 0;
                             }*/
 
-                            if (tempbool)
+                            if (tempbooleen)
                             {
                                 Explode_V2(bomb_list[((z * 15) + x)], up_bombexplode_list[((z * 15) + x)], right_bombexplode_list[((z * 15) + x)], down_bombexplode_list[((z * 15) + x)], left_bombexplode_list[((z * 15) + x)]);
                                 down_bombexplode_list[((z * 15) + x)] = 0;
@@ -922,7 +922,7 @@ public class MapManager_COop : MonoBehaviour {
                                 Explode(VariableManager_Coop.instance.firepower_list[(z * 15) + (x)], x, z);
                                 VariableManager_Coop.instance.firepower_list[(z * 15) + (x)] = 0;
                             }
-                            if (tempbool)
+                            if (tempbooleen)
                             {
 
                                 Explode_V2(bomb_list[((z * 15) + x)], up_bombexplode_list[((z * 15) + x)], right_bombexplode_list[((z * 15) + x)], down_bombexplode_list[((z * 15) + x)], left_bombexplode_list[((z * 15) + x)]);

@@ -22,7 +22,13 @@ public class Item_Network_Airdrop : Item_Network{
     }
     public void IsGen()
     {
+        Invoke("Gen_true", 2.0f);
+    }
+
+    void Gen_true()
+    {
         m_Droping = true;
+
     }
     void OnTriggerEnter(Collider other)
     {
@@ -42,9 +48,12 @@ public class Item_Network_Airdrop : Item_Network{
     }
     // Update is called once per frame
     void Update () {
-        if (!m_Droping)
-            floating();
-        else
-            Droping();
+        if (gameObject.activeInHierarchy)
+        {
+            if (!m_Droping)
+                floating();
+            else
+                Droping();
+        }
     }
 }

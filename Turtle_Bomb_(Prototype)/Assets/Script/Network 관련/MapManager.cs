@@ -41,6 +41,7 @@ public class MapManager : MonoBehaviour
     GameObject[] range_List = new GameObject[225];
     List<GameObject> LiveList = new List<GameObject>();
     GameObject[] push_box_list = new GameObject[8];
+    WaitForSeconds delay = new WaitForSeconds(0.1f);
     bool[] is_alive_kick = new bool[32];
     bool[] set_pos_kick = new bool[32];
     int[] dx_kick = new int[32];
@@ -76,13 +77,15 @@ public class MapManager : MonoBehaviour
     GameObject terrain;
     GameObject[] bush_list = new GameObject[50];
     GameObject plane;
-    GameObject[] item_s_list = new GameObject[50];
-    GameObject[] item_f_list = new GameObject[50];
-    GameObject[] item_b_list = new GameObject[50];
-    GameObject[] item_t_list = new GameObject[50];
-    GameObject[] item_k_list = new GameObject[50];
+    GameObject[] item_s_list = new GameObject[32];
+    GameObject[] item_f_list = new GameObject[32];
+    GameObject[] item_b_list = new GameObject[32];
+    GameObject[] item_t_list = new GameObject[32];
+    GameObject[] item_k_list = new GameObject[32];
     GameObject[] item_g_list = new GameObject[32];
     GameObject[] item_air_list = new GameObject[32];
+    GameObject[] ex_list = new GameObject[32];
+    GameObject[] fire_list = new GameObject[200];
     byte[] copy_map_info = new byte[225];
     bool is_airdrop = false;
     private void Awake()
@@ -113,22 +116,7 @@ public class MapManager : MonoBehaviour
 
             rock_list[i].SetActive(false);
             rock_list[i].transform.parent = parent.transform;
-            item_s_list[i] = Instantiate(m_item_speed);
-            item_s_list[i].transform.parent = parent.transform;
-            item_s_list[i].SetActive(false);
-            item_f_list[i] = Instantiate(m_item_fire);
-            item_f_list[i].transform.parent = parent.transform;
-            item_f_list[i].SetActive(false);
-            item_b_list[i] = Instantiate(m_item_bomb);
-            item_b_list[i].transform.parent = parent.transform;
-            item_b_list[i].SetActive(false);
-            item_t_list[i] = Instantiate(m_item_throw);
-            item_k_list[i] = Instantiate(m_item_kick);
-            item_k_list[i].transform.parent = parent.transform;
-
-            item_k_list[i].SetActive(false);
-            item_t_list[i].SetActive(false);
-            item_t_list[i].transform.parent = parent.transform;
+            
             bush_list[i] = Instantiate(m_bush);
             bush_list[i].transform.parent = parent.transform;
             bush_list[i].SetActive(false);
@@ -145,6 +133,25 @@ public class MapManager : MonoBehaviour
                     push_box_list[i].transform.parent = parent.transform;
                     dirc_box[i] = 0;
                 }
+                ex_list[i] = Instantiate(m_explode_effect);
+                ex_list[i].transform.parent = parent.transform;
+                ex_list[i].SetActive(false);
+                item_s_list[i] = Instantiate(m_item_speed);
+                item_s_list[i].transform.parent = parent.transform;
+                item_s_list[i].SetActive(false);
+                item_f_list[i] = Instantiate(m_item_fire);
+                item_f_list[i].transform.parent = parent.transform;
+                item_f_list[i].SetActive(false);
+                item_b_list[i] = Instantiate(m_item_bomb);
+                item_b_list[i].transform.parent = parent.transform;
+                item_b_list[i].SetActive(false);
+                item_t_list[i] = Instantiate(m_item_throw);
+                item_k_list[i] = Instantiate(m_item_kick);
+                item_k_list[i].transform.parent = parent.transform;
+
+                item_k_list[i].SetActive(false);
+                item_t_list[i].SetActive(false);
+                item_t_list[i].transform.parent = parent.transform;
                 item_g_list[i] = Instantiate(m_item_glider);
                 item_g_list[i].transform.parent = parent.transform;
                 item_air_list[i] = Instantiate(m_item_airdrop);
@@ -172,7 +179,12 @@ public class MapManager : MonoBehaviour
                 dirc_kick[i] = 0;
             }
         }
-
+        for(int i = 0; i < 200; ++i)
+        {
+            fire_list[i] = Instantiate(m_flame_effect);
+            fire_list[i].SetActive(false);
+            fire_list[i].transform.parent = parent.transform;
+        }
         for (int z = 0; z < 15; ++z)
         {
             for (int x = 0; x < 15; ++x)
@@ -519,46 +531,7 @@ public class MapManager : MonoBehaviour
         }
         return -1;
     }
-    public void Initialize_Map(byte[] mapinfo)
-    {
-        for (int z = 0; z < 15; ++z)
-        {
-            for (int x = 0; x < 15; ++x)
-            {
-                byte Tile_Info2 = mapinfo[(z * 15) + (x)];
-                switch (Tile_Info2)
-                {
-                    case 5: //Bomb
-                        if (!bomb_list[(z * 15) + (x)].activeInHierarchy)
-                            bomb_list[(z * 15) + (x)].SetActive(true);
-                        break;
-                    case 0: //Nothing
-                        ////Debug.Log("Nothing:" + x+","+y);
-                        break;
-                    case 1: //Cube(Box)로
-                        if (!box_list[(z * 15) + (x)].activeInHierarchy)
-                            box_list[(z * 15) + (x)].SetActive(true);
-                        break;
-                    case 2: //Rock
-                        if (!rock_list[(z * 15) + (x)].activeInHierarchy)
-                            rock_list[(z * 15) + (x)].SetActive(true);
-                        break;
-                    case 11: //Item_Bomb
-                        if (!item_b_list[(z * 15) + (x)].activeInHierarchy)
-                            item_b_list[(z * 15) + (x)].SetActive(true);
-                        break;
-                    case 22://Glider
-                        if (!item_g_list[(z * 15) + (x)].activeInHierarchy)
-                            item_g_list[(z * 15) + (x)].SetActive(true);
-                        break;
-                    default:
-
-                        break;
-
-                }
-            }
-        }
-    }
+   
     public void Explode_Bomb(int x, int z, byte f)
     {
         //Explode(f, bomb_list[((z * 15) + x)]);
@@ -659,30 +632,52 @@ public class MapManager : MonoBehaviour
         GameObject Instance_FlameDir_E;
         GameObject Instance_FlameDir_M;
         GameObject Instance_FlameDir_M2;
-        Instance_FlameDir_M2 = Instantiate(m_explode_effect);
+        Instance_FlameDir_M2 = GetExplodeEffect();
         Instance_FlameDir_M2.transform.position = new Vector3(bomb.transform.position.x, 0.0f, bomb.transform.position.z);
-        Instance_FlameDir_M = Instantiate(m_flame_effect);
+        Instance_FlameDir_M2.SetActive(true);
+        Instance_FlameDir_M2.GetComponentInChildren<BoxCollider_x>().ChangeBoxColX(left, right);
+        Instance_FlameDir_M2.GetComponentInChildren<BoxCollider_z>().ChangeBoxColZ(down,up);
+        
+        Instance_FlameDir_M2.GetComponent<ParticleSystem>().Play();
+        
+        Instance_FlameDir_M = GetFireEffect();
         Instance_FlameDir_M.transform.position = new Vector3(bomb.transform.position.x, 0.0f, bomb.transform.position.z);
+        Instance_FlameDir_M.SetActive(true);
+        Instance_FlameDir_M.GetComponent<ParticleSystem>().Play();
+        
         for (byte i = 0; i < up; ++i)
         {
-            Instance_FlameDir_N = Instantiate(m_flame_effect);
+            Instance_FlameDir_N = GetFireEffect();
             Instance_FlameDir_N.transform.position = new Vector3(bomb.transform.position.x, 0.0f, bomb.transform.position.z + (2.0f * (i + 1)));
+            Instance_FlameDir_N.SetActive(true);
+            Instance_FlameDir_N.GetComponent<ParticleSystem>().Play();
+            
 
         }
         for (byte i = 0; i < down; ++i)
         {
-            Instance_FlameDir_S = Instantiate(m_flame_effect);
+            Instance_FlameDir_S = GetFireEffect();
             Instance_FlameDir_S.transform.position = new Vector3(bomb.transform.position.x, 0.0f, bomb.transform.position.z - (2.0f * (i + 1)));
+            Instance_FlameDir_S.SetActive(true);
+            Instance_FlameDir_S.GetComponent<ParticleSystem>().Play();
+            
         }
         for (byte i = 0; i < left; ++i)
         {
-            Instance_FlameDir_W = Instantiate(m_flame_effect);
+            Instance_FlameDir_W = GetFireEffect();
             Instance_FlameDir_W.transform.position = new Vector3(bomb.transform.position.x - (2.0f * (i + 1)), 0.0f, bomb.transform.position.z);
+            Instance_FlameDir_W.SetActive(true);
+            Instance_FlameDir_W.GetComponent<ParticleSystem>().Play();
+            
         }
         for (byte i = 0; i < right; ++i)
         {
-            Instance_FlameDir_E = Instantiate(m_flame_effect);
+            Instance_FlameDir_E = GetFireEffect();
             Instance_FlameDir_E.transform.position = new Vector3(bomb.transform.position.x + (2.0f * (i + 1)), 0.0f, bomb.transform.position.z);
+            Instance_FlameDir_E.SetActive(true);
+            
+            Instance_FlameDir_E.GetComponent<ParticleSystem>().Play();
+            
         }
         MusicManager.manage_ESound.soundE();
         bomb.SetActive(false);
@@ -770,7 +765,24 @@ public class MapManager : MonoBehaviour
         }
         return null;
     }
-
+    GameObject GetExplodeEffect()
+    {
+        for (int i = 0; i < 32; ++i)
+        {
+            if (!ex_list[i].activeInHierarchy)
+                return ex_list[i];
+        }
+        return null;
+    }
+    GameObject GetFireEffect()
+    {
+        for (int i = 0; i < 200; ++i)
+        {
+            if (!fire_list[i].activeInHierarchy)
+                return fire_list[i];
+        }
+        return null;
+    }
     GameObject GetItem(int type)
     {
         switch (type)
@@ -859,7 +871,7 @@ public class MapManager : MonoBehaviour
     }
     IEnumerator CheckFire()
     {
-        WaitForSeconds delay = new WaitForSeconds(0.1f);
+        
         for (; ; )
         {
 
@@ -918,16 +930,17 @@ public class MapManager : MonoBehaviour
     }
     IEnumerator CheckMap_v2()
     {
-        WaitForSeconds delay = new WaitForSeconds(0.1f);
+        
         for (; ; )
         {
             if (is_airdrop)
             {
+                Notice_UI.GetInstance().Notice_Play(NOTICE_NUMBER.AIR_DROP);
                 plane.transform.position = new Vector3(24, 20, 24);
                 plane.SetActive(true);
                 plane.GetComponent<Animation>().Play(plane.GetComponent<Animation>().GetClip("Air_Drop").name);
                 plane.GetComponentInChildren<Airdrop_Sound>().Play_AirplaneSound();
-                Debug.Log("AirPlane Active");
+                //Debug.Log("AirPlane Active");
                 Invoke("AirplaneOff", 5.0f);
                 is_airdrop = false;
             }

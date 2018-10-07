@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bomb_Network : MonoBehaviour {
 
-    public GameObject m_flame_effect;
+    //public GameObject m_flame_effect;
     byte firepower;
     Animation m_Animations;
     
@@ -23,7 +23,8 @@ public class Bomb_Network : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        m_Animations.PlayQueued("Bomb_Pumpin");
+        if(gameObject.activeInHierarchy)
+            m_Animations.PlayQueued("Bomb_Pumpin");
     }
 
     void ReLoad()
@@ -31,6 +32,7 @@ public class Bomb_Network : MonoBehaviour {
         this.gameObject.SetActive(true);
 
     }
+    /*
     void Explode(byte fire_power)
     {
         GameObject Instance_FlameDir_N;
@@ -51,5 +53,6 @@ public class Bomb_Network : MonoBehaviour {
         }
         this.gameObject.SetActive(false);
     }
+    */
 
 }

@@ -2,13 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+public class BoxCollider_z : MonoBehaviour {
 
-public class Fire_Effect_Net : MonoBehaviour {
+    //public static BoxCollider_z instance;
+    BoxCollider m_box_col;
+    // Use this for initialization
+    void Start()
+    {
+        m_box_col = GetComponent<BoxCollider>();
 
-    Collider m_Fire_Collider;
+    }
 
-    //화염 지속시간-  다만 이펙트 이기 때문에 파티클은 사라지지 않을 수 있으므로 값을 조종하려면 파티클 inspector에서 조정 -R
-    public float bombCountDown = 1.0f;
+
+    public void ChangeBoxColZ(int down, int up)
+    {
+        m_box_col = GetComponent<BoxCollider>();
+        float centerz = ((float)((up - down) / 2.0f)) * 2;
+        int sizez = (down + up + 1) * 2;
+        m_box_col.center = new Vector3(0, centerz, -2);
+        m_box_col.size = new Vector3(2, sizez, 4);
+    }
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
     void OnTriggerEnter(Collider other)
     {
         if (gameObject.activeInHierarchy)
@@ -40,22 +58,6 @@ public class Fire_Effect_Net : MonoBehaviour {
                     Turtle_Move_Coop.instance.alive = 0;
                     NetManager_Coop.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
                 }
-            }
-        }
-    }
-    // Update is called once per frame
-    void Update () {
-        if (gameObject.activeInHierarchy)
-        {
-            if (bombCountDown >= 0.0f)
-            {
-                bombCountDown -= Time.deltaTime;
-            }
-            else
-            {
-                bombCountDown = 1.0f;
-                gameObject.SetActive(false);
-                //Destroy(gameObject);
             }
         }
     }

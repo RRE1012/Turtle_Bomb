@@ -139,7 +139,7 @@ public class VSModeManager : MonoBehaviour
         if (win_or_lose == 1)
         {
             //Performance_Network.instance.DeadAnimation(loser_ID);
-            Invoke("WinnerSet", 3.3f);
+            Invoke("WinnerSet", 0.3f);
             win_or_lose = 0;
             //Debug.Log("Win!!!!!!");
             //Time.timeScale = 0;
