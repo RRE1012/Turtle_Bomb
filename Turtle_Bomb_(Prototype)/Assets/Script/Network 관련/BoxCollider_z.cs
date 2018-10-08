@@ -31,32 +31,35 @@ public class BoxCollider_z : MonoBehaviour {
     {
         if (gameObject.activeInHierarchy)
         {
-            if (other.gameObject.CompareTag("Player"))
+            if (!Camera_Directing_Net.GetInstance().ani_is_working)
             {
-                if (SceneManager.GetActiveScene().buildIndex == 7)
+                if (other.gameObject.CompareTag("Player"))
                 {
-                    if (Turtle_Move.instance.alive != 0)
+                    if (SceneManager.GetActiveScene().buildIndex == 7 || SceneChange.instance.GetSceneState() == 13)
                     {
-                        //Debug.Log("TTaGawa");
-                        if (Turtle_Move.instance.glider_on)
+                        if (Turtle_Move.instance.alive != 0)
                         {
-                            Turtle_Move.instance.alive = 1;
-                            Turtle_Move.instance.glider_on = false;
-                            Turtle_Move.instance.overpower = true;
-                        }
-                        else
-                        {
-                            if (!Turtle_Move.instance.overpower)
-                                Turtle_Move.instance.alive = 0;
+                            //Debug.Log("TTaGawa");
+                            if (Turtle_Move.instance.glider_on)
+                            {
+                                Turtle_Move.instance.alive = 1;
+                                Turtle_Move.instance.glider_on = false;
+                                Turtle_Move.instance.overpower = true;
+                            }
+                            else
+                            {
+                                if (!Turtle_Move.instance.overpower)
+                                    Turtle_Move.instance.alive = 0;
 
+                            }
+                            NetTest.instance.SetmoveTrue();
                         }
-                        NetTest.instance.SetmoveTrue();
                     }
-                }
-                else
-                {
-                    Turtle_Move_Coop.instance.alive = 0;
-                    NetManager_Coop.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
+                    else
+                    {
+                        Turtle_Move_Coop.instance.alive = 0;
+                        NetManager_Coop.instance.SetMyPos(transform.position.x, transform.rotation.y, transform.position.z);
+                    }
                 }
             }
         }

@@ -70,6 +70,12 @@ public class SceneChange : MonoBehaviour
         scene = 11;
         swap_scene = true;
     }
+    public void GoTo_Ice_VS_Scene()
+    {
+        last_scene = scene;
+        scene = 13;
+        swap_scene = true;
+    }
     public void GoTo_CoopBoss_Scene()
     {
         last_scene = scene;

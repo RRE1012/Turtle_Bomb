@@ -9,7 +9,7 @@ public class MapManager : MonoBehaviour
     public static MapManager instance;
     public GameObject m_bomb;
     public GameObject m_Tbomb;
-    public GameObject[] m_terrain;
+   
     public GameObject[] m_box;
     public GameObject[] m_rock;
     public GameObject m_flame_effect;
@@ -25,7 +25,7 @@ public class MapManager : MonoBehaviour
     public GameObject m_explode_effect;
     public GameObject parent;
     public GameObject m_airplane;
-    public GameObject[] m_tile;
+   
     public Text g_text;
 
     byte[] bombexplode_list = new byte[225];
@@ -72,7 +72,7 @@ public class MapManager : MonoBehaviour
     byte[] dirc = new byte[32];
     int[] sx = new int[32];
     int[] sz = new int[32];
-    GameObject[] land1 = new GameObject[225];
+    
 
     GameObject terrain;
     GameObject[] bush_list = new GameObject[50];
@@ -97,10 +97,8 @@ public class MapManager : MonoBehaviour
     void Start()
     {
         //NetTest.instance.Receive();
-        terrain = Instantiate(m_terrain[VariableManager.instance.map_type]);
-        terrain.transform.position = new Vector3(0.0f, 0.0f, -50.0f);
-        terrain.transform.parent = parent.transform;
-        terrain.SetActive(true);
+       
+       
         //terrain.transform.position == new Vector3(100, 0, 100);
         LobbySound.instanceLS.SoundStop();
 
@@ -133,7 +131,10 @@ public class MapManager : MonoBehaviour
                     push_box_list[i].transform.parent = parent.transform;
                     dirc_box[i] = 0;
                 }
+
+                
                 ex_list[i] = Instantiate(m_explode_effect);
+                ex_list[i].transform.position = new Vector3(100, 0, 100);
                 ex_list[i].transform.parent = parent.transform;
                 ex_list[i].SetActive(false);
                 item_s_list[i] = Instantiate(m_item_speed);
@@ -169,9 +170,11 @@ public class MapManager : MonoBehaviour
                 bombK_list[i].transform.parent = parent.transform;
                 //bombK_list[i].transform.rotation = new Quaternion(0, 0, 90.0f,0);
                 bombK_list[i].SetActive(false);
+
                 is_alive[i] = false;
                 set_pos[i] = false;
                 is_alive_kick[i] = false;
+
                 set_pos_kick[i] = false;
                 m_is_donerising[i] = false;
                 m_is_rising_start[i] = true;
@@ -195,6 +198,7 @@ public class MapManager : MonoBehaviour
                 range_List[(z * 15) + x].SetActive(false);
                 item_set[(z * 15) + x] = false;
                 rock_set[(z * 15) + x] = false;
+
                 /*
                 if (((z * 15) + x) % 2 == 0)
                 {

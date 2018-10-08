@@ -15,7 +15,7 @@ public class Flame_Remains : MonoBehaviour {
 
     public void Cycle_Start()
     {
-        Flame_Remains_LifeTime = 1.2f;
+        Flame_Remains_LifeTime = 1.0f;
         StartCoroutine(m_Cycle_Checker);
     }
 

@@ -15,7 +15,7 @@ public class Fire_Effect_Net : MonoBehaviour {
         {
             if (other.gameObject.CompareTag("Player"))
             {
-                if (SceneManager.GetActiveScene().buildIndex == 7)
+                if (SceneManager.GetActiveScene().buildIndex == 7 || SceneChange.instance.GetSceneState() == 13)
                 {
                     if (Turtle_Move.instance.alive != 0)
                     {

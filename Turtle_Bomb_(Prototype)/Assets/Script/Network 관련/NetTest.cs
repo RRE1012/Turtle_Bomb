@@ -289,7 +289,7 @@ public class NetTest : MonoBehaviour
                     byte tempid = copy_data[2];
                     m_chardata[tempid].ani_state = copy_data[3];
                     m_chardata[tempid].is_alive = copy_data[4];
-                    if(SceneChange.instance.GetSceneState() == 7)
+                    if(SceneChange.instance.GetSceneState() == 7 || SceneChange.instance.GetSceneState() == 13)
                         Turtle_Move.instance.Move_Case(tempid);
                     m_chardata[tempid].x = BitConverter.ToSingle(recv_buff, 10);
                     m_chardata[tempid].z = BitConverter.ToSingle(recv_buff, 14);
@@ -421,7 +421,10 @@ public class NetTest : MonoBehaviour
                         //WaitRoom.instance.SetRoomCreate_Respond(copy_data);
                         m_ingame = true;
                         GameRoom.instance.load_on = true;
-                        SceneChange.instance.GoTo_Game_Scene();
+                        if(VariableManager.instance.map_type ==0)
+                            SceneChange.instance.GoTo_Game_Scene();
+                        else
+                            SceneChange.instance.GoTo_Ice_VS_Scene();
                     }
                     else
                     {
