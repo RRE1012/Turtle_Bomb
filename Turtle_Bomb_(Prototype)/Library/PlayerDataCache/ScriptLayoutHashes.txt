@@ -152,6 +152,7 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Boss_HP_Gauge
 b7536247a550bc1596505b7f345c8adf Assembly-CSharp.dll:.GunAim
 a43fb043ad4312f62df6964a881c41a4 Assembly-CSharp.dll:.Info_Trigger
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.BoxCollider_x
 f3125121287b1b12df80db942b96cf90 Assembly-CSharp.dll:.VariableManager
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Sound_Effect
 5b2f590512564fbca6d35a10070cd511 Assembly-CSharp.dll:.UI
@@ -159,6 +160,7 @@ f3125121287b1b12df80db942b96cf90 Assembly-CSharp.dll:.VariableManager
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Icicle_Bottom
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Jump_Checker
 05880a6c31c041e41dc432287e447c0b Assembly-CSharp.dll:.Fire_Effect_Net
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.BoxCollider_z
 2b8bbf72c3967dcb289fff37229fe89c Assembly-CSharp.dll:.Notice_Sound
 6816a2047d390d6af575248f24a827de Assembly-CSharp.dll:.Jet_Goblin
 adad0620247afd8e7596a7ab85e89126 Assembly-CSharp.dll:.Ice_Box
@@ -169,7 +171,7 @@ f63803ca8912bf05ce6a5a64e459dafb Assembly-CSharp.dll:.GameRoom
 48bf81d7a6b12f0ba78943efa147dc93 Assembly-CSharp.dll:.Airdrop_Sound
 a4f24f5cb65e499081ec0d2ba7682d42 Assembly-CSharp.dll:.NetUser4
 2470ff29bb6966b6f9cb989fc54cfd2e Assembly-CSharp.dll:.NetTeam3
-38f916ae4e2cab0e4291c4e93347fcee Assembly-CSharp.dll:.SceneSwaps
+7a2e881d9e52fcd91e239effd24d08fa Assembly-CSharp.dll:.SceneSwaps
 5fe2123461d89b59900b7d67d38d9370 Assembly-CSharp.dll:.CoOpManager
 c393c1a7071b350370238daac28d5e8c Assembly-CSharp.dll:.AnimatedUVs
 83773f851cf44b361cb1c6c24545d64c Assembly-CSharp.dll:.IconTester
@@ -202,7 +204,7 @@ a4f24f5cb65e499081ec0d2ba7682d42 Assembly-CSharp.dll:.NetUser
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.TestRunner.dll:UnityEngine.TestTools.TestRunner.Callbacks.PlayModeRunnerCallback
 2a56361227def9f56c2cf57a88b32f4d UnityEngine.TestRunner.dll:UnityEngine.TestTools.TestRunner.PlaymodeTestsController
 64eb32cc721b1cc68a91ed57461e188c UnityEngine.TestRunner.dll:UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender
-82a26374a6a5cde83c90fe53a66be5cd Assembly-CSharp.dll:.TitleScript
+9ab436b6b272b1a9e2cd9bd388a16689 Assembly-CSharp.dll:.TitleScript
 f675c178c15caae67165ee948ec96691 Assembly-CSharp.dll:.Terrain_Net
 e0f7ffd5d5c2abe4b2e16569a21163da UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioRoom
 e0f7ffd5d5c2abe4b2e16569a21163da UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioRoom
@@ -238,9 +240,9 @@ ad1e585c380d8c30fffd1739c3b3ea7e Assembly-CSharp.dll:.Bush
 48bf81d7a6b12f0ba78943efa147dc93 Assembly-CSharp.dll:.Bomb_Sound
 c4bd3fba4a17f2addf054f1443c88cf2 Assembly-CSharp.dll:.Turtle_Move
 2b8bbf72c3967dcb289fff37229fe89c Assembly-CSharp.dll:.Normal_Goblin_Sound
+7437a0b29429253702486c7ff89fed40 Assembly-CSharp.dll:.Temp
 0f4a716f3475e1944287e8d10113881c Assembly-CSharp.dll:.Audio_Manager
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Net_Item
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Stage_Clear
-05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.BoxCollider_z
-7437a0b29429253702486c7ff89fed40 Assembly-CSharp.dll:.Temp
-05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.BoxCollider_x
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Normal_Fade
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Title_BGM

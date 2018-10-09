@@ -28,7 +28,7 @@ public class Camera_Directing : MonoBehaviour {
 
     public Camera m_Player_Camera;
 
-    float m_Skip_Button_Activate_Time = 5.0f;
+    float m_Skip_Button_Activate_Time = 3.0f;
     int m_Curr_Direction_Number;
     string m_Curr_Animation_Name;
     string m_Curr_Fade_Animation_Name;

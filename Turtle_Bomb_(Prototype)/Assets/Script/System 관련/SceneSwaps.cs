@@ -9,15 +9,14 @@ using UnityEngine.SceneManagement;
 public class SceneSwaps : MonoBehaviour {
 
     public Canvas cv;
-    public RawImage FadeSlider;
-    IEnumerator m_WaitForFadeSlider;
+    public GameObject m_Fade_UI;
+    Normal_Fade m_Normal_Fade;
+    IEnumerator m_WaitForFade;
+    int m_Scene_Number;
 
-    // Use this for initialization
-    void Start () {
-        if (cv != null)
-        {
-            cv.enabled = true;
-        }
+    void Start()
+    {
+        if (m_Fade_UI != null) m_Normal_Fade = m_Fade_UI.GetComponent<Normal_Fade>();
     }
 
     //쓰지 않는 함수(카메라 스위칭 함수)
@@ -39,15 +38,27 @@ public class SceneSwaps : MonoBehaviour {
     }
     public void GoTo_ModeSelect_Scene()
     {
-        //Debug.Log("Clicked");
         SceneManager.LoadScene(1);
+    }
+    public void Return_to_Mode_Select_Scene()
+    {
+        m_Scene_Number = 1;
+        m_Fade_UI.SetActive(true);
+        m_Normal_Fade.FadeOut();
+
+        m_WaitForFade = WaitForFade();
+        StartCoroutine(m_WaitForFade);
     }
 
     // "모험모드 스테이지 선택 화면"으로 이동
-
     public void GoTo_Mode_Adventure_StageSelect_Scene()
-    {    
-        SceneManager.LoadScene(2);
+    {
+        m_Scene_Number = 2;
+        m_Fade_UI.SetActive(true);
+        m_Normal_Fade.FadeOut();
+
+        m_WaitForFade = WaitForFade();
+        StartCoroutine(m_WaitForFade);
     }
     public void GoTo_Mode_VS_Wait_Scene()
     {
@@ -55,26 +66,24 @@ public class SceneSwaps : MonoBehaviour {
     }
     public void GoTo_Mode_CoOp_Wait_Scene()
     {
-        //FadeSlider.gameObject.SetActive(true);
         SceneManager.LoadScene(9);
     }
+
     // "선택한 해당 스테이지"로 이동
     public void GoTo_Mode_Adventure_Selected_Stage(int stage_ID)
     {
-        if (LobbySound.instanceLS != null)
-            LobbySound.instanceLS.SoundStop();
+        if (LobbySound.instanceLS != null) LobbySound.instanceLS.SoundStop();
         
         // "맵 로드를 위한" 현재 스테이지 번호를 기록.
         PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", stage_ID);
         PlayerPrefs.Save();
-        FadeSlider.gameObject.SetActive(true);
-        FadeSlider.gameObject.GetComponent<Fade_Slider>().m_is_Stage_Select_Scene = true;
-        FadeSlider.gameObject.GetComponent<Fade_Slider>().Start_Fade_Slider(1);
 
+        m_Scene_Number = 3;
+        m_Fade_UI.SetActive(true);
+        m_Normal_Fade.FadeOut();
 
-        // 페이드 아웃 대기 후 모험모드 씬을 연다
-        m_WaitForFadeSlider = WaitForFadeSlider();
-        StartCoroutine(m_WaitForFadeSlider);
+        m_WaitForFade = WaitForFade();
+        StartCoroutine(m_WaitForFade);
     }
    
     public void Save_Selected_Stage(int stage_ID)
@@ -84,14 +93,14 @@ public class SceneSwaps : MonoBehaviour {
         PlayerPrefs.Save();
     }
 
-    IEnumerator WaitForFadeSlider()
+    IEnumerator WaitForFade()
     {
         while (true)
         {
-            if (Fade_Slider.c_Fade_Slider.Get_is_Fade_Over())
+            if (m_Normal_Fade.Get_is_Fade_Out_Over())
             {
-                StopCoroutine(m_WaitForFadeSlider);
-                SceneManager.LoadScene(3);
+                StopCoroutine(m_WaitForFade);
+                SceneManager.LoadScene(m_Scene_Number);
             }
             yield return null;
         }
