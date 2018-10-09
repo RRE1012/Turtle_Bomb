@@ -149,7 +149,6 @@ public class Bomb_Remaster : MonoBehaviour
                 collision.gameObject.CompareTag("Bomb") ||
                 collision.gameObject.CompareTag("Monster") ||
                 collision.gameObject.CompareTag("Boss_Monster") ||
-                collision.gameObject.CompareTag("Player") ||
                 collision.gameObject.CompareTag("icicle_Body"))
                 ) Set_Bomb();
         }

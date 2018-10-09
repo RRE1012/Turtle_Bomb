@@ -20,7 +20,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 9}
-  m_MinSize: {x: 950, y: 300}
+  m_MinSize: {x: 950, y: 742}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &2
 MonoBehaviour:
@@ -67,8 +67,8 @@ MonoBehaviour:
     y: 0
     width: 1114
     height: 572
-  m_MinSize: {x: 202, y: 442}
-  m_MaxSize: {x: 4002, y: 8042}
+  m_MinSize: {x: 202, y: 421}
+  m_MaxSize: {x: 4002, y: 8021}
   vertical: 1
   controlID: 57
 --- !u!114 &4
@@ -116,10 +116,10 @@ MonoBehaviour:
     y: 0
     width: 1368
     height: 572
-  m_MinSize: {x: 406, y: 442}
-  m_MaxSize: {x: 8006, y: 8042}
+  m_MinSize: {x: 406, y: 421}
+  m_MaxSize: {x: 8006, y: 8021}
   vertical: 0
-  controlID: 82
+  controlID: 56
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -140,10 +140,10 @@ MonoBehaviour:
     y: 30
     width: 1920
     height: 947
-  m_MinSize: {x: 683, y: 563}
-  m_MaxSize: {x: 12008, y: 12063}
+  m_MinSize: {x: 683, y: 692}
+  m_MaxSize: {x: 14004, y: 18042}
   vertical: 0
-  controlID: 161
+  controlID: 54
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -162,8 +162,8 @@ MonoBehaviour:
     y: 0
     width: 552
     height: 947
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 277, y: 71}
+  m_MaxSize: {x: 4002, y: 4021}
   m_ActualView: {fileID: 20}
   m_Panes:
   - {fileID: 20}
@@ -171,7 +171,7 @@ MonoBehaviour:
   - {fileID: 16}
   - {fileID: 15}
   m_Selected: 0
-  m_LastSelected: 3
+  m_LastSelected: 1
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -190,16 +190,16 @@ MonoBehaviour:
     y: 572
     width: 1368
     height: 375
-  m_MinSize: {x: 102, y: 121}
-  m_MaxSize: {x: 4002, y: 4021}
-  m_ActualView: {fileID: 18}
+  m_MinSize: {x: 232, y: 271}
+  m_MaxSize: {x: 10002, y: 10021}
+  m_ActualView: {fileID: 19}
   m_Panes:
   - {fileID: 18}
   - {fileID: 17}
   - {fileID: 19}
   - {fileID: 24}
-  m_Selected: 0
-  m_LastSelected: 2
+  m_Selected: 2
+  m_LastSelected: 1
 --- !u!114 &9
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -284,10 +284,10 @@ MonoBehaviour:
     y: 0
     width: 1368
     height: 947
-  m_MinSize: {x: 406, y: 563}
-  m_MaxSize: {x: 8006, y: 12063}
+  m_MinSize: {x: 406, y: 692}
+  m_MaxSize: {x: 10002, y: 18042}
   vertical: 1
-  controlID: 81
+  controlID: 55
 --- !u!114 &13
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -306,8 +306,8 @@ MonoBehaviour:
     y: 0
     width: 1114
     height: 335
-  m_MinSize: {x: 202, y: 221}
-  m_MaxSize: {x: 4002, y: 4021}
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 23}
   m_Panes:
   - {fileID: 23}
@@ -365,7 +365,7 @@ MonoBehaviour:
     y: 92
     width: 550
     height: 926
-  m_Recording: 0
+  m_Recording: 1
   m_ViewType: 0
   m_CurrentArea: 0
   m_ShowInactiveDSPChains: 0
@@ -539,19 +539,19 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets/Materials
+    - Assets/Prefabs/Maps/SnowLand
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Materials
+  - Assets/Prefabs/Maps/SnowLand
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\user\Documents\GitHub\Turtle_Bomb\Turtle_Bomb_(Prototype)
   m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 223}
-    m_SelectedIDs: 70320000
-    m_LastClickedID: 12912
-    m_ExpandedIDs: 000000005a280000a4280000f2280000fc280000b4290000be290000142a0000f82a0000fe2a0000702b00002a2c00006e2d0000c62d00004a2e00006e2e0000f22e0000782f000004300000283000005c3000004231000096320000a432000074330000303400007834000096340000b6340000fa34000064350000c4350000c6350000503600009c360000c8360000ce3600009a3700009c370000d8370000523800009e480000a0480000a2480000a4480000a6480000a8480000aa480000ac480000ae480000b0480000b2480000b4480000b6480000b8480000ba480000bc480000be480000c0480000c2480000c4480000c6480000c8480000ca480000cc480000ce48000000ca9a3bffffff7f
+    scrollPos: {x: 0, y: 275}
+    m_SelectedIDs: 16320000
+    m_LastClickedID: 12822
+    m_ExpandedIDs: 00000000f8290000422a0000902a00009a2a0000502b00005a2b0000b02b0000922c0000982c00000a2d0000c42d00000a2f00005e2f0000e02f0000043000007e3000000031000088310000ac310000e0310000c63200001834000026340000f4340000ac350000f03500000c3600002a3600006c360000d43600003437000036370000c23700000c380000383800003e3800000a3900000c39000048390000c2390000d6490000d8490000da490000dc490000de490000e0490000e2490000e4490000e6490000e8490000ea490000ec490000ee490000f0490000f2490000f4490000f6490000f8490000fa490000fc490000fe490000004a0000024a0000044a0000064a000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -579,7 +579,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000005a280000a4280000f2280000fc280000b4290000be290000142a0000f82a0000fe2a0000702b00002a2c00006e2d0000c62d00000e2e00004a2e00006e2e0000f22e0000782f000004300000283000005c3000004231000096320000a432000074330000303400007834000096340000b6340000fa34000064350000c4350000c6350000503600009c360000c8360000ce3600009c370000d8370000523800009e480000a0480000a2480000a4480000a6480000a8480000aa480000ac480000ae480000b0480000b2480000b4480000b6480000b8480000ba480000bc480000be480000c0480000c2480000c4480000c6480000c8480000ca480000cc480000ce480000
+    m_ExpandedIDs: 00000000f8290000422a0000902a00009a2a0000502b00005a2b0000b02b0000922c0000982c00000a2d0000c42d00000a2f00005e2f0000e02f0000043000007e3000000031000088310000ac310000e0310000c63200001834000026340000f4340000ac350000f03500000c3600002a3600006c360000d43600003437000036370000c23700000c380000383800003e3800000a3900000c39000048390000c2390000d6490000d8490000da490000dc490000de490000e0490000e2490000e4490000e6490000e8490000ea490000ec490000ee490000f0490000f2490000f4490000f6490000f8490000fa490000fc490000fe490000004a0000024a0000044a0000064a0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -604,10 +604,10 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: cc8f0000
-    m_LastClickedInstanceID: 36812
+    m_SelectedInstanceIDs: 
+    m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: ee3400005a370000082d00006e60000056440000f839000000000000102d0000ac1cedff
+    m_ExpandedInstanceIDs: ee3400005a370000082d00006e60000056440000f839000000000000102d0000ac1cedffb0370000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -697,21 +697,21 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: ce5ed0ffdc5fd0ff8467d0ff8a67d0ff9267d0ff9667d0ffa067d0ffcc68d0ff7272d0ff7872d0ff8072d0ff8a72d0ff8875d0ff9275d0ffa075d0ffca82d5ffd629d7fffe29d7ff1c2ed7ff262ed7ff7830d7ff7c30d7ff5069dfffb826e2ff9aa3e4fff016e7ff3619e7ffaa19e7ffbe19e7ffdc1de7ffe61de7ff3c20e7ff465deaffba5eebff1e48f5ff2048f5ff8037fbfff0c6fbff9421fcff984cfcffb44cfcffd04cfcffec4cfcff8accfdffa6ccfdfffaccfdfffccdfeff84cefeffbecefeffd0cefeffe4cefeff2ccffeff3ecffeff74cffeffd0cffeffe2cffefff6cffeff1cd0feff58d0feffa6d0feffe0d0feff5ed5feff62d5feff66d5feffa6fbffff00000000563b00007a3b00007a900000cc90000004910000
+    m_ExpandedIDs: 3ed8f5ff5ad9f5ff02e1f5ff08e1f5ff10e1f5ff14e1f5ff1ee1f5ffaee4f5ff54eef5ff5aeef5ff62eef5ff66eef5ff64f1f5ff6ef1f5ff7cf1f5ff96e2f7ff98e2f7ffa82afffff6faffff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: Mission_Star1
-      m_OriginalName: Mission_Star1
+      m_Name: BS
+      m_OriginalName: BS
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 14984
+      m_UserData: -531818
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 0
+      m_OriginalEventType: 4
       m_IsRenamingFilename: 0
       m_ClientGUIView: {fileID: 4}
     m_SearchString: 
@@ -789,7 +789,7 @@ MonoBehaviour:
     speed: 2
     m_Value: 1
   m_ShowGlobalGrid: 1
-  m_LastSceneViewRotation: {x: 0.30735594, y: 0.15522368, z: -0.050890557, w: 0.937469}
+  m_LastSceneViewRotation: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
   m_LastSceneViewOrtho: 0
   m_ReplacementShader: {fileID: 0}
   m_ReplacementString: 

@@ -208,7 +208,7 @@ e0f7ffd5d5c2abe4b2e16569a21163da UnityEngine.GoogleAudioSpatializer.dll:UnityEng
 e0f7ffd5d5c2abe4b2e16569a21163da UnityEngine.GoogleAudioSpatializer.dll:UnityEngine.Experimental.Audio.Google.GvrAudioRoom
 7f13ada6e10b1acb845d1ca0374652d7 Assembly-CSharp.dll:.Mode_Adventure_Stage_Select_Scene_Manager
 62a08811156868fe872193af273a5cb7 Assembly-CSharp.dll:.MapManager_COop
-7437a0b29429253702486c7ff89fed40 Assembly-CSharp.dll:.MapManager
+25b5b8d4d1945fa7d2a8d08d410da670 Assembly-CSharp.dll:.MapManager
 15701d406fc6d17d8a00ead481fa36ae Assembly-CSharp.dll:.Matching_Room
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Front_Collider
 bc68edb0af574bf79f9550ead8ebae5c UnityEngine.HoloLens.dll:UnityEngine.Audio.AudioSpatializerMicrosoft
@@ -218,7 +218,7 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 45f3431f0103c41611e8d4eec3d439df UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.SpatialMappingRenderer
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Item
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Flame_Crash
-480ccda02233a8ca2dea979f7864aea2 Assembly-CSharp.dll:.Bomb_Network
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Bomb_Network
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 a9c6d5befca6efeb6edf159c31618e8a Assembly-CSharp.dll:.Turtle_Move_Coop
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Item_Network_Airdrop
@@ -241,3 +241,6 @@ c4bd3fba4a17f2addf054f1443c88cf2 Assembly-CSharp.dll:.Turtle_Move
 0f4a716f3475e1944287e8d10113881c Assembly-CSharp.dll:.Audio_Manager
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Net_Item
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Stage_Clear
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.BoxCollider_z
+7437a0b29429253702486c7ff89fed40 Assembly-CSharp.dll:.Temp
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.BoxCollider_x

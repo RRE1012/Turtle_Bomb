@@ -248,6 +248,8 @@
     <Compile Include="Assets\Script\Bomb 관련\Shake_Checker.cs" />
     <Compile Include="Assets\Script\Network 관련\Bomb_Network.cs" />
     <Compile Include="Assets\Script\Network 관련\Boss_AI_Coop.cs" />
+    <Compile Include="Assets\Script\Network 관련\BoxCollider_x.cs" />
+    <Compile Include="Assets\Script\Network 관련\BoxCollider_z.cs" />
     <Compile Include="Assets\Script\Network 관련\Camera_Directing_Net.cs" />
     <Compile Include="Assets\Script\Network 관련\CoOpManager.cs" />
     <Compile Include="Assets\Script\Network 관련\Fire_Effect_Net.cs" />
@@ -278,6 +280,7 @@
     <Compile Include="Assets\Script\Network 관련\SceneChange.cs" />
     <Compile Include="Assets\Script\Network 관련\Serial_Script.cs" />
     <Compile Include="Assets\Script\Network 관련\TeamChange.cs" />
+    <Compile Include="Assets\Script\Network 관련\Temp.cs" />
     <Compile Include="Assets\Script\Network 관련\Terrain_Net.cs" />
     <Compile Include="Assets\Script\Network 관련\TestNet.cs" />
     <Compile Include="Assets\Script\Network 관련\Turtle_Move.cs" />
