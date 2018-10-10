@@ -23,7 +23,7 @@ public class Shake_Checker : MonoBehaviour {
 
     public void Set_Out_of_Range()
     {
-        m_Player = null;
         m_isInRange = false;
+        m_Player = null;
     }
 }

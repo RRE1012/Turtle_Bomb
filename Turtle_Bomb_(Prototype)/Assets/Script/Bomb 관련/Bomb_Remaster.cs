@@ -42,8 +42,8 @@ static class KICKED_BOMB_VALUES
 public class Bomb_Remaster : MonoBehaviour
 {
     public GameObject m_Bomb_Model;
-    public Shake_Checker m_Shake_Checker;
-    public Jump_Checker m_Jump_Checker;
+    Shake_Checker m_Shake_Checker;
+    Jump_Checker m_Jump_Checker;
     Bomb_Sound m_Bomb_Sound;
 
     GameObject m_Range_Box;
@@ -119,6 +119,11 @@ public class Bomb_Remaster : MonoBehaviour
         m_Animations = GetComponent<Animation>();
         m_Bomb_Collider = GetComponent<BoxCollider>();
         m_Bomb_Sound = GetComponentInChildren<Bomb_Sound>();
+
+        m_Shake_Checker = GetComponentInChildren<Shake_Checker>();
+        m_Shake_Checker.gameObject.SetActive(false);
+        m_Jump_Checker = GetComponentInChildren<Jump_Checker>();
+        m_Jump_Checker.gameObject.SetActive(false);
 
         m_Curr_Bomb_Timer = 0.0f;
         m_is_Thrown = false;
@@ -343,6 +348,8 @@ public class Bomb_Remaster : MonoBehaviour
 
         m_Bomb_Model.transform.localEulerAngles = Vector3.zero;
 
+        m_Shake_Checker.gameObject.SetActive(true);
+
         m_MCL_Index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z);
         
         Vector3 pos = transform.position;
@@ -395,8 +402,7 @@ public class Bomb_Remaster : MonoBehaviour
     public void Return_To_Pool() // 풀로 복귀시키기 전의 작업들
     {
         Fire_OFF();
-        
-        m_Shake_Checker.gameObject.SetActive(false);
+
         m_Whose_Bomb.GetComponent<Bomb_Setter>().Bomb_Reload(); // 주인의 폭탄 개수를 다시 채워준다.
         if (m_Whose_Bomb.GetComponent<Player>() != null) m_Whose_Bomb.GetComponent<Player>().UI_Status_Update();
         m_Whose_Bomb = null; // 주인 마킹을 지운다.
@@ -707,8 +713,9 @@ public class Bomb_Remaster : MonoBehaviour
 
             m_Bomb_Model.SetActive(false);
             
-            if (m_Shake_Checker.Get_Target() != null) m_Shake_Checker.Get_Target().GetComponent<Player>().AniBomb_Start();
+            if (m_Shake_Checker.Get_Target() != null) m_Shake_Checker.Get_Target().GetComponent<Player>().Camera_Wave();
             m_Shake_Checker.Set_Out_of_Range();
+            m_Shake_Checker.gameObject.SetActive(false);
 
             Fire_ON();
             m_is_Fire_Life_Over = false;

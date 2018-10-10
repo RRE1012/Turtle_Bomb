@@ -114,7 +114,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1257813760939790
 GameObject:
   m_ObjectHideFlags: 1
@@ -313,7 +313,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4021251890889862
 Transform:
   m_ObjectHideFlags: 1
@@ -1010,8 +1010,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Bomb_Model: {fileID: 1015852641168642}
-  m_Shake_Checker: {fileID: 114316441801214000}
-  m_Jump_Checker: {fileID: 114417509787557364}
   m_Center_Range: {fileID: 1135215940210930}
   m_Center_Fire: {fileID: 1577058246483564}
   m_Fire_Object: {fileID: 1958074104739130, guid: 17f8c48fef476924e91bbd792029555e,
@@ -1160,7 +1158,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1475431634
+  randomSeed: 995989364
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -4507,7 +4505,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1896763042
+  randomSeed: 1828133430
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -11115,7 +11113,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 561668330
+  randomSeed: -1991705580
   InitialModule:
     serializedVersion: 3
     enabled: 1

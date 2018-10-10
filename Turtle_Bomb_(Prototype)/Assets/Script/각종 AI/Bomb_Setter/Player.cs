@@ -657,15 +657,16 @@ public class Player : Bomb_Setter
         m_Camera_Animator.SetTrigger("Dead");
     }
 
-    public void AniBomb_Start()
+    public void Camera_Wave()
     {
+        Debug.Log("Ringing");
         m_Camera_Animator.SetTrigger("Ring");
+        
+#if UNITY_ANDROID
         if (!Audio_Manager.GetInstance().Get_is_Vibration_Mute())
-        {
-//#if UNITY_ANDROID
             Handheld.Vibrate(); // 1초간 진동
-//#endif
-        }
+#endif
+
     }
 
     public void UI_Status_Update()

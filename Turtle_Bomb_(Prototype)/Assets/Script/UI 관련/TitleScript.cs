@@ -15,13 +15,10 @@ public class TitleScript : MonoBehaviour
             m_Bomb_Sound.GetComponent<Bomb_Sound>().Play_ExplodeSound();
             m_Animator.SetTrigger("Touched_Start");
             m_is_Clicked = true;
-
+#if UNITY_ANDROID
             if (PlayerPrefs.HasKey("System_Option_Vib_ON") && PlayerPrefs.GetInt("System_Option_Vib_ON") == 1)
-            {
-//#if UNITY_ANDROID
                 Handheld.Vibrate(); // 1초간 진동
-//#endif
-            }
+#endif
         }
     }
 }
