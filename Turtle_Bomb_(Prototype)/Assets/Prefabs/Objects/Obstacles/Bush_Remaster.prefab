@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33348341879447724}
   - component: {fileID: 23492866150759538}
   - component: {fileID: 65072029011299204}
-  - component: {fileID: 114477374752302956}
+  - component: {fileID: 114004648635083602}
   m_Layer: 0
   m_Name: Bush_Remaster
   m_TagString: Bush
@@ -127,7 +127,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.1, y: 0.1, z: 0.1}
   m_Center: {x: 0, y: 0.05, z: 0}
---- !u!114 &114477374752302956
+--- !u!114 &114004648635083602
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -135,7 +135,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1038357147439758}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e3a0d8e72770784ea07fd023e6b1fe2, type: 3}
+  m_Script: {fileID: 11500000, guid: a69aeaec4bbc6c94e99ae92fa79b6a6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 2100000, guid: eb5a8227578bc784287839f7953f7c90, type: 2}

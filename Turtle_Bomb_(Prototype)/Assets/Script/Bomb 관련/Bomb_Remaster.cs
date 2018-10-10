@@ -62,6 +62,12 @@ public class Bomb_Remaster : MonoBehaviour
     List<GameObject> m_W_Fires;
     List<GameObject> m_E_Fires;
 
+    BoxCollider m_Center_Fire_Collider;
+    List<BoxCollider> m_N_Fire_Colliders;
+    List<BoxCollider> m_S_Fire_Colliders;
+    List<BoxCollider> m_W_Fire_Colliders;
+    List<BoxCollider> m_E_Fire_Colliders;
+
     public Flame_Remains[] m_Fire_Remains;
 
     IEnumerator m_Idle_State;
@@ -95,6 +101,8 @@ public class Bomb_Remaster : MonoBehaviour
     bool m_is_Hardend; // 굳혀졌는가?
     bool m_is_Explode; // 폭발했는가?
 
+    bool m_is_Fire_Life_Over; // 불꽃의 수명이 다했는가? (불꽃 충돌체 끄기)
+
     public bool Get_is_Hardend() { return m_is_Hardend; }
     public void Set_is_Hardend(bool b) { m_is_Hardend = b; Change_Bomb_Colliders_isTrigger(!b); }
 
@@ -119,9 +127,11 @@ public class Bomb_Remaster : MonoBehaviour
         m_is_Set_Complete = false;
         m_is_Explode = false;
         m_is_Hardend = false;
+        m_is_Fire_Life_Over = true;
 
         Range_Object_Init();
         Fire_Object_Init();
+        m_Bomb_Model.SetActive(false);
     }
 
     void OnTriggerEnter(Collider other)
@@ -385,6 +395,7 @@ public class Bomb_Remaster : MonoBehaviour
     public void Return_To_Pool() // 풀로 복귀시키기 전의 작업들
     {
         Fire_OFF();
+        
         m_Shake_Checker.gameObject.SetActive(false);
         m_Whose_Bomb.GetComponent<Bomb_Setter>().Bomb_Reload(); // 주인의 폭탄 개수를 다시 채워준다.
         if (m_Whose_Bomb.GetComponent<Player>() != null) m_Whose_Bomb.GetComponent<Player>().UI_Status_Update();
@@ -397,7 +408,6 @@ public class Bomb_Remaster : MonoBehaviour
         m_is_Explode = false;
 
         Set_Collider_Size_Normal();
-        m_Bomb_Model.SetActive(true);
         m_Jump_Checker.gameObject.SetActive(false);
 
         StopAllCoroutines(); // 모든 행동을 멈춘다.
@@ -486,19 +496,19 @@ public class Bomb_Remaster : MonoBehaviour
         bool is_W_Blocked = false; bool is_E_Blocked = false;
         // 한번이라도 막히는 순간 더이상 진행되지 않는다!
 
-        for (int i = 1; i <= m_FireCount; ++i)
+        for (int i = 0; i < m_FireCount; ++i)
         {
-            if (!is_N_Blocked && !StageManager.GetInstance().Get_MCL_is_Blocked_With_Coord(m_N_Ranges[i - 1].transform.position.x, m_N_Ranges[i - 1].transform.position.z))
-                m_N_Ranges[i - 1].SetActive(true);
+            if (!is_N_Blocked && !StageManager.GetInstance().Get_MCL_is_Blocked_With_Coord(m_N_Ranges[i].transform.position.x, m_N_Ranges[i].transform.position.z))
+                m_N_Ranges[i].SetActive(true);
             else is_N_Blocked = true; 
-            if (!is_S_Blocked && !StageManager.GetInstance().Get_MCL_is_Blocked_With_Coord(m_S_Ranges[i - 1].transform.position.x, m_S_Ranges[i - 1].transform.position.z))
-                m_S_Ranges[i - 1].SetActive(true);
+            if (!is_S_Blocked && !StageManager.GetInstance().Get_MCL_is_Blocked_With_Coord(m_S_Ranges[i].transform.position.x, m_S_Ranges[i].transform.position.z))
+                m_S_Ranges[i].SetActive(true);
             else is_S_Blocked = true;
-            if (!is_W_Blocked && !StageManager.GetInstance().Get_MCL_is_Blocked_With_Coord(m_W_Ranges[i - 1].transform.position.x, m_W_Ranges[i - 1].transform.position.z))
-                m_W_Ranges[i - 1].SetActive(true);
+            if (!is_W_Blocked && !StageManager.GetInstance().Get_MCL_is_Blocked_With_Coord(m_W_Ranges[i].transform.position.x, m_W_Ranges[i].transform.position.z))
+                m_W_Ranges[i].SetActive(true);
             else is_W_Blocked = true;
-            if (!is_E_Blocked && !StageManager.GetInstance().Get_MCL_is_Blocked_With_Coord(m_E_Ranges[i - 1].transform.position.x, m_E_Ranges[i - 1].transform.position.z))
-                m_E_Ranges[i - 1].SetActive(true);
+            if (!is_E_Blocked && !StageManager.GetInstance().Get_MCL_is_Blocked_With_Coord(m_E_Ranges[i].transform.position.x, m_E_Ranges[i].transform.position.z))
+                m_E_Ranges[i].SetActive(true);
             else is_E_Blocked = true;
         }
     }
@@ -523,10 +533,18 @@ public class Bomb_Remaster : MonoBehaviour
         m_Fire_Box = new GameObject();
         m_Fire_Box.transform.parent = transform;
 
+        m_Center_Fire.SetActive(false);
+        m_Center_Fire_Collider = m_Center_Fire.GetComponent<BoxCollider>();
+
         m_N_Fires = new List<GameObject>();
         m_S_Fires = new List<GameObject>();
         m_W_Fires = new List<GameObject>();
         m_E_Fires = new List<GameObject>();
+
+        m_N_Fire_Colliders = new List<BoxCollider>();
+        m_S_Fire_Colliders = new List<BoxCollider>();
+        m_W_Fire_Colliders = new List<BoxCollider>();
+        m_E_Fire_Colliders = new List<BoxCollider>();
 
         Vector3 pos; float unit;
         for (int i = 1; i <= MAX_STATUS.FIRE; ++i)
@@ -543,6 +561,9 @@ public class Bomb_Remaster : MonoBehaviour
             pos.z = transform.position.z + unit;
             m_N_Fires[i - 1].transform.position = pos;
             m_N_Fires[i - 1].transform.parent = m_Fire_Box.transform;
+            
+            m_N_Fire_Colliders.Add(m_N_Fires[i - 1].GetComponent<BoxCollider>());
+            m_N_Fires[i - 1].SetActive(false);
 
             pos = transform.position;
             pos.y = m_Fire_Object.transform.position.y;
@@ -550,31 +571,50 @@ public class Bomb_Remaster : MonoBehaviour
             m_S_Fires[i - 1].transform.position = pos;
             m_S_Fires[i - 1].transform.parent = m_Fire_Box.transform;
 
+            m_S_Fire_Colliders.Add(m_S_Fires[i - 1].GetComponent<BoxCollider>());
+            m_S_Fires[i - 1].SetActive(false);
+
             pos = transform.position;
             pos.y = m_Fire_Object.transform.position.y;
             pos.x = transform.position.x - unit;
             m_W_Fires[i - 1].transform.position = pos;
             m_W_Fires[i - 1].transform.parent = m_Fire_Box.transform;
 
+            m_W_Fire_Colliders.Add(m_W_Fires[i - 1].GetComponent<BoxCollider>());
+            m_W_Fires[i - 1].SetActive(false);
+
             pos = transform.position;
             pos.y = m_Fire_Object.transform.position.y;
             pos.x = transform.position.x + unit;
             m_E_Fires[i - 1].transform.position = pos;
             m_E_Fires[i - 1].transform.parent = m_Fire_Box.transform;
-        }
 
-        Fire_OFF();
+            m_E_Fire_Colliders.Add(m_E_Fires[i - 1].GetComponent<BoxCollider>());
+            m_E_Fires[i - 1].SetActive(false);
+        }
     }
 
     void Fire_OFF() // 불꽃 오브젝트 끄기
     {
         m_Center_Fire.SetActive(false);
-        for (int i = 1; i <= MAX_STATUS.FIRE; ++i)
+        for (int i = 0; i < m_FireCount; ++i)
         {
-            m_N_Fires[i - 1].SetActive(false);
-            m_S_Fires[i - 1].SetActive(false);
-            m_W_Fires[i - 1].SetActive(false);
-            m_E_Fires[i - 1].SetActive(false);
+            m_N_Fires[i].SetActive(false);
+            m_S_Fires[i].SetActive(false);
+            m_W_Fires[i].SetActive(false);
+            m_E_Fires[i].SetActive(false);
+        }
+    }
+
+    void Fire_Collider_OFF()
+    {
+        m_Center_Fire_Collider.enabled = false;
+        for (int i = 0; i < m_FireCount; ++i)
+        {
+            m_N_Fire_Colliders[i].enabled = false;
+            m_S_Fire_Colliders[i].enabled = false;
+            m_W_Fire_Colliders[i].enabled = false;
+            m_E_Fire_Colliders[i].enabled = false;
         }
     }
 
@@ -642,6 +682,20 @@ public class Bomb_Remaster : MonoBehaviour
                 break;
             }
         }
+
+        Fire_Collider_ON();
+    }
+
+    void Fire_Collider_ON()
+    {
+        m_Center_Fire_Collider.enabled = true;
+        for (int i = 0; i < m_FireCount; ++i)
+        {
+            m_N_Fire_Colliders[i].enabled = true;
+            m_S_Fire_Colliders[i].enabled = true;
+            m_W_Fire_Colliders[i].enabled = true;
+            m_E_Fire_Colliders[i].enabled = true;
+        }
     }
 
     void Explode() // 폭탄 폭발!
@@ -657,6 +711,7 @@ public class Bomb_Remaster : MonoBehaviour
             m_Shake_Checker.Set_Out_of_Range();
 
             Fire_ON();
+            m_is_Fire_Life_Over = false;
             Set_Bomb_Off();
 
             m_Center_Particle.Play();
@@ -672,6 +727,11 @@ public class Bomb_Remaster : MonoBehaviour
             if (m_Center_Particle.time >= m_Center_Particle.main.duration) // 불꽃 연출이 끝났다면
             {
                 Return_To_Pool(); // 폭탄을 풀로 돌려보낸다.
+            }
+            else if (!m_is_Fire_Life_Over && m_Center_Particle.time >= m_Center_Particle.main.duration * 0.6f)
+            {
+                Fire_Collider_OFF();
+                m_is_Fire_Life_Over = true;
             }
             yield return null;
         }

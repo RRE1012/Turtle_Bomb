@@ -96,6 +96,7 @@ f61c0793411f10cf5fbfa1473fef5ef2 UnityEngine.UI.dll:UnityEngine.UI.ToggleGroup
 50bc42aec0324e8da9962d40b2a714a9 Assembly-CSharp.dll:.ParticleMenu
 a91d78fd20a94fba3b46727be8247b5d Assembly-CSharp.dll:.NetTest
 573406a46f6de3fc61b2fa0758bf3a8e Assembly-CSharp.dll:.Boss_AI_Coop
+05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Normal_Fade
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Item_Network
 dd661bc9f1bee852b3d172321407dfa7 Assembly-CSharp.dll:.Box_None_Item
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
@@ -224,6 +225,7 @@ c2275a8bfbb9f9942cad75ecdfded41d UnityEngine.HoloLens.dll:UnityEngine.XR.WSA.Spa
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 a9c6d5befca6efeb6edf159c31618e8a Assembly-CSharp.dll:.Turtle_Move_Coop
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Item_Network_Airdrop
+ad1e585c380d8c30fffd1739c3b3ea7e Assembly-CSharp.dll:.Bush_Remaster
 9d53592a8c67da4b8757fac8422b93d3 Assembly-CSharp.dll:.Notice_UI
 2b8bbf72c3967dcb289fff37229fe89c Assembly-CSharp.dll:.Player_Sound
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Net_Boss_1
@@ -234,7 +236,7 @@ a1230c455d0c9e5a120633b480723109 Assembly-CSharp.dll:.Flame_Crash_Portal
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Image_Fade
 daf5573c543625d4a568733dbc79ab32 Assembly-CSharp.dll:.Bomb_Remaster
 e3659e54bdf8f8724570fa7d451db279 Assembly-CSharp.dll:.Monster_Portal
-ad1e585c380d8c30fffd1739c3b3ea7e Assembly-CSharp.dll:.Bush
+309baed84c78f7599669a90b1a9e3ef4 Assembly-CSharp.dll:.Bush
 569e16817b3d0a3daadbe6c3d97d7996 Assembly-CSharp.dll:.RenderEffect
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Start_Point
 48bf81d7a6b12f0ba78943efa147dc93 Assembly-CSharp.dll:.Bomb_Sound
@@ -244,5 +246,3 @@ c4bd3fba4a17f2addf054f1443c88cf2 Assembly-CSharp.dll:.Turtle_Move
 0f4a716f3475e1944287e8d10113881c Assembly-CSharp.dll:.Audio_Manager
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Net_Item
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Stage_Clear
-05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Normal_Fade
-05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Title_BGM

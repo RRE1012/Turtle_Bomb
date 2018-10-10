@@ -138,7 +138,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e3a0d8e72770784ea07fd023e6b1fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: eb5a8227578bc784287839f7953f7c90, type: 2}
+  m_Object_temp: []
+  fire_Effect: {fileID: 1247745852361674, guid: 7dda86a6201d5ae4cb814eb0fc12535b,
+    type: 2}
+  m: {fileID: 2100000, guid: eb5a8227578bc784287839f7953f7c90, type: 2}
 --- !u!198 &198970737521137238
 ParticleSystem:
   m_ObjectHideFlags: 1

@@ -343,12 +343,12 @@ public class Player : Bomb_Setter
     void Move()
     {
         Body_MoveControl_ForMobile(); // 릴리즈용
-        Body_MoveControl_ForPC(); // 디버그용
+        //Body_MoveControl_ForPC(); // 디버그용
 
-        Body_RotateControl_ForPC(); // 디버그용
+        //Body_RotateControl_ForPC(); // 디버그용
         Body_RotateControl_ForMobile(); // 릴리즈용
 
-        OtherControl_ForPC(); // 디버그용
+        //OtherControl_ForPC(); // 디버그용
     }
 
     void Body_MoveControl_ForPC()
@@ -662,9 +662,9 @@ public class Player : Bomb_Setter
         m_Camera_Animator.SetTrigger("Ring");
         if (!Audio_Manager.GetInstance().Get_is_Vibration_Mute())
         {
-#if UNITY_ANDROID
+//#if UNITY_ANDROID
             Handheld.Vibrate(); // 1초간 진동
-#endif
+//#endif
         }
     }
 
