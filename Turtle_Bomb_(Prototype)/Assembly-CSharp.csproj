@@ -73,6 +73,8 @@
      <Compile Include="Assets\Script\Bomb 관련\Shake_Checker.cs" />
      <Compile Include="Assets\Script\Network 관련\Bomb_Network.cs" />
      <Compile Include="Assets\Script\Network 관련\Boss_AI_Coop.cs" />
+     <Compile Include="Assets\Script\Network 관련\BoxCollider_x.cs" />
+     <Compile Include="Assets\Script\Network 관련\BoxCollider_z.cs" />
      <Compile Include="Assets\Script\Network 관련\Camera_Directing_Net.cs" />
      <Compile Include="Assets\Script\Network 관련\CoOpManager.cs" />
      <Compile Include="Assets\Script\Network 관련\Fire_Effect_Net.cs" />
@@ -80,6 +82,7 @@
      <Compile Include="Assets\Script\Network 관련\GetID.cs" />
      <Compile Include="Assets\Script\Network 관련\IconTester.cs" />
      <Compile Include="Assets\Script\Network 관련\Item_Network.cs" />
+     <Compile Include="Assets\Script\Network 관련\Item_Network_Airdrop.cs" />
      <Compile Include="Assets\Script\Network 관련\MapManager.cs" />
      <Compile Include="Assets\Script\Network 관련\MapManager_COop.cs" />
      <Compile Include="Assets\Script\Network 관련\Matching_Room.cs" />
@@ -102,6 +105,7 @@
      <Compile Include="Assets\Script\Network 관련\SceneChange.cs" />
      <Compile Include="Assets\Script\Network 관련\Serial_Script.cs" />
      <Compile Include="Assets\Script\Network 관련\TeamChange.cs" />
+     <Compile Include="Assets\Script\Network 관련\Temp.cs" />
      <Compile Include="Assets\Script\Network 관련\Terrain_Net.cs" />
      <Compile Include="Assets\Script\Network 관련\TestNet.cs" />
      <Compile Include="Assets\Script\Network 관련\Turtle_Move.cs" />
@@ -115,6 +119,7 @@
      <Compile Include="Assets\Script\Object 관련\Box_None_Item.cs" />
      <Compile Include="Assets\Script\Object 관련\Box_Particle_Manager.cs" />
      <Compile Include="Assets\Script\Object 관련\Bush.cs" />
+     <Compile Include="Assets\Script\Object 관련\Bush_Remaster.cs" />
      <Compile Include="Assets\Script\Object 관련\Flame_Crash.cs" />
      <Compile Include="Assets\Script\Object 관련\Flame_Crash_Portal.cs" />
      <Compile Include="Assets\Script\Object 관련\Ice_Box.cs" />
@@ -146,6 +151,7 @@
      <Compile Include="Assets\Script\UI 관련\Fade_Slider.cs" />
      <Compile Include="Assets\Script\UI 관련\GameOver_UI.cs" />
      <Compile Include="Assets\Script\UI 관련\Image_Fade.cs" />
+     <Compile Include="Assets\Script\UI 관련\Normal_Fade.cs" />
      <Compile Include="Assets\Script\UI 관련\Notice_UI.cs" />
      <Compile Include="Assets\Script\UI 관련\Script_Box.cs" />
      <Compile Include="Assets\Script\UI 관련\Stage_Clear.cs" />
