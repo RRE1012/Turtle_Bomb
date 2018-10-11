@@ -33,12 +33,6 @@ public class Icicle : MonoBehaviour
         m_MCL_Index = StageManager.GetInstance().Find_Own_MCL_Index(transform.position.x, transform.position.z); // 인덱스 찾기
     }
 
-    void OnDestroy()
-    {
-        // MCL 갱신
-        StageManager.GetInstance().Update_MCL_isBlocked(m_MCL_Index, false);
-    }
-
     public void Start_With_Offset_Time(float time) // 인자로 받은 시간만큼 대기 후 첫 시작.
     {
         Invoke("Icicle_Behavior_Start", time);

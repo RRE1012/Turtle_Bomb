@@ -908,9 +908,9 @@ public class StageManager : MonoBehaviour
             b.GetComponent<Bomb_Remaster>().Return_To_Pool();
 
         // 불 붙은 부쉬의 파티클도 제거
-        GameObject[] fBushs = GameObject.FindGameObjectsWithTag("Flame_Bush_Particle");
-        foreach (GameObject fb in fBushs)
-            Destroy(fb);
+        //GameObject[] fBushs = GameObject.FindGameObjectsWithTag("Flame_Bush_Particle");
+        //foreach (GameObject fb in fBushs)
+        //    Destroy(fb);
 
         // 동적생성 아이템들도 제거
         GameObject[] items = GameObject.FindGameObjectsWithTag("Bomb_Item");
