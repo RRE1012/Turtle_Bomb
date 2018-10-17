@@ -17,7 +17,7 @@ public class Camera_Directing_Net : MonoBehaviour
     Animation m_Intro_Fade_Animations;
 
     public Camera m_Player_Camera;
-
+    
     float m_Skip_Button_Activate_Time = 5.0f;
     int m_Curr_Direction_Number;
     string m_Curr_Animation_Name;
@@ -25,8 +25,8 @@ public class Camera_Directing_Net : MonoBehaviour
     IEnumerator m_Dir_Over_Checker;
     IEnumerator m_Go_to_Target;
     Transform m_Target;
-    float m_Going_to_Target_Speed = 20.0f;
-    float m_Going_to_Target_Rotate_Angle = 40.0f;
+    float m_Going_to_Target_Speed = 30.0f;
+    float m_Going_to_Target_Rotate_Angle = 60.0f;
     public bool ani_is_working;
     bool m_is_in_Target = false;
     bool m_is_Debug_Mode = false;
@@ -49,7 +49,7 @@ public class Camera_Directing_Net : MonoBehaviour
     {
         Camera_Switching(CAMERA_NUMBER.DIRECTION); // 연출용 카메라로 전환
 
-        Invoke("Skip_Button_Activate", m_Skip_Button_Activate_Time);
+        //Invoke("Skip_Button_Activate", m_Skip_Button_Activate_Time);
 
         m_Curr_Direction_Number = direction_num;
         switch (m_Curr_Direction_Number)
@@ -57,6 +57,7 @@ public class Camera_Directing_Net : MonoBehaviour
             case DIRECTION_NUMBER.INTRO_NORMAL_1:
                 ani_is_working = true;
                 m_Curr_Animation_Name = m_Animations.GetClip("Stage_Intro_Normal_1").name; // 재생할 애니메이션 이름을 등록!
+               // Debug.Log("Damn");
                 break;
 
             case DIRECTION_NUMBER.INTRO_BOSS_1:
@@ -74,11 +75,13 @@ public class Camera_Directing_Net : MonoBehaviour
         }
         if (!m_is_Debug_Mode)
         {
+            //Debug.Log("Damn1_debug_mode");
             m_Animations.Play(m_Curr_Animation_Name); // 연출 시작!
             StartCoroutine(m_Dir_Over_Checker); // 연출 종료 검사 시작!
         }
         else
         {
+           // Debug.Log("Damn2_else");
             StageManager.GetInstance().Set_is_Intro_Over(true);
             Camera_Switching(CAMERA_NUMBER.PLAYER);
         }
@@ -96,8 +99,11 @@ public class Camera_Directing_Net : MonoBehaviour
     {
         while (true)
         {
-            if (m_Animations[m_Curr_Animation_Name].normalizedTime >= 0.95f) // 연출이 끝나면
+            if (m_Animations[m_Curr_Animation_Name].normalizedTime >= 0.95f)
+            { // 연출이 끝나면
+                Debug.Log("Damn_End");
                 Direction_Over_Process(); // 연출 종료 처리 수행.
+            }
             yield return null;
         }
     }
@@ -238,6 +244,7 @@ public class Camera_Directing_Net : MonoBehaviour
         {
             case CAMERA_NUMBER.PLAYER:
                 m_Player_Camera.enabled = true;
+               
                 m_Player_Camera.GetComponent<AudioListener>().enabled = true;
                 gameObject.GetComponentInChildren<Camera>().enabled = false;
                 gameObject.GetComponentInChildren<AudioListener>().enabled = false;
@@ -246,6 +253,7 @@ public class Camera_Directing_Net : MonoBehaviour
 
             case CAMERA_NUMBER.DIRECTION:
                 m_Player_Camera.enabled = false;
+                
                 m_Player_Camera.GetComponent<AudioListener>().enabled = false;
                 gameObject.GetComponentInChildren<Camera>().enabled = true;
                 gameObject.GetComponentInChildren<AudioListener>().enabled = true;

@@ -44,3 +44,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scene/Mode_CoOp_Play.unity
     guid: 24815bb6406fe82488fde7d4009c5b3e
+  - enabled: 1
+    path: Assets/Scene/Mode_VS(Play)_Ice.unity
+    guid: e572f28d80bd4ab4893d7181d4c00c73
