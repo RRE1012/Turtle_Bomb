@@ -359,6 +359,11 @@ Prefab:
       propertyPath: m_Interactable
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Forest
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -611,6 +616,11 @@ Prefab:
       propertyPath: m_Interactable
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Ice
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -715,6 +725,10 @@ Prefab:
         type: 2}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1345689476781668, guid: c765bd387ad83d3448a8c0ec93c3fd9b, type: 2}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c765bd387ad83d3448a8c0ec93c3fd9b, type: 2}
@@ -864,6 +878,11 @@ Prefab:
         type: 2}
       propertyPath: m_Interactable
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Ice
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
@@ -1412,6 +1431,11 @@ Prefab:
       propertyPath: m_Interactable
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Forest
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -1578,6 +1602,11 @@ Prefab:
       propertyPath: m_Interactable
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Ice
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -1733,6 +1762,11 @@ Prefab:
       propertyPath: m_Interactable
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Forest
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -1887,6 +1921,11 @@ Prefab:
       propertyPath: m_Interactable
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Ice
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -2006,6 +2045,11 @@ Prefab:
         type: 2}
       propertyPath: m_Interactable
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Forest
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
@@ -2167,6 +2211,11 @@ Prefab:
       propertyPath: m_Interactable
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Ice
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -2320,6 +2369,11 @@ Prefab:
         type: 2}
       propertyPath: m_Interactable
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Forest
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
@@ -2534,6 +2588,11 @@ Prefab:
         type: 2}
       propertyPath: m_Interactable
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Ice
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
@@ -3009,6 +3068,11 @@ Prefab:
       propertyPath: m_Interactable
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Forest
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -3259,6 +3323,11 @@ Prefab:
       propertyPath: m_Interactable
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Forest
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -3392,6 +3461,11 @@ Prefab:
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_IntArgument
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Ice
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
@@ -3596,6 +3670,11 @@ Prefab:
       propertyPath: m_Interactable
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Ice
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -3749,6 +3828,11 @@ Prefab:
         type: 2}
       propertyPath: m_Interactable
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Ice
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
@@ -3909,6 +3993,11 @@ Prefab:
         type: 2}
       propertyPath: m_Interactable
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Forest
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
@@ -4267,6 +4356,11 @@ Prefab:
       propertyPath: m_Interactable
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Ice
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}
   m_IsPrefabParent: 0
@@ -4391,7 +4485,7 @@ Prefab:
     - target: {fileID: 114749603463617302, guid: e8365a7dc51921144a8e6d2620773a9c,
         type: 2}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: GoTo_Mode_Adventure_Selected_Stage
+      value: GoTo_Mode_Adventure_Selected_Stage_Forest
       objectReference: {fileID: 0}
     - target: {fileID: 114749603463617302, guid: e8365a7dc51921144a8e6d2620773a9c,
         type: 2}
@@ -4556,6 +4650,11 @@ Prefab:
         type: 2}
       propertyPath: m_Interactable
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114671044887698826, guid: 0342f0dbc3bbb3241a723b438c0ed6c8,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoTo_Mode_Adventure_Selected_Stage_Forest
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0342f0dbc3bbb3241a723b438c0ed6c8, type: 2}

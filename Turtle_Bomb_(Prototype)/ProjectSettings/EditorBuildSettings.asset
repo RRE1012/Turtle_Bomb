@@ -47,3 +47,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scene/Mode_VS(Play)_Ice.unity
     guid: e572f28d80bd4ab4893d7181d4c00c73
+  - enabled: 1
+    path: Assets/Scene/Mode_Adventure_Game_Stage_(Forest).unity
+    guid: 7bd7260dda5ca9547b388dc584f45c28
+  - enabled: 1
+    path: Assets/Scene/Mode_Adventure_Game_Stage_(IceLand).unity
+    guid: df391224697182043a379238ce2c0adb

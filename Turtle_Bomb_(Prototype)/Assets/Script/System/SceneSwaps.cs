@@ -85,7 +85,36 @@ public class SceneSwaps : MonoBehaviour {
         m_WaitForFade = WaitForFade();
         StartCoroutine(m_WaitForFade);
     }
-   
+    public void GoTo_Mode_Adventure_Selected_Stage_Forest(int stage_ID)
+    {
+        if (LobbySound.instanceLS != null) LobbySound.instanceLS.SoundStop();
+
+        // "맵 로드를 위한" 현재 스테이지 번호를 기록.
+        PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", stage_ID);
+        PlayerPrefs.Save();
+
+        m_Scene_Number = 14;
+        m_Fade_UI.SetActive(true);
+        m_Normal_Fade.FadeOut();
+
+        m_WaitForFade = WaitForFade();
+        StartCoroutine(m_WaitForFade);
+    }
+    public void GoTo_Mode_Adventure_Selected_Stage_Ice(int stage_ID)
+    {
+        if (LobbySound.instanceLS != null) LobbySound.instanceLS.SoundStop();
+
+        // "맵 로드를 위한" 현재 스테이지 번호를 기록.
+        PlayerPrefs.SetInt("Mode_Adventure_Stage_ID_For_MapLoad", stage_ID);
+        PlayerPrefs.Save();
+
+        m_Scene_Number = 15;
+        m_Fade_UI.SetActive(true);
+        m_Normal_Fade.FadeOut();
+
+        m_WaitForFade = WaitForFade();
+        StartCoroutine(m_WaitForFade);
+    }
     public void Save_Selected_Stage(int stage_ID)
     {
         // 선택한 스테이지가 몇번인지 PlayerPrefs에 기록!

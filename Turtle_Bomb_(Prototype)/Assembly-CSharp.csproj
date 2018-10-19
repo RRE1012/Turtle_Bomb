@@ -159,6 +159,7 @@
      <Compile Include="Assets\Script\System\PlayerPrefs_Manager.cs" />
      <Compile Include="Assets\Script\System\SceneSwaps.cs" />
      <Compile Include="Assets\Script\System\StageManager.cs" />
+     <Compile Include="Assets\Script\System\StageManager_Copy.cs" />
      <Compile Include="Assets\Script\UI\Boss_HP_Gauge.cs" />
      <Compile Include="Assets\Script\UI\Fade_Slider.cs" />
      <Compile Include="Assets\Script\UI\GameOver_UI.cs" />
@@ -170,6 +171,7 @@
      <Compile Include="Assets\Script\UI\System_Option.cs" />
      <Compile Include="Assets\Script\UI\TitleScript.cs" />
      <Compile Include="Assets\Script\UI\UI.cs" />
+     <Compile Include="Assets\Script\UI\UI_Beta.cs" />
      <None Include="Assets\Particle\EffectExamples\Scenes\Shared\Shaders\SurfaceShader_VC.shader" />
      <None Include="Assets\Particle\Toon particle pack SKJ Ver.1(Impact)\Plugins\Effect\Shader\effect_distortion_mask.shader" />
      <None Include="Assets\SailCharacterPack\Readme.txt" />

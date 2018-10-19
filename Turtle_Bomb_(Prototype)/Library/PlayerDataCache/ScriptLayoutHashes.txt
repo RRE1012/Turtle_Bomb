@@ -127,7 +127,7 @@ e9bdabf9265d758d56f01bb188916fa8 UnityEngine.Networking.dll:UnityEngine.Networki
 3f32f08a64daf40b09ed864d96fe3840 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransform
 73843688b51256aed059f049c540bca8 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformChild
 528ea1fd7c01796fc60c4e2f172ea229 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformVisualizer
-88ac2bf5c04082560a847486649903bd Assembly-CSharp.dll:.StageManager
+00c966fbabd66685ecf125690e76003b Assembly-CSharp.dll:.StageManager
 2470ff29bb6966b6f9cb989fc54cfd2e Assembly-CSharp.dll:.NetTeam4
 9de3a22eca9aefadba2d10d5987cefe3 UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 2470ff29bb6966b6f9cb989fc54cfd2e Assembly-CSharp.dll:.NetTeam2
@@ -246,3 +246,5 @@ c4bd3fba4a17f2addf054f1443c88cf2 Assembly-CSharp.dll:.Turtle_Move
 0f4a716f3475e1944287e8d10113881c Assembly-CSharp.dll:.Audio_Manager
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Net_Item
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Stage_Clear
+88ac2bf5c04082560a847486649903bd Assembly-CSharp.dll:.StageManager_Copy
+5b2f590512564fbca6d35a10070cd511 Assembly-CSharp.dll:.UI_Beta

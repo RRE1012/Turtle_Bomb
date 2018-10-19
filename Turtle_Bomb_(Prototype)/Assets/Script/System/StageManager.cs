@@ -5,58 +5,6 @@ using UnityEngine.UI;
 
 
 // MCL에 들어갈 좌표 구조체
-public struct Map_Coordinate
-{
-    public float x, z;
-    public Map_Coordinate(float x, float z)
-    {
-        this.x = x;
-        this.z = z;
-    }
-}
-
-static class MAP_SIZE
-{
-    public const float UNIT = 2.0f;
-}
-
-
-
-// ========================
-
-static class OBJECT_TABLE_NUMBER
-{
-    public const int BOX = 1;
-    public const int ROCK = 2;
-    public const int GRASS = 3;
-    public const int GOBLIN = 4;
-    public const int BOSS_GOBLIN = 5;
-    public const int START_POINT = 6;
-    public const int NEXT_POINT = 7;
-    public const int END_POINT = 8;
-    public const int CHARACTER_SPAWN = 9;
-    public const int BOSS_GIANT_1 = 10;
-    public const int ITEM_BOMB = 11;
-    public const int ITEM_SPEED = 12;
-    public const int ITEM_FIRE = 13;
-    public const int ITEM_KICK = 14;
-    public const int ITEM_THROW = 15;
-    public const int INFO_TRIGGER_BOMB = 16;
-    public const int INFO_TRIGGER_SPEED = 17;
-    public const int INFO_TRIGGER_FIRE = 18;
-    public const int INFO_TRIGGER_KICK = 19;
-    public const int INFO_TRIGGER_THROW = 20;
-    public const int BOX_NONE_ITEM = 21;
-    public const int ICICLE_1 = 26;
-    public const int ICICLE_2 = 27;
-    public const int ICE_BOX_1 = 28;
-    public const int ICE_BOX_2 = 29;
-    public const int ICE_BOX_3 = 30;
-    public const int ICE_ROCK = 31;
-}
-
-
-
 
 
 
@@ -66,8 +14,7 @@ public class StageManager : MonoBehaviour
     // ================================
     // =========== 프리팹들 ===========
 
-    public GameObject m_Forest_Theme_Terrain;
-    public GameObject m_SnowLand_Theme_Terrain;
+
 
 
     // 오브젝트 프리팹들
@@ -159,7 +106,8 @@ public class StageManager : MonoBehaviour
     // ==================================
     // ========== 시스템관련 ============
 
-    static StageManager m_Instance; public static StageManager GetInstance() { return m_Instance; }
+    static StageManager m_Instance;
+    public static StageManager GetInstance() { return m_Instance; }
 
     [HideInInspector]
     public List<Map_Coordinate> m_Map_Coordinate_List; // MCL
@@ -237,16 +185,16 @@ public class StageManager : MonoBehaviour
         m_Object_Table_List = new List<Object_Table_Data>(CSV_Manager.GetInstance().Get_Object_Table_List()); // 오브젝트 테이블 목록 로드
 
         if (m_Stage_ID == -1) m_Stage_ID = PlayerPrefs.GetInt("Mode_Adventure_Current_Stage_ID"); // 스테이지 ID를 받아온다.
-        
+
         m_Adventure_Stage_Data.Adventure_Quest_ID_List = new int[3];
         m_Adventure_Stage_Data.Stage_Pattern_ID_List = new int[3];
         CSV_Manager.GetInstance().Get_Adventure_Stage_Data(ref m_Adventure_Stage_Data, m_Stage_ID); // 스테이지 테이블 데이터 로드
         CSV_Manager.GetInstance().Get_Adventure_Quest_List(ref m_QuestList, ref m_Adventure_Stage_Data.Adventure_Quest_ID_List); // 퀘스트 데이터 로딩
 
         Boss_Stage_Setting(); // 보스 스테이지인지 검사 후 설정. (브금 까지)
-        
+
         Create_Map(m_Adventure_Stage_Data.Stage_Pattern_ID_List[m_Current_Stage_index_Count]); // 설정된 번호를 받아서 맵 생성!
-        
+
         if (m_Stage_Time_Limit == -1) m_Stage_Time_Limit = m_Adventure_Stage_Data.Stage_Time; // 시간 설정
 
         Intro_Direction_Play(); // 인트로 연출 시작
@@ -313,7 +261,7 @@ public class StageManager : MonoBehaviour
 
     void Create_Map(int stage_id) // 맵 생성 및 설정
     {
-        Create_Terrain(); // 터레인 생성
+
 
         // 오브젝트 스폰 위치 목록을 받아온다.
         CSV_Manager.GetInstance().Get_Object_Spawn_Position_List(ref m_Object_Spawn_Position_List, stage_id);
@@ -503,22 +451,11 @@ public class StageManager : MonoBehaviour
 
         Airplane_Object_Spawn(); // 에어드랍 비행기 객체 소환
     }
-    
 
 
 
-    void Create_Terrain() // 터레인 생성
-    {
-        switch(m_Adventure_Stage_Data.Use_Terrain_Number)
-        {
-            case THEME_NUMBER.FOREST:
-                Instantiate(m_Forest_Theme_Terrain);
-                break;
-            case THEME_NUMBER.SNOWLAND:
-                Instantiate(m_SnowLand_Theme_Terrain);
-                break;
-        }
-    }
+
+
 
 
 
