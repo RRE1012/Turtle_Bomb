@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 95298984230899262}
   - component: {fileID: 114912783948704550}
   m_Layer: 0
-  m_Name: "Bomb_\uB9AC\uD130\uCE6D"
+  m_Name: Bomb_retouch
   m_TagString: Bomb
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
