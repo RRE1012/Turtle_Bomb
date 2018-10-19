@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scene/Mode_Adventure_(Stage_Select).unity
+- path: Assets/Scene/Mode_VS(WaitRoom).unity
   isLoaded: 1
   isActive: 1
