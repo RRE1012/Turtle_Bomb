@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scene/Mode_VS(WaitRoom).unity
+- path: Assets/Scene/Mode_Adventure_Game_Stage_(IceLand).unity
   isLoaded: 1
   isActive: 1

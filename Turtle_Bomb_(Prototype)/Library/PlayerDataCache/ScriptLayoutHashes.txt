@@ -180,6 +180,7 @@ e8600c7998dc2f2df3a591c3d322e52d Assembly-CSharp.dll:.VSModeManager
 2b8bbf72c3967dcb289fff37229fe89c Assembly-CSharp.dll:.Ork_Boss_Sound
 2470ff29bb6966b6f9cb989fc54cfd2e Assembly-CSharp.dll:.NetTeam1
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.MonsterAI
+88ac2bf5c04082560a847486649903bd Assembly-CSharp.dll:.StageManager_Copy
 f48f2eadd15c9669d57cd29d7ed3a558 Assembly-CSharp.dll:.Network_Alarm
 fdfaee1b34d01bc0c3ad3999cf0a5646 Assembly-CSharp.dll:.CameraTarget
 fc1e0f4d8439d9928083474691511a13 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkAnimator
@@ -231,6 +232,7 @@ ad1e585c380d8c30fffd1739c3b3ea7e Assembly-CSharp.dll:.Bush_Remaster
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Net_Boss_1
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.LobbySound
 bbb27c9c17308a8590b6a6ad44b169c5 Assembly-CSharp.dll:.Mode_Select_Scene_Manager
+5b2f590512564fbca6d35a10070cd511 Assembly-CSharp.dll:.UI_Beta
 7f62cf2f72a3d2082d2da3104238fb12 Assembly-CSharp.dll:.GetID
 a1230c455d0c9e5a120633b480723109 Assembly-CSharp.dll:.Flame_Crash_Portal
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Image_Fade
@@ -246,5 +248,3 @@ c4bd3fba4a17f2addf054f1443c88cf2 Assembly-CSharp.dll:.Turtle_Move
 0f4a716f3475e1944287e8d10113881c Assembly-CSharp.dll:.Audio_Manager
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Net_Item
 05524b8f659e7bfe5756d1335fec24ba Assembly-CSharp.dll:.Stage_Clear
-88ac2bf5c04082560a847486649903bd Assembly-CSharp.dll:.StageManager_Copy
-5b2f590512564fbca6d35a10070cd511 Assembly-CSharp.dll:.UI_Beta
